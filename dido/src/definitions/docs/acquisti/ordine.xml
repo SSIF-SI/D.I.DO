@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="ordine" types="mepa|fuori mepa">
+	<list>
+		<document name="proposta d'ordine" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="REQ" />
+				<signature role="TF" alt="RL"/>
+				<signature role="RL" alt="DIR"/>
+				<signature role="DIR" afterValidation="AMM" />
+			</signatures>
+		</document>
+		<document name="indagine di mercato" minOccur="1" maxOccur="1" onlyIfType="mepa" />
+		<document name="preventivo/richiesta preventivo" minOccur="2" onlyIfType="fuori mepa" />
+		<document name="cig" minOccur="0" maxOccur="1" />
+		<document name="determina" minOccur="1" maxOccur="1" />
+		<document name="provvedimento d'impegno" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+				<signature role="SAMM" />
+			</signatures>
+		</document>
+		<document name="conflitto d'interesse" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="RUP" />
+			</signatures>
+		</document>
+		<document name="ordine mepa" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="fattura" minOccur="1" maxOccur="1" />
+		<document name="verbale di collaudo" minOccur="0" maxOccur="1" />
+		<document name="dichiarazione dei requisiti" minOccur="1" maxOccur="1" />
+		<document name="modello di liquidazione" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="RUP" />
+			</signatures>
+		</document>
+		<document name="mandato" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="SAMM" />
+			</signatures>
+		</document>
+	</list>	
+</masterDocument>
