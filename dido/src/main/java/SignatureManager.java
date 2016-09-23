@@ -1,13 +1,24 @@
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import org.bouncycastle.tsp.TimeStampToken;
+
+import com.itextpdf.text.List;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.AcroFields.Item;
-import com.itextpdf.text.pdf.PRStream;
+import com.itextpdf.text.pdf.AcroFields.FieldPosition;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfStream;
-
-import java.io.IOException;
+import com.itextpdf.text.pdf.PdfString;
+import com.itextpdf.text.pdf.security.CertificateInfo;
+import com.itextpdf.text.pdf.security.PdfPKCS7;
+import com.itextpdf.text.pdf.security.SignaturePermissions;
+import com.itextpdf.text.pdf.security.SignaturePermissions.FieldLock;
 //TODO: DA COMPLETARE!! Ho solo copiato i metodi dagli esempi di utilizzo della libreria iText,forse sono da integrare con altre funzionalità.
 public class SignatureManager {
 	public static  String src;
