@@ -14,6 +14,7 @@ import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 
+import com.google.gson.Gson;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.AcroFields.FieldPosition;
@@ -162,7 +163,8 @@ public class SignatureManager implements iSignatureManager {
 		return true;
 	}
 
-	public List<Signature> getSignatures() {
-		return this.signatures;
+	public String getSignatures() {
+		String json = new Gson().toJson(this.signatures);
+		return json;
 	}
 }
