@@ -31,15 +31,9 @@ import dido.signature.interfaces.iSignatureManager;
 
 public class SignatureManager implements iSignatureManager {
 	final static Logger logger = Logger.getLogger(SignatureManager.class);
-	private String pdfPath = null;
 	private List<Signature> signatures = null;
 	private Signature tmpSignature = null;
-	public SignatureManager(String pdfPath){
-		super();
-		loadPDF(pdfPath);
-
-	}
-
+	
 	private PdfPKCS7 verifySignature(AcroFields fields, String name) throws GeneralSecurityException, IOException {
 		logger.info("Signature covers whole document: " + fields.signatureCoversWholeDocument(name));
 		this.tmpSignature.setName(name);
@@ -145,19 +139,18 @@ public class SignatureManager implements iSignatureManager {
 
 	public boolean loadPDF(String path){
 		signatures=new ArrayList<Signature>();
-		pdfPath=path;
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);
 		try {
-			this.inspectSignatures(this.pdfPath);
+			this.inspectSignatures(path);
 		} catch (IOException e) {
 			e.printStackTrace();
-	        logger.error("Could not find file:" + pdfPath);
+	        logger.error("Could not find file:" + path);
 
 			return false;
 		} catch (GeneralSecurityException e) {
 			e.printStackTrace();
-	        logger.error("Could not find file:" + pdfPath);
+	        logger.error("Could not find file:" + path);
 	        return false;
 		}
 		return true;
