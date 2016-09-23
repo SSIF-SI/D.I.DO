@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="missione" types="con anticipo|senza anticipo">
+<masterDocument name="missione">
+	<types>
+		<type>con anticipo</type>
+		<type>senza anticipo</type>
+	</types>
 	<list>
 		<document name="ordine di missione" minOccur="1" maxOccur="1">
 			<signatures>

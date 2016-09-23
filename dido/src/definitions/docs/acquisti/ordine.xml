@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="ordine" types="mepa|fuori mepa">
+<masterDocument name="ordine">
+	<types>
+		<type>mepa</type>
+		<type>fuori mepa</type>
+	</types>
 	<list>
 		<document name="proposta d'ordine" minOccur="1" maxOccur="1">
 			<signatures>
