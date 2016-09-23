@@ -1,3 +1,5 @@
+package dido.signature;
+
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -70,7 +72,10 @@ public class SignatureManager {
 		System.out.println("Filter subtype: " + pkcs7.getFilterSubtype());
 		X509Certificate cert = (X509Certificate) pkcs7.getSigningCertificate();
 		System.out.println("Name of the signer: " + CertificateInfo.getSubjectFields(cert).getField("CN"));
-		if (pkcs7.getSignName() != null)
+		if (pkcs7.getSignNampublic class SignatureManager {
+
+}
+e() != null)
 			System.out.println("Alternative name of the signer: " + pkcs7.getSignName());
 		SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS");
 		System.out.println("Signed on: " + date_format.format(pkcs7.getSignDate().getTime()));

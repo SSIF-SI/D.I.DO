@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<signatureRoles>
-	<role name="REQ" digital="false">Richiedente</role>
-	<role name="TF">Titolare dei fondi</role>
-	<role name="RL">Responsabile di laboratorio</role>
-	<role name="SAMM">Segreteria di direzione</role>
-	<role name="DIR">Direttore</role>
-</signatureRoles>
