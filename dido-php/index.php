@@ -1,1 +1,3 @@
-<?php // Silence is gold ?>
+<?php 
+
+require_once ("config.php");
