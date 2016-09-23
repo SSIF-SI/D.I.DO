@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="trasferimento a partner">
+	<list>
+		<document name="lettera di trasmissione" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR"/>
+			</signatures>
+		</document>
+		<attachments minOccur="0" />
+	</list>	
+</masterDocument>
