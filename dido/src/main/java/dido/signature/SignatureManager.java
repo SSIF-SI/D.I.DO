@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.bouncycastle.asn1.pkcs.RSAPublicKey;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 
@@ -86,7 +86,7 @@ public class SignatureManager implements iSignatureManager {
 		logger.info("Name of the signer: " + CertificateInfo.getSubjectFields(cert).getField("CN"));
 		this.tmpSignature.setSigner(CertificateInfo.getSubjectFields(cert).getField("CN"));
 
-		RSAPublicKey pub = (RSAPublicKey) cert.getPublicKey();
+		BCRSAPublicKey pub = (BCRSAPublicKey) cert.getPublicKey();
 		logger.info("Public Key: " + pub.getModulus().toString(16));
 		this.tmpSignature.setPublicKey(pub.getModulus().toString(16));
 
@@ -143,7 +143,7 @@ public class SignatureManager implements iSignatureManager {
 	}
 
 	public boolean loadPDF(String path){
-		signatures=new ArrayList<>();
+		signatures=new ArrayList<Signature>();
 		pdfPath=path;
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);
@@ -151,10 +151,13 @@ public class SignatureManager implements iSignatureManager {
 			this.inspectSignatures(this.pdfPath);
 		} catch (IOException e) {
 			e.printStackTrace();
+	        logger.error("Could not find file:" + pdfPath);
+
 			return false;
 		} catch (GeneralSecurityException e) {
 			e.printStackTrace();
-			return false;
+	        logger.error("Could not find file:" + pdfPath);
+	        return false;
 		}
 		return true;
 	}
