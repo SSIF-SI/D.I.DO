@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -138,7 +139,9 @@ public class SignatureManager implements iSignatureManager {
 	}
 
 	public boolean loadPDF(String path){
-		signatures=new ArrayList<Signature>();
+		// Set up a simple configuration that logs on the console.
+	    BasicConfigurator.configure();
+	    signatures=new ArrayList<Signature>();
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);
 		try {
