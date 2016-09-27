@@ -1,6 +1,6 @@
 <?php 
-class DocumentChecker{
-	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.v[0-9]{1,}){0,1}(\.pdf)$";
+class FlowChecker{
+	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
 	public static function checkMasterDocument($id){
 		$return = array();
@@ -26,11 +26,11 @@ class DocumentChecker{
 			//$fileList = Utils::filterList($ftp->getContents($record['ftp_folder'])['contents'],'isPDF',1);
 			//$fileList = Utils::getListfromField($fileList, 'filename');
 			
-			$fileList = array("ordine di missione.v1.pdf","caio_1.v5.pdf");
+			$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
 			foreach($xml->getDocList() as $document){
-				$docResult = new DocumentCheckerResult();
+				$docResult = new FlowCheckerResult();
 				$docResult->documentName = (string)$document['name'];
 				foreach($document->attributes() as $k=>$attr){
 					$f_name = "check_$k";
@@ -38,6 +38,28 @@ class DocumentChecker{
 						self::$f_name($document['name'],$fileList,$attr,$docResult);
 					}
 				}
+				
+				if(!is_null($document->signatures->signature) && empty($docResult->errors)){
+					// Conbtrollo el firme secondo i seguewnti step:
+					
+					// 1-Scarico l'ultimo pdf (della history) da FTP
+					$tmpPDF = FTPConnector::getInstance()->getTempFile($docResult->documentName);
+						
+					// 2-Lo passo alla classe Java per recuperare le firme
+					$sigClass = new Java('dido.SignatureManager');
+					$sigClass->loadPDF($tmpPDF);
+					$signaturesOnDocument = $sigClass->getSignatures();
+					
+					// 3-cancello il file temporaneo
+					unlink($tmpPDF);
+					
+					// 4-confronto le firme trovate con quelle attese..
+					foreach($document->signatures->signature as $signature){
+						$who = $signature['role'];
+						$alt = $signature['alt'];
+					}
+				}
+			
 				array_push($return,$docResult);
 			}
 			
@@ -83,6 +105,6 @@ class DocumentChecker{
 		}
 		$docResult->found = $found;
 		return $found;
-	}	
+	}
 }
 ?>

@@ -15,4 +15,4 @@ $contents = $ftp->getContents("/CAMPUS");
 Utils::printr(Utils::filterList($contents['contents'],'isPDF',1));
 */
 
-DocumentChecker::checkMasterDocument(666);
+FlowChecker::checkMasterDocument(666);

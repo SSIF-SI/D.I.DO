@@ -1,5 +1,5 @@
 <?php
-class DocumentCheckerResult{
+class FlowCheckerResult{
 	public $documentName = null;
 	public $found = null;
 	public $limit = null;
