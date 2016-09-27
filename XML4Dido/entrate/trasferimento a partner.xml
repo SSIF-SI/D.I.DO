@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Dati da associare al documento: CDR/GAE/Progetto -->
 
 <masterDocument name="trasferimento a partner">
 	<list>
-		<document name="lettera di trasmissione" minOccur="1" maxOccur="1">
+		<document name="lettera di trasmissione" minOccur="1"
+			maxOccur="1">
+			<inputs>
+				<input>numero variazione</input>
+			</inputs>
 			<signatures>
-				<signature role="DIR"/>
+				<signature role="DIR" />
 			</signatures>
 		</document>
-		<attachments minOccur="0" />
-	</list>	
+		<attachments minOccur="0">
+			<signatures>
+				<signature role="DIR" minOccur="0" />
+			</signatures>
+		</attachments>
+	</list>
 </masterDocument>

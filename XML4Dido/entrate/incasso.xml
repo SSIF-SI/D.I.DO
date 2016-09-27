@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Dati da associare al documento: CDR/GAE/Progetto/natura/voce del piano 
+	dei conti/CUP/PDG si-no/ -->
 
 <masterDocument name="incasso">
 	<types>
@@ -6,22 +8,34 @@
 		<type>con procedimento unico di accertamento</type>
 	</types>
 	<list>
-		<document name="accertamento" minOccur="1" maxOccur="1" onlyIfType="con accertamento">
+		<document name="accertamento" minOccur="1" maxOccur="1"
+			onlyIfType="con accertamento">
 			<signatures>
-				<signature role="DIR"/>
+				<signature role="DIR" />
 			</signatures>
 		</document>
-		<document name="provvedimento unico di accertamento" minOccur="1" maxOccur="1" onlyIfType="con procedimento unico di accertamento">
+		<document name="provvedimento unico di accertamento"
+			minOccur="1" maxOccur="1" onlyIfType="con procedimento unico di accertamento">
 			<signatures>
-				<signature role="DIR"/>
+				<signature role="DIR" />
 			</signatures>
 		</document>
-		<document name="documento generico di entrata" minOccur="0" maxOccur="1" />
+		<document name="documento generico di entrata" minOccur="0"
+			maxOccur="1">
+			<inputs>
+				<input>numero documento</input>
+				<input>data documento</input>
+			</inputs>
+		</document>
 		<attachments minOccur="0" />
 		<document name="reversale di incasso" minOccur="1" maxOccur="1">
+			<inputs>
+				<input>numero reversale</input>
+				<input>data reversale</input>
+			</inputs>
 			<signatures>
-				<signature role="SAMM"/>
+				<signature role="SAMM" />
 			</signatures>
 		</document>
-	</list>	
+	</list>
 </masterDocument>

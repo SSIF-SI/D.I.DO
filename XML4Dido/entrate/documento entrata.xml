@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Dati da associare al documento: CDR/GAE/Progetto/tipo documento(Fattura/Nota) -->
+<masterDocument name="documento entrata">
+	<types>
+		<type>fattura di entrata</type>
+		<type>nota di debito</type>
+	</types>
+	<list>
+		<document name="lettera" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="REQ" />
+			</signatures>
+		</document>
+		<document name="fattura di entrata" minOccur="1" maxOccur="1"
+			onlyIfType="fattura di entrata">
+			<inputs>
+				<input>numero fattura</input>
+				<input>data fattura</input>
+			</inputs>
+		</document>
+		<document name="nota di debito" minOccur="1" maxOccur="1"
+			onlyIfType="nota di debito">
+			<inputs>
+				<input>numero nota di debito</input>
+				<input>data nota di debito</input>
+			</inputs>
+		</document>
+		<attachments minOccur="0">
+			<signatures>
+				<signature role="DIR" minOccur="0" />
+			</signatures>
+		</attachments>
+	</list>
+</masterDocument>

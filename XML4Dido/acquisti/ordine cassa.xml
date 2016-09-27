@@ -5,13 +5,23 @@
 		<document name="proposta d'ordine" minOccur="1" maxOccur="1">
 			<signatures>
 				<signature role="REQ" />
-				<signature role="TF" alt="RL"/>
-				<signature role="RL" alt="DIR"/>
+				<signature role="TF" alt="RL" />
+				<signature role="RL" alt="DIR" />
 				<signature role="DIR" afterValidation="AMM" />
 			</signatures>
 		</document>
 		<document name="scontrini" minOccur="1" />
-		<document name="quietanza di pagamento" minOccur="1" maxOccur="1" />
-		<document name="documento generico" minOccur="1" maxOccur="1"/>
-	</list>	
+		<document name="quietanza di pagamento" minOccur="1"
+			maxOccur="1">
+			<inputs>
+				<input>data quietanza</input>
+			</inputs>
+		</document>
+		<document name="documento generico" minOccur="1" maxOccur="1">
+			<inputs>
+				<input>numero documento</input>
+				<input>data documento</input>
+			</inputs>
+		</document>
+	</list>
 </masterDocument>
