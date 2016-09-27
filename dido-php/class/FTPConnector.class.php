@@ -57,8 +57,7 @@ class FTPConnector{
 						'filename'	=> basename( $filename ),
 						'size'		=> $filesize,
 						'isDir'		=> $isDir,
-						'isPDF'		=> $ext == strtolower("pdf"),
-						'url'		=> $url
+						'isPDF'		=> $ext == strtolower("pdf")
 					);
 				}
 			}

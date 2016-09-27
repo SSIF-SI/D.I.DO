@@ -15,6 +15,4 @@ $contents = $ftp->getContents("/CAMPUS");
 Utils::printr(Utils::filterList($contents['contents'],'isPDF',1));
 */
 
-$xml = new XMLParser("XML4Dido/missioni/missione.xml","senza anticipo");
-
-//Utils::printr($xml->getDocList());
+DocumentChecker::checkMasterDocument(666);

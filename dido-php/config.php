@@ -9,9 +9,6 @@ $config = $ctx->getAttribute ( "php.java.servlet.ServletConfig",  100);
 $context = $ctx->getAttribute( "php.java.servlet.ServletContext", 100);
 $servlet = $ctx->getAttribute( "php.java.servlet.Servlet", 100);
 
-$class = new Java('pippo.Pippo');
-echo $class->getInfo();
-
 ini_set ('magic_quotes_gpc', 0);
 date_default_timezone_set('Europe/Rome');
 
