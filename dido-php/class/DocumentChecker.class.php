@@ -26,20 +26,22 @@ class DocumentChecker{
 			//$fileList = Utils::filterList($ftp->getContents($record['ftp_folder'])['contents'],'isPDF',1);
 			//$fileList = Utils::getListfromField($fileList, 'filename');
 			
-			$fileList = array("pippo_e_sempronio_2.pdf","caio_1.v5.pdf");
+			$fileList = array("ordine di missione.v1.pdf","caio_1.v5.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
 			foreach($xml->getDocList() as $document){
+				$docResult = new DocumentCheckerResult();
+				$docResult->documentName = (string)$document['name'];
 				foreach($document->attributes() as $k=>$attr){
 					$f_name = "check_$k";
 					if(method_exists(__CLASS__, $f_name)){
-						$result = self::$f_name($document['name'],$fileList,$attr);
-						if(!empty($result)){
-							$return[] = $result;
-						}
+						self::$f_name($document['name'],$fileList,$attr,$docResult);
 					}
 				}
+				array_push($return,$docResult);
 			}
+			
+			Utils::printr($return);
 			
 			return $return;
 		} else {
@@ -48,20 +50,39 @@ class DocumentChecker{
 		
 	}
 	
-	static function check_minOccur($docName, $fileList,$value){
-		Utils::printr(__FUNCTION__);
+	static function check_minOccur($docName, $fileList,$value, &$docResult){
+		$docResult->mandatory = (int)$value;
+			
 		if($value > 0){
-			foreach($fileList as $file){
-				preg_match("/".self::FILE_REGEX."/", $file,$fileInfo);
-				Utils::printr($fileInfo);
-			}			
+			
+			$found = self::_findFile($docName, $fileList, $docResult);
+			if($found < $value){
+				array_push($docResult->errors, ($value-$found)." documenti mancanti per $docName");
+			}
+			
+		} 
+	}
+	
+	static function check_maxOccur($docName, $fileList,$value,&$docResult){
+		$docResult->limit = (int)$value;
+		if($value > 0){
+			$found = self::_findFile($docName, $fileList, $docResult);
+			if($found > $value){
+				array_push($docResult->errors, ($value-$found)." documenti in eccesso per $docName");
+			}
 		}
 	}
 	
-	static function check_maxOccur($docName, $fileList,$value){
-		Utils::printr(__FUNCTION__);
-		return true;
-	}
-	
+	private static function _findFile($docName, $fileList, &$docResult){
+		$found = 0;
+		foreach($fileList as $file){
+			preg_match("/".self::FILE_REGEX."/", $file,$fileInfo);
+			if ($fileInfo[1]== $docName){
+				$found++;
+			}
+		}
+		$docResult->found = $found;
+		return $found;
+	}	
 }
 ?>
