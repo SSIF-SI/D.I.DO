@@ -2,7 +2,7 @@
 class FlowChecker{
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
-	public static function checkMasterDocument($id){
+	static function checkMasterDocument($id){
 		$return = array();
 		// Connessione al db e redupero dati documento (categoria, tipo, TODO:versione)
 		
@@ -12,7 +12,7 @@ class FlowChecker{
 		$record = array(
 			'xml' 		=> XML_PATH. "missioni/missione.xml",
 			'md_type' 	=> "senza anticipo",
-			'ftp_folder'	=> 'CAMPUS'
+			'ftp_folder'	=> 'missioni/201609/missione_1/'
 		);
 		
 		if($record){
@@ -22,11 +22,13 @@ class FlowChecker{
 			$xml->setXMLSource($record['xml'],$record['md_type']);
 			// Connessione FTP (documenti esistenti)
 			
-			//$ftp = FTPConnector::getInstance();
-			//$fileList = Utils::filterList($ftp->getContents($record['ftp_folder'])['contents'],'isPDF',1);
-			//$fileList = Utils::getListfromField($fileList, 'filename');
+			$ftp = FTPConnector::getInstance();
+			$fileList = Utils::filterList($ftp->getContents($record['ftp_folder'])['contents'],'isPDF',1);
+			$fileList = Utils::getListfromField($fileList, 'filename');
 			
-			$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
+			Utils::printr($fileList);
+			
+			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
 			foreach($xml->getDocList() as $document){
@@ -42,24 +44,15 @@ class FlowChecker{
 				if(!is_null($document->signatures->signature) && empty($docResult->errors)){
 					// Conbtrollo el firme secondo i seguewnti step:
 					
-					// 1-Scarico l'ultimo pdf (della history) da FTP
-					$tmpPDF = FTPConnector::getInstance()->getTempFile($docResult->documentName);
-						
-					// 2-Lo passo alla classe Java per recuperare le firme
-					$sigClass = new Java('dido.SignatureManager');
-					$sigClass->loadPDF($tmpPDF);
-					$signaturesOnDocument = $sigClass->getSignatures();
+					$files = self::_getFtpFiles($docResult->documentName, $fileList);
 					
-					// 3-cancello il file temporaneo
-					unlink($tmpPDF);
-					
-					// 4-confronto le firme trovate con quelle attese..
-					foreach($document->signatures->signature as $signature){
-						$who = $signature['role'];
-						$alt = $signature['alt'];
+					foreach($files as $k=>$file){
+						$filename = $record['ftp_folder'].$file;
+						$result = SignatureChecker::checkSignatures($filename, $document);
+						$docResult->signatures[$k] = $result;
 					}
 				}
-			
+				
 				array_push($return,$docResult);
 			}
 			
@@ -77,9 +70,10 @@ class FlowChecker{
 			
 		if($value > 0){
 			
-			$found = self::_findFile($docName, $fileList, $docResult);
-			if($found < $value){
-				array_push($docResult->errors, ($value-$found)." documenti mancanti per $docName");
+			self::_findFile($docName, $fileList, $docResult);
+			if(count($docResult->found) < $value){
+				$error = ($value-$found) == 1 ? "$docName assente" : ($value-$found)." documenti mancanti per $docName";
+				array_push($docResult->errors, $error);
 			}
 			
 		} 
@@ -88,23 +82,27 @@ class FlowChecker{
 	static function check_maxOccur($docName, $fileList,$value,&$docResult){
 		$docResult->limit = (int)$value;
 		if($value > 0){
-			$found = self::_findFile($docName, $fileList, $docResult);
-			if($found > $value){
+			self::_findFile($docName, $fileList, $docResult);
+			if(count($docResult->found) > $value){
 				array_push($docResult->errors, ($value-$found)." documenti in eccesso per $docName");
 			}
 		}
 	}
 	
 	private static function _findFile($docName, $fileList, &$docResult){
-		$found = 0;
+		$docResult->found = self::_getFtpFiles($docName, $fileList);
+	}
+	
+	private static function _getFtpFiles($docName, $fileList){
+		$docName = str_replace(" ", "_", $docName);
+		$files = array();
 		foreach($fileList as $file){
 			preg_match("/".self::FILE_REGEX."/", $file,$fileInfo);
 			if ($fileInfo[1]== $docName){
-				$found++;
+				array_push($files,$fileInfo[0]);
 			}
 		}
-		$docResult->found = $found;
-		return $found;
+		return $files;
 	}
 }
 ?>
