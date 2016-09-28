@@ -32,11 +32,11 @@ define ("TEMPLATES_PATH",		REAL_ROOT . "template/");
 
 define ("MAIL_FROM",			"");
 
-define ("HOST", 				"");
-define ("DB_ENGINE", 			"");
-define ("ROOT_USER", 			"");
-define ("ROOT_PASSWORD", 		"");
-define ("ROOT_DATABASE", 		"");
+define ("HOST", 				"localhost");
+define ("DB_ENGINE", 			"pgsql");
+define ("ROOT_USER", 			"dido");
+define ("ROOT_PASSWORD", 		"emaP4ss!");
+define ("ROOT_DATABASE", 		"didodb");
 
 define ("PAGE_TITLE_PREFIX", 	"Test");
 define ("DB_DATE_FORMAT", 		"Y-m-d H:i:s");

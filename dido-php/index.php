@@ -16,3 +16,5 @@ Utils::printr(Utils::filterList($contents['contents'],'isPDF',1));
 */
 
 FlowChecker::checkMasterDocument(666);
+
+$md = new Masterdocument(Connector::getInstance());
