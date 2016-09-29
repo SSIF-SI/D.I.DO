@@ -25,6 +25,7 @@ class MasterdocumentData extends Crud {
 		$where = join ( " AND ", $where );
 		$sql = sprintf ( $this->$SQL_SEARCH, isset ( $this->VIEW ) ? $this->VIEW : $this->TABLE, $where );
 		$this->_connInstance->query ( $sql );
+		return $this->_connInstance->allResults();
 	}
 	
 	
