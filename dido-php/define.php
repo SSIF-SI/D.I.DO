@@ -28,6 +28,7 @@ define ("ADMIN_SCRIPTS_RPATH", 	REAL_ROOT . "scripts/admin/");
 
 define ("FILES_PATH",			REAL_ROOT . "files/");
 define ("FILES_HTTP_PATH",		HTTP_ROOT . "files/");
+define ("GECO_IMPORT_PATH",		REAL_ROOT . "geco-import/");
 define ("TEMPLATES_PATH",		REAL_ROOT . "template/");
 
 define ("MAIL_FROM",			"");
@@ -38,7 +39,7 @@ define ("ROOT_USER", 			"dido");
 define ("ROOT_PASSWORD", 		"emaP4ss!");
 define ("ROOT_DATABASE", 		"didodb");
 
-define ("PAGE_TITLE_PREFIX", 	"Test");
+define ("PAGE_TITLE_PREFIX", 	"DI.DO. [TEST]");
 define ("DB_DATE_FORMAT", 		"Y-m-d H:i:s");
 define ("ACCESS_DENIED",		"<br><br/><p class='error'>Attenzione!! L'utente non ha i privilegi per accedere a questo contenuto.</p>");
 define ("INEXISTENT",			"<br><br/><p class='error'>Attenzione!! Contenuto inesistente.</p>");
