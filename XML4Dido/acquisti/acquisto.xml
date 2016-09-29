@@ -7,8 +7,8 @@
 	</types>
 	<inputs>
 		<input from="geco" key="id_acquisto">Id Acquisto</input>
-		<input from="geco" key="richiedente" join=" ">Richiedente</input>
-		<input from="geco" key="fornitore" join=" ">Fornitore</input>
+		<input from="geco" key="richiedente">Richiedente</input>
+		<input from="geco" key="fornitore">Fornitore</input>
 		<input>Descrittivo GAE</input>
 		<input from="geco" key="cdr">Sigla CDR</input>
 		<input from="geco" key="natura">Natura</input>

@@ -33,26 +33,30 @@ class FlowChecker{
 			// Confronto liste con check su firme e quant'altro
 			foreach($xml->getDocList() as $document){
 				$docResult = new FlowCheckerResult();
-				$docResult->documentName = (string)$document['name'];
-				foreach($document->attributes() as $k=>$attr){
-					$f_name = "check_$k";
-					if(method_exists(__CLASS__, $f_name)){
-						self::$f_name($document['name'],$fileList,$attr,$docResult);
+				
+				if(!is_null($document['md'])){
+					// è un documento di tipo esterno (masterDocument)	
+				} else {
+					$docResult->documentName = (string)$document['name'];
+					foreach($document->attributes() as $k=>$attr){
+						$f_name = "check_$k";
+						if(method_exists(__CLASS__, $f_name)){
+							self::$f_name($document['name'],$fileList,$attr,$docResult);
+						}
+					}
+					
+					if(!is_null($document->signatures->signature) && empty($docResult->errors)){
+						// Conbtrollo el firme secondo i seguewnti step:
+						
+						$files = self::_getFtpFiles($docResult->documentName, $fileList);
+						
+						foreach($files as $k=>$file){
+							$filename = $record['ftp_folder'].$file;
+							$result = SignatureChecker::checkSignatures($filename, $document);
+							$docResult->signatures[$k] = $result;
+						}
 					}
 				}
-				
-				if(!is_null($document->signatures->signature) && empty($docResult->errors)){
-					// Conbtrollo el firme secondo i seguewnti step:
-					
-					$files = self::_getFtpFiles($docResult->documentName, $fileList);
-					
-					foreach($files as $k=>$file){
-						$filename = $record['ftp_folder'].$file;
-						$result = SignatureChecker::checkSignatures($filename, $document);
-						$docResult->signatures[$k] = $result;
-					}
-				}
-				
 				array_push($return,$docResult);
 			}
 			

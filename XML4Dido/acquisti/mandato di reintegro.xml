@@ -2,7 +2,7 @@
 
 <masterDocument name="mandato di reintegro">
 	<list>
-		<external md="ordine cassa" key="id_md" minOccur="1" />
+		<document md="ordine cassa" key="id_md" minOccur="1" />
 		<document name="mandato di reintegro" minOccur="1" maxOccur="1">
 			<inputs>
 				<input>numero mandato</input>

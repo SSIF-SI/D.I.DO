@@ -6,7 +6,6 @@
 		<input>Sigla CDR</input>
 		<input>Progetto</input>
 		<input>Destinatario</input>
-		<input>Tipo contratto</input>
 		<input>Riferimento contratto</input>
 	</inputs>
 	<list>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="provvedimento di utilizzo fondi">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Sigla CDR</input>
+		<input>Progetto</input>
+		<input>Destinatario</input>
+		<input>Riferimento contratto</input>
+	</inputs>
+	<list>
+		<document name="provvedimento utilizzo fondi" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document md="variazione di bilancio" key="id_md" minOccur="1" maxOccur="1" />
+	</list>
+</masterDocument>
