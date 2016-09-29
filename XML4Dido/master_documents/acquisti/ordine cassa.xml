@@ -11,14 +11,7 @@
 		<input>CUP</input>
 	</inputs>
 	<list>
-		<document name="proposta d'ordine" minOccur="1" maxOccur="1">
-			<signatures>
-				<signature role="REQ" />
-				<signature role="TF" alt="RL" />
-				<signature role="RL" alt="DIR" />
-				<signature role="DIR" afterValidation="AMM" />
-			</signatures>
-		</document>
+		<document load="proposta d'ordine.xml" />
 		<document name="scontrini" minOccur="1" />
 		<document name="quietanza di pagamento" minOccur="1"
 			maxOccur="1">

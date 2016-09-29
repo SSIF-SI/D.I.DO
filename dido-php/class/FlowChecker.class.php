@@ -10,7 +10,7 @@ class FlowChecker{
 		//$record = $masterDocument->get($id);
 		
 		$record = array(
-			'xml' 		=> XML_PATH. "missioni/missione.xml",
+			'xml' 		=> XML_MD_PATH. "missioni/missione.xml",
 			'md_type' 	=> "senza anticipo",
 			'ftp_folder'	=> 'missioni/201609/missione_1/'
 		);
@@ -33,6 +33,11 @@ class FlowChecker{
 			// Confronto liste con check su firme e quant'altro
 			foreach($xml->getDocList() as $document){
 				$docResult = new FlowCheckerResult();
+				
+				if(!is_null($document['load'])){
+					$defaultXml = XML_STD_PATH . (string)$document['load'];
+					$document = simplexml_load_file($defaultXml);
+				}
 				
 				if(!is_null($document['md'])){
 					// è un documento di tipo esterno (masterDocument)	

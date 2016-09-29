@@ -17,14 +17,7 @@
 		<input type="hidden">tipo</input>
 	</inputs>
 	<list>
-		<document name="proposta d'ordine" minOccur="1" maxOccur="1">
-			<signatures>
-				<signature role="REQ" />
-				<signature role="TF"/>
-				<signature role="RL" alt="DIR" />
-				<signature role="DIR" afterValidation="AMM" />
-			</signatures>
-		</document>
+		<document load="proposta d'ordine.xml" />
 		<document name="indagine di mercato" minOccur="1" maxOccur="1"
 			onlyIfType="mepa" />
 		<document name="preventivo/richiesta preventivo" minOccur="2"

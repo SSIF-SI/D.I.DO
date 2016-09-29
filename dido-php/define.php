@@ -11,6 +11,8 @@ define ("INCLUDE_PATH", 		REAL_ROOT . "include/");
 define ("INCLUDE_HTTP_PATH", 	HTTP_ROOT . "include/");
 define ("CLASS_PATH",	 		REAL_ROOT . "class/");
 define ("XML_PATH",				REAL_ROOT . "XML4Dido/");
+define ("XML_MD_PATH",			XML_PATH . "master_documents/");
+define ("XML_STD_PATH",			XML_PATH . "standard_documents/");
 
 define ("SCRIPTS_PATH", 		HTTP_ROOT . "scripts/");
 define ("SCRIPTS_RPATH", 		REAL_ROOT . "scripts/");
