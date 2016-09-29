@@ -11,8 +11,8 @@
 		<input from="geco" key="fornitore" join=" ">Fornitore</input>
 		<input>Descrittivo GAE</input>
 		<input from="geco" key="cdr">Sigla CDR</input>
-		<input from="geco" key="natura">natura</input>
-		<input from="geco" key="natura">voce del piano dei conti</input>
+		<input from="geco" key="natura">Natura</input>
+		<input from="geco" key="natura">Voce del piano dei conti</input>
 		<input from="geco" key="cup">CUP</input>
 		<input type="hidden">tipo</input>
 	</inputs>

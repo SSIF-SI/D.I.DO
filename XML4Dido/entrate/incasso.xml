@@ -6,9 +6,9 @@
 	<inputs>
 		<input>Descrittivo GAE</input>
 		<input>Sigla CDR</input>
-		<input>progetto</input>
-		<input>natura</input>
-		<input>voce del piano dei conti</input>
+		<input>Progetto</input>
+		<input>Natura</input>
+		<input>Voce del piano dei conti</input>
 		<input>CUP</input>
 	</inputs>
 	<types>
