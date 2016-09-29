@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <masterDocument name="seminario">
+	<types>
+		<type>co.co.co.</type>
+		<type>prestazione occasionale</type>
+		<type>prestazione professionale</type>
+	</types>
 	<inputs>
 		<input>Descrittivo GAE</input>
 		<input>Sigla CDR</input>
