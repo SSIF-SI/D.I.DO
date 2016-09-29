@@ -15,16 +15,61 @@
 	</inputs>
 	<list>
 		<document load="proposta d'ordine.xml" />
-		<document name="determina" minOccur="1" maxOccur="1">
+		<document name="ricerca professionalità interna" minOccur="0" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
 			</signatures>
 		</document>
-		<document name="avviso conferimento seminario" minOccur="1" maxOccur="1">
+		<document name="avviso interno" minOccur="0" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
 			</signatures>
 		</document>
-		<document name="contratto" minOccur="1" maxOccur="1" />
+		<document name="decisione a contrattare" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="avviso esterno" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<list>
+			<document name="curriculum" minOccur="0" />
+		</list>
+		<document name="proveddimento individuazione contraente" onlyIfExist="curriculum" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="eclusione candidati" onlyIfExist="curriculum" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="conferimento incarico" onlyIfExist="curriculum" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="contratto provvisorio" minOccur="1" maxOccur="1" />
+		<list>
+			<document name="autodichiarazioni" minOccur="0" />
+		</list>
+		<document name="attestazione copertura finanziaria" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="SAMM" />
+			</signatures>
+		</document>
+		<document name="lettera corte dei conti" minOccur="0" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="integrazioni" minOccur="0" maxOccur="1" />
+		<document name="contratto con esito" minOccur="1" maxOccur="1" />
+		<document name="lettera esito" minOccur="1" maxOccur="1" />
+
 	</list>
 </masterDocument>
