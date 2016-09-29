@@ -5,15 +5,20 @@
 		<type>con anticipo</type>
 		<type>senza anticipo</type>
 	</types>
+	<inputs>
+		<input from="geco" key="id_missione">Id Missione</input>
+		<input from="geco" key="nome|cognome" join=" ">Dipendente</input>
+		<input from="geco" key="cf" type="hidden">cf</input>
+		<input from="geco" key="data_inizio">Data inizio missione</input>
+		<input from="geco" key="localita">Località</input>
+		<input>Descrittivo GAE</input>
+		<input from="geco" key="cdr">Sigla CDR</input>
+		<input from="geco" key="tipo_trattamento">Tipo trattamento</input>
+		<input from="geco" key="cup">CUP</input>
+		<input type="hidden">tipo</input>
+	</inputs>
 	<list>
-		<document name="ordine di missione" minOccur="1" maxOccur="1">
-			<signatures>
-				<signature role="REQ" />
-				<signature role="TF" />
-				<signature role="RL" alt="DIR" />
-				<signature role="DIR" afterValidation="AMM" />
-			</signatures>
-		</document>
+		<document load="proposta d'ordine.xml" />
 		<document name="richiesta di anticipo" minOccur="0" maxOccur="1"
 			onlyIfType="con anticipo">
 			<attachments minOccur="0" />
@@ -40,7 +45,7 @@
 			maxOccur="1" onlyIfType="con anticipo">
 			<inputs>
 				<input>numero nota</input>
-				<input>data nota</input>
+				<input type="data">data nota</input>
 			</inputs>
 			<signatures>
 				<signature role="DIR" />
@@ -50,7 +55,7 @@
 			onlyIfType="con anticipo">
 			<inputs>
 				<input>numero mandato</input>
-				<input>data mandato</input>
+				<input type="data">data mandato</input>
 			</inputs>
 			<signatures>
 				<signature role="SAMM" />
@@ -66,7 +71,7 @@
 		<document name="nota di liquidazione" minOccur="1" maxOccur="1">
 			<inputs>
 				<input>numero nota</input>
-				<input>data nota</input>
+				<input type="data">data nota</input>
 			</inputs>
 			<signatures>
 				<signature role="DIR" />
@@ -75,7 +80,7 @@
 		<document name="mandato di missione" minOccur="1" maxOccur="1">
 			<inputs>
 				<input>numero mandato</input>
-				<input>data mandato</input>
+				<input type="data">data mandato</input>
 			</inputs>
 			<signatures>
 				<signature role="SAMM" />

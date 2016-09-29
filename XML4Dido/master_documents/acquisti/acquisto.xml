@@ -1,20 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="ordine" types="mepa|fuori mepa">
+<masterDocument name="acquisto">
+	<types>
+		<type>mepa</type>
+		<type>fuori mepa</type>
+	</types>
+	<inputs>
+		<input from="geco" key="id_acquisto">Id Acquisto</input>
+		<input from="geco" key="richiedente">Richiedente</input>
+		<input from="geco" key="fornitore">Fornitore</input>
+		<input>Descrittivo GAE</input>
+		<input from="geco" key="cdr">Sigla CDR</input>
+		<input from="geco" key="natura">Natura</input>
+		<input from="geco" key="natura">Voce del piano dei conti</input>
+		<input from="geco" key="cup">CUP</input>
+		<input type="hidden">tipo</input>
+	</inputs>
 	<list>
-		<document name="proposta d'ordine" minOccur="1" maxOccur="1">
-			<signatures>
-				<signature role="REQ" />
-				<signature role="TF" alt="RL" />
-				<signature role="RL" alt="DIR" />
-				<signature role="DIR" afterValidation="AMM" />
-			</signatures>
-		</document>
+		<document load="proposta d'ordine.xml" />
 		<document name="indagine di mercato" minOccur="1" maxOccur="1"
 			onlyIfType="mepa" />
 		<document name="preventivo/richiesta preventivo" minOccur="2"
 			onlyIfType="fuori mepa" />
-		<document name="cig" minOccur="0" maxOccur="1">
+		<document name="foglio cig" minOccur="0" maxOccur="1">
 			<inputs>
 				<input>numero cig</input>
 			</inputs>
@@ -24,7 +32,7 @@
 			maxOccur="1">
 			<inputs>
 				<input>numero impegno</input>
-				<input>anno impegno</input>
+				<input type="year">anno impegno</input>
 			</inputs>
 			<signatures>
 				<signature role="DIR" />
@@ -36,15 +44,16 @@
 				<signature role="RUP" />
 			</signatures>
 		</document>
-		<document name="ordine mepa" minOccur="1" maxOccur="1">
+		<document name="ordine mepa-sigla" minOccur="1" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
 			</signatures>
 		</document>
+		<document name="documento di rettifica" minOccur="0" maxOccur="1"/>
 		<document name="fattura" minOccur="1" maxOccur="1">
 			<inputs>
 				<input>numero fattura</input>
-				<input>data fattura</input>
+				<input type="data">data fattura</input>
 			</inputs>
 		</document>
 		<document name="verbale di collaudo" minOccur="0" maxOccur="1" />
@@ -56,10 +65,10 @@
 				<signature role="RUP" />
 			</signatures>
 		</document>
-		<document name="mandato" minOccur="1" maxOccur="1">
+		<document name="mandato di pagamento" minOccur="1" maxOccur="1">
 			<inputs>
 				<input>numero mandato</input>
-				<input>data mandato</input>
+				<input type="data">data mandato</input>
 			</inputs>
 			<signatures>
 				<signature role="SAMM" />

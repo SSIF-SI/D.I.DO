@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="seminario">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Sigla CDR</input>
+		<input>Progetto</input>
+		<input>Nominativo</input>
+		<input>Data</input>
+	</inputs>
+	<list>
+		<document load="proposta d'ordine.xml" />
+		<document name="determina" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="avviso conferimento seminario" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="contratto" minOccur="1" maxOccur="1" />
+	</list>
+</masterDocument>

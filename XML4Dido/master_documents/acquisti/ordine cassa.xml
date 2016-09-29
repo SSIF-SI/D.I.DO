@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="ordine cassa">
+	<inputs>
+		<input>Richiedente</input>
+		<input>Fornitore</input>
+		<input>Descrittivo GAE</input>
+		<input>Sigla CDR</input>
+		<input>Natura</input>
+		<input>Voce del piano dei conti</input>
+		<input>CUP</input>
+	</inputs>
+	<list>
+		<document load="proposta d'ordine.xml" />
+		<document name="scontrini" minOccur="1" />
+		<document name="quietanza di pagamento" minOccur="1"
+			maxOccur="1">
+			<inputs>
+				<input type="data">data quietanza</input>
+			</inputs>
+		</document>
+		<document name="documento generico" minOccur="1" maxOccur="1">
+			<inputs>
+				<input>numero documento</input>
+				<input type="data">data documento</input>
+			</inputs>
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+	</list>
+</masterDocument>

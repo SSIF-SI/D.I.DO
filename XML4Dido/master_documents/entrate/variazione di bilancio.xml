@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Dati da associare al documento: CDR/GAE/Progetto -->
 
 <masterDocument name="variazione di bilancio">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Sigla CDR</input>
+		<input>Progetto</input>
+	</inputs>
 	<list>
 		<document name="variazione di bilancio" minOccur="1"
 			maxOccur="1">
@@ -12,10 +16,5 @@
 				<signature role="DIR" />
 			</signatures>
 		</document>
-		<attachments minOccur="0">
-			<signatures>
-				<signature role="DIR" minOccur="0" />
-			</signatures>
-		</attachments>
 	</list>
 </masterDocument>

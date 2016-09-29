@@ -3,6 +3,14 @@
 	dei conti/CUP/PDG si-no/ -->
 
 <masterDocument name="incasso">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Sigla CDR</input>
+		<input>Progetto</input>
+		<input>Natura</input>
+		<input>Voce del piano dei conti</input>
+		<input>CUP</input>
+	</inputs>
 	<types>
 		<type>con accertamento</type>
 		<type>con procedimento unico di accertamento</type>
@@ -24,14 +32,14 @@
 			maxOccur="1">
 			<inputs>
 				<input>numero documento</input>
-				<input>data documento</input>
+				<input type="data">data documento</input>
 			</inputs>
 		</document>
 		<attachments minOccur="0" />
 		<document name="reversale di incasso" minOccur="1" maxOccur="1">
 			<inputs>
 				<input>numero reversale</input>
-				<input>data reversale</input>
+				<input type="data">data reversale</input>
 			</inputs>
 			<signatures>
 				<signature role="SAMM" />

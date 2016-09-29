@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Dati da associare al documento: CDR/GAE/Progetto/tipo documento(Fattura/Nota) -->
+
 <masterDocument name="documento entrata">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Sigla CDR</input>
+		<input>Progetto</input>
+	</inputs>
 	<types>
 		<type>fattura di entrata</type>
 		<type>nota di debito</type>
@@ -15,20 +20,15 @@
 			onlyIfType="fattura di entrata">
 			<inputs>
 				<input>numero fattura</input>
-				<input>data fattura</input>
+				<inputtype="data">data fattura</input>
 			</inputs>
 		</document>
 		<document name="nota di debito" minOccur="1" maxOccur="1"
 			onlyIfType="nota di debito">
 			<inputs>
 				<input>numero nota di debito</input>
-				<input>data nota di debito</input>
+				<input type="data">data nota di debito</input>
 			</inputs>
 		</document>
-		<attachments minOccur="0">
-			<signatures>
-				<signature role="DIR" minOccur="0" />
-			</signatures>
-		</attachments>
 	</list>
 </masterDocument>
