@@ -9,7 +9,7 @@
 		<input>Data</input>
 	</inputs>
 	<list>
-		<document load="proposta d'ordine.xml" />
+		<document load="proposta ordine.xml" />
 		<document name="determina" minOccur="1" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />

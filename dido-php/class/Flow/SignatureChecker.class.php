@@ -20,6 +20,7 @@ class SignatureChecker{
 				$checkResult[$who] = 'skipped';
 				continue;
 			}
+			
 			$checkResult[$who] = 'ok';
 		}
 		return $checkResult;

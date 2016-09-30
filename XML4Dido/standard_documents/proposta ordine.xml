@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<document name="proposta d'ordine" minOccur="1" maxOccur="1">
+<document name="proposta ordine" minOccur="1" maxOccur="1">
 	<signatures>
 		<signature role="REQ" />
 		<signature role="TF"/>

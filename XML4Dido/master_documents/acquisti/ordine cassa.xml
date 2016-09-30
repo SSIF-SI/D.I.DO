@@ -11,7 +11,7 @@
 		<input>CUP</input>
 	</inputs>
 	<list>
-		<document load="proposta d'ordine.xml" />
+		<document load="proposta ordine.xml" />
 		<document name="scontrini" minOccur="1" />
 		<document name="quietanza di pagamento" minOccur="1"
 			maxOccur="1">
