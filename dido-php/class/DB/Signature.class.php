@@ -12,18 +12,20 @@ class Signature extends AnyDocument {
 		$sigle = array ();
 		$result = array ();
 		$fixedSigners = new FixedSigners ( Connector::getInstance () );
-		$signatures = $fixedSigners->getAll();
+		$signatures = $fixedSigners->getAll ();
 		foreach ( $signatures as $k => $v )
-			$result[$v['sigla']]=$v['pkey'];
+			$result [$v ['sigla']] = $v ['pkey'];
 		$variableSignersRoles = new VariableSignerRoles ( Connector::getInstance () );
 		$sigle = $variableSignersRoles->getRoleDescription ();
 		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
-		$signatures = $masterDocumentData->searchByKeyValue( array ('id_md' => $id_md,$sigle));
-		foreach ($signatures as $k=>$v)
-			$result[$v['key']]=$v['value'];
+		$signatures = $masterDocumentData->searchByKeyValue ( array (
+				'id_md' => $id_md,
+				$sigle 
+		) );
+		foreach ( $signatures as $k => $v )
+			$result [$v ['key']] = $v ['value'];
 		return $result;
 	}
-	
 }
 
 ?>
