@@ -17,7 +17,7 @@
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
-		<document name="ricerca professionalità interna" minOccur="0" maxOccur="1">
+		<document name="ricerca competenza interna" minOccur="0" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
 			</signatures>
