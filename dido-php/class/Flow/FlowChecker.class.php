@@ -1,20 +1,45 @@
 <?php 
 class FlowChecker{
+	public static $instance = null;
+	
+	private $_md;
+	private $_md_data;
+	private $_xml;
+	
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
-	static function checkMasterDocument($id){
-		$return = array();
-		// Connessione al db e redupero dati documento (categoria, tipo, TODO:versione)
+	public static static function getInstance(){
+		if(is_null(self::$instance))
+			self::$instance = new FlowChecker();
+		return self::$instance;
+	} 
+	
+	private function __contruct(){
+		$this->_xml = XMLParser::getInstance();
+	}
+	
+	public function checkMasterDocument($id){
 		
+		$sigObj = new Signatures();
+		/*
+		 * array(
+		 * 	[Ruolo] 	=> chiave
+		 * )
+		 * 
+		 */
 		$masterDocument = new Masterdocument(Connector::getInstance());
-		$record = $masterDocument->get($id);
+		$this->md = $masterDocument->get($id);
 		
+		/*
 		$masterDocumentData = new MasterdocumentData(Connector::getInstance());
-		$md_data = $masterDocumentData->searchByKeyValue(array(
-			'id_md'	=> $id,
-			array('TF','RL','RUP'),
-			
+		$this->_md_data = $masterDocumentData->searchByKeyValue(array(
+				'id_md'	=> $id,
+				$sigObj->getDescrizioni()
 		));
+		*/
+		$signers = $sigObj->getSigners($id);
+		
+		$return = array();
 		
 		/*
 		$record = array(
@@ -24,15 +49,14 @@ class FlowChecker{
 		);
 		*/
 		
-		if($record){
+		if($this->md){
 		
 			// Parsing con XML (documenti richiesti)
-			$xml = XMLParser::getInstance();
-			$xml->setXMLSource($record['xml'],$record['md_type']);
+			$this->_xml->setXMLSource($this->md['xml'],$this->md['md_type']);
 			// Connessione FTP (documenti esistenti)
 			
 			$ftp = FTPConnector::getInstance();
-			$fileList = Utils::filterList($ftp->getContents($record['ftp_folder'])['contents'],'isPDF',1);
+			$fileList = Utils::filterList($ftp->getContents($this->md['ftp_folder'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
 			
 			Utils::printr($fileList);
@@ -40,7 +64,7 @@ class FlowChecker{
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
-			foreach($xml->getDocList() as $document){
+			foreach($this->_xml->getDocList() as $document){
 				$docResult = new FlowCheckerResult();
 				
 				if(!is_null($document['load'])){
@@ -66,7 +90,7 @@ class FlowChecker{
 						
 						foreach($files as $k=>$file){
 							$filename = $record['ftp_folder'].$file;
-							$result = SignatureChecker::checkSignatures($filename, $document);
+							$result = $this->checkSignatures($filename, $document);
 							$docResult->signatures[$k] = $result;
 						}
 					}
@@ -105,6 +129,42 @@ class FlowChecker{
 				array_push($docResult->errors, ($value-$found)." documenti in eccesso per $docName");
 			}
 		}
+	}
+	
+	public function checkSignatures($filename, $document){
+		$checkResult = array();
+		// 1-Scarico il pdf da FTP
+		$tmpPDF = FTPConnector::getInstance()->getTempFile($filename);
+			
+		// 2-Lo passo alla classe Java per recuperare le firme
+		$sigClass = new Java('dido.signature.SignatureManager');
+		$sigClass->loadPDF($tmpPDF);
+		$signaturesOnDocument = json_decode((string)$sigClass->getSignatures());
+		
+		Utils::printr($signaturesOnDocument);
+		// 3-cancello il file temporaneo
+		unlink($tmpPDF);
+	
+		// 4-confronto le firme trovate con quelle attese..
+		foreach($document->signatures->signature as $signature){
+			$who = (string)$signature['role'];
+			if($who == "REQ") {
+				$checkResult[$who] = 'skipped';
+				continue;
+			}
+				
+			$pKey = $this->_getSignerPkey($who);
+			$checkResult[$who] = 'ok';
+		}
+		return $checkResult;
+	}
+	
+	private function _getSignerPkey($role){
+		// mi connetto al db
+		// verifico se $role è un firmatario fisso
+		// altrimenti recupero dalla tabella variable_signers_roles la chiave
+		// con la quale richiedo, sempre al db, la mail del firmatario e quindi su
+		// variable_signers ho la chiave
 	}
 	
 	private static function _findFile($docName, $fileList, &$docResult){
