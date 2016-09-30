@@ -1,5 +1,5 @@
 <?php 
-class Document extends AnyDocument{
+class Document extends Crud{
 	protected $TABLE = "documents";
 	protected $FIELD_ID = "id_doc";
 	
