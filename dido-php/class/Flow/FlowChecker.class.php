@@ -6,14 +6,23 @@ class FlowChecker{
 		$return = array();
 		// Connessione al db e redupero dati documento (categoria, tipo, TODO:versione)
 		
-		//$masterDocument = new MasterDocument(Connector::getInstance());
-		//$record = $masterDocument->get($id);
+		$masterDocument = new Masterdocument(Connector::getInstance());
+		$record = $masterDocument->get($id);
 		
+		$masterDocumentData = new MasterdocumentData(Connector::getInstance());
+		$md_data = $masterDocumentData->searchByKeyValue(array(
+			'id_md'	=> $id,
+			array('TF','RL','RUP'),
+			
+		));
+		
+		/*
 		$record = array(
 			'xml' 		=> XML_MD_PATH. "missioni/missione.xml",
 			'md_type' 	=> "senza anticipo",
 			'ftp_folder'	=> 'missioni/201609/missione_1/'
 		);
+		*/
 		
 		if($record){
 		

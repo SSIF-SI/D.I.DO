@@ -3,7 +3,7 @@
 <masterDocument name="provvedimento di utilizzo fondi">
 	<inputs>
 		<input>Descrittivo GAE</input>
-		<input>Sigla CDR</input>
+		<input>Laboratorio</input>
 		<input>Progetto</input>
 		<input>Descrittivo</input>
 		<input>Riferimento contratto</input>

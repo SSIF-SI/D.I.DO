@@ -12,7 +12,9 @@ class AnyDocument extends Crud{
 		foreach ( $key_value as $key => $value ) {
 			if (is_null ( $key ) || is_null ( $value ))
 				continue;
-			if(is_array($value)){
+			if(is_array($key)){
+				$where [] = "key IN (".join(",",array_map('Utils::apici()', key)).")";
+			} else if(is_array($value)){
 				array_map('Utils::apici()', $value);
 				$where [] = "key={$key} AND value IN (".join(",",$value).")";
 			} else

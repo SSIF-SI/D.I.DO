@@ -12,10 +12,12 @@
 		<input from="geco" key="data_inizio">Data inizio missione</input>
 		<input from="geco" key="localita">Località</input>
 		<input>Descrittivo GAE</input>
-		<input from="geco" key="cdr">Sigla CDR</input>
+		<input from="geco" key="laboratorio">Laboratorio</input>
 		<input from="geco" key="tipo_trattamento">Tipo trattamento</input>
 		<input from="geco" key="cup">CUP</input>
 		<input type="hidden">tipo</input>
+		<input>titolare dei fondi</input>
+		<input>responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
@@ -65,7 +67,7 @@
 			<attachments minOccur="1" />
 			<signatures>
 				<signature role="REQ" />
-				<signature role="DIR" afterValidation="DIR,AMM" />
+				<signature role="DIR" afterValidation="DIR,SAMM" />
 			</signatures>
 		</document>
 		<document name="nota di liquidazione" minOccur="1" maxOccur="1">

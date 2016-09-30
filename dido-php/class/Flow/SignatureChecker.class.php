@@ -21,9 +21,18 @@ class SignatureChecker{
 				continue;
 			}
 			
+			$pKey = self::_getSignerPkey($who);
 			$checkResult[$who] = 'ok';
 		}
 		return $checkResult;
+	}
+	
+	static function _getSignerPkey($role){
+		// mi connetto al db 
+		// verifico se $role è un firmatario fisso
+		// altrimenti recupero dalla tabella variable_signers_roles la chiave 
+		// con la quale richiedo, sempre al db, la mail del firmatario e quindi su 
+		// variable_signers ho la chiave
 	}
 }
 ?>

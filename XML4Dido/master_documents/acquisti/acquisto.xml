@@ -10,11 +10,13 @@
 		<input from="geco" key="richiedente">Richiedente</input>
 		<input from="geco" key="fornitore">Fornitore</input>
 		<input>Descrittivo GAE</input>
-		<input from="geco" key="cdr">Sigla CDR</input>
+		<input from="geco" key="laboratorio">Laboratorio</input>
 		<input from="geco" key="natura">Natura</input>
 		<input from="geco" key="natura">Voce del piano dei conti</input>
 		<input from="geco" key="cup">CUP</input>
 		<input type="hidden">tipo</input>
+		<input>titolare dei fondi</input>
+		<input>responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
