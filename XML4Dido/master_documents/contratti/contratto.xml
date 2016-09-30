@@ -11,7 +11,9 @@
 		<input>Sigla CDR</input>
 		<input>Progetto</input>
 		<input>Nominativo</input>
-		<input>Data</input>
+		<input>Numero contratto</input>
+		<input>Data inizio</input>
+		<input>Data fine</input>
 	</inputs>
 	<list>
 		<document load="proposta d'ordine.xml" />
@@ -62,6 +64,7 @@
 				<signature role="SAMM" />
 			</signatures>
 		</document>
+		<document md="provvedimento di utilizzo fondi" key="id_md" minOccur="0" maxOccur="1"/>
 		<document name="lettera corte dei conti" minOccur="0" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
