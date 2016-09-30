@@ -5,7 +5,7 @@ class FTPConnector{
 	private $_baseDir = null;
 	
 	private function __construct(){
-		$config = parse_ini_file(__CLASS__."/config.ini");
+		$config = parse_ini_file("config.ini");
 		$this->_conn_id = ftp_connect($config['FTP_SERVER']);
 		if($this->_conn_id){
 			if(!ftp_login($this->_conn_id, $config['FTP_USER_NAME'], $config['FTP_USER_PASS'])) return false;
