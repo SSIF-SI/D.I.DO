@@ -9,6 +9,8 @@
 		<input>Natura</input>
 		<input>Voce del piano dei conti</input>
 		<input>CUP</input>
+		<input>titolare dei fondi</input>
+		<input>responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />

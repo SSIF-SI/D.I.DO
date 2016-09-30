@@ -14,6 +14,8 @@
 		<input>Numero contratto</input>
 		<input>Data inizio</input>
 		<input>Data fine</input>
+		<input>titolare dei fondi</input>
+		<input>responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
