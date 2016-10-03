@@ -161,8 +161,9 @@ class FlowChecker{
 				if($pKey == $signatureData->publicKey) $result = $signatureData->signer;
 			}
 			$checkResult[$who] = $result;
+			
 			if(!$result)
-				$docResult->errors[$k][] = "Manca la firma del ".$signers[$who]['descrizione'];
+				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signer['who']['email'])." (".$signers[$who]['descrizione'].")";
 		}
 		return $checkResult;
 	}
