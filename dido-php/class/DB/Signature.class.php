@@ -1,12 +1,12 @@
 <?php
 class Signature extends AnyDocument {
+	
 	protected $VIEW = "signers_view";
+	
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );
 	}
-	/*
-	 * $masterDocumentData = new MasterdocumentData(Connector::getInstance()); $this->_md_data = $masterDocumentData->searchByKeyValue(array( 'id_md'	=> $id, $sigObj->getDescrizioni() ));
-	 */
+	
 	public function getSigners($id_md) {
 		Utils::printr ( $id_md );
 		$sigle = array ();
@@ -16,21 +16,26 @@ class Signature extends AnyDocument {
 		foreach ( $signatures as $k => $v ) {
 			$result [$v ['sigla']] = array (
 					'pkey' => $v ['pkey'],
-					'descrizione' => $v ['descrizione'] 
+					'descrizione' => $v ['descrizione'],
+					'email' => $v ['email'] 
 			);
 		}
 		$variableSignersRoles = new VariableSignersRoles ( Connector::getInstance () );
 		
 		$sigle = $variableSignersRoles->getRoleDescription ();
 		Utils::printr ( $sigle );
-		
 		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
 		$signatures = $masterDocumentData->searchByKeys ( $sigle, $id_md );
-		
 		foreach ( $signatures as $k => $v ) {
-			$result [$v ['key']] = array (
-					'pkey' => $v ['value'],
-					'descrizione' => array_search ( $v ['key'], $sigle ) 
+			$publickeys [$v ['key']] = $v ['value'];
+		}
+		$publickeys = join ( ',', $publickeys );
+		$signatures = $this->getBy ( 'pkey', $publickeys, 'sigla' );
+		foreach ( $signatures as $k => $v ) {
+			$result [$v ['sigla']] = array (
+					'pkey' => $v ['pkey'],
+					'descrizione' => array_search ( $v ['key'], $sigle ),
+					'email' => $v ['email'] 
 			);
 		}
 		Utils::printr ( $result );
