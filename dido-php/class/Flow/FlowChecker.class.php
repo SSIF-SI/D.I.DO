@@ -92,7 +92,7 @@ class FlowChecker{
 						
 						foreach($files as $k=>$file){
 							$filename = $this->md['ftp_folder'].$file;
-							$result = $this->checkSignatures($filename, $document, $signers);
+							$result = $this->checkSignatures($filename, $document, $signers, $k, $docResult);
 							$docResult->signatures[$k] = $result;
 						}
 					}
@@ -117,7 +117,7 @@ class FlowChecker{
 			self::_findFile($docName, $fileList, $docResult);
 			if(count($docResult->found) < $value){
 				$error = ($value-$found) == 1 ? "$docName assente" : ($value-$found)." documenti mancanti per $docName";
-				array_push($docResult->errors, $error);
+				$docResult->errors['generic'][] = $error;
 			}
 			
 		} 
@@ -128,12 +128,12 @@ class FlowChecker{
 		if($value > 0){
 			self::_findFile($docName, $fileList, $docResult);
 			if(count($docResult->found) > $value){
-				array_push($docResult->errors, ($value-$found)." documenti in eccesso per $docName");
+				$docResult->errors['generic'][] = ($value-$found)." documenti in eccesso per $docName";
 			}
 		}
 	}
 	
-	public function checkSignatures($filename, $document, $signers){
+	public function checkSignatures($filename, $document, $signers, $k, &$docResult){
 		$checkResult = array();
 		// 1-Scarico il pdf da FTP
 		$tmpPDF = FTPConnector::getInstance()->getTempFile($filename);
@@ -155,12 +155,15 @@ class FlowChecker{
 				continue;
 			}
 
-			$pKey = $signers[$who];
+			$pKey = $signers[$who]['pKey'];
 			$result = false;
 			foreach ($signaturesOnDocument as $signatureData){
 				if($pKey == $signatureData->publicKey) $result = $signatureData->signer;
 			}
 			$checkResult[$who] = $result;
+			
+			if(!$result)
+				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signers[$who]['email'])." (".$signers[$who]['descrizione'].")";
 		}
 		return $checkResult;
 	}
