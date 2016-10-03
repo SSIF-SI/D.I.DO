@@ -163,7 +163,7 @@ class FlowChecker{
 			$checkResult[$who] = $result;
 			
 			if(!$result)
-				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signer['who']['email'])." (".$signers[$who]['descrizione'].")";
+				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signers[$who]['email'])." (".$signers[$who]['descrizione'].")";
 		}
 		return $checkResult;
 	}
