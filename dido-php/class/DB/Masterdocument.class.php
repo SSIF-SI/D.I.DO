@@ -1,7 +1,6 @@
 <?php 
 class Masterdocument extends Crud{
-	protected $TABLE = "masterdocument";
-	protected $FIELD_ID = "id_md";
+	protected $TABLE = "master_documents";
 	
 	public function __construct($connInstance){
 		parent::__construct($connInstance);

@@ -1,6 +1,8 @@
 <?php 
 class AnyDocument extends Crud{
 	
+	protected $SQL_SEARCH = "SELECT * FROM %s WHERE %s";
+	
 	protected function __construct($connInstance){
 		parent::__construct($connInstance);
 	}
