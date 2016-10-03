@@ -14,8 +14,11 @@ class Signature extends AnyDocument {
 		$result = array ();
 		$fixedSigners = new FixedSigners ( Connector::getInstance () );
 		$signatures = $fixedSigners->getAll ();
-		foreach ( $signatures as $k => $v )
-			$result [$v ['sigla']] = $v ['pkey'];
+		foreach ( $signatures as $k => $v ){
+			$tmp[$v ['sigla']]=$v ['pkey'];
+			$tmp['descrizione']=$v ['descrizione'];
+			$result= ($tmp);
+		}
 		$variableSignersRoles = new VariableSignersRoles ( Connector::getInstance () );
 		
 		$sigle = $variableSignersRoles->getRoleDescription ();
@@ -24,8 +27,11 @@ class Signature extends AnyDocument {
 		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
 		$signatures = $masterDocumentData->searchByKeys ( $sigle , $id_md );
 		
-		foreach ( $signatures as $k => $v )
-			$result [$v ['key']] = $v ['value'];
+		foreach ( $signatures as $k => $v ){
+			$tmp[$v ['key']]=$v ['value'];
+			$tmp['descrizione']=array_search($v ['key'],$sigle);
+			$result= ($tmp);
+		}
 		Utils::printr($result);
 		return $result;
 	}
