@@ -8,19 +8,18 @@ class FlowChecker{
 	
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
-	public static static function getInstance(){
+	public static function getInstance(){
 		if(is_null(self::$instance))
 			self::$instance = new FlowChecker();
 		return self::$instance;
 	} 
 	
-	private function __contruct(){
+	private function __construct(){
 		$this->_xml = XMLParser::getInstance();
 	}
 	
 	public function checkMasterDocument($id){
 		
-		$sigObj = new Signatures();
 		/*
 		 * array(
 		 * 	[Ruolo] 	=> chiave
@@ -37,7 +36,8 @@ class FlowChecker{
 				$sigObj->getDescrizioni()
 		));
 		*/
-		$signers = $sigObj->getSigners($id);
+		$sigObj = new Signature(Connector::getInstance());
+		$signers = $sigObj->getSigners($id['id_md']);
 		
 		$return = array();
 		
@@ -49,10 +49,12 @@ class FlowChecker{
 		);
 		*/
 		
+		$this->md['ftp_folder']	= 'missioni/201609/missione_1/';
 		if($this->md){
 		
+			Utils::printr($this->md);
 			// Parsing con XML (documenti richiesti)
-			$this->_xml->setXMLSource($this->md['xml'],$this->md['md_type']);
+			$this->_xml->setXMLSource(XML_MD_PATH.$this->md['xml'],$this->md['type']);
 			// Connessione FTP (documenti esistenti)
 			
 			$ftp = FTPConnector::getInstance();
@@ -89,8 +91,8 @@ class FlowChecker{
 						$files = self::_getFtpFiles($docResult->documentName, $fileList);
 						
 						foreach($files as $k=>$file){
-							$filename = $record['ftp_folder'].$file;
-							$result = $this->checkSignatures($filename, $document);
+							$filename = $this->md['ftp_folder'].$file;
+							$result = $this->checkSignatures($filename, $document, $signers);
 							$docResult->signatures[$k] = $result;
 						}
 					}
@@ -131,7 +133,7 @@ class FlowChecker{
 		}
 	}
 	
-	public function checkSignatures($filename, $document){
+	public function checkSignatures($filename, $document, $signers){
 		$checkResult = array();
 		// 1-Scarico il pdf da FTP
 		$tmpPDF = FTPConnector::getInstance()->getTempFile($filename);
@@ -152,19 +154,15 @@ class FlowChecker{
 				$checkResult[$who] = 'skipped';
 				continue;
 			}
-				
-			$pKey = $this->_getSignerPkey($who);
-			$checkResult[$who] = 'ok';
+
+			$pKey = $signers[$who];
+			$result = false;
+			foreach ($signaturesOnDocument as $signatureData){
+				if($pKey == $signatureData->publicKey) $result = $signatureData->signer;
+			}
+			$checkResult[$who] = $result;
 		}
 		return $checkResult;
-	}
-	
-	private function _getSignerPkey($role){
-		// mi connetto al db
-		// verifico se $role è un firmatario fisso
-		// altrimenti recupero dalla tabella variable_signers_roles la chiave
-		// con la quale richiedo, sempre al db, la mail del firmatario e quindi su
-		// variable_signers ho la chiave
 	}
 	
 	private static function _findFile($docName, $fileList, &$docResult){

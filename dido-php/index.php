@@ -15,6 +15,6 @@ $contents = $ftp->getContents("/CAMPUS");
 Utils::printr(Utils::filterList($contents['contents'],'isPDF',1));
 */
 
-FlowChecker::checkMasterDocument(666);
+FlowChecker::getInstance()->checkMasterDocument(array('id_md' => 1));
 
-$md = new Masterdocument(Connector::getInstance());
+//$md = new Masterdocument(Connector::getInstance());
