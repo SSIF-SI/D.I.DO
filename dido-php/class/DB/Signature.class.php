@@ -1,6 +1,7 @@
 <?php
 class Signature extends AnyDocument {
 	protected $VIEW = "signers_view";
+	
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );
 	}
