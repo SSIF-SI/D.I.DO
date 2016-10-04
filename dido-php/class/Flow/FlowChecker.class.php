@@ -52,7 +52,7 @@ class FlowChecker{
 		$this->md['ftp_folder']	= 'missioni/201609/missione_1/';
 		if($this->md){
 		
-			Utils::printr($this->md);
+			//Utils::printr($this->md);
 			// Parsing con XML (documenti richiesti)
 			$this->_xml->setXMLSource(XML_MD_PATH.$this->md['xml'],$this->md['type']);
 			// Connessione FTP (documenti esistenti)
@@ -61,7 +61,7 @@ class FlowChecker{
 			$fileList = Utils::filterList($ftp->getContents($this->md['ftp_folder'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
 			
-			Utils::printr($fileList);
+			//Utils::printr($fileList);
 			
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
@@ -143,27 +143,31 @@ class FlowChecker{
 		$sigClass->loadPDF($tmpPDF);
 		$signaturesOnDocument = json_decode((string)$sigClass->getSignatures());
 		
-		Utils::printr($signaturesOnDocument);
+		// Utils::printr($signaturesOnDocument);
 		// 3-cancello il file temporaneo
 		unlink($tmpPDF);
 	
 		// 4-confronto le firme trovate con quelle attese..
 		foreach($document->signatures->signature as $signature){
 			$who = (string)$signature['role'];
+				
 			if($who == "REQ") {
 				$checkResult[$who] = 'skipped';
 				continue;
 			}
 
-			$pKey = $signers[$who]['pKey'];
+			$pKey = $signers[$who]['pkey'];
+			
 			$result = false;
 			foreach ($signaturesOnDocument as $signatureData){
-				if($pKey == $signatureData->publicKey) $result = $signatureData->signer;
+				if($pKey == $signatureData->publicKey) $result = $signers[$who]['email'];
 			}
 			$checkResult[$who] = $result;
 			
-			if(!$result)
+			if(!$result){
+				
 				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signers[$who]['email'])." (".$signers[$who]['descrizione'].")";
+			}
 		}
 		return $checkResult;
 	}

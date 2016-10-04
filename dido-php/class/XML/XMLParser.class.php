@@ -36,6 +36,10 @@ class XMLParser{
 		}
 	}
 	
+	public function getMasterDocumentInputs(){
+		return $this->_xml->inputs->input;
+	}
+	
 	public function getDocList(){
 		return $this->_xml->list->document;
 	}

@@ -13,7 +13,7 @@ class VariableSignersRoles extends Crud {
 		$this->_connInstance->query($sql);
 		$list = $this->_connInstance->allResults();
 		foreach($list as $k=>$v){
-			$newList[$v['descrizione']] = $v['sigla'];
+			$newList[$v['sigla']] = $v['descrizione'];
 		}
 		return $newList;
 	}
