@@ -61,7 +61,7 @@ class FlowChecker{
 			$fileList = Utils::filterList($ftp->getContents($this->md['ftp_folder'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
 			
-			//Utils::printr($fileList);
+			// Utils::printr($fileList);
 			
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
