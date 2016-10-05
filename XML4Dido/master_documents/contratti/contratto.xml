@@ -66,7 +66,7 @@
 				<signature role="SAMM" />
 			</signatures>
 		</document>
-		<document md="provvedimento di utilizzo fondi" key="id_md" minOccur="0" maxOccur="1"/>
+		<document md="provvedimento di utilizzo fondi" linkTo="id_md" minOccur="0" maxOccur="1"/>
 		<document name="lettera corte dei conti" minOccur="0" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
