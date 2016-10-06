@@ -13,8 +13,13 @@ class Personale {
 			ini_set ( "soap.wsdl_cache_enabled", "0" );
 			$wsdl_url = "http://pimpa.isti.cnr.it/PERSONALE/web-services/dido/dido.wsdl";
 			$client = new SoapClient ( $wsdl_url );
-			$personaKey = Utils::getListfromField ( $client->personale (), null, "idpersona" );
-			$groups = Utils::getListfromField ( $client->gruppi (), null, "idpersona" );
+			$arraypersonale = json_decode(json_encode($client->personale()),true);
+				
+			$personaKey = Utils::getListfromField ( $arraypersonale, "email");
+			echo"<pre>".print_r($personaKey,1)."</pre>";
+				
+			
+// 			$groups = Utils::getListfromField ( $client->gruppi (), null, "codiceFiscale" );
 		}
 		return self::$instance;
 	}
@@ -22,6 +27,9 @@ class Personale {
 	public function getEmail($idpersona) {
 		$persona = $personakey [$idpersona];
 		return $persona ["email"];
+	}
+	public function getPersonakey() {
+		return $personakey;
 	}
 }
 ?>
