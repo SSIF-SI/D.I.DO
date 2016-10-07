@@ -22,7 +22,7 @@ class Signature extends AnyDocument {
 		//$signatures = $this->getBy ( 'id_persona', array_merge($id_fs,$id_vs), 'sigla' );
 		$id_s = array_merge($id_fs,$id_vs);
 		$id_s = join(", ",array_map("Utils::apici",$id_s));
-		$signers = $this->getBy('id_persona', $id_s);
+		$signers = Utils::getListfromField($this->getBy('id_persona', $id_s),null,'sigla');
 		
 		return $signers;
 	}
