@@ -8,6 +8,7 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -16,11 +17,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.tsp.TimeStampToken;
 
 import com.google.gson.Gson;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.AcroFields.FieldPosition;
+import com.itextpdf.text.pdf.PdfArray;
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfString;
 import com.itextpdf.text.pdf.security.CertificateInfo;
@@ -33,9 +37,10 @@ import dido.pdfmanager.interfaces.iSignatureManager;
 public class PdfManager implements iSignatureManager {
 	final static Logger logger = Logger.getLogger(PdfManager.class);
 	private List<Signature> signatures = null;
+	private List<Annotation> annotations=null;
 	private Signature tmpSignature = null;
 	private String xmlMetadata = null;
-	
+
 	private PdfPKCS7 verifySignature(AcroFields fields, String name) throws GeneralSecurityException, IOException {
 		logger.info("Signature covers whole document: " + fields.signatureCoversWholeDocument(name));
 		this.tmpSignature.setName(name);
@@ -77,7 +82,7 @@ public class PdfManager implements iSignatureManager {
 
 		logger.info("Filter subtype: " + pkcs7.getFilterSubtype());
 		if(pkcs7.getFilterSubtype()!=null)
-		this.tmpSignature.setFilterSubtype(pkcs7.getFilterSubtype().toString());
+			this.tmpSignature.setFilterSubtype(pkcs7.getFilterSubtype().toString());
 
 		X509Certificate cert = (X509Certificate) pkcs7.getSigningCertificate();
 		logger.info("Name of the signer: " + CertificateInfo.getSubjectFields(cert).getField("CN"));
@@ -142,24 +147,28 @@ public class PdfManager implements iSignatureManager {
 
 	public boolean loadPDF(String path){
 		// Set up a simple configuration that logs on the console.
-	    BasicConfigurator.configure();
-	    signatures=new ArrayList<Signature>();
+		BasicConfigurator.configure();
+		signatures=new ArrayList<Signature>();
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);
 		try {
 			this.inspectSignatures(path);
+			this.extractAnnotations(path);
 		} catch (IOException e) {
 			e.printStackTrace();
-	        logger.error("Could not find file:" + path);
-
+			logger.error("Could not find file:" + path);
 			return false;
 		} catch (GeneralSecurityException e) {
 			e.printStackTrace();
-	        logger.error("Could not find file:" + path);
-	        return false;
+			logger.error("Could not find file:" + path);
+			return false;
+		} catch (DocumentException e) {
+			e.printStackTrace();
+			logger.error("Could not find file:" + path);
+			return false;
 		}
 		return true;
-	}
+	} 
 
 	public String getSignatures() {
 		String json = new Gson().toJson(this.signatures);
@@ -169,6 +178,57 @@ public class PdfManager implements iSignatureManager {
 	public String getXmlMetadata() {
 		String json = new Gson().toJson(this.xmlMetadata);
 		return json;
+	}
+
+	public String getAnnotations(){
+		String json = new Gson().toJson(this.annotations);
+		return json;
+	}
+	private void extractAnnotations(String path) throws IOException, DocumentException {
+		PdfReader reader = new PdfReader(path);
+		for (int i = 1; i <= reader.getNumberOfPages(); i++)
+		{		
+			PdfDictionary page = reader.getPageN(i);
+			logger.info(path+" :"+page.toString());
+			PdfArray annotsArray = null;
+			if(page.getAsArray(PdfName.ANNOTS)==null){
+				logger.info("Non ci sono annotazioni");
+				continue;
+			}
+			annotsArray = page.getAsArray(PdfName.ANNOTS);
+			for (ListIterator iter = annotsArray.listIterator(); iter.hasNext();)
+			{
+				Annotation ann=new Annotation();
+				PdfDictionary annot = (PdfDictionary) PdfReader.getPdfObject((PdfObject) iter.next());
+				PdfString type = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.TYPE));
+				PdfString content = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.CONTENTS));
+				PdfString author = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.T));
+				PdfString created = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.CREATIONDATE));
+				PdfString modified = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.MODDATE));
+				if(content!=null){
+					logger.info("Contenuto:"+content);
+					ann.setContent(content.toString());
+				}
+				if(author!=null){
+					logger.info("Author:"+author);
+					ann.setAuthor(author.toString());
+				}
+				if(type!=null){
+					logger.info("Type:"+type);
+					ann.setType(type.toString());
+				}
+				if(created!=null){
+					logger.info("Created:"+created);
+					ann.setCreated(created.toString());
+				}
+				if(modified!=null){
+					logger.info("Modified:"+modified);
+					ann.setModified(modified.toString());
+				}
+				if(!ann.isEmpty())
+					annotations.add(ann);
+			}
+		}
 	}
 
 }
