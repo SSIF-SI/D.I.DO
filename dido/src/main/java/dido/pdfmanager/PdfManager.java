@@ -1,4 +1,4 @@
-package dido.signature;
+package dido.pdfmanager;
 
 
 import java.io.IOException;
@@ -28,10 +28,10 @@ import com.itextpdf.text.pdf.security.PdfPKCS7;
 import com.itextpdf.text.pdf.security.SignaturePermissions;
 import com.itextpdf.text.pdf.security.SignaturePermissions.FieldLock;
 
-import dido.signature.interfaces.iSignatureManager;
+import dido.pdfmanager.interfaces.iSignatureManager;
 
-public class SignatureManager implements iSignatureManager {
-	final static Logger logger = Logger.getLogger(SignatureManager.class);
+public class PdfManager implements iSignatureManager {
+	final static Logger logger = Logger.getLogger(PdfManager.class);
 	private List<Signature> signatures = null;
 	private Signature tmpSignature = null;
 	private String xmlMetadata = null;

@@ -1,4 +1,4 @@
-package dido.signature.interfaces;
+package dido.pdfmanager.interfaces;
 
 public interface iSignatureManager {
 	public boolean loadPDF(String path);
