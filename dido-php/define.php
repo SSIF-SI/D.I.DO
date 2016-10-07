@@ -31,7 +31,8 @@ define ("ADMIN_SCRIPTS_RPATH", 	REAL_ROOT . "scripts/admin/");
 define ("FILES_PATH",			REAL_ROOT . "files/");
 define ("FILES_HTTP_PATH",		HTTP_ROOT . "files/");
 define ("GECO_IMPORT_PATH",		REAL_ROOT . "geco-import/");
-define ("TEMPLATES_PATH",		REAL_ROOT . "template/");
+define ("TEMPLATES_PATH",		REAL_ROOT . "templates/");
+define ("SB_ADMIN_2",			HTTP_ROOT . "templates/sb-admin-2/");
 
 define ("MAIL_FROM",			"");
 

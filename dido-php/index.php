@@ -17,6 +17,9 @@ Utils::printr(Utils::filterList($contents['contents'],'isPDF',1));
 Utils::printr(Personale::getInstance()->getPersone());
 Utils::printr(Personale::getInstance()->getGruppi());
 */
-FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
+
+// FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
 // print_r(Personale::getInstance()->getPersonakey(),1);
-//$md = new Masterdocument(Connector::getInstance());
+// $md = new Masterdocument(Connector::getInstance());
+
+include_once (TEMPLATES_PATH."template.php");

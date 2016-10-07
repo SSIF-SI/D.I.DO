@@ -134,19 +134,15 @@ class FlowChecker{
 	}
 	
 	public function checkSignatures($filename, $document, $signers, $k, &$docResult){
-		$checkResult = array();
-		// 1-Scarico il pdf da FTP
 		$tmpPDF = FTPConnector::getInstance()->getTempFile($filename);
-			
-		// 2-Lo passo alla classe Java per recuperare le firme
+
 		$pdfParser = new PDFParser($tmpPDF);
 		$signaturesOnDocument = $pdfParser->getSignatures();
 		
-		// Utils::printr($signaturesOnDocument);
-		// 3-cancello il file temporaneo
 		unlink($tmpPDF);
 	
-		// 4-confronto le firme trovate con quelle attese..
+		$checkResult = array();
+		
 		foreach($document->signatures->signature as $signature){
 			$who = (string)$signature['role'];
 				
@@ -155,18 +151,21 @@ class FlowChecker{
 				continue;
 			}
 
-			$pKey = $signers[$who]['pkey'];
+			$pKeys = array($signers[$who]['pkey'], $signers[$who]['pkey_delegato']);
 			
-			$result = false;
 			foreach ($signaturesOnDocument as $signatureData){
-				if($pKey == $signatureData->publicKey) $result = $signers[$who]['id_persona'];
-			}
-			$checkResult[$who] = $result;
+				if(in_array($signatureData->publicKey,$pKeys)){
+					$result = $signers[$who]['id_persona'];
+					break;
+				}
+			} 
 			
 			if(!$result){
 				$persona = Personale::getInstance()->getPersona($signers[$who]['id_persona']);
 				$docResult->errors[$k][] = "Manca la firma di {$persona['nome']} {$persona['cognome']} (".$signers[$who]['descrizione'].")";
 			}
+			
+			$checkResult[$who] = $result;
 		}
 		return $checkResult;
 	}
