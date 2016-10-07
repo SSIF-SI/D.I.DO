@@ -18,6 +18,7 @@ public class SignatureTest1 {
 
 
 	public static void main(String[] args) throws IOException, DocumentException {
+		System.out.println("INIZIO TEST");
 		PdfManager sigMan=new PdfManager();
 		sigMan.loadPDF(SRC);
 		sigMan.getAnnotations();
