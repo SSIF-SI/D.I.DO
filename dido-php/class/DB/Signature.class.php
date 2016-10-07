@@ -1,5 +1,6 @@
 <?php
 class Signature extends AnyDocument {
+	protected $TABLE = "signers";
 	protected $VIEW = "signers_view";
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );
@@ -9,38 +10,21 @@ class Signature extends AnyDocument {
 		$result = array ();
 		
 		$fixedSigners = new FixedSigners ( Connector::getInstance () );
-		$signatures = $fixedSigners->getAll ();
+		$id_fs = Utils::getListfromField($fixedSigners->getAll(),'id_persona');
 		
-		foreach ( $signatures as $k => $v ) {
-			$result [$v ['sigla']] = array (
-					'pkey' => $v ['pkey'],
-					'descrizione' => $v ['descrizione'],
-					'email' => $v ['email'] 
-			);
-		}
 		$variableSignersRoles = new VariableSignersRoles ( Connector::getInstance () );
 		$sigle = $variableSignersRoles->getRoleDescription ();
-		Utils::printr ( $sigle );
 		
 		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
-		$signatures = $masterDocumentData->searchByKeys ( array_keys ( $sigle ), $id_md );
-		$signatures = Utils::getListfromField ( $signatures, 'value' );
+		$id_vs = $masterDocumentData->searchByKeys ( array_keys ( $sigle ), $id_md );
+		$id_vs = Utils::getListfromField ( $id_vs, 'value' );
 		
-		$publickeys = join ( ',', array_map ( "Utils::apici", $signatures ) );
+		//$signatures = $this->getBy ( 'id_persona', array_merge($id_fs,$id_vs), 'sigla' );
+		$id_s = array_merge($id_fs,$id_vs);
+		$id_s = join(", ",array_map("Utils::apici",$id_s));
+		$signers = $this->getBy('id_persona', $id_s);
 		
-		$signatures = $this->getBy ( 'pkey', $publickeys, 'sigla' );
-		
-		$publickeys = join ( ',', $publickeys );
-		$signatures = $this->getBy ( 'pkey', $publickeys, 'sigla' );
-		foreach ( $signatures as $k => $v ) {
-			$result [$v ['sigla']] = array (
-					'pkey' => $v ['pkey'],
-					'descrizione' => isset ( $sigle [$v ['sigla']] ) ? $sigle [$v ['sigla']] : null,
-					'email' => $v ['email'] 
-			);
-		}
-		
-		return $result;
+		return $signers;
 	}
 }
 
