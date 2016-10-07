@@ -131,7 +131,10 @@ public class PdfManager implements InterfacePdfManager {
 	private void inspectSignatures(String path) throws IOException, GeneralSecurityException {
 		logger.info("Path document to inspect"+path);
 		PdfReader reader = new PdfReader(path);
-		this.xmlMetadata  = new String( reader.getMetadata() );
+		if( reader.getMetadata()!=null)
+			this.xmlMetadata  = new String( reader.getMetadata() );
+		else
+			this.xmlMetadata="";
 		AcroFields fields = reader.getAcroFields();
 		ArrayList<String> names = fields.getSignatureNames();
 		SignaturePermissions perms = null;
@@ -149,6 +152,8 @@ public class PdfManager implements InterfacePdfManager {
 		// Set up a simple configuration that logs on the console.
 		BasicConfigurator.configure();
 		signatures=new ArrayList<Signature>();
+		annotations=new ArrayList<Annotation>();
+
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);
 		try {
@@ -186,6 +191,7 @@ public class PdfManager implements InterfacePdfManager {
 	}
 	private void extractAnnotations(String path) throws IOException, DocumentException {
 		PdfReader reader = new PdfReader(path);
+
 		for (int i = 1; i <= reader.getNumberOfPages(); i++)
 		{		
 			PdfDictionary page = reader.getPageN(i);
@@ -200,7 +206,7 @@ public class PdfManager implements InterfacePdfManager {
 			{
 				Annotation ann=new Annotation();
 				PdfDictionary annot = (PdfDictionary) PdfReader.getPdfObject((PdfObject) iter.next());
-				PdfString type = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.TYPE));
+				PdfName type = (PdfName) PdfReader.getPdfObject(annot.get(PdfName.TYPE));
 				PdfString content = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.CONTENTS));
 				PdfString author = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.T));
 				PdfString created = (PdfString) PdfReader.getPdfObject(annot.get(PdfName.CREATIONDATE));
