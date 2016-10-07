@@ -4,7 +4,7 @@ class PDFParser{
 	private $_metadata;
 	
 	public function __construct($pdf_path){
-		$sigatureManagerClass = new Java('dido.signature.SignatureManager');
+		$sigatureManagerClass = new Java('dido.pdfmanager.PdfManager');
 		$sigatureManagerClass->loadPDF($pdf_path);
 		$this->_signatures = json_decode((string)$sigatureManagerClass->getSignatures());
 
