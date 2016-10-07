@@ -24,7 +24,7 @@ class Signature extends AnyDocument {
 		$id_s = join(", ",array_map("Utils::apici",$id_s));
 		$signers = Utils::getListfromField($this->getBy('id_persona', $id_s),null,'sigla');
 		
-		utils::printr($signers);
+		//utils::printr($signers);
 		return $signers;
 	}
 }
