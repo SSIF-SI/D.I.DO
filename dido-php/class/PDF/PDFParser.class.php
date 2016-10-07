@@ -39,10 +39,14 @@ class PDFParser{
 				: $this->_metadata->rdf_RDF->rdf_Description[$attribute];
 	}
 
-	public function is_PDFA(){
+	public function isPDFA(){
 		$pdfConformance = $this->getPDFDescription('pdfaid_conformance');
 		if(is_null($pdfConformance)) return false;
 		return substr(strtoupper((string)$this->_metadata->rdf_RDF->rdf_Description['pdfaid_conformance']),0,1) == "A";
+	}
+	
+	public function hasAnnotations(){
+		return is_array($this->_annotations) && count($this->_annotations) > 0;
 	}
 }
 
