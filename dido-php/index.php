@@ -6,7 +6,7 @@ require_once ("config.php");
 $PDFParser = new PDFParser("/var/lib/tomcat7/webapps/dido-php-test/richiesta_delega_2016_DMT_signed.pdf");
 echo Utils::printr($PDFParser->getSignatures());
 echo Utils::printr($PDFParser->getMetadata());
-var_dump($PDFParser->is_PDFA());
+var_dump($PDFParser->isPDFA());
 */
 /*
 $ftp = FTPConnector::getInstance();
