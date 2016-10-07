@@ -1,6 +1,6 @@
 package dido.pdfmanager.interfaces;
 
-public interface iSignatureManager {
+public interface InterfacePdfManager {
 	public boolean loadPDF(String path);
 	public String getSignatures();
 }

@@ -32,9 +32,9 @@ import com.itextpdf.text.pdf.security.PdfPKCS7;
 import com.itextpdf.text.pdf.security.SignaturePermissions;
 import com.itextpdf.text.pdf.security.SignaturePermissions.FieldLock;
 
-import dido.pdfmanager.interfaces.iSignatureManager;
+import dido.pdfmanager.interfaces.InterfacePdfManager;
 
-public class PdfManager implements iSignatureManager {
+public class PdfManager implements InterfacePdfManager {
 	final static Logger logger = Logger.getLogger(PdfManager.class);
 	private List<Signature> signatures = null;
 	private List<Annotation> annotations=null;
