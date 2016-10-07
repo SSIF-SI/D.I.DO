@@ -139,9 +139,8 @@ class FlowChecker{
 		$tmpPDF = FTPConnector::getInstance()->getTempFile($filename);
 			
 		// 2-Lo passo alla classe Java per recuperare le firme
-		$sigClass = new Java('dido.signature.SignatureManager');
-		$sigClass->loadPDF($tmpPDF);
-		$signaturesOnDocument = json_decode((string)$sigClass->getSignatures());
+		$pdfParser = new PDFParser($tmpPDF);
+		$signaturesOnDocument = $pdfParser->getSignatures();
 		
 		// Utils::printr($signaturesOnDocument);
 		// 3-cancello il file temporaneo
@@ -165,7 +164,6 @@ class FlowChecker{
 			$checkResult[$who] = $result;
 			
 			if(!$result){
-				
 				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signers[$who]['email'])." (".$signers[$who]['descrizione'].")";
 			}
 		}
