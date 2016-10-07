@@ -15,7 +15,7 @@ class Signature extends AnyDocument {
 			$result [$v ['sigla']] = array (
 					'pkey' => $v ['pkey'],
 					'descrizione' => $v ['descrizione'],
-					'email' => $v ['email'] 
+					'id_persona' => $v ['id_persona'] 
 			);
 		}
 		$variableSignersRoles = new VariableSignersRoles ( Connector::getInstance () );
@@ -36,7 +36,7 @@ class Signature extends AnyDocument {
 			$result [$v ['sigla']] = array (
 					'pkey' => $v ['pkey'],
 					'descrizione' => isset ( $sigle [$v ['sigla']] ) ? $sigle [$v ['sigla']] : null,
-					'email' => $v ['email'] 
+					'id_persona' => $v ['id_persona'] 
 			);
 		}
 		

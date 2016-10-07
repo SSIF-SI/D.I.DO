@@ -1,13 +1,13 @@
 <?php 
 class XMLParser{
-	public static $instance = null;
+	private static $_instance = null;
 	private $_xml = null;
 	
 	public static function getInstance(){
-		if(is_null(self::$instance)){
-			self::$instance = new XMLParser();
+		if(is_null(self::$_instance)){
+			self::$_instance = new XMLParser();
 		}
-		return self::$instance;
+		return self::$_instance;
 	}
 	
 	private function __construct(){}

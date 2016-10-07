@@ -1,6 +1,6 @@
 <?php 
 class FlowChecker{
-	public static $instance = null;
+	private static $_instance = null;
 	
 	private $_md;
 	private $_md_data;
@@ -9,9 +9,9 @@ class FlowChecker{
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
 	public static function getInstance(){
-		if(is_null(self::$instance))
-			self::$instance = new FlowChecker();
-		return self::$instance;
+		if(is_null(self::$_instance))
+			self::$_instance = new FlowChecker();
+		return self::$_instance;
 	} 
 	
 	private function __construct(){
@@ -159,12 +159,13 @@ class FlowChecker{
 			
 			$result = false;
 			foreach ($signaturesOnDocument as $signatureData){
-				if($pKey == $signatureData->publicKey) $result = $signers[$who]['email'];
+				if($pKey == $signatureData->publicKey) $result = $signers[$who]['id_persona'];
 			}
 			$checkResult[$who] = $result;
 			
 			if(!$result){
-				$docResult->errors[$k][] = "Manca la firma di ".Utils::operatore($signers[$who]['email'])." (".$signers[$who]['descrizione'].")";
+				$persona = Personale::getInstance()->getPersona($signers[$who]['id_persona']);
+				$docResult->errors[$k][] = "Manca la firma di {$persona['nome']} {$persona['cognome']} (".$signers[$who]['descrizione'].")";
 			}
 		}
 		return $checkResult;
