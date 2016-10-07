@@ -3,6 +3,7 @@ class FTPConnector{
 	private static $_instance;
 	private $_conn_id;
 	private $_baseDir = null;
+	private $_pdfExtensions = array('pdf','p7m');
 	
 	private function __construct(){
 		$config = parse_ini_file("config.ini");
@@ -57,7 +58,7 @@ class FTPConnector{
 						'filename'	=> basename( $filename ),
 						'size'		=> $filesize,
 						'isDir'		=> $isDir,
-						'isPDF'		=> $ext == strtolower("pdf")
+						'isPDF'		=> in_array($ext, $this->_pdfExtensions)
 					);
 				}
 			}
@@ -133,12 +134,10 @@ class FTPConnector{
 				$path_parts = pathinfo($file['filename']);
 			    $ext = isset($path_parts["extension"]) ? strtolower( $path_parts["extension"] ) : "";
 				    
-			    switch ($ext) {
-			        case "pdf":
+			    if(in_array($ext, $this->_pdfExtensions)){
 			        header("Content-type: application/pdf"); // add here more headers for diff. extensions
 			        header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a download
-			        break;
-			        default;
+			    } else {
 			        header("Content-type: application/octet-stream");
 			        header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
 			   	}

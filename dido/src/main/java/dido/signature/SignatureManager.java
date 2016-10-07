@@ -34,6 +34,7 @@ public class SignatureManager implements iSignatureManager {
 	final static Logger logger = Logger.getLogger(SignatureManager.class);
 	private List<Signature> signatures = null;
 	private Signature tmpSignature = null;
+	private String xmlMetadata = null;
 	
 	private PdfPKCS7 verifySignature(AcroFields fields, String name) throws GeneralSecurityException, IOException {
 		logger.info("Signature covers whole document: " + fields.signatureCoversWholeDocument(name));
@@ -125,6 +126,7 @@ public class SignatureManager implements iSignatureManager {
 	private void inspectSignatures(String path) throws IOException, GeneralSecurityException {
 		logger.info("Path document to inspect"+path);
 		PdfReader reader = new PdfReader(path);
+		this.xmlMetadata  = new String( reader.getMetadata() );
 		AcroFields fields = reader.getAcroFields();
 		ArrayList<String> names = fields.getSignatureNames();
 		SignaturePermissions perms = null;
@@ -163,4 +165,10 @@ public class SignatureManager implements iSignatureManager {
 		String json = new Gson().toJson(this.signatures);
 		return json;
 	}
+
+	public String getXmlMetadata() {
+		String json = new Gson().toJson(this.xmlMetadata);
+		return json;
+	}
+
 }
