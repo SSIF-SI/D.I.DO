@@ -22,4 +22,10 @@ Utils::printr(Personale::getInstance()->getGruppi());
 // print_r(Personale::getInstance()->getPersonakey(),1);
 // $md = new Masterdocument(Connector::getInstance());
 
+$options = array(
+	"pippo"	=> "Pippo Baudo",
+	"topolino" => "Topolinus"
+);
+$mySelect = HTMLHelper::select("mySelect", "La mia select list", $options,"topolino");
+
 include_once (TEMPLATES_PATH."template.php");

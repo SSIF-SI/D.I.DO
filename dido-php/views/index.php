@@ -7,6 +7,14 @@
                 	</div>
                     <!-- /.col-lg-12 -->
                 </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                    	<form role="form">
+                    		<?=$mySelect?>
+                    	</form>
+                    </div>
+                </div>
+                     
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
