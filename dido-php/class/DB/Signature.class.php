@@ -1,6 +1,5 @@
 <?php
 class Signature extends AnyDocument {
-	protected $TABLE = "signers";
 	protected $VIEW = "signers_view";
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );

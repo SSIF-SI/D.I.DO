@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -35,7 +34,7 @@ import com.itextpdf.text.pdf.security.SignaturePermissions.FieldLock;
 import dido.pdfmanager.interfaces.InterfacePdfManager;
 
 public class PdfManager implements InterfacePdfManager {
-	final static Logger logger = Logger.getLogger(PdfManager.class);
+	final static Logger logger = Logger.getLogger(PdfManager.class.getName());
 	private List<Signature> signatures = null;
 	private List<Annotation> annotations=null;
 	private Signature tmpSignature = null;
@@ -150,7 +149,6 @@ public class PdfManager implements InterfacePdfManager {
 
 	public boolean loadPDF(String path){
 		// Set up a simple configuration that logs on the console.
-		BasicConfigurator.configure();
 		signatures=new ArrayList<Signature>();
 		annotations=new ArrayList<Annotation>();
 

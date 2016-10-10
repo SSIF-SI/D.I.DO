@@ -4,6 +4,8 @@ package dido.signatureTests;
 
 import java.io.IOException;
 
+import org.apache.log4j.BasicConfigurator;
+
 import com.itextpdf.text.DocumentException;
 
 import dido.pdfmanager.PdfManager;
@@ -17,8 +19,11 @@ public class SignatureTest1 {
 	public static final String SRC5 = "/testresources/sample06.pdf";
 
 
+
 	public static void main(String[] args) throws IOException, DocumentException {
 		System.out.println("INIZIO TEST");
+		BasicConfigurator.configure();
+
 		PdfManager sigMan=new PdfManager();
 		sigMan.loadPDF(SRC);
 		sigMan.getAnnotations();
