@@ -22,10 +22,22 @@ Utils::printr(Personale::getInstance()->getGruppi());
 // print_r(Personale::getInstance()->getPersonakey(),1);
 // $md = new Masterdocument(Connector::getInstance());
 
-$options = array(
-	"pippo"	=> "Pippo Baudo",
-	"topolino" => "Topolinus"
-);
-$mySelect = HTMLHelper::select("mySelect", "La mia select list", $options,"topolino");
+
+XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.xml");
+foreach (XMLParser::getInstance()->getMasterDocumentInputs() as $input){
+	$type = is_null($input['type']) ? 'text' : $type;
+	$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $_POST[str_replace(" ", "_", (string)$input)], check($_POST[str_replace(" ", "_", (string)$input)]));
+}
+
+$inputs = join("<br>",$inputs);
+$result = count($_POST) > 0 ? "<pre>".print_r($_POST,1)."</pre>" : "";
 
 include_once (TEMPLATES_PATH."template.php");
+
+function check($var){
+	if(count($_POST)>0){
+		$var = trim($var);
+		return $var === "" ? 'has-error' : '';
+	}
+	return null;
+}

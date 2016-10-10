@@ -47,7 +47,6 @@ class XMLParser{
 	public function getDocTypes(){
 		return (array)$this->_xml->types;
 	}
-	
 }
 
 class XMLParserException extends Exception{}

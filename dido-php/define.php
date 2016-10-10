@@ -50,4 +50,5 @@ define ("INEXISTENT",			"<br><br/><p class='error'>Attenzione!! Contenuto inesis
 define ("FILE_LOG",				ADMIN_PATH."log/".date("Ym").".log");
 
 define ("SITE_ONLINE",			1);
+
 ?>

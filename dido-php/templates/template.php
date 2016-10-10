@@ -85,13 +85,13 @@
                             <a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
                         <li>
-                            <a href="<?=BUSINESS_PATH."missioni.php"?>"><i class="fa fa-files-o fa-fw"></i> Missioni<span class="fa arrow"></span></a>
+                            <a href="<?=BUSINESS_HTTP_PATH."missioni.php"?>"><i class="fa fa-files-o fa-fw"></i> Missioni<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 <li>
-                                    <a href="<?=BUSINESS_PATH."missioni.php?type=con%20anticipo"?>"> Con anticipo</a>
+                                    <a href="<?=BUSINESS_HTTP_PATH."missioni.php?type=con%20anticipo"?>"> Con anticipo</a>
                                 </li>
                                 <li>
-                                    <a href="<?=BUSINESS_PATH."missioni.php?type=senza%20anticipo"?>"> Senza anticipo</a>
+                                    <a href="<?=BUSINESS_HTTP_PATH."missioni.php?type=senza%20anticipo"?>"> Senza anticipo</a>
                                 </li>
                             </ul>
                             <!-- /.nav-second-level -->
@@ -102,9 +102,12 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
-
-        <?php @include( VIEWS_PATH. (isset($view) ? $view : basename($_SERVER['PHP_SELF'])));?>
-
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+            	<?php include( VIEWS_PATH. (isset($view) ? $view : basename($_SERVER['PHP_SELF'])));?>
+            </div>
+        </div>
     </div>
     <!-- /#wrapper -->
 
