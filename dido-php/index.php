@@ -22,22 +22,22 @@ Utils::printr(Personale::getInstance()->getGruppi());
 // print_r(Personale::getInstance()->getPersonakey(),1);
 // $md = new Masterdocument(Connector::getInstance());
 
-
+$result = null;
 XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.xml");
-foreach (XMLParser::getInstance()->getMasterDocumentInputs() as $input){
-	$type = is_null($input['type']) ? 'text' : $type;
-	$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $_POST[str_replace(" ", "_", (string)$input)], check($_POST[str_replace(" ", "_", (string)$input)]));
+
+if(count($_POST) > 0){
+	FormValidation::check($_POST, XMLParser::getInstance()->getMasterDocumentInputs());
+	$result = FormValidation::getWarnBox();
 }
 
-$inputs = join("<br>",$inputs);
-$result = count($_POST) > 0 ? "<pre>".print_r($_POST,1)."</pre>" : "";
+foreach (XMLParser::getInstance()->getMasterDocumentInputs() as $input){
+	$type = is_null($input['type']) ? 'text' : (string)$input['type'];
+	$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
+	$field = str_replace(" ", "_", (string)$input);
+	$value = $_POST[$field];
+	$warning = FormValidation::getWarnMessages($field);
+	$class = isset($warning['class']) ? $warning['class'] : null; 
+	$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $value, $class, false);
+}
 
 include_once (TEMPLATES_PATH."template.php");
-
-function check($var){
-	if(count($_POST)>0){
-		$var = trim($var);
-		return $var === "" ? 'has-error' : '';
-	}
-	return null;
-}

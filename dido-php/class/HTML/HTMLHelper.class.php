@@ -15,29 +15,20 @@ class HTMLHelper{
 		return ob_get_clean();
 	}
 	
-	static function input($type, $name, $label, $value=null, $class = null){
+	static function input($type, $name, $label, $value=null, $class = null, $required = false){
 		ob_start();
-		$innerInputMethod = $type."Input";
-		$innerInput = self::$innerInputMethod($name, $label, $value);
+		if($type == 'hidden'):
+			echo self::lineInput($type, $name, $label, $value, $required);
+		else :
+		$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $required) : self::lineInput($type, $name, $label, $value, $required);
 ?>
 	<div class="form-group <?=$class?>">
 	    <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
 		<?=$innerInput;?> 
 	</div>		
 <?php
+		endif;
 		return ob_get_clean();
-	}
-	
-	private static function textInput($name, $label, $value=null){
-		return "<input type=\"text\" class=\"form-control\" name=\"$name\" id=\"$name\" value=\"$value\" />";
-	}
-	
-	private static function passwordInput($name, $label, $value=null){
-		return "<input type=\"password\" class=\"form-control\" name=\"$name\" id=\"$name\" value=\"$value\" />";
-	}
-	
-	private static function textareaInput($name, $label, $value=null){
-		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\">$value</textarea>";
 	}
 	
 	static function multipleInput($type, $name, $label, $options, $selected = array(), $class = null, $inline = false){
@@ -64,5 +55,38 @@ class HTMLHelper{
 		return ob_get_clean();
 	}
 
+	public static function ulist($list, $class = null){
+		if(!is_array($list) || count($list) == 0) return false;
+		ob_start();
+?>
+<ul class="<?=$class?>">
+	<?php foreach ($list as $item):?>
+	<li><?=$item?></li>
+	<?php endforeach;?>
+</ul>
+<?php 
+		return ob_get_clean();
+	}
+	
+	public static function saveErrorBox($errors){
+		$errors = self::ulist($errors);
+		return "<div class=\"alert alert-danger\"><p><strong>Attenzione!</strong> Sono stati riscontrati i seguenti errori:</p><p>$errors</p></div>";
+	}
+	
+	public static function saveSuccessBox(){
+		return "<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>";
+	}
+	
+	private static function lineInput($type, $name, $label, $value=null, $required = false){
+		$required = $required ? "required" : null;
+		return "<input type=\"$type\" class=\"form-control\" name=\"$name\" id=\"$name\" value=\"$value\" $required/>";
+	}
+	
+	private static function textareaInput($name, $label, $value=null , $required = false){
+		$required = $required ? "required" : null;
+		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\" $required>$value</textarea>";
+	}
+	
+	
 }
 ?> 
