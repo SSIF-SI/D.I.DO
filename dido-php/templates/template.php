@@ -130,6 +130,10 @@
     <!-- Custom Theme JavaScript -->
     <script src="<?=SB_ADMIN_2?>dist/js/sb-admin-2.js"></script>
 	
+	<!-- DataTables JavaScript -->
+	<script src="<?=SB_ADMIN_2?>vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="<?=SB_ADMIN_2?>vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+	<script src="<?=SB_ADMIN_2?>vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
 	
 	<!-- Custom Scripts -->
 	<?php 
@@ -138,6 +142,14 @@
 			eval("Utils::includeScript(SCRIPTS_PATH, $pageScripts);");
 		} 
 	?>
+
+	<script>
+    $(document).ready(function() {
+        $('#signature-dataTable').DataTable({
+            responsive: true
+        });
+    });
+	</script>
 		
 </body>
 
