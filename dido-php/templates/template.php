@@ -93,7 +93,11 @@
                                 <li>
                                     <a href="<?=BUSINESS_HTTP_PATH."missioni.php?type=senza%20anticipo"?>"> Senza anticipo</a>
                                 </li>
+                                                        
                             </ul>
+                            <li>
+                            <a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa  fa-key fa-fw"></i> Gestione firme</a>
+                        </li>
                             <!-- /.nav-second-level -->
                         </li>
                     </ul>
