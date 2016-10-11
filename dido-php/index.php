@@ -37,7 +37,8 @@ foreach (XMLParser::getInstance()->getMasterDocumentInputs() as $input){
 	$value = $_POST[$field];
 	$warning = FormValidation::getWarnMessages($field);
 	$class = isset($warning['class']) ? $warning['class'] : null; 
-	$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $value, $class, false);
+	$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $value, $class, $required);
 }
 
+$pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");

@@ -13,7 +13,8 @@
 
     <!-- Bootstrap Core CSS -->
     <link href="<?=SB_ADMIN_2?>vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
+	<link href="<?=SB_ADMIN_2?>vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+    
     <!-- MetisMenu CSS -->
     <link href="<?=SB_ADMIN_2?>vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
@@ -116,13 +117,24 @@
 
     <!-- Bootstrap Core JavaScript -->
     <script src="<?=SB_ADMIN_2?>vendor/bootstrap/js/bootstrap.min.js"></script>
-
+    <script src="<?=SB_ADMIN_2?>vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="<?=SB_ADMIN_2?>vendor/bootstrap-datepicker/locales/bootstrap-datepicker.it.min.js" charset="UTF-8"></script>
+    
     <!-- Metis Menu Plugin JavaScript -->
     <script src="<?=SB_ADMIN_2?>vendor/metisMenu/metisMenu.min.js"></script>
 
     <!-- Custom Theme JavaScript -->
     <script src="<?=SB_ADMIN_2?>dist/js/sb-admin-2.js"></script>
-
+	
+	
+	<!-- Custom Scripts -->
+	<?php 
+		if(isset($pageScripts)){
+			$pageScripts = implode(",", array_map('Utils::apici',$pageScripts));
+			eval("Utils::includeScript(SCRIPTS_PATH, $pageScripts);");
+		} 
+	?>
+		
 </body>
 
 </html>
