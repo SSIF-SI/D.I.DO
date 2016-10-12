@@ -121,7 +121,8 @@
 	<!-- DataTables JavaScript -->
 	<script src="<?=SB_ADMIN_2?>vendor/datatables/js/jquery.dataTables.min.js"></script>
 	<script src="<?=SB_ADMIN_2?>vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
-	<script src="<?=SB_ADMIN_2?>vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+	<script src="<?=SB_ADMIN_2?>vendor/datatables-responsive/dataTables.responsive.js"></script>
+	
 	
 	<!-- Custom Scripts -->
 	<?php 
@@ -130,14 +131,6 @@
 			eval("Utils::includeScript(SCRIPTS_PATH, $pageScripts);");
 		} 
 	?>
-
-	<script>
-    $(document).ready(function() {
-        $('#signature-dataTable').DataTable({
-            responsive: true
-        });
-    });
-	</script>
 		
 </body>
 
