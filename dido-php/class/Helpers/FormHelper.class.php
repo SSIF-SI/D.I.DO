@@ -16,7 +16,13 @@ class FormHelper{
 			$warning = FormHelper::getWarnMessages($field);
 			$class = isset($warning['class']) ? $warning['class'] : null;
 			
-			$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $value, $class, $required);
+			if(is_null($input['values']))
+				$inputs[] = HTMLHelper::input($type, $field, $label, $value, $class, $required);
+			else{
+				$callback = (string)$input['values'];
+				$options = ListHelper::$callback();
+				$inputs[] = HTMLHelper::select($field, $label, $options,$value);
+			}
 		}
 		
 		return $inputs;
