@@ -8,7 +8,7 @@ class TemplateHelper{
 				<?php foreach(XMLBrowser::getInstance()->getXmlTree() as $categoria => $dati):?>
 				<li>
 					<a href="#"><?=ucfirst($categoria)?><span class="fa arrow"></span></a>
-					<ul class="nav nav-second-level">
+					<ul class="nav nav-third-level">
 					<?php foreach($dati['documenti'] as $tipoDocumento => $xmlList):?>
 						<li>
 							<a href="<?=BUSINESS_HTTP_PATH."$tipoDocumento.php"?>"><?=ucwords($tipoDocumento)?></a>
