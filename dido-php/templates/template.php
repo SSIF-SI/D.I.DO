@@ -85,21 +85,9 @@
                         <li>
                             <a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                         </li>
+                        <?php Template::LeftMenu()?>
                         <li>
-                            <a href="<?=BUSINESS_HTTP_PATH."missioni.php"?>"><i class="fa fa-files-o fa-fw"></i> Missioni<span class="fa arrow"></span></a>
-                            <ul class="nav nav-second-level">
-                                <li>
-                                    <a href="<?=BUSINESS_HTTP_PATH."missioni.php?type=con%20anticipo"?>"> Con anticipo</a>
-                                </li>
-                                <li>
-                                    <a href="<?=BUSINESS_HTTP_PATH."missioni.php?type=senza%20anticipo"?>"> Senza anticipo</a>
-                                </li>
-                                                        
-                            </ul>
-                            <li>
-                            <a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa  fa-key fa-fw"></i> Gestione firme</a>
-                        </li>
-                            <!-- /.nav-second-level -->
+                            <a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa fa-key fa-fw"></i> Gestione firme</a>
                         </li>
                     </ul>
                 </div>

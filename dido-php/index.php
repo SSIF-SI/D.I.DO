@@ -23,22 +23,14 @@ Utils::printr(Personale::getInstance()->getGruppi());
 // $md = new Masterdocument(Connector::getInstance());
 
 $result = null;
-XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.xml");
+XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.v01.xml");
 
 if(count($_POST) > 0){
-	FormValidation::check($_POST, XMLParser::getInstance()->getMasterDocumentInputs());
-	$result = FormValidation::getWarnBox();
+	FormHelper::check($_POST, XMLParser::getInstance()->getMasterDocumentInputs());
+	$result = FormHelper::getWarnBox();
 }
 
-foreach (XMLParser::getInstance()->getMasterDocumentInputs() as $input){
-	$type = is_null($input['type']) ? 'text' : (string)$input['type'];
-	$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
-	$field = str_replace(" ", "_", (string)$input);
-	$value = $_POST[$field];
-	$warning = FormValidation::getWarnMessages($field);
-	$class = isset($warning['class']) ? $warning['class'] : null; 
-	$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $value, $class, $required);
-}
+$inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDocumentInputs());
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");

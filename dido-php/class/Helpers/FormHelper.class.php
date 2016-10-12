@@ -1,18 +1,39 @@
 <?php 
-class FormValidation{
+class FormHelper{
 	private static $warnmessages = array();
 	private static $warnBox = "";
 
+	public static function createInputsFromXml($xmlInputs){
+		$inputs = array();
+
+		foreach ($xmlInputs as $input){
+			$type = is_null($input['type']) ? 'text' : (string)$input['type'];
+			$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
+			$label = (string)$input;
+			$field = self::fieldFromLabel($label);
+			$value = $_POST[$field];
+			
+			$warning = FormHelper::getWarnMessages($field);
+			$class = isset($warning['class']) ? $warning['class'] : null;
+			
+			$inputs[] = HTMLHelper::input($type, str_replace(" ", "_", (string)$input), (string)$input, $value, $class, $required);
+		}
+		
+		return $inputs;
+	}
+	
 	public static function check($REQUEST, $inputs){
 		
 		self::$warnmessages = array();
 		self::$warnBox = "";
 		
 		foreach($inputs as $input){
+			
 			$label = (string)$input;
-			$field = str_replace(" ", "_", $label);
+			$field = self::fieldFromLabel($label);
 			$type = is_null($input['type']) ? 'text' : (string)$input['type'];
 			$mandatory = is_null($input['mandatory']) ? true : $input['mandatory'];
+			
 			if($mandatory){
 				if($type != 'hidden'){ // I tipi nascosti a regola sono sempre validi
 					if(!isset($REQUEST[$field]) || trim($REQUEST[$field]) === ""){
@@ -43,6 +64,10 @@ class FormValidation{
 	
 	public static function getWarnBox(){
 		return self::$warnBox;  
+	}
+	
+	private static function fieldFromLabel($label){
+		return str_replace(" ", "_", $label);
 	}
 	
 	private static function checkField($type, $var, $field, $label){
