@@ -1,5 +1,5 @@
 <?php 
-class Template{
+class TemplateHelper{
 	static function LeftMenu(){
 ?>
 		<li>

@@ -34,3 +34,4 @@ $inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDoc
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
+Utils::printr(XMLBrowser::getInstance()->getXmlTree());
