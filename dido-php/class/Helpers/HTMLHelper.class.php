@@ -77,6 +77,44 @@ class HTMLHelper{
 		return "<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>";
 	}
 	
+	public static function editTable($list, $buttons = array(), $substitutes = null, $hidden = null){
+		ob_start();
+?>
+		<div class="table-responsive">
+			<table class="table table-condensed table-striped">
+				<thead>
+					<tr>
+					<?php foreach(array_keys(reset($list)) as $key):?>
+					<?php if(isset($hidden) && in_array($key,$hidden)) continue;?>
+						<th><?=ucfirst(str_replace("id_","",$key))?></tH>
+					<?php endforeach;?>
+						<th></th>
+					</tr>
+				<tbody>
+					<?php foreach($list as $key=>$row):?>
+					<tr id="row-<?=$row['variable'] ? 'variable' : 'fixed'?>-<?=$row['id_persona']?>">
+						<?php foreach($row as $field=>$value):?>
+							<?php if(isset($hidden) && in_array($field,$hidden)) continue;?>
+						<td><?=isset($substitutes[$key][$field]) ? $substitutes[$key][$field] : $value?></td>
+						<?php endforeach;?>
+						<td class="text-right">
+							<?php if(isset($buttons[$key])) foreach($buttons[$key] as $label=>$button):?>
+							<a class="btn btn-<?=$button['type']?>" href="<?=$button['href']?>">
+								<span class="glyphicon glyphicon-<?=$button['icon']?>"></span> <?=$label?>
+							</a>
+							<?php endforeach;?>
+						</td>
+					</tr>
+					<?php endforeach;?>
+				</tbody>
+			</table>
+		</div>
+		
+<?php 	
+		return ob_get_clean();
+	}
+	
+	
 	private static function lineInput($type, $name, $label, $value=null, $required = false){
 		$required = $required ? "required" : null;
 		return "<input type=\"$type\" class=\"form-control\" name=\"$name\" id=\"$name\" value=\"$value\" $required/>";

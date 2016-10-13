@@ -1,33 +1,50 @@
 				<div class="row">
                     <div class="col-lg-12">
-                    	<h1 class="page-header">Firmatari</h1>
+                    	<h1 class="page-header">Gestione Firme</h1>
                 	</div>
-                    <!-- /.col-lg-12 -->
                 </div>
-                <div class="row">
+               <div class="row">
                     <div class="col-lg-12">
-	                    <div class="table-responsive">
-							<table class="table table-condensed table-striped">
-								<thead>
-									<tr>
-									<?php foreach(array_keys(reset($signers)) as $key):?>
-									<?php if(in_array($key,$hidden)) continue;?>
-										<th><?=ucfirst(str_replace("id_","",$key))?></tH>
-									<?php endforeach;?>
-										<th></th>
-									</tr>
-								<tbody>
-									<?php foreach($signers as $key=>$row):?>
-									<tr id="row-<?=$row['variable'] ? 'variable' : 'fixed'?>-<?=$row['id_item']?>">
-										<?php foreach($row as $field=>$value):?>
-											<?php if(in_array($field,$hidden)) continue;?>
-										<td><?=isset($substitutes[$key][$field]) ? $substitutes[$key][$field] : $value?></td>
-										<?php endforeach;?>
-										<th><a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php?id_item={$row['id_item']}&variable=".(int)$row['variable']?>">Edit</a>
-									</tr>
-									<?php endforeach;?>
-								</tbody>
-							</table>
-						</div>
+	                	<div class="panel panel-default">
+	                        <div class="panel-body">
+	                            <!-- Nav tabs -->
+	                            <ul class="nav nav-tabs">
+	                                <li class="active"><a href="#elenco-firmatari" data-toggle="tab" aria-expanded="false">Elenco Firmatari</a>
+	                                </li>
+	                                <li class=""><a href="#firmatari-fissi" data-toggle="tab" aria-expanded="false">Firmatari fissi</a>
+	                                </li>
+	                                <li class=""><a href="#firmatari-variabili" data-toggle="tab" aria-expanded="true">Firmatari variabili</a>
+	                                </li>
+	                            </ul>
+	
+	                            <!-- Tab panes -->
+	                            <div class="tab-content">
+	                                <div class="tab-pane active" id="elenco-firmatari">
+	                                    <h4>Elenco Firmatari</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php"?>"><span class="glyphicon glyphicon-plus"></span> Nuovo firmatario</a>
+				                    	</div>
+				                    	<?=$signers['all']?>
+					                </div>
+					                <div class="tab-pane" id="firmatari-fissi">
+	                                    <h4>Firmatari fissi</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php?list=fixed"?>"><span class="glyphicon glyphicon-plus"></span> Aggiungi firmatario fisso</a>
+				                    	</div>
+				                    	<?=$signers['fixed']?>
+	                                </div>
+					                <div class="tab-pane" id="firmatari-variabili">
+	                                    <h4>Firmatari variabili</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php?list=variable"?>"><span class="glyphicon glyphicon-plus"></span> Aggiungi firmatario variabile</a>
+				                    	</div>
+					                	<?=$signers['variable']?>
+	                                </div>
+					        	</div>
+	                        </div>
+	                        <!-- /.panel-body -->
+	                    </div>
+                    
+                    	
                     </div>
                 </div>
