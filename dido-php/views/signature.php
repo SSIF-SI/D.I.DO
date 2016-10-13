@@ -22,10 +22,12 @@
 	                                <div class="tab-pane active" id="elenco-firmatari">
 	                                    <h4>Elenco Firmatari</h4>
 	                                    <div>
-				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php"?>"><span class="glyphicon glyphicon-plus"></span> Nuovo firmatario</a>
+	                                  	<!--	<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php"?>"><span class="glyphicon glyphicon-plus"></span> Nuovo firmatario</a> -->
+				                    	  <button class="btn btn-primary" data-toggle="modal" data-target="#newSignersModal"><span class="glyphicon glyphicon-plus"></span>Nuovo firmatario</button>
 				                    	</div>
+				                    	<?=$newsigner ?>
 				                    	<?=$signers['all']?>
-					                </div>
+				                     </div>
 					                <div class="tab-pane" id="firmatari-fissi">
 	                                    <h4>Firmatari fissi</h4>
 	                                    <div>
@@ -41,10 +43,12 @@
 					                	<?=$signers['variable']?>
 	                                </div>
 					        	</div>
-	                        </div>
+	                       	</div>
 	                        <!-- /.panel-body -->
 	                    </div>
-                    
-                    	
                     </div>
                 </div>
+
+                
+                
+                 
