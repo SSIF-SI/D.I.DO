@@ -17,11 +17,11 @@ class FormHelper{
 			$class = isset($warning['class']) ? $warning['class'] : null;
 			
 			if(is_null($input['values']))
-				$inputs[] = HTMLHelper::input($type, $field, $label, $value, $class, $required);
+				$inputs[] = HTMLHelper::input($type, $field, $label, $value, $class, false);
 			else{
 				$callback = (string)$input['values'];
 				$options = ListHelper::$callback();
-				$inputs[] = HTMLHelper::select($field, $label, $options,$value);
+				$inputs[] = HTMLHelper::select($field, $label, $options,$value, $class);
 			}
 		}
 		

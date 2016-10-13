@@ -3,7 +3,7 @@ class HTMLHelper{
 	static function select($name, $label, $options, $selected = null, $class = null){
 		ob_start();
 ?>
-<div class="form-group" class="<?=$class?>">
+<div class="form-group <?=$class?>">
 	<label class="control-label" for="<?=$name?>"><?=$label?>:</label>
 	<select class="form-control" id="<?=name?>" name="<?=$name?>">
 <?php	foreach ($options as $value=>$optlabel): ?>
