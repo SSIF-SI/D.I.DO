@@ -1,40 +1,50 @@
-<div class="row">
-	<div class="col-lg-12">
-		<h1 class="page-header">Firmatari</h1>
-	</div>
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">Firmatari</div>
-				<!-- /.panel-heading -->
-				<div class="panel-body">
-					<div class="table-responsive">
-						<table width="100%" class="col-lg-12 table table-striped table-bordered table-hover dataTable no-footer dtr-inline" 
-						id="signature-table" data-id-field="id_persona" role="grid">
-							<thead>
-								<tr role="row">
-							 <?php foreach ($arrayk as $column):?>
-								<th class="<?php $column=="sigla"?"sorting_asc":"sorting"?>" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-sort="ascending" aria-label="<?= ucfirst(trim($column))?>: activate to sort column ascending"tabindex="0" id="<?=trim($column)?>"><?= ucfirst(trim($column))?></th>
-							<?php endforeach; ?>
-							</tr>
-							</thead>
-							<tbody>
-						 	<?php foreach ($allsignatures as $row):?>
-						 	<?php $oddeven=$oddeven=="odd"?"even":"odd"?>
-							<tr class="gradeA <?=$oddeven?>" role="row">
-									<td class="sorting_1"><?=$row["sigla"]?></td>
-									<td><?=$row["descrizione"]?></td>
-									<td><?=$row["id_persona"]?></td>
-									<td><?=$row["pkey"]?></td>
-									<td><?=$row["id_delegato"]?></td>
-									<td><?=$row["pkey_delegato"]?></td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+				<div class="row">
+                    <div class="col-lg-12">
+                    	<h1 class="page-header">Gestione Firme</h1>
+                	</div>
+                </div>
+               <div class="row">
+                    <div class="col-lg-12">
+	                	<div class="panel panel-default">
+	                        <div class="panel-body">
+	                            <!-- Nav tabs -->
+	                            <ul class="nav nav-tabs">
+	                                <li class="active"><a href="#elenco-firmatari" data-toggle="tab" aria-expanded="false">Elenco Firmatari</a>
+	                                </li>
+	                                <li class=""><a href="#firmatari-fissi" data-toggle="tab" aria-expanded="false">Firmatari fissi</a>
+	                                </li>
+	                                <li class=""><a href="#firmatari-variabili" data-toggle="tab" aria-expanded="true">Firmatari variabili</a>
+	                                </li>
+	                            </ul>
+	
+	                            <!-- Tab panes -->
+	                            <div class="tab-content">
+	                                <div class="tab-pane active" id="elenco-firmatari">
+	                                    <h4>Elenco Firmatari</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php"?>"><span class="glyphicon glyphicon-plus"></span> Nuovo firmatario</a>
+				                    	</div>
+				                    	<?=$signers['all']?>
+					                </div>
+					                <div class="tab-pane" id="firmatari-fissi">
+	                                    <h4>Firmatari fissi</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php?list=fixed"?>"><span class="glyphicon glyphicon-plus"></span> Aggiungi firmatario fisso</a>
+				                    	</div>
+				                    	<?=$signers['fixed']?>
+	                                </div>
+					                <div class="tab-pane" id="firmatari-variabili">
+	                                    <h4>Firmatari variabili</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php?list=variable"?>"><span class="glyphicon glyphicon-plus"></span> Aggiungi firmatario variabile</a>
+				                    	</div>
+					                	<?=$signers['variable']?>
+	                                </div>
+					        	</div>
+	                        </div>
+	                        <!-- /.panel-body -->
+	                    </div>
+                    
+                    	
+                    </div>
+                </div>
