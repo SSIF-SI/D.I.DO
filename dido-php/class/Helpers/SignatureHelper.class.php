@@ -1,26 +1,41 @@
 <?php 
 class SignatureHelper{
 	
-	static function getNewSigner(){
+	static function createModalSigner($idP = null){
+		$signersObj = new Signers(Connector::getInstance());
+		$signer = is_null($idP) ? $signersObj->getStub() : $signersObj->get(array('id_persona' => $idP));
+		
+		$listPersone = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
+		
+		$signers = array_keys($signersObj->getAll(null,'id_persona'));
+/*
+		foreach( $signers as $id_persona){
+			if(array_key_exists($id_persona, $listPersone)) 
+				unset($listPersone[$id_persona]);
+		}
+	*/	
 		ob_start();
+		
 ?>	
 	 <div class="modal fade in" id="newSignersModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-right: 15px;">
-			<div class="modal-dialog">
+	 		<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h4 class="modal-title" id="myModalLabel">Nuovo firmatario</h4>
+						<h4 class="modal-title" id="myModalLabel">Firmatario</h4>
 					</div>
-					<div class="modal-body">
+					<form id="firmatario" name="firmatario" method="POST">
+						<div class="modal-body">
 <?php 
-					echo HTMLHelper::input('text', "persona", "Persona");
-					echo HTMLHelper::input('text', "pkey", "Chiave Pubblica");
+					echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($signer['id_persona']) ? $signer['id_persona'] : null);
+					echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null);
 ?>
-		 			</div>
-		 			<div class="modal-footer">
-		 				<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-		                <button type="button" class="btn btn-primary">Salva nuovo firmatario</button>
-		            </div>
+			 			</div>
+			 			<div class="modal-footer">
+			 				<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+			                <button type="submit" class="btn btn-primary">Salva firmatario</button>
+			            </div>
+		            </form>
 		   		</div>
 <!-- /.modal-content -->
 		     </div>
