@@ -15,11 +15,7 @@ class SignatureHelper{
 		}
 	*/	
 		ob_start();
-		
 ?>	
-	 <div class="modal fade in" id="newSignersModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none; padding-right: 15px;">
-	 		<div class="modal-dialog">
-				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						<h4 class="modal-title" id="myModalLabel">Firmatario</h4>
@@ -36,11 +32,6 @@ class SignatureHelper{
 			                <button type="submit" class="btn btn-primary">Salva firmatario</button>
 			            </div>
 		            </form>
-		   		</div>
-<!-- /.modal-content -->
-		     </div>
-<!-- /.modal-dialog -->
-		    </div>
 <?php
 		return ob_get_clean();
 		}
@@ -80,11 +71,11 @@ class SignatureHelper{
 			$buttons[$k] = array(
 					'Modifica'	=> array(
 							'type' => 'primary',
-							'href' => BUSINESS_HTTP_PATH."editSigner.php?list=$table_suffix&id=".$k,
+							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k,
 							'icon' => 'pencil'),
 					'Elimina'	=> array(
 							'type' => 'danger',
-							'href' => BUSINESS_HTTP_PATH."editSigner.php?list=$table_suffix&id=".$k."&delete",
+							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k."&delete",
 							'icon' => 'trash')
 			);
 		}
