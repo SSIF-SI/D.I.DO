@@ -1,130 +1,89 @@
 <?php 
-class HTMLHelper{
-	static function select($name, $label, $options, $selected = null, $class = null){
-		ob_start();
-?>
-<div class="form-group <?=$class?>">
-	<label class="control-label" for="<?=$name?>"><?=$label?>:</label>
-	<select class="form-control" id="<?=name?>" name="<?=$name?>">
-<?php	foreach ($options as $value=>$optlabel): ?>
-		<option value="<?=$value?>" <?=$value == $selected ? "selected" : ""?>><?=$optlabel?></option>
-<?php 	endforeach;?>
-	</select>
-</div>
-<?php
-		return ob_get_clean();
-	}
+class SignatureHelper{
 	
-	static function input($type, $name, $label, $value=null, $class = null, $required = false){
-		ob_start();
-		if($type == 'hidden'):
-			echo self::lineInput($type, $name, $label, $value, $required);
-		else :
-		$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $required) : self::lineInput($type, $name, $label, $value, $required);
-?>
-	<div class="form-group <?=$class?>">
-	    <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
-		<?=$innerInput;?> 
-	</div>		
-<?php
-		endif;
-		return ob_get_clean();
-	}
-	
-	static function multipleInput($type, $name, $label, $options, $selected = array(), $class = null, $inline = false){
-		ob_start();		
-?>
-<div class="form-group <?=$class?>">
-	<label class="control-label"><?=$label?></label>
-<?php 
-		foreach ($options as $option):
-			$input = "<input type=\"$type\" id=\"{$option['id']}\" name=\"$name\" value=\"{$option['value']}\" ".(in_array($option['value'], $selected) ? "checked" : "").">{$option['label']}";
-			if($inline):
-?>
-	<label class="control-label" class="<?=$type?>-inline"><?=$input?></label>
-<?php	 	else :?>	
-	<div class="<?=$type?>">
-		<label class="control-label"><?=$input?></label>
-	</div>
-<?php
-			endif;
-		endforeach;
-?>
-</div>
-<?php
-		return ob_get_clean();
-	}
-
-	public static function ulist($list, $class = null){
-		if(!is_array($list) || count($list) == 0) return false;
-		ob_start();
-?>
-<ul class="<?=$class?>">
-	<?php foreach ($list as $item):?>
-	<li><?=$item?></li>
-	<?php endforeach;?>
-</ul>
-<?php 
-		return ob_get_clean();
-	}
-	
-	public static function saveErrorBox($errors){
-		$errors = self::ulist($errors);
-		return "<div class=\"alert alert-danger\"><p><strong>Attenzione!</strong> Sono stati riscontrati i seguenti errori:</p><p>$errors</p></div>";
-	}
-	
-	public static function saveSuccessBox(){
-		return "<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>";
-	}
-	
-	public static function editTable($list, $buttons = array(), $substitutes = null, $hidden = null){
-		ob_start();
-?>
-		<div class="table-responsive">
-			<table class="table table-condensed table-striped">
-				<thead>
-					<tr>
-					<?php foreach(array_keys(reset($list)) as $key):?>
-					<?php if(isset($hidden) && in_array($key,$hidden)) continue;?>
-						<th><?=ucfirst(str_replace("id_","",$key))?></tH>
-					<?php endforeach;?>
-						<th></th>
-					</tr>
-				<tbody>
-					<?php foreach($list as $key=>$row):?>
-					<tr id="row-<?=$row['variable'] ? 'variable' : 'fixed'?>-<?=$row['id_persona']?>">
-						<?php foreach($row as $field=>$value):?>
-							<?php if(isset($hidden) && in_array($field,$hidden)) continue;?>
-						<td><?=isset($substitutes[$key][$field]) ? $substitutes[$key][$field] : $value?></td>
-						<?php endforeach;?>
-						<td class="text-right">
-							<?php if(isset($buttons[$key])) foreach($buttons[$key] as $label=>$button):?>
-							<a class="btn btn-<?=$button['type']?> mymodal" href="<?=$button['href']?>">
-								<span class="glyphicon glyphicon-<?=$button['icon']?>"></span> <?=$label?>
-							</a>
-							<?php endforeach;?>
-						</td>
-					</tr>
-					<?php endforeach;?>
-				</tbody>
-			</table>
-		</div>
+	static function createModalSigner($idP = null){
+		$signersObj = new Signers(Connector::getInstance());
+		$signer = is_null($idP) ? $signersObj->getStub() : $signersObj->get(array('id_persona' => $idP));
 		
-<?php 	
+		$listPersone = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
+		
+		$signers = array_keys($signersObj->getAll(null,'id_persona'));
+		foreach( $signers as $id_persona){
+			if(array_key_exists($id_persona, $listPersone)&& $id_persona!=$idP)
+				unset($listPersone[$id_persona]);
+		}
+
+		ob_start();
+?>	
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel">Firmatario</h4>
+					</div>
+					<form id="firmatario" name="firmatario" method="POST">
+						<div class="modal-body">
+<?php 
+					echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($signer['id_persona']) ? $signer['id_persona'] : null);
+					echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null);
+?>
+			 			</div>
+			 			<div class="modal-footer">
+			 				<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
+			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario">Salva firmatario</button>
+			            </div>
+		            </form>
+<?php
 		return ob_get_clean();
+		}
+	
+	static function getSigners(){
+
+		$signersObj = new Signers(Connector::getInstance());
+		$signers = $signersObj->getAll(null,'id_persona');
+		
+		$metadata = self::createMetadata($signers,"all", array('id_persona' => __CLASS__.'::getNominativo', 'pkey' => 'Utils::shorten'));
+		$signers = HTMLHelper::editTable($signers, $metadata['buttons'], $metadata['substitutes']);
+		
+		$signatureObj = new Signature(Connector::getInstance());
+		$signatures = $signatureObj->getAll('sigla','id_item');
+		
+		$fixed_signers = Utils::filterList($signatures, 'variable', 0);
+		$metadata = self::createMetadata($fixed_signers,"fixed", array('id_persona' => __CLASS__.'::getNominativo', 'id_delegato'=> __CLASS__.'::getNominativo'));
+		$fixed_signers = HTMLHelper::editTable($fixed_signers, $metadata['buttons'], $metadata['substitutes'], array('id_item','variable','pkey','pkey_delegato'));
+		
+		$variable_signers = Utils::filterList($signatures, 'variable', 1);
+		$metadata = self::createMetadata($variable_signers,"variable", array('id_persona'=> __CLASS__.'::getNominativo'));
+		$variable_signers = HTMLHelper::editTable($variable_signers, $metadata['buttons'], $metadata['substitutes'], array('id_item','variable','pkey','id_delegato','pkey_delegato'));
+		
+		return array('all' => $signers, 'fixed' => $fixed_signers, 'variable' => $variable_signers);
 	}
 	
+	static function createMetadata($list, $table_suffix, $substitutes_keys){
+		$substitutes = array();
+		$buttons = array();
 	
-	private static function lineInput($type, $name, $label, $value=null, $required = false){
-		$required = $required ? "required" : null;
-		return "<input type=\"$type\" class=\"form-control\" name=\"$name\" id=\"$name\" value=\"$value\" $required/>";
+	
+		foreach($list as $k=>$signer){
+			foreach($substitutes_keys as $key=>$callback){
+				$substitutes[$k][$key] = call_user_func($callback,$signer[$key]);
+			}
+	
+			$buttons[$k] = array(
+					'Modifica'	=> array(
+							'type' => 'primary',
+							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k,
+							'icon' => 'pencil'),
+					'Elimina'	=> array(
+							'type' => 'danger',
+							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k."&delete",
+							'icon' => 'trash')
+			);
+		}
+	
+		return array('substitutes' => $substitutes, 'buttons' => $buttons);
 	}
 	
-	private static function textareaInput($name, $label, $value=null , $required = false){
-		$required = $required ? "required" : null;
-		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\" $required>$value</textarea>";
+	static function getNominativo($id){
+		return Personale::getInstance()->getPersona($id)['nome']." ".Personale::getInstance()->getPersona($id)['cognome'];
 	}
-	
-	
 }
-?> 
+?>
