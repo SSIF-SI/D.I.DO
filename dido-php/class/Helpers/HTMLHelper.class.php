@@ -5,7 +5,7 @@ class HTMLHelper{
 ?>
 <div class="form-group <?=$class?>">
 	<label class="control-label" for="<?=$name?>"><?=$label?>:</label>
-	<select class="form-control" id="<?=name?>" name="<?=$name?>">
+	<select class="form-control" id="<?=$name?>" name="<?=$name?>">
 <?php	foreach ($options as $value=>$optlabel): ?>
 		<option value="<?=$value?>" <?=$value == $selected ? "selected" : ""?>><?=$optlabel?></option>
 <?php 	endforeach;?>

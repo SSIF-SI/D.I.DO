@@ -8,12 +8,11 @@ class SignatureHelper{
 		$listPersone = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
 		
 		$signers = array_keys($signersObj->getAll(null,'id_persona'));
-/*
 		foreach( $signers as $id_persona){
-			if(array_key_exists($id_persona, $listPersone)) 
+			if(array_key_exists($id_persona, $listPersone)&& $id_persona!=$idP)
 				unset($listPersone[$id_persona]);
 		}
-	*/	
+
 		ob_start();
 ?>	
 					<div class="modal-header">
@@ -29,7 +28,7 @@ class SignatureHelper{
 			 			</div>
 			 			<div class="modal-footer">
 			 				<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-			                <button type="submit" class="btn btn-primary">Salva firmatario</button>
+			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario">Salva firmatario</button>
 			            </div>
 		            </form>
 <?php
