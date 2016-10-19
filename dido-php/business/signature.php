@@ -3,9 +3,9 @@ require_once ("../config.php");
 
 if (Utils::checkAjax ()) {
 	if (count( $_POST ) != 0) {
-		echo $_POST ["Persona"];
+		echo $_POST ["persona"];
 		echo $_POST ["pkey"];
-		die ( Utils::printr ( $_POST ) );
+		die ( print_r($_POST,1) );
 	} else {
 		$idp = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
 		die ( SignatureHelper::createModalSigner ( $idp ) );
