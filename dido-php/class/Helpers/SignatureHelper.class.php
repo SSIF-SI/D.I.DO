@@ -27,8 +27,8 @@ class SignatureHelper{
 ?>
 			 			</div>
 			 			<div class="modal-footer">
-			 				<button type="button" class="btn btn-default" data-dismiss="modal">Chiudi</button>
-			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario">Salva firmatario</button>
+			 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
+			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 			            </div>
 		            </form>
 <?php
