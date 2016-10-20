@@ -1,5 +1,4 @@
 $(document).ready(function(){
-	
 	var loading = false;
 	
 	$("a.mymodal").click(function (e){

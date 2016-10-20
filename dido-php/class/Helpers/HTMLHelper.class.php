@@ -20,10 +20,12 @@ class HTMLHelper{
 		if($type == 'hidden'):
 			echo self::lineInput($type, $name, $label, $value, $required);
 		else :
-		$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $required) : self::lineInput($type, $name, $label, $value, $required);
+			$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $required) : self::lineInput($type, $name, $label, $value, $required);
 ?>
 	<div class="form-group <?=$class?>">
+<?php 	if($type != 'hidden'):?>	
 	    <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
+<?php 	endif; ?>
 		<?=$innerInput;?> 
 	</div>		
 <?php
