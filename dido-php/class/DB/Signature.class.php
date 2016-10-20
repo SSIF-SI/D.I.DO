@@ -13,8 +13,8 @@ class Signature extends AnyDocument {
 		$fixedSigners = new FixedSigners ( Connector::getInstance () );
 		$id_fs = Utils::getListfromField($fixedSigners->getAll(),'id_persona');
 		
-		$variableSignersRoles = new VariableSignersRoles ( Connector::getInstance () );
-		$sigle = $variableSignersRoles->getRoleDescription ();
+		$signersRoles = new SignersRoles ( Connector::getInstance () );
+		$sigle = $SignersRoles->getRoleDescription ();
 		
 		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
 		$id_vs = $masterDocumentData->searchByKeys ( array_keys ( $sigle ), $id_md );

@@ -40,6 +40,58 @@ class SignatureHelper{
 		return ob_get_clean();
 	}
 	
+	static function createModalFixedSigner($idFs = null){
+			$signatureObj = new Signature(Connector::getInstance());
+			$signatures = is_null($idFs) ? $signatureObj->getAll("sigla","id_item") : $signatureObj->getBy('id_item', $idFs);
+			$signatures = Utils::filterList($signatures, 'fixed_role', 1);
+			$roleselected=reset($signatures);
+		if(is_null($idFs)){
+			$signersRolesObj=new SignersRoles(Connector::getInstance());
+			$fixedRoles=$signersRolesObj->getAll("id_sr","sigla");
+			$fixedRoles= Utils::filterList($fixedRoles, 'fixed_role', 1);
+			$signatures=Utils::getListfromField($signatures,"sigla");		
+			foreach($signatures as $id){
+				if(array_key_exists($id, $fixedRoles))
+					unset($fixedRoles[$id]);
+			}
+			$sigle=Utils::getListfromField($fixedRoles,"sigla");
+				
+		}
+		$listPersone = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
+		$listDelegati = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
+		$listDelegati[-1]="Nessuno";
+				
+		ob_start();
+		?>
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h4 class="modal-title" id="myModalLabel">Assegna Ruolo</h4>
+						</div>
+						<form id="firmatario" name="firmatario" method="POST">
+							<div class="modal-body">
+	<?php 
+								
+						if(!is_null($idFs)){
+							echo"<label for=\"sigla\">Sigla:</label><p id=\"sigla\">".$roleselected["sigla"]."</p>";
+						}else{
+							echo HTMLHelper::select('sigla', "Sigla", $sigle);
+
+						}
+							echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($roleselected["id_persona"]) ? $roleselected['id_persona'] : null);
+							echo HTMLHelper::select('id_delegato', "Delegato",$listDelegati, isset($roleselected["id_delegato"]) ? $roleselected['id_delegato'] : null);
+
+						
+	?>
+				 			</div>
+				 			<div class="modal-footer">
+				 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
+				                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
+				            </div>
+			            </form>
+	<?php
+			return ob_get_clean();
+		}
+	
 	static function getSigners(){
 
 		$signersObj = new Signers(Connector::getInstance());
@@ -88,7 +140,7 @@ class SignatureHelper{
 	}
 	
 	static function getNominativo($id){
-		return Personale::getInstance()->getPersona($id)['nome']." ".Personale::getInstance()->getPersona($id)['cognome'];
+		return Personale::getInstance()->getPersona($id)['cognome']." ".Personale::getInstance()->getPersona($id)['nome'];
 	}
 }
 ?>

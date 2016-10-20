@@ -8,7 +8,13 @@ if (Utils::checkAjax ()) {
 		die ( print_r($_POST,1) );
 	} else {
 		$idp = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
-		die ( SignatureHelper::createModalSigner ( $idp ) );
+		$list=isset ( $_GET ['list'] ) ? $_GET ['list'] : 'all';
+		if($list=='all'){
+			die ( SignatureHelper::createModalSigner ( $idp ) );
+		}elseif ($list=='fixed'){
+			die ( SignatureHelper::createModalFixedSigner ( $idp ) );
+	}
+		
 	}
 }
 

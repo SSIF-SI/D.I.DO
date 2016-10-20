@@ -1,7 +1,7 @@
 <?php
-class VariableSignersRoles extends Crud {
+class SignersRoles extends Crud {
 	
-	protected $TABLE = "variable_signers_roles";
+	protected $TABLE = "signers_roles";
 	protected $SQL_GET_PROJECTIONS 		= "SELECT %s FROM %s";
 	
 	public function __construct($connInstance) {
