@@ -19,7 +19,6 @@ if (Utils::checkAjax ()) {
 }
 
 $signers = SignatureHelper::getSigners ();
-$newsigner = SignatureHelper::createModalSigner ();
 
 $pageScripts = array (
 		"signature.js" 

@@ -15,29 +15,37 @@ $(document).ready(function(){
 			span.attr('class', newClass);
 			
 			// fa fa-cog fa-spin fa-3x fa-fw
-			$.get( href, function( result ) {
-				span.attr('class', oldClass);
-				
-				// Recupero il contenuto della finestra modale tramite GET
-				// e lo metto nel div.modal-content, quindi mostro la finestra
-				$("#myModal .modal-content").html(result);
-				$("#myModal").modal();
-				
-				loading = false;
-				
-				// Intercetto la sottomissione della finestra modale e continuo a fare tutto
-				// via AJAX passando in POST i parametri
-				$("form").submit(function(e){
-					e.preventDefault();
-					//console.log("QUI");
-					$.ajax({
-						type: "POST", 
-						data: { id_persona: $('#id_persona').val(), pkey: $('#pkey').val() }, 
-						success: function(result){ 
-							alert(result);
-						}
+			$.ajax({
+				url: href, 
+				success: function( result ) {
+					span.attr('class', oldClass);
+					
+					// Recupero il contenuto della finestra modale tramite GET
+					// e lo metto nel div.modal-content, quindi mostro la finestra
+					$("#myModal .modal-content").html(result);
+					$("#myModal").modal();
+					
+					loading = false;
+					
+					// Intercetto la sottomissione della finestra modale e continuo a fare tutto
+					// via AJAX passando in POST i parametri
+					$("form").submit(function(e){
+						e.preventDefault();
+						//console.log("QUI");
+						$.ajax({
+							type: "POST", 
+							data: { id_persona: $('#id_persona').val(), pkey: $('#pkey').val() }, 
+							success: function(result){ 
+								alert(result);
+							}
+						});
 					});
-				});
+				},
+				error: function(){
+					loading = false;
+					span.attr('class', oldClass);
+					alert("Errore imprevisto");
+				}
 			});
 		}
 	});

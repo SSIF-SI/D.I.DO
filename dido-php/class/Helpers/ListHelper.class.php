@@ -25,5 +25,9 @@ class ListHelper{
 		}
 		return Utils::getListfromField($persone,'label');
 	}
+	
+	static function listPersone(){
+		return array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
+	}
 }
 ?>
