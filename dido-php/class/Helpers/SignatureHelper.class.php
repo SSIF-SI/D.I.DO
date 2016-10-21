@@ -40,54 +40,78 @@ class SignatureHelper{
 		return ob_get_clean();
 	}
 	
-	static function createModalFixedSigner($idFs = null){
-			$signatureObj = new Signature(Connector::getInstance());
-			$signatures = is_null($idFs) ? $signatureObj->getAll("sigla","id_item") : $signatureObj->getBy('id_item', $idFs);
-			$signatures = Utils::filterList($signatures, 'fixed_role', 1);
-			$roleselected=reset($signatures);
-		if(is_null($idFs)){
-			$signersRolesObj=new SignersRoles(Connector::getInstance());
-			$fixedRoles=$signersRolesObj->getAll("id_sr","sigla");
-			$fixedRoles= Utils::filterList($fixedRoles, 'fixed_role', 1);
-			$signatures=Utils::getListfromField($signatures,"sigla");		
-			foreach($signatures as $id){
-				if(array_key_exists($id, $fixedRoles))
-					unset($fixedRoles[$id]);
-			}
-			$sigle=Utils::getListfromField($fixedRoles,"sigla");
-				
-		}
-		$listPersone = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
-		$listDelegati = array_map(function($id){ return self::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
-		$listDelegati[-1]="Nessuno";
-				
+	static function createModalFixedSigner($id_fs = null){
+		$FixedSigner = new FixedSigners(Connector::getInstance());
+		$fixed_signer = is_null($id_fs) ? $FixedSigner->getStub() : $FixedSigner->get(array('id_fs' =>$id_fs));
+		
+		$signersRoles = new SignersRoles(Connector::getInstance());
+		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',1),'descrizione');
+		$assignable_roles = array_diff_key($signer_roles,Utils::getListfromField($FixedSigner->getAll(),null,'id_sr'));
+		
+		$listPersone = ListHelper::listPersone();
+		$listDelegati = array(null => "--Nessuno--") + $listPersone;
+		
 		ob_start();
-		?>
+?>
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							<h4 class="modal-title" id="myModalLabel">Assegna Ruolo</h4>
+							<h4 class="modal-title" id="myModalLabel">Firmatario fisso</h4>
 						</div>
 						<form id="firmatario" name="firmatario" method="POST">
 							<div class="modal-body">
-	<?php 
-								
-						if(!is_null($idFs)){
-							echo"<label for=\"sigla\">Sigla:</label><p id=\"sigla\">".$roleselected["sigla"]."</p>";
-						}else{
-							echo HTMLHelper::select('sigla', "Sigla", $sigle);
-
-						}
-							echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($roleselected["id_persona"]) ? $roleselected['id_persona'] : null);
-							echo HTMLHelper::select('id_delegato', "Delegato",$listDelegati, isset($roleselected["id_delegato"]) ? $roleselected['id_delegato'] : null);
-
-						
-	?>
+<?php
+							if(!is_null($id_fs)){
+								echo"<label for=\"ruolo\">Ruolo firmatario:</label><p id=\"ruolo\">".$signer_roles[$fixed_signer["id_sr"]]."</p>";
+							}else{
+								echo HTMLHelper::select("id_sr", "Ruolo firmatario", $assignable_roles);		
+							}
+							echo HTMLHelper::select("id_persona", "Persona", $listPersone,$fixed_signer['id_persona']);		
+							echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
+?>
 				 			</div>
 				 			<div class="modal-footer">
 				 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
 				                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 				            </div>
 			            </form>
+<?php
+		return ob_get_clean();
+	}
+	
+	static function createModalVariableSigner($id_fs = null){
+		$FixedSigner = new FixedSigners(Connector::getInstance());
+		$fixed_signer = is_null($id_fs) ? $FixedSigner->getStub() : $FixedSigner->get(array('id_fs' =>$id_fs));
+	
+		$signersRoles = new SignersRoles(Connector::getInstance());
+		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',1),'descrizione');
+		$assignable_roles = array_diff_key($signer_roles,Utils::getListfromField($FixedSigner->getAll(),null,'id_sr'));
+	
+		$listPersone = ListHelper::listPersone();
+		$listDelegati = array(null => "--Nessuno--") + $listPersone;
+	
+		ob_start();
+		?>
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h4 class="modal-title" id="myModalLabel">Firmatario fisso</h4>
+							</div>
+							<form id="firmatario" name="firmatario" method="POST">
+								<div class="modal-body">
+	<?php
+								if(!is_null($id_fs)){
+									echo"<label for=\"ruolo\">Ruolo firmatario:</label><p id=\"ruolo\">".$signer_roles[$fixed_signer["id_sr"]]."</p>";
+								}else{
+									echo HTMLHelper::select("id_sr", "Ruolo firmatario", $assignable_roles);		
+								}
+								echo HTMLHelper::select("id_persona", "Persona", $listPersone,$fixed_signer['id_persona']);		
+								echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
+	?>
+					 			</div>
+					 			<div class="modal-footer">
+					 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
+					                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
+					            </div>
+				            </form>
 	<?php
 			return ob_get_clean();
 		}
@@ -105,11 +129,11 @@ class SignatureHelper{
 		
 		$fixed_signers = Utils::filterList($signatures, 'fixed_role', 1);
 		$metadata = self::createMetadata($fixed_signers,"fixed", array('id_persona' => 'PersonaleHelper::getNominativo', 'id_delegato'=> 'PersonaleHelper::getNominativo'));
-		$fixed_signers = HTMLHelper::editTable($fixed_signers, $metadata['buttons'], $metadata['substitutes'], array('id_item','fixed_role','pkey','pkey_delegato'));
+		$fixed_signers = HTMLHelper::editTable($fixed_signers, $metadata['buttons'], $metadata['substitutes'], array('id_item','fixed_role','pkey','pkey_delegato','sigla'));
 		
 		$variable_signers = Utils::filterList($signatures, 'fixed_role', 0);
 		$metadata = self::createMetadata($variable_signers,"variable", array('id_persona'=> 'PersonaleHelper::getNominativo'));
-		$variable_signers = HTMLHelper::editTable($variable_signers, $metadata['buttons'], $metadata['substitutes'], array('id_item','fixed_role','pkey','id_delegato','pkey_delegato'));
+		$variable_signers = HTMLHelper::editTable($variable_signers, $metadata['buttons'], $metadata['substitutes'], array('id_item','fixed_role','pkey','id_delegato','pkey_delegato','sigla'));
 		
 		return array('all' => $signers, 'fixed' => $fixed_signers, 'variable' => $variable_signers);
 	}
@@ -139,8 +163,5 @@ class SignatureHelper{
 		return array('substitutes' => $substitutes, 'buttons' => $buttons);
 	}
 	
-	static function getNominativo($id){
-		return Personale::getInstance()->getPersona($id)['cognome']." ".Personale::getInstance()->getPersona($id)['nome'];
-	}
 }
 ?>
