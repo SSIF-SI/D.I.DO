@@ -48,7 +48,7 @@ class SignatureHelper{
 		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',1),'descrizione');
 		$assignable_roles = array_diff_key($signer_roles,Utils::getListfromField($FixedSigner->getAll(),null,'id_sr'));
 		
-		$listPersone = ListHelper::listPersone();
+		$listPersone = ListHelper::listSigners();
 		$listDelegati = array(null => "--Nessuno--") + $listPersone;
 		
 		ob_start();
@@ -86,7 +86,7 @@ class SignatureHelper{
 		$signersRoles = new SignersRoles(Connector::getInstance());
 		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',0),'descrizione');
 		
-		$listPersone = ListHelper::listPersone();
+		$listPersone = ListHelper::listSigners();
 		
 		ob_start();
 		?>

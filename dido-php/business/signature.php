@@ -5,9 +5,7 @@ if (Utils::checkAjax ()) {
 	if (count( $_POST ) != 0) {
 		$classname= $_GET['list'];
 		$dbconnector=new $classname(Connector::getInstance());
-		die(Utils::printr($dbconnector->getPk()));
-		Utils::printr($dbconnector->save($_POST, $dbconnector->getPk()));
-		die();
+		die(json_encode($dbconnector->save($_POST)));
 	} else {
 		$id = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
 		$list=isset ( $_GET ['list'] ) ? $_GET ['list'] : null;

@@ -18,6 +18,7 @@ $(document).ready(function(){
 			$.ajax({
 				url: href, 
 				success: function( result ) {
+					loading = false;
 					span.attr('class', oldClass);
 					
 					// Recupero il contenuto della finestra modale tramite GET
@@ -25,28 +26,40 @@ $(document).ready(function(){
 					$("#myModal .modal-content").html(result);
 					$("#myModal").modal();
 					
-					loading = false;
+					var modal_span = $('#myModal button[type="submit"]').children("span");
+					var modal_class = modal_span.attr('class');
 					
 					// Intercetto la sottomissione della finestra modale e continuo a fare tutto
 					// via AJAX passando in POST i parametri
 					$("form").submit(function(e){
-						e.preventDefault();
-						//console.log("QUI");
-						
-//						$('form input,form select,form textarea').each(
-//						    function(index){  
-//						        var input = $(this);
-//						        alert('Type: ' + input.attr('type') + '\nName: ' + input.attr('name') + '\nValue: ' + input.val());
-//						    }
-//						);
-						$.ajax({
-							url: href, 
-							type: "POST", 
-							data: $(this).serializeArray(), 
-							success: function(result){ 
-								alert(result);
-							}
-						});
+						if(!loading){
+							e.preventDefault();
+							loading = true;
+							modal_span.attr('class', newClass);
+							
+							
+							$.ajax({
+								url: href, 
+								type: "POST", 
+								data: $(this).serializeArray(), 
+								success: function(result){ 
+									loading = false;
+									modal_span.attr('class', modal_class);
+									
+									if(result.errors){
+										alert("Attenzione, salvataggio non riuscito.\n"+result.errors)
+									} else {
+										alert("Dati salvati con successo!");
+										location.reload();
+									}
+								},
+								error: function(){
+									loading = false;
+									modal_span.attr('class', modal_class);
+									alert("Errore imprevisto");
+								}
+							});
+						}
 					});
 				},
 				error: function(){
