@@ -7,14 +7,19 @@ if (Utils::checkAjax ()) {
 		echo $_POST ["pkey"];
 		die ( print_r($_POST,1) );
 	} else {
-		$idp = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
+		$id = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
 		$list=isset ( $_GET ['list'] ) ? $_GET ['list'] : 'all';
-		if($list=='all'){
-			die ( SignatureHelper::createModalSigner ( $idp ) );
-		}elseif ($list=='fixed'){
-			die ( SignatureHelper::createModalFixedSigner ( $idp ) );
-	}
-		
+		switch($list){
+			case 'all':
+				die ( SignatureHelper::createModalSigner ( $id ) );
+				break;
+			case 'fixed':
+				die ( SignatureHelper::createModalFixedSigner ( $id ) );
+				break;
+			case 'variable':
+				die ( SignatureHelper::createModalVariableSigner ( $id ) );
+				break;
+		}
 	}
 }
 

@@ -79,7 +79,7 @@ class HTMLHelper{
 		return "<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>";
 	}
 	
-	public static function editTable($list, $buttons = array(), $substitutes = null, $hidden = null){
+	public static function editTable($list, $buttons = array(), $substitutes = null, $key_replace = null, $hidden = null){
 		ob_start();
 ?>
 		<div class="table-responsive">
@@ -88,7 +88,7 @@ class HTMLHelper{
 					<tr>
 					<?php foreach(array_keys(reset($list)) as $key):?>
 					<?php if(isset($hidden) && in_array($key,$hidden)) continue;?>
-						<th><?=ucfirst(str_replace("id_","",$key))?></tH>
+						<th><?=isset($key_replace[$key]) ? $key_replace[$key] : ucfirst(str_replace("id_","",$key))?></tH>
 					<?php endforeach;?>
 						<th></th>
 					</tr>
