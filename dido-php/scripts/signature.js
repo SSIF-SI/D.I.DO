@@ -86,7 +86,6 @@ $(document).ready(function(){
 				success: function(result){ 
 					loading = false;
 					span.attr('class', oldClass);
-					
 					if(result.errors){
 						alert("Attenzione, eliminazione non riuscita.\n"+result.errors)
 					} else {

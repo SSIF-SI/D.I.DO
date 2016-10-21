@@ -81,13 +81,14 @@ class HTMLHelper{
 	
 	public static function editTable($list, $buttons = array(), $substitutes = null, $key_replace = null, $hidden = null){
 		ob_start();
-?>
+
+		if(reset($list)){?>
 		<div class="table-responsive">
 			<table class="table table-condensed table-striped">
 				<thead>
 					<tr>
-					<?php foreach(array_keys(reset($list)) as $key):?>
-					<?php if(isset($hidden) && in_array($key,$hidden)) continue;?>
+					<?php 	foreach(array_keys(reset($list)) as $key):
+						if(isset($hidden) && in_array($key,$hidden)) continue;?>
 						<th><?=isset($key_replace[$key]) ? $key_replace[$key] : ucfirst(str_replace("id_","",$key))?></tH>
 					<?php endforeach;?>
 						<th></th>
@@ -108,8 +109,10 @@ class HTMLHelper{
 						</td>
 					</tr>
 					<?php endforeach;?>
+					
 				</tbody>
 			</table>
+			<?php }else{?> <div class="alert alert-warning">Tabella vuota</div><?php }?>
 		</div>
 		
 <?php 	
