@@ -32,8 +32,10 @@ class ListHelper{
 	
 	static function listSigners(){
 		$signersObj=new Signers(Connector::getInstance());
-		$signers=$signersObj->getAll("cognome,nome","id_persona");
-		return array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField($signers,'id_persona'));
+		$signers=$signersObj->getAll(null,"id_persona");
+		$signers=array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField($signers,'id_persona'));
+		asort($signers);
+		return $signers;
 	}
 }
 ?>
