@@ -19,16 +19,23 @@ class SignatureHelper{
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 						<h4 class="modal-title" id="myModalLabel">Firmatario</h4>
 					</div>
+<?php	if(is_null($idP) && count($listPersone) == 0): ?> 
+						<div class="modal-body">
+							<div class="alert alert-danger">
+								Non è possibile aggiungere ulteriori firmatari
+							</div>
+						</div>
+<?php 	else: ?>					
 					<form id="firmatario" name="firmatario" method="POST">
 						<div class="modal-body">
 <?php 
-		if(is_null($idP)){				
-			echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($signer['id_persona']) ? $signer['id_persona'] : null);
-		} else {
-			echo"<label for=\"persona\">Persona:</label><p id=\"persona\">".PersonaleHelper::getNominativo($idP)."</p>";
-			echo HTMLHelper::input('hidden', "id_persona", null, $idP);
-		}
- 		echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null);
+			if(is_null($idP)){				
+				echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($signer['id_persona']) ? $signer['id_persona'] : null);
+			} else {
+				echo"<label for=\"persona\">Persona:</label><p id=\"persona\">".PersonaleHelper::getNominativo($idP)."</p>";
+				echo HTMLHelper::input('hidden', "id_persona", null, $idP);
+			}
+	 		echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null,null,true);
 ?>
 			 			</div>
 			 			<div class="modal-footer">
@@ -36,7 +43,7 @@ class SignatureHelper{
 			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 			            </div>
 		            </form>
-<?php
+<?php	endif;
 		return ob_get_clean();
 	}
 	
@@ -57,25 +64,32 @@ class SignatureHelper{
 							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 							<h4 class="modal-title" id="myModalLabel">Firmatario fisso</h4>
 						</div>
+<?php	if(is_null($id_fs) && count($assignable_roles) == 0): ?> 
+						<div class="modal-body">
+							<div class="alert alert-danger">
+								Non è possibile aggiungere ulteriori firmatari fissi
+							</div>
+						</div>
+<?php 	else: ?>
 						<form id="firmatario" name="firmatario" method="POST">
 							<div class="modal-body">
-<?php
-		if(!is_null($id_fs)){
-			echo"<label for=\"ruolo\">Ruolo firmatario:</label><p id=\"ruolo\">".$signer_roles[$fixed_signer["id_sr"]]."</p>";
-			echo HTMLHelper::input('hidden', "id_fs", null, $id_fs);
-		}else{
-			echo HTMLHelper::select("id_sr", "Ruolo", $assignable_roles);		
-		}
-		echo HTMLHelper::select("id_persona", "Persona", $listPersone,$fixed_signer['id_persona']);		
-		echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
+<?php 
+			if(!is_null($id_fs)){
+				echo"<label for=\"ruolo\">Ruolo firmatario:</label><p id=\"ruolo\">".$signer_roles[$fixed_signer["id_sr"]]."</p>";
+				echo HTMLHelper::input('hidden', "id_fs", null, $id_fs);
+			}else{
+				echo HTMLHelper::select("id_sr", "Ruolo", $assignable_roles);		
+			}
+			echo HTMLHelper::select("id_persona", "Persona", $listPersone,$fixed_signer['id_persona']);		
+			echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
 ?>
 				 			</div>
 				 			<div class="modal-footer">
 				 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
-				                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
+				                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 				            </div>
 			            </form>
-<?php
+<?php 	endif;
 		return ob_get_clean();
 	}
 	
@@ -104,7 +118,7 @@ class SignatureHelper{
 					 			</div>
 					 			<div class="modal-footer">
 					 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
-					                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
+					                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 					            </div>
 				            </form>
 	<?php
@@ -147,11 +161,13 @@ class SignatureHelper{
 					'Modifica'	=> array(
 							'type' => 'primary',
 							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k,
-							'icon' => 'pencil'),
+							'icon' => 'pencil',
+							'mymodal edit'),
 					'Elimina'	=> array(
 							'type' => 'danger',
 							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k."&delete",
-							'icon' => 'trash')
+							'icon' => 'trash',
+							'mymodal delete')
 			);
 		}
 	
