@@ -97,7 +97,7 @@ class SignatureHelper{
 							<form id="firmatario" name="firmatario" method="POST">
 								<div class="modal-body">
 	<?php									
-								echo HTMLHelper::input('hidden', "id_vs", null, $id_vs);
+								if(!is_null($id_vs)) echo HTMLHelper::input('hidden', "id_vs", null, $id_vs);
 								echo HTMLHelper::select("id_sr", "Ruolo", $signer_roles,$variable_signer['id_sr']);		
 								echo HTMLHelper::select("id_persona", "Persona", $listPersone,$variable_signer['id_persona']);		
 	?>
