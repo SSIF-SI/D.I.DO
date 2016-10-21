@@ -96,7 +96,8 @@ class SignatureHelper{
 							</div>
 							<form id="firmatario" name="firmatario" method="POST">
 								<div class="modal-body">
-	<?php
+	<?php									
+								echo HTMLHelper::input('hidden', "id_vs", null, $id_vs);
 								echo HTMLHelper::select("id_sr", "Ruolo", $signer_roles,$variable_signer['id_sr']);		
 								echo HTMLHelper::select("id_persona", "Persona", $listPersone,$variable_signer['id_persona']);		
 	?>
@@ -115,18 +116,18 @@ class SignatureHelper{
 		$signersObj = new Signers(Connector::getInstance());
 		$signers = $signersObj->getAll(null,'id_persona');
 		
-		$metadata = self::createMetadata($signers,"all", array('id_persona' => 'PersonaleHelper::getNominativo', 'pkey' => 'Utils::shorten'));
+		$metadata = self::createMetadata($signers,"Signers", array('id_persona' => 'PersonaleHelper::getNominativo', 'pkey' => 'Utils::shorten'));
 		$signers = HTMLHelper::editTable($signers, $metadata['buttons'], $metadata['substitutes']);
 		
 		$signatureObj = new Signature(Connector::getInstance());
 		$signatures = $signatureObj->getAll('sigla','id_item');
 		
 		$fixed_signers = Utils::filterList($signatures, 'fixed_role', 1);
-		$metadata = self::createMetadata($fixed_signers,"fixed", array('id_persona' => 'PersonaleHelper::getNominativo', 'id_delegato'=> 'PersonaleHelper::getNominativo'));
+		$metadata = self::createMetadata($fixed_signers,"FixedSigners", array('id_persona' => 'PersonaleHelper::getNominativo', 'id_delegato'=> 'PersonaleHelper::getNominativo'));
 		$fixed_signers = HTMLHelper::editTable($fixed_signers, $metadata['buttons'], $metadata['substitutes'], array('descrizione'=>'Ruolo'), array('id_item','fixed_role','pkey','pkey_delegato','sigla'));
 		
 		$variable_signers = Utils::filterList($signatures, 'fixed_role', 0);
-		$metadata = self::createMetadata($variable_signers,"variable", array('id_persona'=> 'PersonaleHelper::getNominativo'));
+		$metadata = self::createMetadata($variable_signers,"VariableSigners", array('id_persona'=> 'PersonaleHelper::getNominativo'));
 		$variable_signers = HTMLHelper::editTable($variable_signers, $metadata['buttons'], $metadata['substitutes'], array('descrizione'=>'Ruolo'), array('id_item','fixed_role','pkey','id_delegato','pkey_delegato','sigla'));
 		
 		return array('all' => $signers, 'fixed' => $fixed_signers, 'variable' => $variable_signers);

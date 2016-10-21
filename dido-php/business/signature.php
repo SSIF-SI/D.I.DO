@@ -3,20 +3,22 @@ require_once ("../config.php");
 
 if (Utils::checkAjax ()) {
 	if (count( $_POST ) != 0) {
-		echo $_POST ["persona"];
-		echo $_POST ["pkey"];
-		die ( print_r($_POST,1) );
+		$classname= $_GET['list'];
+		$dbconnector=new $classname(Connector::getInstance());
+		die(Utils::printr($dbconnector->getPk()));
+		Utils::printr($dbconnector->save($_POST, $dbconnector->getPk()));
+		die();
 	} else {
 		$id = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
-		$list=isset ( $_GET ['list'] ) ? $_GET ['list'] : 'all';
+		$list=isset ( $_GET ['list'] ) ? $_GET ['list'] : null;
 		switch($list){
-			case 'all':
+			case 'Signers':
 				die ( SignatureHelper::createModalSigner ( $id ) );
 				break;
-			case 'fixed':
+			case 'FixedSigners':
 				die ( SignatureHelper::createModalFixedSigner ( $id ) );
 				break;
-			case 'variable':
+			case 'VariableSigners':
 				die ( SignatureHelper::createModalVariableSigner ( $id ) );
 				break;
 		}

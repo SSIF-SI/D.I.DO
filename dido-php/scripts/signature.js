@@ -32,9 +32,17 @@ $(document).ready(function(){
 					$("form").submit(function(e){
 						e.preventDefault();
 						//console.log("QUI");
+						
+//						$('form input,form select,form textarea').each(
+//						    function(index){  
+//						        var input = $(this);
+//						        alert('Type: ' + input.attr('type') + '\nName: ' + input.attr('name') + '\nValue: ' + input.val());
+//						    }
+//						);
 						$.ajax({
+							url: href, 
 							type: "POST", 
-							data: { id_persona: $('#id_persona').val(), pkey: $('#pkey').val() }, 
+							data: $(this).serializeArray(), 
 							success: function(result){ 
 								alert(result);
 							}

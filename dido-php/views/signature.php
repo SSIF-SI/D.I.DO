@@ -22,22 +22,21 @@
 	                                <div class="tab-pane active" id="elenco-firmatari">
 	                                    <h4>Elenco Firmatari</h4>
 	                                    <div>
-	                                  	<!--<a class="btn btn-primary" href="<?=BUSINESS_HTTP_PATH."editSigner.php"?>"><span class="glyphicon glyphicon-plus"></span> Nuovo firmatario</a> -->
-                                           	<a class="btn btn-primary mymodal" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=all"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Nuovo Firmatario</a>
+                                           	<a class="btn btn-primary mymodal" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=Signers"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Nuovo Firmatario</a>
 	                                    </div>
 				                    	<?=$signers['all']?>
 				                     </div>
 					                <div class="tab-pane" id="firmatari-fissi">
 	                                    <h4>Firmatari fissi</h4>
 	                                    <div>
-				                    		<a class="btn btn-primary mymodal" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=fixed"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario fisso</a>
+				                    		<a class="btn btn-primary mymodal" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=FixedSigners"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario fisso</a>
 				                    	</div>
 				                    	<?=$signers['fixed']?>
 	                                </div>
 					                <div class="tab-pane" id="firmatari-variabili">
 	                                    <h4>Firmatari variabili</h4>
 	                                    <div>
-				                    		<a class="btn btn-primary mymodal" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=variable"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario variabile</a>
+				                    		<a class="btn btn-primary mymodal" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=VariableSigners"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario variabile</a>
 				                    	</div>
 					                	<?=$signers['variable']?>
 	                                </div>
