@@ -29,5 +29,11 @@ class ListHelper{
 	static function listPersone(){
 		return array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
 	}
+	
+	static function listSigners(){
+		$signersObj=new Signers(Connector::getInstance());
+		$signers=$signersObj->getAll("cognome,nome","id_persona");
+		return array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField($signers,'id_persona'));
+	}
 }
 ?>
