@@ -2,21 +2,34 @@
 require_once ("../config.php");
 
 if (Utils::checkAjax ()) {
-	if (count( $_POST ) != 0) {
-		$classname= $_GET['list'];
-		$dbconnector=new $classname(Connector::getInstance());
-		die(json_encode($dbconnector->save($_POST)));
+	$classname = $_GET ['list'];
+	$dbconnector = new $classname ( Connector::getInstance () );
+	
+	$delete = isset ( $_GET ['delete'] ) ? true : false;
+
+	if ($delete){
+		unset($_GET['list'],$_GET['delete']);
+		die ( json_encode ( $dbconnector->delete ( $_GET ) ) );
+	}
+	
+	if (count ( $_POST ) != 0) {
+		
+		die ( json_encode ( $dbconnector->save ( $_POST ) ) );
+	
 	} else {
-		$id = isset ( $_GET ['id'] ) ? $_GET ['id'] : null;
-		$list=isset ( $_GET ['list'] ) ? $_GET ['list'] : null;
-		switch($list){
-			case 'Signers':
+		$list = isset ( $_GET ['list'] ) ? $_GET ['list'] : null;
+		unset($_GET['list']);
+		$id = reset($_GET);
+		if(!$id)
+			$id=null;
+		switch ($list) {
+			case 'Signers' :
 				die ( SignatureHelper::createModalSigner ( $id ) );
 				break;
-			case 'FixedSigners':
+			case 'FixedSigners' :
 				die ( SignatureHelper::createModalFixedSigner ( $id ) );
 				break;
-			case 'VariableSigners':
+			case 'VariableSigners' :
 				die ( SignatureHelper::createModalVariableSigner ( $id ) );
 				break;
 		}

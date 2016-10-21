@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	var loading = false;
 	
-	$("a.mymodal").click(function (e){
+	$("a.mymodal.edit").click(function (e){
 		e.preventDefault();
 		var href = $(this).attr('href');
 		
@@ -61,6 +61,38 @@ $(document).ready(function(){
 							});
 						}
 					});
+				},
+				error: function(){
+					loading = false;
+					span.attr('class', oldClass);
+					alert("Errore imprevisto");
+				}
+			});
+		}
+	});
+	$("a.mymodal.delete").click(function (e){
+		e.preventDefault();
+		var href = $(this).attr('href');
+		
+		var span = $(this).children("span");
+		var oldClass = span.attr('class');
+		var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
+		
+		if(!loading){
+			loading = true;
+			span.attr('class', newClass);
+			$.ajax({
+				url: href, 
+				success: function(result){ 
+					loading = false;
+					span.attr('class', oldClass);
+					
+					if(result.errors){
+						alert("Attenzione, eliminazione non riuscita.\n"+result.errors)
+					} else {
+						alert("Dati eliminati con successo!");
+						location.reload();
+					}
 				},
 				error: function(){
 					loading = false;

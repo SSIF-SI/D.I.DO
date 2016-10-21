@@ -130,24 +130,24 @@ class SignatureHelper{
 		$signersObj = new Signers(Connector::getInstance());
 		$signers = $signersObj->getAll(null,'id_persona');
 		
-		$metadata = self::createMetadata($signers,"Signers", array('id_persona' => 'PersonaleHelper::getNominativo', 'pkey' => 'Utils::shorten'));
+		$metadata = self::createMetadata($signers,"Signers",'id_persona', array('id_persona' => 'PersonaleHelper::getNominativo', 'pkey' => 'Utils::shorten'));
 		$signers = HTMLHelper::editTable($signers, $metadata['buttons'], $metadata['substitutes']);
 		
 		$signatureObj = new Signature(Connector::getInstance());
 		$signatures = $signatureObj->getAll('sigla','id_item');
 		
 		$fixed_signers = Utils::filterList($signatures, 'fixed_role', 1);
-		$metadata = self::createMetadata($fixed_signers,"FixedSigners", array('id_persona' => 'PersonaleHelper::getNominativo', 'id_delegato'=> 'PersonaleHelper::getNominativo'));
+		$metadata = self::createMetadata($fixed_signers,"FixedSigners",'id_fs', array('id_persona' => 'PersonaleHelper::getNominativo', 'id_delegato'=> 'PersonaleHelper::getNominativo'));
 		$fixed_signers = HTMLHelper::editTable($fixed_signers, $metadata['buttons'], $metadata['substitutes'], array('descrizione'=>'Ruolo'), array('id_item','fixed_role','pkey','pkey_delegato','sigla'));
 		
 		$variable_signers = Utils::filterList($signatures, 'fixed_role', 0);
-		$metadata = self::createMetadata($variable_signers,"VariableSigners", array('id_persona'=> 'PersonaleHelper::getNominativo'));
+		$metadata = self::createMetadata($variable_signers,"VariableSigners","id_vs", array('id_persona'=> 'PersonaleHelper::getNominativo'));
 		$variable_signers = HTMLHelper::editTable($variable_signers, $metadata['buttons'], $metadata['substitutes'], array('descrizione'=>'Ruolo'), array('id_item','fixed_role','pkey','id_delegato','pkey_delegato','sigla'));
 		
 		return array('all' => $signers, 'fixed' => $fixed_signers, 'variable' => $variable_signers);
 	}
 	
-	static function createMetadata($list, $table_suffix, $substitutes_keys){
+	static function createMetadata($list, $table_suffix,$idname, $substitutes_keys){
 		$substitutes = array();
 		$buttons = array();
 	
@@ -160,14 +160,14 @@ class SignatureHelper{
 			$buttons[$k] = array(
 					'Modifica'	=> array(
 							'type' => 'primary',
-							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k,
+							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&$idname=".$k,
 							'icon' => 'pencil',
-							'mymodal edit'),
+							'class'=> 'mymodal edit'),
 					'Elimina'	=> array(
 							'type' => 'danger',
-							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&id=".$k."&delete",
+							'href' => BUSINESS_HTTP_PATH."signature.php?list=$table_suffix&$idname=".$k."&delete",
 							'icon' => 'trash',
-							'mymodal delete')
+							'class'=> 'mymodal delete')
 			);
 		}
 	

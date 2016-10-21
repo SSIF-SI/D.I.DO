@@ -101,7 +101,7 @@ class HTMLHelper{
 						<?php endforeach;?>
 						<td class="text-right">
 							<?php if(isset($buttons[$key])) foreach($buttons[$key] as $label=>$button):?>
-							<a class="btn btn-<?=$button['type']?> mymodal" href="<?=$button['href']?>">
+							<a class="btn btn-<?=$button['type']?> <?=$button['class']?>" href="<?=$button['href']?>">
 								<span class="fa fa-<?=$button['icon']?> fa-1x fa-fw"></span> <?=$label?>
 							</a>
 							<?php endforeach;?>
