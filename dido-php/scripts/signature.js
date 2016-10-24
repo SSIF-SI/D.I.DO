@@ -1,6 +1,15 @@
 $(document).ready(function(){
 	var loading = false;
 	
+	if(location.hash) {
+		$('.nav-tabs a[href="' + location.hash + '"]').tab('show');
+    }
+	
+	$(document.body).on("click", "a[data-toggle]", function(event) {
+        location.hash = this.getAttribute("href");
+    });
+    
+    
 	$("a.mymodal.edit").click(function (e){
 		e.preventDefault();
 		var href = $(this).attr('href');
@@ -24,7 +33,9 @@ $(document).ready(function(){
 					// Recupero il contenuto della finestra modale tramite GET
 					// e lo metto nel div.modal-content, quindi mostro la finestra
 					$("#myModal .modal-content").html(result);
-					$("#myModal").modal();
+					$("#myModal").modal({
+						backdrop: 'static'
+					});
 					
 					var modal_span = $('#myModal button[type="submit"]').children("span");
 					var modal_class = modal_span.attr('class');
@@ -41,15 +52,16 @@ $(document).ready(function(){
 							$.ajax({
 								url: href, 
 								type: "POST", 
-								data: $(this).serializeArray(), 
+								dataType: "json",
+					            data: $(this).serializeArray(), 
 								success: function(result){ 
 									loading = false;
 									modal_span.attr('class', modal_class);
-									
 									if(result.errors){
-										alert("Attenzione, salvataggio non riuscito.\n"+result.errors)
+										alert("Attenzione, salvataggio non riuscito.\n\nMessaggio di errore:\n"+result.errors)
 									} else {
 										alert("Dati salvati con successo!");
+										$("#myModal").modal('hide');
 										location.reload();
 									}
 								},
@@ -79,26 +91,30 @@ $(document).ready(function(){
 		var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
 		
 		if(!loading){
-			loading = true;
-			span.attr('class', newClass);
-			$.ajax({
-				url: href, 
-				success: function(result){ 
-					loading = false;
-					span.attr('class', oldClass);
-					if(result.errors){
-						alert("Attenzione, eliminazione non riuscita.\n"+result.errors)
-					} else {
-						alert("Dati eliminati con successo!");
-						location.reload();
+			if(confirm("Sei sicuro ?")){
+				loading = true;
+				span.attr('class', newClass);
+				$.ajax({
+					url: href, 
+					dataType: "json",
+		            success: function(result){ 
+						loading = false;
+						span.attr('class', oldClass);
+						if(result.errors){
+							alert("Attenzione, Eliminazione non riuscita.\n\nMessaggio di errore:\n"+result.errors)
+						} else {
+							alert("Dati eliminati con successo!");
+							$("#myModal").modal('hide');
+							location.reload();
+						}
+					},
+					error: function(){
+						loading = false;
+						span.attr('class', oldClass);
+						alert("Errore imprevisto");
 					}
-				},
-				error: function(){
-					loading = false;
-					span.attr('class', oldClass);
-					alert("Errore imprevisto");
-				}
-			});
+				});
+			}
 		}
 	});
 });
