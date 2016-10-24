@@ -52,17 +52,21 @@ $(document).ready(function(){
 							$.ajax({
 								url: href, 
 								type: "POST", 
+								data: $(this).serializeArray(), 
 								dataType: "json",
-					            data: $(this).serializeArray(), 
 								success: function(result){ 
 									loading = false;
 									modal_span.attr('class', modal_class);
+									
 									if(result.errors){
-										alert("Attenzione, salvataggio non riuscito.\n\nMessaggio di errore:\n"+result.errors)
+										$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"glyphicon glyphicon-remove\">&nbsp;</span> Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
 									} else {
-										alert("Dati salvati con successo!");
-										$("#myModal").modal('hide');
-										location.reload();
+										$('#myModal .modal-result').html("<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>");
+										$('#myModal button[type="submit"]').remove();
+										$('#myModal button[data-dismiss="modal"]').click(function(){
+											$("#myModal").modal('hide');
+											location.reload();
+										});
 									}
 								},
 								error: function(){
@@ -97,15 +101,18 @@ $(document).ready(function(){
 				$.ajax({
 					url: href, 
 					dataType: "json",
-		            success: function(result){ 
+					success: function(result){ 
 						loading = false;
 						span.attr('class', oldClass);
 						if(result.errors){
-							alert("Attenzione, Eliminazione non riuscita.\n\nMessaggio di errore:\n"+result.errors)
+							$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"glyphicon glyphicon-remove\">&nbsp;</span> Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
 						} else {
-							alert("Dati eliminati con successo!");
-							$("#myModal").modal('hide');
-							location.reload();
+							$('#myModal .modal-result').html("<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>");
+							$('#myModal button[type="submit"]').remove();
+							$('#myModal button[data-dismiss="modal"]').click(function(){
+								$("#myModal").modal('hide');
+								location.reload();
+							});
 						}
 					},
 					error: function(){

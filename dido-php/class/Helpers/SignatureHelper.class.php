@@ -38,6 +38,7 @@ class SignatureHelper{
 	 		echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null,null,true);
 ?>
 			 			</div>
+			 			<div class="modal-result"></div>
 			 			<div class="modal-footer">
 			 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
 			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
@@ -84,7 +85,8 @@ class SignatureHelper{
 			echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
 ?>
 				 			</div>
-				 			<div class="modal-footer">
+				 			<div class="modal-result"></div>
+			 				<div class="modal-footer">
 				 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
 				                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 				            </div>
@@ -116,7 +118,8 @@ class SignatureHelper{
 								echo HTMLHelper::select("id_persona", "Persona", $listPersone,$variable_signer['id_persona']);		
 	?>
 					 			</div>
-					 			<div class="modal-footer">
+					 			<div class="modal-result"></div>
+			 					<div class="modal-footer">
 					 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
 					                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 					            </div>
