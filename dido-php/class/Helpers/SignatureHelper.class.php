@@ -52,7 +52,7 @@ class SignatureHelper{
 			            $("#pdfConFirma").fileinput({
 			    	        language: "it",
 			    	        uploadAsync: true,
-			    	        uploadUrl: '<?php echo $_SERVER['PHP_SELF']?>'
+			    	        uploadUrl: 'importPdf.php'
 			    	    });			            
 		    	    </script>
 <?php	endif;

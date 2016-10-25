@@ -2,6 +2,9 @@
 require_once ("../config.php");
 
 if (Utils::checkAjax ()) {
+	
+	
+	
 	$classname = $_GET ['list'];
 	$dbconnector = new $classname ( Connector::getInstance () );
 	
