@@ -9,7 +9,7 @@
                 		<?=$result?>
                     </div>
                 </div>
-                <form role="form" method="POST" name="form2">
+                <form role="form" method="POST" name="form2" enctype="multipart/form-data">
                 <div class="row">
                 	<?php foreach($inputs as $input): ?>
                 	<div class="col-lg-4">
@@ -17,6 +17,12 @@
                   	</div>
                     <?php endforeach; ?>
                 </div>
-                <button class="btn btn-primary type="submit">Salva</button>
+                <div class="row">
+                	<div class="col-lg-12">
+                	<?php echo HTMLHelper::input("file", "fileToUpload", "File da caricare",$_FILES['fileToUpload']['name'],"file",true)?>
+                	</div>
+                </div>
+                <br/>
+                <button class="btn btn-primary" type="submit">Salva</button>
                 </form>
                                

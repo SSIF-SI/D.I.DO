@@ -17,10 +17,15 @@ class HTMLHelper{
 	
 	static function input($type, $name, $label, $value=null, $class = null, $required = false){
 		ob_start();
-		if($type == 'hidden'):
-			echo self::lineInput($type, $name, $label, $value, $required);
+		if($type == 'hidden' || $type == 'file'):
+			if($type != 'hidden' && !is_null($label)):
+?>
+    <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
+<?php 		
+			endif;
+			echo self::lineInput($type, $name, $label, $value, $class, $required);
 		else :
-			$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $required) : self::lineInput($type, $name, $label, $value, $required);
+			$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $class, $required) : self::lineInput($type, $name, $label, $value, $class, $required);
 ?>
 	<div class="form-group <?=$class?>">
 <?php 	if($type != 'hidden'):?>	
@@ -120,9 +125,10 @@ class HTMLHelper{
 	}
 	
 	
-	private static function lineInput($type, $name, $label, $value=null, $required = false){
+	private static function lineInput($type, $name, $label, $value=null, $class = null, $required = false){
+		$more = $type == 'file' ? 'data-show-upload="false" data-allowed-file-extensions=\'["pdf", "p7m"]\'': null ;
 		$required = $required ? "required" : null;
-		return "<input type=\"$type\" class=\"form-control\" name=\"$name\" id=\"$name\" value=\"$value\" $required/>";
+		return "<input type=\"$type\" class=\"form-control $class\" name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";
 	}
 	
 	private static function textareaInput($name, $label, $value=null , $required = false){

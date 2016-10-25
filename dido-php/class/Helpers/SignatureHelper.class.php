@@ -37,13 +37,24 @@ class SignatureHelper{
 			}
 	 		echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null,null,true);
 ?>
-			 			</div>
+			            <label for="pdfConFirma">Pdf con firma digitale:</label><br/>
+			            <input class="file" type="file" id="pdfConFirma" name="pdfConFirma" data-allowed-file-extensions='["pdf", "p7m"]'/>
+					</div>
 			 			<div class="modal-result"></div>
 			 			<div class="modal-footer">
 			 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
 			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 			            </div>
 		            </form>
+		            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
+    				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
+    				<script>
+			            $("#pdfConFirma").fileinput({
+			    	        language: "it",
+			    	        uploadAsync: true,
+			    	        uploadUrl: '<?php echo $_SERVER['PHP_SELF']?>'
+			    	    });			            
+		    	    </script>
 <?php	endif;
 		return ob_get_clean();
 	}

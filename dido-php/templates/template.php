@@ -31,6 +31,8 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <link href="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/css/fileinput.min.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body>
@@ -123,6 +125,15 @@
 	<script src="<?=SB_ADMIN_2?>vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
 	<script src="<?=SB_ADMIN_2?>vendor/datatables-responsive/dataTables.responsive.js"></script>
 	
+	<?php if(defined("KARTIK_FILEINPUT")):?>
+    <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
+    <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
+    <script>
+	    $(".file").fileinput({
+	        language: "it",
+	    });
+    </script>
+    <?php endif; ?>
 	
 	<!-- Custom Scripts -->
 	<?php 

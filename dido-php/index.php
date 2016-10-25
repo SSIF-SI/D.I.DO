@@ -32,6 +32,10 @@ if(count($_POST) > 0){
 
 $inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDocumentInputs());
 
+define("KARTIK_FILEINPUT", true);
+
+Utils::printr($_FILES);
+
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
-Utils::printr(XMLBrowser::getInstance()->getXmlTree());
+//Utils::printr(XMLBrowser::getInstance()->getXmlTree());
