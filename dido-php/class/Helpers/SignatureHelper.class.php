@@ -37,6 +37,7 @@ class SignatureHelper{
 			}
 	 		echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null,null,true);
 ?>
+			            <div class="signatures list-group"></div>
 			            <label for="pdfConFirma">Pdf con firma digitale:</label><br/>
 			            <input class="file" type="file" id="pdfConFirma" name="pdfConFirma" data-allowed-file-extensions='["pdf", "p7m"]'/>
 					</div>
@@ -52,8 +53,19 @@ class SignatureHelper{
 			            $("#pdfConFirma").fileinput({
 			    	        language: "it",
 			    	        uploadAsync: true,
-			    	        uploadUrl: 'importPdf.php'
-			    	    });			            
+			    	        uploadUrl: 'importPdf.php',
+			    	        uploadExtraData: {getOnlySignatures:true}
+			    	    });
+			    	    $("#pdfConFirma").on('fileuploaded', function(event, data) {
+							$(".signatures").html("");
+			    	    	$("#pdfConFirma").fileinput('clear');
+			    	    	$('<h4>Firme trovate</h4>').appendTo(".signatures");
+			    	    	$('<p>clicca su una delle seguenti firme per aggiornare il campo "Chiave Pubblica"</p>').appendTo(".signatures");
+							for (i = 0; i < data.response.signatures.length; i++) {
+			    	    		$('<a href="#" data-pkey="'+data.response.signatures[i].publicKey+'" class="list-group-item list-group-item-action">'+data.response.signatures[i].signer+'</a>').appendTo('.signatures');
+								
+			    	    	}
+			    		});			            
 		    	    </script>
 <?php	endif;
 		return ob_get_clean();
