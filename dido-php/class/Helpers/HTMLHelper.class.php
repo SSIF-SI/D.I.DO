@@ -117,9 +117,8 @@ class HTMLHelper{
 					
 				</tbody>
 			</table>
-			<?php }else{?> <div class="alert alert-warning">Tabella vuota</div><?php }?>
 		</div>
-		
+			<?php }else{?> <div class="alert alert-warning">Tabella vuota</div><?php }?>
 <?php 	
 		return ob_get_clean();
 	}

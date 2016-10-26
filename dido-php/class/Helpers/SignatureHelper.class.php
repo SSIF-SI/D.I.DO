@@ -136,7 +136,23 @@ class SignatureHelper{
 				 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
 				                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
 				            </div>
-			            </form>
+				          </form>
+			              <script>
+
+			              		selectControl();
+		              		
+				        		$('#id_persona').on('change', function(){
+				        			selectControl();
+				     			});
+
+								function selectControl(){
+									$('#id_delegato option').removeAttr('disabled');
+									var selected = $('#id_persona option:selected').val();
+									$('#id_delegato').find('option[value="'+selected+'"]').attr('disabled','disabled');
+									if($('#id_delegato option:selected').val() == $('#id_persona option:selected').val())
+										$('#id_delegato').val(null);
+				     		   	}
+				         </script>
 <?php 	endif;
 		return ob_get_clean();
 	}
