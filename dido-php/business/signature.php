@@ -9,7 +9,10 @@ if (Utils::checkAjax ()) {
 	$dbconnector = new $classname ( Connector::getInstance () );
 	
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
-
+	if (isset($_GET['confirm'])){
+		die ( SignatureHelper::createModalConfirm("Vuoi eliminare l'elemento dalla tabella?"));
+		break;
+	}
 	if ($delete){
 		unset($_GET['list'],$_GET['delete']);
 		die ( json_encode ( $dbconnector->delete ( $_GET ) ) );

@@ -239,5 +239,29 @@ class SignatureHelper{
 		return array('substitutes' => $substitutes, 'buttons' => $buttons);
 	}
 	
+	static function createModalConfirm($text){
+		ob_start();
+		?>
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+									<h4 class="modal-title" id="myModalLabel">Firmatario Variabile</h4>
+								</div>
+								<form id="confirm" name="confirm" method="POST">
+									<div class="modal-body">
+		<?php									
+							echo"<label for=\"confirm\">Confermi:</label><p id=\"confirm\">".$text."</p>";
+		?>
+						 			</div>
+						 			<div class="modal-result"></div>
+				 					<div class="modal-footer">
+						 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-ban fa-1x fa-fw"></span> NO</button>
+						                <button type="submit" class="btn btn-primary" id="mysubmit" form="confirm"><span class="fa fa-trash-o fa-1x fa-fw"></span> SI</button>
+						            </div>
+					            </form>
+		<?php
+				return ob_get_clean();
+			}
+		
+	
 }
 ?>
