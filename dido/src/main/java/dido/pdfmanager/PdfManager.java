@@ -42,15 +42,15 @@ public class PdfManager implements InterfacePdfManager {
 
 	private PdfPKCS7 verifySignature(AcroFields fields, String name) throws GeneralSecurityException, IOException {
 		logger.info("Signature covers whole document: " + fields.signatureCoversWholeDocument(name));
-		this.tmpSignature.setName(name);
+		tmpSignature.setName(name);
 
 		logger.info("Document revision: " + fields.getRevision(name) + " of " + fields.getTotalRevisions());
-		this.tmpSignature.setRevision(fields.getRevision(name));
-		this.tmpSignature.setTotalREvisions(fields.getTotalRevisions());
+		tmpSignature.setRevision(fields.getRevision(name));
+		tmpSignature.setTotalREvisions(fields.getTotalRevisions());
 
 		PdfPKCS7 pkcs7 = fields.verifySignature(name);
 		logger.info("Integrity check OK? " + pkcs7.verify());
-		this.tmpSignature.setComplete(pkcs7.verify());
+		tmpSignature.setComplete(pkcs7.verify());
 
 		return pkcs7;
 	}
@@ -62,10 +62,10 @@ public class PdfManager implements InterfacePdfManager {
 			Rectangle pos = fp.position;
 			if (pos.getWidth() == 0 || pos.getHeight() == 0) {
 				logger.info("Invisible signature");
-				this.tmpSignature.setInvisible(true);
+				tmpSignature.setInvisible(true);
 			}
 			else {
-				this.tmpSignature.setInvisible(false);
+				tmpSignature.setInvisible(false);
 				logger.info(String.format("Field on page %s; llx: %s, lly: %s, urx: %s; ury: %s",
 						fp.page, pos.getLeft(), pos.getBottom(), pos.getRight(), pos.getTop()));
 			}
@@ -74,33 +74,33 @@ public class PdfManager implements InterfacePdfManager {
 		PdfPKCS7 pkcs7 = this.verifySignature(fields, name);
 
 		logger.info("Digest algorithm: " + pkcs7.getHashAlgorithm());
-		this.tmpSignature.setHashAlgorithm(pkcs7.getHashAlgorithm());
+		tmpSignature.setHashAlgorithm(pkcs7.getHashAlgorithm());
 
 		logger.info("Encryption algorithm: " + pkcs7.getEncryptionAlgorithm());
-		this.tmpSignature.setEncryptionAlgorithm(pkcs7.getEncryptionAlgorithm());
+		tmpSignature.setEncryptionAlgorithm(pkcs7.getEncryptionAlgorithm());
 
 		logger.info("Filter subtype: " + pkcs7.getFilterSubtype());
 		if(pkcs7.getFilterSubtype()!=null)
-			this.tmpSignature.setFilterSubtype(pkcs7.getFilterSubtype().toString());
+			tmpSignature.setFilterSubtype(pkcs7.getFilterSubtype().toString());
 
 		X509Certificate cert = (X509Certificate) pkcs7.getSigningCertificate();
 		logger.info("Name of the signer: " + CertificateInfo.getSubjectFields(cert).getField("CN"));
-		this.tmpSignature.setSigner(CertificateInfo.getSubjectFields(cert).getField("CN"));
+		tmpSignature.setSigner(CertificateInfo.getSubjectFields(cert).getField("CN"));
 
 		BCRSAPublicKey pub = (BCRSAPublicKey) cert.getPublicKey();
 		logger.info("Public Key: " + pub.getModulus().toString(16));
-		this.tmpSignature.setPublicKey(pub.getModulus().toString(16));
+		tmpSignature.setPublicKey(pub.getModulus().toString(16));
 
 		if (pkcs7.getSignName() != null){
 			logger.info("Alternative name of the signer: " + pkcs7.getSignName());
-			this.tmpSignature.setSignerAlt(pkcs7.getSignName());
+			tmpSignature.setSignerAlt(pkcs7.getSignName());
 		} else {
-			this.tmpSignature.setSignerAlt(null);
+			tmpSignature.setSignerAlt(null);
 		}
 
 		SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS");
 		logger.info("Signed on: " + date_format.format(pkcs7.getSignDate().getTime()));
-		this.tmpSignature.setSignDate(date_format.format(pkcs7.getSignDate().getTime()));
+		tmpSignature.setSignDate(date_format.format(pkcs7.getSignDate().getTime()));
 
 		if (pkcs7.getTimeStampDate() != null) {
 			logger.info("TimeStamp: " + date_format.format(pkcs7.getTimeStampDate().getTime()));
@@ -117,7 +117,7 @@ public class PdfManager implements InterfacePdfManager {
 		perms = new SignaturePermissions(sigDict, perms);
 
 		logger.info("Signature type: " + (perms.isCertification() ? "certification" : "approval"));
-		this.tmpSignature.setSignType(perms.isCertification() ? "certification" : "approval");
+		tmpSignature.setSignType(perms.isCertification() ? "certification" : "approval");
 
 		logger.info("Filling out fields allowed: " + perms.isFillInAllowed());
 		logger.info("Adding annotations allowed: " + perms.isAnnotationsAllowed());
@@ -138,13 +138,21 @@ public class PdfManager implements InterfacePdfManager {
 		ArrayList<String> names = fields.getSignatureNames();
 		SignaturePermissions perms = null;
 		for (String name : names) {
-			this.tmpSignature=new Signature();
+			tmpSignature=new Signature();
 			logger.info("===== " + name + " =====");
 			perms = inspectSignature(fields, name, perms);
-			signatures.add(tmpSignature);
+			this.addSignature();
 		}
 		logger.info("end ispection");
 
+	}
+
+	private void addSignature() { 
+		// Non voglio firme duplicate ma un elenco univoco per publicKey.
+		for (int i = 0; i < signatures.size(); i++) {
+			if(signatures.get(i).getPublicKey().equals(tmpSignature.getPublicKey())) return;
+		}
+		signatures.add(tmpSignature);
 	}
 
 	public boolean loadPDF(String path){

@@ -38,6 +38,7 @@ class SignatureHelper{
 	 		echo HTMLHelper::input('textarea', "pkey", "Chiave Pubblica", isset($signer['pkey']) ? $signer['pkey'] : null,null,true);
 ?>
 			            <div class="signatures list-group"></div>
+			            <div class="errorbox"></div>
 			            <label for="pdfConFirma">Pdf con firma digitale:</label><br/>
 			            <input class="file" type="file" id="pdfConFirma" name="pdfConFirma" data-allowed-file-extensions='["pdf", "p7m"]'/>
 					</div>
@@ -50,22 +51,44 @@ class SignatureHelper{
 		            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
     				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
     				<script>
-			            $("#pdfConFirma").fileinput({
-			    	        language: "it",
-			    	        uploadAsync: true,
-			    	        uploadUrl: 'importPdf.php',
-			    	        uploadExtraData: {getOnlySignatures:true}
-			    	    });
-			    	    $("#pdfConFirma").on('fileuploaded', function(event, data) {
-							$(".signatures").html("");
-			    	    	$("#pdfConFirma").fileinput('clear');
-			    	    	$('<h4>Firme trovate</h4>').appendTo(".signatures");
-			    	    	$('<p>clicca su una delle seguenti firme per aggiornare il campo "Chiave Pubblica"</p>').appendTo(".signatures");
+    					$('#pkey').on("keyup",function(){
+    						$(".signatures a").removeClass("active");
+            			});
+
+    					pdfConFirma();	
+		    	    	
+            			$("#pdfConFirma").on('filebatchuploadsuccess', function(event, data) {
+			    	    	$(".signatures").html("");
+			    	    	
+			    	    	pdfConFirma();	
+			    	    	$('<div class="panel panel-success">'+
+			    	    			'<div class="panel-heading"> FIRME TROVATE: </div>'+
+			    	    			'<div class="panel-body"></div>'+
+			    	    			'<div class="panel-footer"> clicca su una delle firme trovate per aggiornare il campo "Chiave Pubblica" </div>'+
+			    	    			'</div>').appendTo(".signatures");
+	    	    			
 							for (i = 0; i < data.response.signatures.length; i++) {
-			    	    		$('<a href="#" data-pkey="'+data.response.signatures[i].publicKey+'" class="list-group-item list-group-item-action">'+data.response.signatures[i].signer+'</a>').appendTo('.signatures');
-								
+			    	    		$('<a href="#" data-pkey="'+data.response.signatures[i].publicKey+'" class="list-group-item list-group-item-action"><span class="fa fa-check-circle"></span>&nbsp;'+data.response.signatures[i].signer+'</a>').appendTo('.signatures .panel-body');
 			    	    	}
-			    		});			            
+							$(".signatures a").click(function(e){
+								$(".signatures a").removeClass("active");
+								$(this).addClass("active");
+								$("#pkey").val($(this).attr("data-pkey"));
+							}); 			    	   
+			    		});
+
+            			function pdfConFirma(){
+	    					$("#pdfConFirma").fileinput('destroy')
+		    	    		.fileinput({
+				    	        language: "it",
+				    	        uploadUrl: 'importPdf.php',
+				    	        uploadAsync: false,
+				    	        showPreview: false,
+				    	        uploadExtraData: {getOnlySignatures:true},
+				    	        elErrorContainer: '.errorbox'
+				    	    })
+			    	    	.fileinput('enable');
+            			}
 		    	    </script>
 <?php	endif;
 		return ob_get_clean();

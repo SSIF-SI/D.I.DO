@@ -59,7 +59,7 @@ $(document).ready(function(){
 									modal_span.attr('class', modal_class);
 									
 									if(result.errors){
-										$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"glyphicon glyphicon-remove\">&nbsp;</span> Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
+										$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+result.errors+"</p></div>");
 									} else {
 										$('#myModal .modal-result').html("<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>");
 										$('#myModal button[type="submit"]').remove();
@@ -105,14 +105,9 @@ $(document).ready(function(){
 						loading = false;
 						span.attr('class', oldClass);
 						if(result.errors){
-							$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"glyphicon glyphicon-remove\">&nbsp;</span> Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
+							alert("<div class=\"alert alert-danger\"><p><span class=\"glyphicon glyphicon-remove\">&nbsp;</span> Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
 						} else {
-							$('#myModal .modal-result').html("<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati salvati con successo</p></div>");
-							$('#myModal button[type="submit"]').remove();
-							$('#myModal button[data-dismiss="modal"]').click(function(){
-								$("#myModal").modal('hide');
-								location.reload();
-							});
+							location.reload();
 						}
 					},
 					error: function(){
@@ -124,4 +119,9 @@ $(document).ready(function(){
 			}
 		}
 	});
+	
+	$('#myModal').on('hidden.bs.modal', function (e) {
+		$("#myModal .modal-content").html("");
+	})
+
 });

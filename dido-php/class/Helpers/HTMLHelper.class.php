@@ -77,7 +77,7 @@ class HTMLHelper{
 	
 	public static function saveErrorBox($errors){
 		$errors = self::ulist($errors);
-		return "<div class=\"alert alert-danger\"><p><strong>Attenzione!</strong> Sono stati riscontrati i seguenti errori:</p><p>$errors</p></div>";
+		return "<div class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span><strong>Attenzione!</strong> Sono stati riscontrati i seguenti errori:</p><p>$errors</p></div>";
 	}
 	
 	public static function saveSuccessBox(){
