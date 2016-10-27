@@ -13,7 +13,7 @@ var MyModal = {
 							'<div class="modal-body"></div>'+
 							'<div class="modal-result"></div>'+
 							'<div class="modal-footer">'+
-								'<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-backward fa-1x fa-fw"></span> Annulla</button>'+
+								'<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-backward fa-1x fa-fw"></span> Torna indietro</button>'+
 							'</div>'+
 			            '</div>'+
 					'</div>'+
@@ -73,11 +73,9 @@ var MyModal = {
 			} 
 		}
 	},
-	submit:function (anchor, data){
-		if(anchor.prop('href') == undefined)
-		var href = anchor.prop('href') == undefined ? '' : anchor.prop('href');
+	submit:function (element,href, data){
 		
-		var span = anchor.children("span");
+		var span = element.children("span");
 		var oldClass = span.prop('class');
 		var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
 

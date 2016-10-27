@@ -15,19 +15,13 @@ class SignatureHelper{
 
 		ob_start();
 ?>	
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h4 class="modal-title" id="myModalLabel">Firmatario</h4>
-					</div>
+
 <?php	if(is_null($idP) && count($listPersone) == 0): ?> 
-						<div class="modal-body">
 							<div class="alert alert-danger">
 								Non è possibile aggiungere ulteriori firmatari
 							</div>
-						</div>
 <?php 	else: ?>					
 					<form id="firmatario" name="firmatario" method="POST">
-						<div class="modal-body">
 <?php 
 			if(is_null($idP)){				
 				echo HTMLHelper::select('id_persona', "Persona", $listPersone, isset($signer['id_persona']) ? $signer['id_persona'] : null);
@@ -41,12 +35,6 @@ class SignatureHelper{
 			            <div class="errorbox"></div>
 			            <label for="pdfConFirma">Pdf con firma digitale:</label><br/>
 			            <input class="file" type="file" id="pdfConFirma" name="pdfConFirma" data-allowed-file-extensions='["pdf", "p7m"]'/>
-					</div>
-			 			<div class="modal-result"></div>
-			 			<div class="modal-footer">
-			 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
-			                <button type="submit" class="btn btn-primary mymodal" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
-			            </div>
 		            </form>
 		            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
     				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
@@ -107,19 +95,14 @@ class SignatureHelper{
 		
 		ob_start();
 ?>
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-							<h4 class="modal-title" id="myModalLabel">Firmatario fisso</h4>
-						</div>
+						
 <?php	if(is_null($id_fs) && count($assignable_roles) == 0): ?> 
-						<div class="modal-body">
+					
 							<div class="alert alert-danger">
 								Non è possibile aggiungere ulteriori firmatari fissi
 							</div>
-						</div>
 <?php 	else: ?>
 						<form id="firmatario" name="firmatario" method="POST">
-							<div class="modal-body">
 <?php 
 			if(!is_null($id_fs)){
 				echo"<label for=\"ruolo\">Ruolo firmatario:</label><p id=\"ruolo\">".$signer_roles[$fixed_signer["id_sr"]]."</p>";
@@ -130,12 +113,6 @@ class SignatureHelper{
 			echo HTMLHelper::select("id_persona", "Persona", $listPersone,$fixed_signer['id_persona']);		
 			echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
 ?>
-				 			</div>
-				 			<div class="modal-result"></div>
-			 				<div class="modal-footer">
-				 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
-				                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
-				            </div>
 				          </form>
 			              <script>
 
@@ -168,23 +145,13 @@ class SignatureHelper{
 		
 		ob_start();
 		?>
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-								<h4 class="modal-title" id="myModalLabel">Firmatario Variabile</h4>
-							</div>
+							
 							<form id="firmatario" name="firmatario" method="POST">
-								<div class="modal-body">
 	<?php									
 								if(!is_null($id_vs)) echo HTMLHelper::input('hidden', "id_vs", null, $id_vs);
 								echo HTMLHelper::select("id_sr", "Ruolo", $signer_roles,$variable_signer['id_sr']);		
 								echo HTMLHelper::select("id_persona", "Persona", $listPersone,$variable_signer['id_persona']);		
 	?>
-					 			</div>
-					 			<div class="modal-result"></div>
-			 					<div class="modal-footer">
-					 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
-					                <button type="submit" class="btn btn-primary" id="mysubmit" form="firmatario"><span class="fa fa-save fa-1x fa-fw"></span> Salva firmatario</button>
-					            </div>
 				            </form>
 	<?php
 			return ob_get_clean();
@@ -238,30 +205,6 @@ class SignatureHelper{
 	
 		return array('substitutes' => $substitutes, 'buttons' => $buttons);
 	}
-	
-	static function createModalConfirm($text){
-		ob_start();
-		?>
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-									<h4 class="modal-title" id="myModalLabel">Firmatario Variabile</h4>
-								</div>
-								<form id="confirm" name="confirm" method="POST">
-									<div class="modal-body">
-		<?php									
-							echo"<label for=\"confirm\">Confermi:</label><p id=\"confirm\">".$text."</p>";
-		?>
-						 			</div>
-						 			<div class="modal-result"></div>
-				 					<div class="modal-footer">
-				 						<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
-				 						<button type="submit" class="btn btn-primary" id="mysubmit" form="confirm"><span class="fa fa-trash-o fa-1x fa-fw"></span> Elimina</button>
-						            </div>
-					            </form>
-		<?php
-				return ob_get_clean();
-			}
-		
-	
+
 }
 ?>
