@@ -92,7 +92,7 @@ var MyModal = {
 					MyModal.busy = false;
 					span.attr('class', oldClass);
 					if(result.errors){
-						MyModal.error(result.errors,true);
+						MyModal.error(result.errors);
 					} else {
 						MyModal.success();
 						$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
@@ -122,7 +122,7 @@ var MyModal = {
 		MyModal.init();
 		$('#'+MyModal.MyModalId+(innerdiv == undefined ? ' .modal-result' : ' '+innerdiv))
 			.html(error ? 
-				"<div class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+message+"</p></div>" : 
+				"<div style='word-wrap: break-word;' class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+message+"</p></div>" : 
 				"<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Operazione andata a buon fine</p></div>");
 	},
 	modal: function(){
