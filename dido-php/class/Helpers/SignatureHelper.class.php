@@ -254,8 +254,8 @@ class SignatureHelper{
 						 			</div>
 						 			<div class="modal-result"></div>
 				 					<div class="modal-footer">
-						 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-ban fa-1x fa-fw"></span> NO</button>
-						                <button type="submit" class="btn btn-primary" id="mysubmit" form="confirm"><span class="fa fa-trash-o fa-1x fa-fw"></span> SI</button>
+				 						<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-power-off fa-1x fa-fw"></span> Chiudi</button>
+				 						<button type="submit" class="btn btn-primary" id="mysubmit" form="confirm"><span class="fa fa-trash-o fa-1x fa-fw"></span> Elimina</button>
 						            </div>
 					            </form>
 		<?php

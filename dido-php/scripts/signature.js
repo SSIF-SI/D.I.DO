@@ -57,7 +57,6 @@ $(document).ready(function(){
 								success: function(result){ 
 									loading = false;
 									modal_span.attr('class', modal_class);
-
 									if(result.errors){
 										$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+result.errors+"</p></div>");
 									} else {
@@ -103,43 +102,57 @@ $(document).ready(function(){
 					loading = false;
 					span.attr('class', oldClass);
 
-					// Recupero il contenuto della finestra modale tramite GET
-					// e lo metto nel div.modal-content, quindi mostro la finestra
+
 					$("#myModal .modal-content").html(result);
 					$("#myModal").modal({
 						backdrop: 'static'
 					});
+					
+					var modal_span = $('#myModal button[type="submit"]').children("span");
+					var modal_class = modal_span.attr('class');
 					$("form").submit(function(e){
-						$.ajax({
-							url: href, 
-							dataType: "json",
-							success: function(result){ 
-								loading = false;
-								span.attr('class', oldClass);
-								if(result.errors){
-									alert("<div class=\"alert alert-danger\"><p><span class=\"glyphicon glyphicon-remove\">&nbsp;</span> Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
-								} else {
-									location.reload();
-								}
+						if(!loading){
+							e.preventDefault();
+							loading = true;
+							modal_span.attr('class', newClass);
+
+							$.ajax({
+								url: href, 
+								dataType: "json",
+								success: function(result){ 
+									loading = false;
+									span.attr('class', modal_class);
+									if(result.errors){
+										$('#myModal .modal-result').html("<div class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span>Attenzione, eliminazione non riuscita<br/><br/>"+result.errors+"</p></div>");
+									} else {
+										$('#myModal .modal-result').html("<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Dati eliminati con successo</p></div>");
+									}
+									$('#myModal button[type="submit"]').remove();
+									$('#myModal button[data-dismiss="modal"]').click(function(){
+										$("#myModal").modal('hide');
+										location.reload();
+									});
+								
 							},
 							error: function(){
 								loading = false;
-								span.attr('class', oldClass);
+								span.attr('class', modal_class);
 								alert("Errore imprevisto");
 							}
 						});
-					});
+					}
+				});
 
-				},
-				error: function(){
-					loading = false;
-					span.attr('class', oldClass);
-					alert("Errore imprevisto");
-				}
-			});
-		}
-	});
 
+			},
+			error: function(){
+				loading = false;
+				span.attr('class', oldClass);
+				alert("Errore imprevisto");
+			}
+		});
+	}
+});
 	$('#myModal').on('hidden.bs.modal', function (e) {
 		$("#myModal .modal-content").html("");
 	});
