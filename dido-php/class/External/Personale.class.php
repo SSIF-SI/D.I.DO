@@ -15,6 +15,7 @@ class Personale {
 		$gruppi = json_decode(json_encode($client->gruppi()),true);
 		
 		$this->_persone = Utils::getListfromField ( $personale, null, "idPersona");
+		$this->_cfId = Utils::getListfromField ( $personale, "idPersona", "codiceFiscale");
 		$this->_gruppi = Utils::getListfromField ( $gruppi, null, "sigla");
 	}
 	
@@ -35,6 +36,10 @@ class Personale {
 	
 	public function getPersona($id){
 		return $this->_persone[$id];
+	}
+
+	public function getPersonabyCf($cf){
+		return isset($this->_cfId[$cf]) ? $this->_persone[$this->_cfId[$cf]] : false;
 	}
 
 	public function getGruppo($sigla){

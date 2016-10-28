@@ -34,7 +34,7 @@ $inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDoc
 
 define("KARTIK_FILEINPUT", true);
 
-Utils::printr($_FILES);
+Utils::printr(Personale::getInstance()->getPersonabyCf("VLPFRC79R18G843Z"));
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
