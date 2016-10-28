@@ -18,9 +18,10 @@ Utils::printr(Personale::getInstance()->getPersone());
 Utils::printr(Personale::getInstance()->getGruppi());
 */
 
-// FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
-// print_r(Personale::getInstance()->getPersonakey(),1);
-// $md = new Masterdocument(Connector::getInstance());
+$fcr = FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
+//print_r(Personale::getInstance()->getPersonakey(),1);
+//$md = new Masterdocument(Connector::getInstance());
+
 
 $result = null;
 XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.v01.xml");
@@ -34,7 +35,7 @@ $inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDoc
 
 define("KARTIK_FILEINPUT", true);
 
-Utils::printr(Personale::getInstance()->getPersonabyCf("VLPFRC79R18G843Z"));
+//Utils::printr(Personale::getInstance()->getPersonabyCf("VLPFRC79R18G843Z"));
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");

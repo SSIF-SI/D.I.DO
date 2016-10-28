@@ -27,15 +27,9 @@ class FlowChecker{
 		 * 
 		 */
 		$masterDocument = new Masterdocument(Connector::getInstance());
-		$this->md = $masterDocument->get($id);
+		$this->_md = $masterDocument->get($id);
 		
-		/*
-		$masterDocumentData = new MasterdocumentData(Connector::getInstance());
-		$this->_md_data = $masterDocumentData->searchByKeyValue(array(
-				'id_md'	=> $id,
-				$sigObj->getDescrizioni()
-		));
-		*/
+		
 		$sigObj = new Signature(Connector::getInstance());
 		$signers = $sigObj->getSigners($id['id_md']);
 		
@@ -49,16 +43,16 @@ class FlowChecker{
 		);
 		*/
 		
-		$this->md['ftp_folder']	= 'missioni/201609/missione_1/';
-		if($this->md){
+		//$this->_md['ftp_folder']	= 'missioni/2016/09/missione_1/';
+		if($this->_md){
 		
-			//Utils::printr($this->md);
+			//Utils::printr($this->_md);
 			// Parsing con XML (documenti richiesti)
-			$this->_xml->setXMLSource(XML_MD_PATH.$this->md['xml'],$this->md['type']);
+			$this->_xml->setXMLSource(XML_MD_PATH.$this->_md['xml'],$this->_md['type']);
 			// Connessione FTP (documenti esistenti)
 			
 			$ftp = FTPConnector::getInstance();
-			$fileList = Utils::filterList($ftp->getContents($this->md['ftp_folder'])['contents'],'isPDF',1);
+			$fileList = Utils::filterList($ftp->getContents($this->_md['ftp_folder'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
 			
 			// Utils::printr($fileList);
@@ -91,16 +85,14 @@ class FlowChecker{
 						$files = self::_getFtpFiles($docResult->documentName, $fileList);
 						
 						foreach($files as $k=>$file){
-							$filename = $this->md['ftp_folder'].$file;
+							$filename = $this->_md['ftp_folder'].$file;
 							$result = $this->checkSignatures($filename, $document, $signers, $k, $docResult);
 							$docResult->signatures[$k] = $result;
 						}
 					}
 				}
-				array_push($return,$docResult);
+				$return[$docResult->documentName] = $docResult;
 			}
-			
-			Utils::printr($return);
 			
 			return $return;
 		} else {
@@ -117,7 +109,7 @@ class FlowChecker{
 			self::_findFile($docName, $fileList, $docResult);
 			if(count($docResult->found) < $value){
 				$error = ($value-$found) == 1 ? "$docName assente" : ($value-$found)." documenti mancanti per $docName";
-				$docResult->errors['generic'][] = $error;
+				$docResult->errors['missing'][] = $error;
 			}
 			
 		} 
@@ -145,27 +137,37 @@ class FlowChecker{
 		
 		foreach($document->signatures->signature as $signature){
 			$who = (string)$signature['role'];
+			$persona = Personale::getInstance()->getPersona($signers[$who]['id_persona']);
 				
 			if($who == "REQ") {
-				$checkResult[$who] = 'skipped';
+				$checkResult[$who]['result'] = 'skipped';
 				continue;
 			}
 
-			$pKeys = array($signers[$who]['pkey'], $signers[$who]['pkey_delegato']);
+			$checkResult[$who]['role'] = $signers[$who]['descrizione'];
+				
+			$pKeys = array($signers[$who]['id_persona'] => $signers[$who]['pkey'], $signers[$who]['id_delegato'] => $signers[$who]['pkey_delegato']);
 			
 			foreach ($signaturesOnDocument as $signatureData){
-				if(in_array($signatureData->publicKey,$pKeys)){
-					$result = $signers[$who]['id_persona'];
+				$result = array_search($signatureData->publicKey,$pKeys); 
+				if($result){
+					if($result != $signers[$who]['id_persona']){
+						$checkResult[$who]['role'] = "Delegato del {$signers[$who]['descrizione']}";
+						$persona = Personale::getInstance()->getPersona($signers[$who]['id_delegato']);
+					}
 					break;
 				}
-			} 
-			
-			if(!$result){
-				$persona = Personale::getInstance()->getPersona($signers[$who]['id_persona']);
-				$docResult->errors[$k][] = "Manca la firma di {$persona['nome']} {$persona['cognome']} (".$signers[$who]['descrizione'].")";
 			}
 			
-			$checkResult[$who] = $result;
+			$checkResult[$who]['who'] = "{$persona['nome']} {$persona['cognome']}";
+				
+				
+			
+			if(!$result){
+				$docResult->errors[$k][] = "Manca la firma di {$persona['nome']} {$persona['cognome']} (".$signers[$who]['descrizione'].")";
+			} 
+			
+			$checkResult[$who]['result'] = $result;
 		}
 		return $checkResult;
 	}

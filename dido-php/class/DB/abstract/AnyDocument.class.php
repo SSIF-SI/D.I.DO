@@ -1,5 +1,5 @@
 <?php 
-class AnyDocument extends Crud{
+abstract class AnyDocument extends Crud{
 	
 	protected $SQL_SEARCH = "SELECT * FROM %s WHERE %s";
 	protected $id_document_label = null;
@@ -8,25 +8,22 @@ class AnyDocument extends Crud{
 		parent::__construct($connInstance);
 	}
 	
-	protected function searchByKeyValue(array $key_value, $id = null) {
-		if (empty ( $key_value ))
-			return $this->getAll ();
+	public function searchByKeyValue($key_value, $id = null) {
 		$where = array ();
-		
 		if(!is_null($id) && !is_null($this->id_document_label))
 			$where[] = "{$this->id_document_label} = '$id'";
 		
-		Utils::printr($key_value);
-		
-		foreach ( $key_value as $key => $value ) {
-			if (is_null ( $key ) || is_null ( $value ))
-				continue;
-			
-			if(is_array($value)){
-				$value = array_map('Utils::apici', $value);
-				$where [] = "key='{$key}' AND value IN (".join(",",$value).")";
-			} else {
-				$where [] = "key='{$key}' AND value={$value}";
+		if(!empty($key_value)){ 
+			foreach ( $key_value as $key => $value ) {
+				if (is_null ( $key ) || is_null ( $value ))
+					continue;
+				
+				if(is_array($value)){
+					$value = array_map('Utils::apici', $value);
+					$where [] = "key='{$key}' AND value IN (".join(",",$value).")";
+				} else {
+					$where [] = "key='{$key}' AND value={$value}";
+				}
 			}
 		}
 		$where = join ( " AND ", $where );
@@ -35,7 +32,7 @@ class AnyDocument extends Crud{
 		return $this->_connInstance->allResults();
 	}
 	
-	protected function searchByKeys($keys, $id = null){
+	public function searchByKeys($keys, $id = null){
 		if (empty ( $keys ) || !is_array($keys))
 			return $this->getAll ();
 		
