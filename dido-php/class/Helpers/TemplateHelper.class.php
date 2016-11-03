@@ -46,6 +46,7 @@ class TemplateHelper{
 <?php 
 		$firstError = false;
 		foreach($flowCheckereResult as $docName=>$docData):
+			if($firstError) continue;
 			$status = 
 				empty($docData->errors) ? 
 					($docData->mandatory ? 'success' : 'not-mandatory') :
@@ -56,10 +57,10 @@ class TemplateHelper{
                                     <div class="timeline-panel">
                                         <div class="timeline-heading">
                                         	<div class="row">
-                                        		<div class="col-lg-6">
+                                        		<div class="col-lg-4">
                                             		<h4 class="timeline-title"><?=ucfirst($docData->documentName)?></h4>
                                             	</div>
-                                            	<div class="col-lg-6">
+                                            	<div class="col-lg-8">
                                             		<?php if(!$firstError && $status != 'success'): $firstError = true;?>
 		                                            <form class="text-right">
 		                                            	<a class="btn btn-primary edit-metadata" type="button"><span class="fa fa-pencil fa-1x fa-fw"></span> Modifica Metadati</a>
