@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="compenso">
+<masterDocument name="compenso" owner="SA">
 	<inputs>
 		<input>Descrittivo GAE</input>
 		<input>Laboratorio</input>

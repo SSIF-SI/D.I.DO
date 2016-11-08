@@ -34,7 +34,7 @@
 		                	</div>
 		                	<div class="panel-body">
 		                		<div class="container-fluid">
-		                			<?php TemplateHelper::createTimeline($fcr);?>
+		                			<?php //TemplateHelper::createTimeline($fcr);?>
 		                		</div>
 		                	</div>
 		                </div>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="ordine cassa">
+<masterDocument name="ordine cassa" owner="SA">
 	<inputs>
 		<input>Richiedente</input>
 		<input>Fornitore</input>

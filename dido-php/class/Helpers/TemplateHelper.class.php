@@ -1,6 +1,7 @@
 <?php 
 class TemplateHelper{
 	static function LeftMenu(){
+		//XMLBrowser::getInstance()->filterXmlByOwner("SA");
 ?>
 		<li>
 			<a href="#"><i class="fa fa-files-o fa-fw"></i> Nuovo documento<span class="fa arrow"></span></a>
@@ -11,7 +12,7 @@ class TemplateHelper{
 					<ul class="nav nav-third-level">
 					<?php foreach($dati['documenti'] as $tipoDocumento => $xmlList):?>
 						<li>
-							<a href="<?=BUSINESS_HTTP_PATH."$tipoDocumento.php"?>"><?=ucwords($tipoDocumento)?></a>
+							<a href="<?=BUSINESS_HTTP_PATH."document.php?t=$tipoDocumento"?>"><?=ucwords($tipoDocumento)?></a>
 						</li>
 					<?php endforeach;?>
 					</ul>					

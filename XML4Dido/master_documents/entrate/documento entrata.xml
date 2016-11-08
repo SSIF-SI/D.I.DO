@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="documento entrata">
+<masterDocument name="documento entrata" owner="SA">
 	<inputs>
 		<input>Descrittivo GAE</input>
 		<input>Laboratorio</input>
@@ -20,7 +20,7 @@
 			onlyIfType="fattura di entrata">
 			<inputs>
 				<input>numero fattura</input>
-				<inputtype="data">data fattura</input>
+				<input type="data">data fattura</input>
 			</inputs>
 		</document>
 		<document name="nota di debito" minOccur="1" maxOccur="1"

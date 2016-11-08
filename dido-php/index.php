@@ -18,7 +18,7 @@ Utils::printr(Personale::getInstance()->getPersone());
 Utils::printr(Personale::getInstance()->getGruppi());
 */
 
-$fcr = FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
+//$fcr = FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
 //print_r(Personale::getInstance()->getPersonakey(),1);
 //$md = new Masterdocument(Connector::getInstance());
 
@@ -39,4 +39,4 @@ define("KARTIK_FILEINPUT", true);
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
-//Utils::printr(XMLBrowser::getInstance()->getXmlTree());
+

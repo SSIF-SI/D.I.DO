@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="acquisto">
+<masterDocument name="acquisto" owner="SA">
 	<types>
 		<type>mepa</type>
 		<type>fuori mepa</type>
