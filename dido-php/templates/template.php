@@ -84,13 +84,7 @@
                             </div>
                             <!-- /input-group -->
                         </li>
-                        <li>
-                            <a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
-                        </li>
                         <?php TemplateHelper::LeftMenu()?>
-                        <li>
-                            <a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa fa-key fa-fw"></i> Gestione firme</a>
-                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

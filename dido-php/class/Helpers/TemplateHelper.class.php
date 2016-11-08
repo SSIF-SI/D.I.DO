@@ -4,9 +4,13 @@ class TemplateHelper{
 		//XMLBrowser::getInstance()->filterXmlByOwner("SA");
 ?>
 		<li>
+			<a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+		</li>
+		<?php $tree = XMLBrowser::getInstance()->getXmlTree(); if(!empty($tree)): ?>
+        <li>
 			<a href="#"><i class="fa fa-files-o fa-fw"></i> Nuovo documento<span class="fa arrow"></span></a>
 			<ul class="nav nav-second-level">
-				<?php foreach(XMLBrowser::getInstance()->getXmlTree() as $categoria => $dati):?>
+				<?php foreach($tree as $categoria => $dati):?>
 				<li>
 					<a href="#"><?=ucfirst($categoria)?><span class="fa arrow"></span></a>
 					<ul class="nav nav-third-level">
@@ -20,6 +24,13 @@ class TemplateHelper{
 				<?php endforeach;?>
 			</ul>
 		</li>
+		<?php endif; ?>
+		<li>
+        	<a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa fa-pencil fa-fw"></i> Gestione firme</a>
+        </li>
+		<li>
+        	<a href="<?=BUSINESS_HTTP_PATH."roles.php"?>"><i class="fa fa-key fa-fw"></i> Gestione permessi</a>
+        </li>
 <?php 
 	}
 	
