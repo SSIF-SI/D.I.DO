@@ -46,5 +46,15 @@ class Personale {
 		return $this->_gruppi[$sigla];
 	}
 	
+	public function getPeopleByGroupType($type){
+		$list = array();
+		foreach($this->_persone as $id=>$datiPersona){
+			foreach($datiPersona['gruppi'] as $sigla){
+				if($this->_gruppi[$sigla]['tipo'] == $type)
+					$list[$id] = $datiPersona;
+			}
+		}
+		return $list;
+	}
 }
 ?>
