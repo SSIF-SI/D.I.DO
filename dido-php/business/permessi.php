@@ -4,7 +4,6 @@ require_once ("../config.php");
 $userRolesObj = new UsersRoles( Connector::getInstance () );
 
 if (Utils::checkAjax ()) {
-
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	
 	if ($delete){
@@ -33,9 +32,9 @@ if (Utils::checkAjax ()) {
 	}
 }
 
-$list = $userRolesObj->getAll("id_persona, ruolo");
-$metadata = HTMLHelper::createMetadata($list, basename($_SERVER['PHP_SELF']), array("id_persona"), array('id_persona'=> 'PersonaleHelper::getNominativo'));
-$userRolesTable = HTMLHelper::editTable($list,$metadata['buttons'], $metadata['substitutes']);
+$list = $userRolesObj->getAll("id_persona, ruolo,id_ruolo");
+$metadata = HTMLHelper::createMetadata($list, basename($_SERVER['PHP_SELF']), array("id_persona","id_ruolo"), array('id_persona'=> 'PersonaleHelper::getNominativo'));
+$userRolesTable = HTMLHelper::editTable($list,$metadata['buttons'], $metadata['substitutes'],null,array("id_ruolo"));
 
 $pageScripts = array (
 		"MyModal.js","userRolesModal.js"
@@ -47,7 +46,6 @@ include_once (TEMPLATES_PATH . "template.php");
 function createModal($user_role, $listPersone){
 	$rolesObj = new Roles(Connector::getInstance());
 	$listaRuoli = Utils::getListfromField($rolesObj->getAll("ruolo"),"ruolo","id_ruolo");
-	$user_role['id_ruolo'] = array_search($user_role['ruolo'], $listaRuoli);
 	ob_start();
 	if(is_null($user_role['id_persona']) && count($listPersone) == 0): ?>
 	<div class="alert alert-danger">
@@ -56,8 +54,13 @@ function createModal($user_role, $listPersone){
 <?php else: ?>
 				<form id="userRoles" name="userRoles" method="POST">
 <?php 
-			echo HTMLHelper::select('id_persona', "Persona", $listPersone, $user_role['id_persona']);
-			echo HTMLHelper::select('id_ruolo', "Ruolo", $listaRuoli, $user_role['id_ruolo']);
+				if(count($_GET) > 0){
+					echo"<label for=\"persona\">Persona:</label><p id=\"persona\">".PersonaleHelper::getNominativo($user_role['id_persona'])."</p>";
+					echo HTMLHelper::input('hidden', "id_persona", null, $user_role['id_persona']);
+				} else {
+					echo HTMLHelper::select('id_persona', "Persona", $listPersone, $user_role['id_persona']);
+				}
+				echo HTMLHelper::select('id_ruolo', "Ruolo", $listaRuoli, $user_role['id_ruolo']);
 ?>
 				</form>
 <?php endif;

@@ -151,7 +151,6 @@ class HTMLHelper{
 			
 			foreach($pKeys as $key)
 				array_push($suffix, $key."=".$item[$key]);
-			
 			$suffix = "&".join("&",$suffix);
 			
 			$buttons[$k] = array(
