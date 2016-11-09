@@ -42,6 +42,7 @@ var MyModal = {
 		$('#'+MyModal.MyModalId+' .modal-body').html(html);
 	},
 	load: function(anchor, callbackSuccess, callbackFailure){
+		MyModal.init();
 		if(anchor.prop('href') != undefined){
 			var href = anchor.prop('href');
 	
@@ -49,8 +50,6 @@ var MyModal = {
 			var oldClass = span.prop('class');
 			var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
 	
-			MyModal.init();
-			
 			if(MyModal.busy == false){
 				MyModal.busy = true;
 				span.attr('class', newClass);
@@ -72,6 +71,31 @@ var MyModal = {
 				});
 			} 
 		}
+	},
+	editModal: function(context){
+		var href=$(context).prop("href");
+		MyModal.addButtons(
+			[
+				{id:"salva", type: "submit", label: "Salva", cssClass: "btn-primary", spanClass: "fa-save", callback: function(){;
+					MyModal.submit($(context),href,$('form').serializeArray());
+					}
+				}
+			]
+		);
+		MyModal.load($(context));
+	},
+	deleteModal: function(context){
+		var href=$(context).prop("href");
+		MyModal.addButtons(
+			[
+				{id:"Elimina", type: "submit", label: "Elimina", cssClass: "btn-danger", spanClass: "fa-trash-o", callback: function(){;
+					MyModal.submit($(context),href,null);
+					}
+				}
+			]
+		);
+		MyModal.setContent("<label for=\"conferma\">Confermi:</label><p id=\"conferma\">Sei sicuro di voler eliminare l'elemento?</p>");
+		MyModal.modal();
 	},
 	submit:function (element,href, data){
 		
@@ -119,7 +143,6 @@ var MyModal = {
 		MyModal.modal();
 	},
 	_resultMessage: function(message, error, innerdiv){
-		MyModal.init();
 		$('#'+MyModal.MyModalId+(innerdiv == undefined ? ' .modal-result' : ' '+innerdiv))
 			.html(error ? 
 				"<div style='word-wrap: break-word;' class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+message+"</p></div>" : 

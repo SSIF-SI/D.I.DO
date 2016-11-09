@@ -6,17 +6,17 @@ if (Utils::checkAjax ()) {
 	
 	
 	$classname = $_GET ['list'];
-	$dbconnector = new $classname ( Connector::getInstance () );
+	$userRolesObj = new $classname ( Connector::getInstance () );
 	
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	if ($delete){
 		unset($_GET['list'],$_GET['delete']);
-		die ( json_encode ( $dbconnector->delete ( $_GET ) ) );
+		die ( json_encode ( $userRolesObj->delete ( $_GET ) ) );
 	}
 	
 	if (count ( $_POST ) != 0) {
 		
-		die ( json_encode ( $dbconnector->save ( $_POST ) ) );
+		die ( json_encode ( $userRolesObj->save ( $_POST ) ) );
 	
 	} else {
 		$list = isset ( $_GET ['list'] ) ? $_GET ['list'] : null;

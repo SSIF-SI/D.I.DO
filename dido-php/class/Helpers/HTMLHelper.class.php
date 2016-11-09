@@ -135,6 +135,41 @@ class HTMLHelper{
 		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\" $required>$value</textarea>";
 	}
 	
+	static function createMetadata($list, $href, $pKeys, $substitutes_keys){
+		$substitutes = array();
+		$buttons = array();
+		
+		if(stripos($href, "?") === false) 
+			$href .= "?";
+		
+		foreach($list as $k=>$item){
+			foreach($substitutes_keys as $key=>$callback){
+				$substitutes[$k][$key] = call_user_func($callback,$item[$key]);
+			}
+	
+			$suffix = array();
+			
+			foreach($pKeys as $key)
+				array_push($suffix, $key."=".$item[$key]);
+			
+			$suffix = "&".join("&",$suffix);
+			
+			$buttons[$k] = array(
+					'Modifica'	=> array(
+							'type' => 'primary',
+							'href' => BUSINESS_HTTP_PATH.$href.$suffix,
+							'icon' => 'pencil',
+							'class'=> 'mymodal edit'),
+					'Elimina'	=> array(
+							'type' => 'danger',
+							'href' => BUSINESS_HTTP_PATH.$href.$suffix."&delete",
+							'icon' => 'trash',
+							'class'=> 'mymodal delete')
+			);
+		}
+	
+		return array('substitutes' => $substitutes, 'buttons' => $buttons);
+	}
 	
 }
 ?> 

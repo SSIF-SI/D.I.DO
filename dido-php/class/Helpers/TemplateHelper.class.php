@@ -29,7 +29,7 @@ class TemplateHelper{
         	<a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa fa-pencil fa-fw"></i> Gestione firme</a>
         </li>
 		<li>
-        	<a href="<?=BUSINESS_HTTP_PATH."roles.php"?>"><i class="fa fa-key fa-fw"></i> Gestione permessi</a>
+        	<a href="<?=BUSINESS_HTTP_PATH."permessi.php"?>"><i class="fa fa-key fa-fw"></i> Gestione permessi</a>
         </li>
 <?php 
 	}
