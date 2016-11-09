@@ -121,7 +121,8 @@ var MyModal = {
 						MyModal.success();
 						$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
-							$("#myModal").modal('hide');
+							$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
+							$(this).remove();
 							location.reload();
 						});
 					}
