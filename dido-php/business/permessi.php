@@ -33,7 +33,7 @@ if (Utils::checkAjax ()) {
 	}
 }
 
-$list = $userRolesObj->getAll("id_persona","ruolo");
+$list = $userRolesObj->getAll("id_persona, ruolo");
 $metadata = HTMLHelper::createMetadata($list, basename($_SERVER['PHP_SELF']), array("id_persona"), array('id_persona'=> 'PersonaleHelper::getNominativo'));
 $userRolesTable = HTMLHelper::editTable($list,$metadata['buttons'], $metadata['substitutes']);
 
