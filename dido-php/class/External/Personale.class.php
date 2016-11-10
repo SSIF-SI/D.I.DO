@@ -4,6 +4,7 @@ class Personale {
 	private static $_instance = null;
 	private $_persone;
 	private $_gruppi;
+	private $_email;
 	
 	private function __construct(){
 		ini_set ( "soap.wsdl_cache_enabled", "0" );
@@ -16,6 +17,8 @@ class Personale {
 		
 		$this->_persone = Utils::getListfromField ( $personale, null, "idPersona");
 		$this->_cfId = Utils::getListfromField ( $personale, "idPersona", "codiceFiscale");
+		$this->_email = Utils::getListfromField ( $personale, "idPersona", "email");
+		
 		$this->_gruppi = Utils::getListfromField ( $gruppi, null, "sigla");
 	}
 	
@@ -40,6 +43,10 @@ class Personale {
 
 	public function getPersonabyCf($cf){
 		return isset($this->_cfId[$cf]) ? $this->_persone[$this->_cfId[$cf]] : false;
+	}
+	
+	public function getPersonabyEmail($email){
+		return isset($this->_email[$email]) ? $this->_persone[$this->_email[$email]] : false;
 	}
 
 	public function getGruppo($sigla){

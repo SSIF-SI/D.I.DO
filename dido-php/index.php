@@ -32,6 +32,7 @@ if(count($_POST) > 0){
 }
 
 $inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDocumentInputs());
+$perm=PermissionHelper::getInstance();
 
 define("KARTIK_FILEINPUT", true);
 
