@@ -2,6 +2,7 @@
 class Geko{
 	private static $_instance = null;
 	private $_connection;
+	private static $tablesToRead = array("geco_missioni_dido","geco_ordini_dido");
 	
 	private function __construct(){}
 
@@ -12,9 +13,8 @@ class Geko{
 		return self::$_instance;
 	}
 	
-	public function show(){
-		$ml = new master_log();
-		Utils::printr($ml->getAll(null,null,100));
+	public function import(){
+		
 	}
 }
 ?>

@@ -7,7 +7,7 @@ class Sistemainformativo{
 		'HOST' 			=> 'sistemainformativo-dev.isti.cnr.it',
 		'ROOT_DATABASE' => 'sistemainformativo',
 		'ROOT_USER' 	=> 'personale',
-		'ROOT_PASSWORD' => 'personale123'
+		'ROOT_PASSWORD' => '!personale123'
 	);
 	
 	private $_connection;
