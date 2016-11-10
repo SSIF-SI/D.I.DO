@@ -40,5 +40,5 @@ define("KARTIK_FILEINPUT", true);
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
 
-Geko::getInstance()->show();
-
+$ml = new master_log();
+Utils::printr($ml->getLastIdFlussoOk("geco_missioni_dido"));

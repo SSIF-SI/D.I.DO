@@ -70,6 +70,7 @@ class FlowChecker{
 				
 				if(!is_null($document['md'])){
 					// è un documento di tipo esterno (masterDocument)	
+					// TODO: controllare se esiste e appendere il risulktato
 				} else {
 					$docResult->documentName = (string)$document['name'];
 					foreach($document->attributes() as $k=>$attr){

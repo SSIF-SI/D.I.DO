@@ -1,7 +1,8 @@
 <?php 
 class master_log extends Crud{
 	const CODICE_FLUSSO = "dido";
-
+	const SEQ_ID_FLUSSO = "flusso_seq";
+	
 	protected $TABLE = "master_log";
 	private $_idFlusso = null;
 
@@ -14,15 +15,15 @@ class master_log extends Crud{
 			if(is_null($operation) || is_null($tables)) throw new Exception(__CLASS__.__METHOD__.': Missing $operation and $tables parameters');
 			$this->_connInstance
 				->query("INSERT INTO 
-							master_log (codice_flusso, tabelle, operazione, data_inizio_oper) 
+						{$this->TABLE} (codice_flusso, tabelle, operazione, data_inizio_oper) 
 						 VALUES 
 							('".self::CODICE_FLUSSO."', '$tables', '$operation', now())",
-						"flusso_seq");
+						self::SEQ_ID_FLUSSO);
 			$this->_idFlusso = $this->_connInstance->getLastInsertId();
 		} else {
 			$this->_connInstance
 			->query("UPDATE 
-						master_log
+						{$this->TABLE}
 					 SET
 						data_fine_oper = now(),
 						esito_oper = '$esito'
@@ -31,6 +32,27 @@ class master_log extends Crud{
 			$this->_idFlusso = null;
 		}
 		
+	}
+	
+	public function getLastIdFlussoOk($table){
+		$this->_connInstance
+			->query("SELECT 
+						id_flusso
+					 FROM
+						{$this->TABLE}
+					 WHERE
+						codice_flusso = '".self::CODICE_FLUSSO."'
+					 AND
+						operazione = 'L'
+					 AND
+						esito_oper = 'OK'
+					 AND
+						tabelle like '%$table%'
+					 ORDER BY
+						id_flusso DESC
+					 LIMIT 1");
+		$row = $this->_connInstance->getRow();
+		return isset($row['id_flusso']) ? $row['id_flusso'] : 0;
 	}
 }
 ?>
