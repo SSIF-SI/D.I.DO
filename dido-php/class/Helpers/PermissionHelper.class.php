@@ -53,18 +53,15 @@ class PermissionHelper{
 		return $this->_role == self::RUOLO_AMMINISTRATORE;
 	}
 	
-	public function isGestore(){
+	public function isGestore($service = null){
 		if($this->_role == self::RUOLO_AMMINISTRATORE) return true;
 		
-		$services = func_get_args();
-		if(count($services) == 0)
-			return $this->_role == self::RUOLO_GESTORE;
+		if(in_array($service, $this->_user['gruppi']) || is_null($service)){
+			return true && $this->_role == self::RUOLO_GESTORE;
+		} 
 		
-		foreach($services as $service){
-			if(in_array($service, $this->_user['gruppi'])){
-				return true && $this->_role == self::RUOLO_GESTORE;
-			}
-		}
+		return false;
+		
 	}
 	
 	public function isConsultatore(){
