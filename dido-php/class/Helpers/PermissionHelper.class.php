@@ -1,60 +1,79 @@
 <?php
 class PermissionHelper{
-private static $_instance = null;
-private $_user;
-private $_role;
-private $_sign;
-
-private function __construct(){
+	const RUOLO_AMMINISTRATORE = 'Amministratore';
+	const RUOLO_GESTORE = 'Gestore Dati';
+	const RUOLO_CONSULTATORE = 'Consultatore';
 	
-	$userEmail=Session::getInstance()->get("AUTH_USER");
-	$this->_user=Personale::getInstance()->getPersonabyEmail($userEmail);
-	$user=$this->_user[idPersona];
-	$user_roleObj=new UsersRoles(Connector::getInstance());
-	$signerObj=new Signers(Connector::getInstance());
-	$user_role= $user_roleObj->getBy("id_persona", $user);
-	$signer= $signerObj->getBy("id_persona",$user );
-	$signer=Utils::getListfromField($signer,"pkey","id_persona");
-	$user_role=Utils::getListfromField($user_role,"ruolo","id_persona");
-	$this->_role=$user_role[$user];
-	$this->_sign=$signer[$user];	
+	private static $_instance = null;
+	private $_user;
+	private $_role;
+	private $_sign;
 	
-}
-
-public static function getInstance() {
-	if (self::$_instance == null) {
-		self::$_instance = new PermissionHelper ();
+	private function __construct(){
+		// Set User
+		$this->_user = Personale::getInstance()->getPersonabyEmail(Session::getInstance()->get("AUTH_USER"));
+		$user_id = $this->_user['idPersona'];
+		
+		// Set User Role
+		$user_roleObj = new UsersRoles(Connector::getInstance());
+		$user_role = Utils::getListfromField($user_roleObj->getBy("id_persona", $user_id),"ruolo","id_persona");
+		$this->_role = isset($user_role[$user_id]) ? $user_role[$user_id] : null;
+		
+		// Set user Signature, if exists
+		$signerObj = new Signers(Connector::getInstance());
+		$signer = Utils::getListfromField($signerObj->getBy("id_persona",$user_id ),"pkey","id_persona");
+		$this->_sign = isset($signer[$user_id]) ? $signer[$user_id] : null;	
 	}
-	return self::$_instance;
-}
-public function getUser(){
-	return $this->_user;
-}
-
-public function getUserId(){
-	return $this->_user[idPersona];
-}
-public function getUserRole(){
-	return $this->_role;
 	
-}
-public function getUserSign(){
-	return $this->_sign;
+	public static function getInstance() {
+		if (self::$_instance == null) {
+			self::$_instance = new PermissionHelper ();
+		}
+		return self::$_instance;
+	}
 	
-}
-public function isAdmin(){
-	if($this->_role=='Amministratore')
-		return true;
-	else
-		false;
-}
-public function isGestore(){
-	if($this->_role=='Gestore Dati')
-		return $this->_user[gruppi];
-	else 
-		return false;
-}
-public function isSigner(){
-	return isset($this->_sign);
-}
+	public function getUser(){
+		return $this->_user;
+	}
+	
+	public function getUserField($field){
+		if(!isset($this->_user[$field])) Throw new Exception(__CLASS__.":".__METHOD__." User has no field $field");
+		return $this->_user[$field];
+	}
+	
+	public function getUserRole(){
+		return $this->_role;
+		
+	}
+	public function getUserSign(){
+		return $this->_sign;
+	}
+	
+	public function isAdmin(){
+		return $this->_role == self::RUOLO_AMMINISTRATORE;
+	}
+	
+	public function isGestore(){
+		if($this->_role == self::RUOLO_AMMINISTRATORE) return true;
+		
+		$services = func_get_args();
+		if(count($services) == 0)
+			return $this->_role == self::RUOLO_GESTORE;
+		
+		foreach($services as $service){
+			if(in_array($service, $this->_user['gruppi'])){
+				return true && $this->_role == self::RUOLO_GESTORE;
+			}
+		}
+	}
+	
+	public function isConsultatore(){
+		if($this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE) return true;
+		
+		// TODO controlli
+	}
+	
+	public function isSigner(){
+		return !is_null($this->_sign);
+	}
 }
