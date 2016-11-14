@@ -64,10 +64,13 @@ class PermissionHelper{
 		
 	}
 	
-	public function isConsultatore(){
+	public function isConsultatore($service=null){
 		if($this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE) return true;
 		
-		// TODO controlli
+		if(in_array($service, $this->_user['gruppi']) || is_null($service)){
+			return true && $this->_role == self::RUOLO_CONSULTATORE;
+		}	
+		return false;
 	}
 	
 	public function isSigner(){
