@@ -1,12 +1,14 @@
 <?php 
 class TemplateHelper{
 	static function LeftMenu(){
-		//XMLBrowser::getInstance()->filterXmlByOwner("SA");
+		XMLBrowser::getInstance()->filterXmlByServices(array("SSIF - SI"));
+		$tree = PermissionHelper::getInstance()->isGestore() ? XMLBrowser::getInstance()->getXmlTree(true) : null;
+		
 ?>
 		<li>
 			<a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
 		</li>
-		<?php $tree = XMLBrowser::getInstance()->getXmlTree(); if(!empty($tree)): ?>
+		<?php if(!empty($tree)): ?>
         <li>
 			<a href="#"><i class="fa fa-files-o fa-fw"></i> Nuovo documento<span class="fa arrow"></span></a>
 			<ul class="nav nav-second-level">
