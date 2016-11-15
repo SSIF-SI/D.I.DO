@@ -51,9 +51,26 @@ class XMLBrowser{
 			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
 					if($dividedBycategories) 
-						$list[$categoria] = $xmlTree['path'].$metadata['file'];
+						$list[$categoria][] = $xmlTree['path'].$metadata['file'];
 					else
 						$list[] = $xmlTree['path'].$metadata['file'];
+				}
+			}
+		}
+		return $list;
+	}
+	
+	public function getXmlListByOwner($owner = null){
+		$list = array();
+		foreach($this->_xmlTree as $categoria=>$xmlData){
+			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
+				foreach($versioni as $numVersione=>$metadata){
+					if(!is_null($owner)){ 
+						if((string)$metadata['owner'] == $owner)
+							$list[$owner][] = $xmlTree['path'].$metadata['file'];
+					} else {
+						$list[(string)$metadata['owner']][] = $xmlTree['path'].$metadata['file'];
+					}
 				}
 			}
 		}

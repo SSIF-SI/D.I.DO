@@ -116,7 +116,7 @@ class TemplateHelper{
 	}
 	
 	static function createDashboardPanels(){
-		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",26,"Documenti da importare","?detail=documentToImport");
+		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",Geko::getInstance()->getFileToImport()['nTot'],"Documenti da importare","?detail=documentToImport");
 		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",8,"Documenti aperti","?detail=documentOpen");
 		self::_createDashboardPanel(4,"panel-green","fa-edit",2,"Documenti da firmare","?detail=documentToSign");
 	}

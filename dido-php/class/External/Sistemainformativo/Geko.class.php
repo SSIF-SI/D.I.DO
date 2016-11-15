@@ -47,19 +47,32 @@ class Geko {
 		return $data_to_import;
 	}
 	
-	public function getFileToImport($type = null) {
+	public function getFileToImport() {
+		
+		$owner = PermissionHelper::getInstance()->isAdmin() ? null : PermissionHelper::getInstance()->getUserField("gruppi");
+		
+		$list = XMLBrowser::getInstance()->getXmlListByOwner($owner);
+		$list = array_map(function($el){ return str_replace(".xml","",$el);},$list);
+		
 		$fti = array("nTot" => 0);
-		if(is_null($type)){
-			$types = glob(GECO_IMPORT_PATH."*");
-			foreach($types as $type){
-				$files = glob($type."/*");
-				if(count($files)){
-					foreach($files as $file)
-						$fti[basename($type)][] = basename($file);
-					$fti['nTot'] += count($fti[basename($type)]);
+		
+		$types = glob(GECO_IMPORT_PATH."*");
+		foreach($types as $type){
+			$needle = basename($type);
+			
+			foreach ($list as $owner => $xmlList){
+				if(in_array($needle,$xmlList)){
+						
+					$files = glob($type."/*");
+					if(count($files)){
+						foreach($files as $file)
+							$fti[basename($type)][] = basename($file);
+						$fti['nTot'] += count($fti[basename($type)]);
+					}
 				}
 			}
 		}
+
 		return $fti;
 	}
 	

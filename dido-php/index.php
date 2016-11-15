@@ -21,10 +21,10 @@ Utils::printr(Personale::getInstance()->getGruppi());
 //$fcr = FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
 //print_r(Personale::getInstance()->getPersonakey(),1);
 //$md = new Masterdocument(Connector::getInstance());
-
+/*
 
 $result = null;
-XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.v01.xml");
+XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.xml");
 
 if(count($_POST) > 0){
 	FormHelper::check($_POST, XMLParser::getInstance()->getMasterDocumentInputs());
@@ -35,10 +35,8 @@ $inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDoc
 $perm=PermissionHelper::getInstance();
 
 define("KARTIK_FILEINPUT", true);
-
+*/
 //Utils::printr(Personale::getInstance()->getPeopleByGroupType("Servizio"));
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
-
-Utils::printr(Geko::getInstance()->getFileToImport());
