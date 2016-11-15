@@ -32,6 +32,8 @@ define ("LIB_PATH",				HTTP_ROOT . "lib/");
 define ("FILES_PATH",			REAL_ROOT . "files/");
 define ("FILES_HTTP_PATH",		HTTP_ROOT . "files/");
 define ("GECO_IMPORT_PATH",		REAL_ROOT . "geco-import/");
+define ("GECO_IMPORT_MISSIONI", GECO_IMPORT_PATH . "missioni/");
+define ("GECO_IMPORT_ORDINI",   GECO_IMPORT_PATH . "ordini/");
 define ("TEMPLATES_PATH",		REAL_ROOT . "templates/");
 define ("SB_ADMIN_2",			HTTP_ROOT . "templates/sb-admin-2/");
 
