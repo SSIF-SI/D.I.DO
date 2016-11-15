@@ -147,5 +147,31 @@ class TemplateHelper{
 	                </div>
 <?php 
 	}
+	static function createListGroupToImport(){
+		$list=Geko::getInstance()->getFileToImport();
+		unset($list['nTot']);
+		foreach ($list as $md=>$val):{
+		?>
+		<div class="panel-group" id="GroupToImport">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#".(ucfirst($md)).""?>><?php echo(ucfirst($md))?><span class="badge"><?php echo count($val)?></span></a>
+			</h4>
+				</div>
+				<div id="<?php echo(ucfirst($md))?>" class="panel-collapse collapse in">
+					<ul class="list-group">
+					<?php foreach ($val as $k=>$id):{?>
+					<li class="list-group-item"><?php echo($id)?></li>
+					<?php }endforeach;?>
+					</ul>
+					<?php }endforeach;?>
+				</div>
+			</div>
+		</div>
+			
+<?
+	}
+	
 }
 ?>

@@ -1,12 +1,13 @@
-                <div class="row">
-                    <div class="col-lg-12">
-                    	<h1 class="page-header">Dashboard</h1>
-                	</div>
-                </div>
-                <div class="row">
+
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">Dashboard</h1>
+	</div>
+</div>
+<div class="row">
 	                <?php TemplateHelper::createDashboardPanels();?>
 	            </div>
-				<!--
+<!--
 				<div class="row">
                     <div class="col-lg-12">
                 		<?=$result?>
@@ -29,17 +30,24 @@
 	                <button class="btn btn-primary" type="submit">Salva</button>
                 </form>
                  -->
-                <div class="row">
-                    <div class="col-lg-12">
-		                <div class="panel panel-default">
-		                	<div class="panel-heading">
-		                		<i class="fa fa-clock-o fa-fw"></i> Responsive Timeline
-		                	</div>
-		                	<div class="panel-body">
-		                		<div class="container-fluid">
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<i class="fa fa-clock-o fa-fw"></i> Responsive Timeline
+			</div>
+			<div class="panel-body">
+				<div class="container-fluid">
+		                		
 		                			<?php //TemplateHelper::createTimeline($fcr);?>
 		                		</div>
-		                	</div>
-		                </div>
-		          	</div>
-		       </div>
+			</div>
+		</div>
+	</div>
+	</div>
+	<div class="row"><?php
+		if( isset($_GET['detail']) && $_GET['detail']==='documentToImport'){
+			TemplateHelper::createListGroupToImport();
+	}
+	?></div>
+</div>
