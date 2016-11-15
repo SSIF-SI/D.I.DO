@@ -23,11 +23,10 @@ class Geko {
 	}
 	public function importFromSI() {
 		$data_to_import = self::getDataToImport ();
+		
 		foreach ( self::$tablesToRead as $table => $k ) {
 			foreach ( $data_to_import [$k['alias']] as $record ) {
-				//$record = Utils::getListfromField ( $record, $k['id'] );
-				Utils::printr($record);
-// 				self::createFilesToImport ( $table, $k['alias'], $record );
+				self::createFilesToImport ( $table, $k, $record );
 			}
 		}
 	}
@@ -47,18 +46,31 @@ class Geko {
 		
 		return $data_to_import;
 	}
-	private function getFileToImport() {
-		// TODO
+	
+	public function getFileToImport($type = null) {
+		$fti = array("nTot" => 0);
+		if(is_null($type)){
+			$types = glob(GECO_IMPORT_PATH."*");
+			foreach($types as $type){
+				$files = glob($type."/*");
+				if(count($files)){
+					foreach($files as $file)
+						$fti[basename($type)][] = basename($file);
+					$fti['nTot'] += count($fti[basename($type)]);
+				}
+			}
+		}
+		return $fti;
 	}
-	private function createFilesToImport($table, $alias, $record) {
-		Utils::printr ( $record [$idToRead [$table]] );
-		$filename = GECO_IMPORT_PATH . $alias . "/id" . $record [$idToRead [$table]];
-		$dirname = GECO_IMPORT_PATH . $alias;
+	
+	private function createFilesToImport($table, $k, $record) {
+		$filename = $record [$k['id']];
+		$dirname = GECO_IMPORT_PATH . $k['alias'];
 		if (! is_dir ( $dirname )) {
 			mkdir ( $dirname, 0777, true );
 		}
-		$importfile = fopen ( $filename, "w" ) or die ( "unable to open file" );
-		fwrite ( $importfile, join ( PHP_EOL, $record ) );
+		$importfile = fopen ( $dirname . DIRECTORY_SEPARATOR . $filename, "w" ) or die ( "unable to open file" );
+		fwrite ( $importfile, serialize($record ) );
 		fclose ( $importfile );
 	}
 }

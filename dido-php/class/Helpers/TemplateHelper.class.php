@@ -114,5 +114,38 @@ class TemplateHelper{
                            </ul>
 <?php 
 	}
+	
+	static function createDashboardPanels(){
+		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",26,"Documenti da importare","?detail=documentToImport");
+		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",8,"Documenti aperti","?detail=documentOpen");
+		self::_createDashboardPanel(4,"panel-green","fa-edit",2,"Documenti da firmare","?detail=documentToSign");
+	}
+	
+	private static function _createDashboardPanel($panel_measure, $panel_class, $icon_class,$nTot,$label,$href){
+?>
+					<div class="col-lg-<?=$panel_measure?> col-md-<?=($panel_measure*2)?>">
+	                    <div class="panel <?=$panel_class?>">
+	                        <div class="panel-heading">
+	                            <div class="row">
+	                                <div class="col-xs-3">
+	                                    <i class="fa <?=$icon_class?> fa-5x"></i>
+	                                </div>
+	                                <div class="col-xs-9 text-right">
+	                                    <div class="huge"><?=$nTot?></div>
+	                                    <div><?=$label?></div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <a href="<?=$href?>">
+	                            <div class="panel-footer">
+	                                <span class="pull-left">Vedi Dettagli</span>
+	                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+	                                <div class="clearfix"></div>
+	                            </div>
+	                        </a>
+	                    </div>
+	                </div>
+<?php 
+	}
 }
 ?>
