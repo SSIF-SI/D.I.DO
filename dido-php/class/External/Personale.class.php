@@ -13,13 +13,15 @@ class Personale {
 		$client = new SoapClient ( $wsdl_url );
 			
 		$personale = json_decode(json_encode($client->personale()),true);
-		$gruppi = json_decode(json_encode($client->gruppi()),true);
-		
 		$this->_persone = Utils::getListfromField ( $personale, null, "idPersona");
 		$this->_cfId = Utils::getListfromField ( $personale, "idPersona", "codiceFiscale");
 		$this->_email = Utils::getListfromField ( $personale, "idPersona", "email");
 		
+		$gruppi = json_decode(json_encode($client->gruppi()),true);
 		$this->_gruppi = Utils::getListfromField ( $gruppi, null, "sigla");
+		
+		$progetti = json_decode(json_encode($client->progetti()),true);
+		$this->_progetti = Utils::getListfromField ( $progetti, null, "id");
 	}
 	
 	public static function getInstance() {
@@ -35,6 +37,10 @@ class Personale {
 	
 	public function getGruppi(){
 		return $this->_gruppi;
+	}
+	
+	public function getProgetti(){
+		return $this->_progetti;
 	}
 	
 	public function getPersona($id){

@@ -6,8 +6,8 @@ class Sistemainformativo{
 		'DB_ENGINE' 	=> 'pgsql',
 		'HOST' 			=> 'sistemainformativo-dev.isti.cnr.it',
 		'ROOT_DATABASE' => 'sistemainformativo',
-		'ROOT_USER' 	=> 'personale',
-		'ROOT_PASSWORD' => '!personale123'
+		'ROOT_USER' 	=> 'dido',
+		'ROOT_PASSWORD' => '!dido2k_16!'
 	);
 	
 	private $_connection;
@@ -26,6 +26,6 @@ class Sistemainformativo{
 	public function getConnection(){
 		return $this->_connection;
 	}
-	
+
 }
 ?>

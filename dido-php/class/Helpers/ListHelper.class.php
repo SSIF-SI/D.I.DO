@@ -37,5 +37,14 @@ class ListHelper{
 		asort($signers);
 		return $signers;
 	}
+	
+	static function listProgetti($data = null){
+		$list = Personale::getInstance()->getProgetti();
+		if(!is_null($data)){
+			$list= Utils::filterList($list, "inizio", $data, Utils::OP_LESS_THAN.Utils::OP_EQUAL);
+			$list= Utils::filterList($list, "inizio", $data, Utils::OP_MORE_THAN.Utils::OP_EQUAL);
+		}
+		return $list;
+	} 
 }
 ?>

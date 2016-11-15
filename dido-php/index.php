@@ -40,3 +40,5 @@ define("KARTIK_FILEINPUT", true);
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
+
+Utils::printr(Geko::getInstance()->getDataToImport());
