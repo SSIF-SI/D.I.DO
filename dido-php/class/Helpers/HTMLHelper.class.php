@@ -1,21 +1,22 @@
 <?php 
 class HTMLHelper{
-	static function select($name, $label, $options, $selected = null, $class = null){
+	static function select($name, $label, $options, $selected = null, $class = null, $isImported = false){
 		ob_start();
 ?>
 <div class="form-group <?=$class?>">
 	<label class="control-label" for="<?=$name?>"><?=$label?>:</label>
-	<select class="form-control" id="<?=$name?>" name="<?=$name?>">
+	<select class="form-control" <?php if(!$isImported):?> id="<?=$name?>" name="<?=$name?>"<?php else:?> disabled="disabled"<?php endif;?>>
 <?php	foreach ($options as $value=>$optlabel): ?>
 		<option value="<?=$value?>" <?=$value == $selected ? "selected" : ""?>><?=$optlabel?></option>
 <?php 	endforeach;?>
 	</select>
+<?php if($isImported) echo self::lineInput("hidden", $name, $label, $selected, $class, false);?>
 </div>
 <?php
 		return ob_get_clean();
 	}
 	
-	static function input($type, $name, $label, $value=null, $class = null, $required = false){
+	static function input($type, $name, $label, $value=null, $class = null, $required = false, $isImported = false){
 		ob_start();
 		if($type == 'hidden' || $type == 'file'):
 			if($type != 'hidden' && !is_null($label)):
@@ -23,9 +24,9 @@ class HTMLHelper{
     <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
 <?php 		
 			endif;
-			echo self::lineInput($type, $name, $label, $value, $class, $required);
+			echo self::lineInput($type, $name, $label, $value, $class, $required, $isImported);
 		else :
-			$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $class, $required) : self::lineInput($type, $name, $label, $value, $class, $required);
+			$innerInput = $type == 'textarea' ? self::textareaInput($name, $label, $value, $class, $required) : self::lineInput($type, $name, $label, $value, $class, $required, $isImported);
 ?>
 	<div class="form-group <?=$class?>">
 <?php 	if($type != 'hidden'):?>	
@@ -124,10 +125,12 @@ class HTMLHelper{
 	}
 	
 	
-	private static function lineInput($type, $name, $label, $value=null, $class = null, $required = false){
+	private static function lineInput($type, $name, $label, $value=null, $class = null, $required = false, $isImported = false){
 		$more = $type == 'file' ? 'data-show-upload="false" data-allowed-file-extensions=\'["pdf", "p7m"]\'': null ;
+		$more .= $isImported ? " readonly=\"readonly\"" : null ;
 		$required = $required ? "required" : null;
-		return "<input type=\"$type\" class=\"form-control $class\" name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";
+		$class = $type == "hidden" ? null : "class=\"form-control $class\"";
+		return "<input type=\"$type\" $class name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";
 	}
 	
 	private static function textareaInput($name, $label, $value=null , $required = false){
