@@ -150,25 +150,31 @@ class TemplateHelper{
 	static function createListGroupToImport(){
 		$list=Geko::getInstance()->getFileToImport();
 		unset($list['nTot']);
+		$i=1;
 		foreach ($list as $md=>$val):{
 		?>
+	<div class="col-lg-12 col-md-12">
 		<div class="panel-group" id="GroupToImport">
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">
-				<a data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#".(ucfirst($md)).""?>><?php echo(ucfirst($md))?><span class="badge"><?php echo count($val)?></span></a>
-			</h4>
+						<a data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$i; ?>>
+                 		 <span class="glyphicon glyphicon-folder-close">&nbsp;<?php echo(ucfirst($md))?>&nbsp;</span><span class="badge badge-info"><?php echo count($val)?></span></a>
+                    </h4>
 				</div>
-				<div id="<?php echo(ucfirst($md))?>" class="panel-collapse collapse in">
+				<div id=<?php echo "list".$i;?> class="panel-collapse collapse">
 					<ul class="list-group">
 					<?php foreach ($val as $k=>$id):{?>
-					<li class="list-group-item"><?php echo($id)?></li>
+					<li class="list-group-item"><span class="glyphicon glyphicon-file"></span><?php echo"IdMissione: ".($id)?><span class=" bafge fa-sign-in fa-rotate-90"></span></li>
 					<?php }endforeach;?>
 					</ul>
-					<?php }endforeach;?>
+					
+			<?php $i++; }endforeach;?>
 				</div>
 			</div>
 		</div>
+    </div>
+
 			
 <?
 	}
