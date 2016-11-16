@@ -3,7 +3,7 @@ class FormHelper{
 	private static $warnmessages = array();
 	private static $warnBox = "";
 
-	public static function createInputsFromXml($xmlInputs){
+	public static function createInputsFromXml($xmlInputs, $colDivision = 4, $_IMPORT = array()){
 		$inputs = array();
 
 		foreach ($xmlInputs as $input){
@@ -11,23 +11,28 @@ class FormHelper{
 			$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
 			$label = (string)$input;
 			$field = self::fieldFromLabel($label);
-			$value = $_POST[$field];
+			$value = isset($_POST[$field]) ? $_POST[$field] : $_IMPORT[$field];
 			
-			if(is_null($input['transform'])){
+			/* IN REALTA NN VA FATTO QUI... DA VEDERE... */
+			if(!is_null($input['transform']) && empty($_POST)){
 				$callback = (string)$input['transform'];
 				$value = ImportHelper::$callback($value);
 			}
-					
+			
 			$warning = FormHelper::getWarnMessages($field);
 			$class = isset($warning['class']) ? $warning['class'] : null;
 			
 			if(is_null($input['values']))
-				$inputs[] = HTMLHelper::input($type, $field, $label, $value, $class, false);
+				$input_html = HTMLHelper::input($type, $field, $label, $value, $class, false, !is_null($input['from']));
 			else{
 				$callback = (string)$input['values'];
 				$options = ListHelper::$callback();
-				$inputs[] = HTMLHelper::select($field, $label, $options,$value, $class);
+				$input_html = HTMLHelper::select($field, $label, $options,$value, $class, !is_null($input['from']));
 			}
+			
+			if($type != 'hidden') $input_html = "<div class=\"col-lg-$colDivision\">$input_html</div>";
+			array_push($inputs, $input_html);	
+		
 		}
 		
 		return $inputs;
@@ -78,7 +83,7 @@ class FormHelper{
 	}
 	
 	private static function fieldFromLabel($label){
-		return str_replace(" ", "_", $label);
+		return strtolower(str_replace(" ", "_", $label));
 	}
 	
 	private static function checkField($type, $var, $field, $label){
