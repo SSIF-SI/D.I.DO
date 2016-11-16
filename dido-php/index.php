@@ -38,5 +38,18 @@ define("KARTIK_FILEINPUT", true);
 */
 //Utils::printr(Personale::getInstance()->getPeopleByGroupType("Servizio"));
 
+
+if( isset($_GET['detail'])){ 
+	switch($_GET['detail']){
+		case 'documentToImport':
+			$detail = TemplateHelper::createListGroupToImport();
+			break;
+		default:
+			$detail = null;
+		
+	}
+	
+}
+
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");

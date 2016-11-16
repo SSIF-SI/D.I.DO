@@ -13,6 +13,11 @@ class FormHelper{
 			$field = self::fieldFromLabel($label);
 			$value = $_POST[$field];
 			
+			if(is_null($input['transform'])){
+				$callback = (string)$input['transform'];
+				$value = ImportHelper::$callback($value);
+			}
+					
 			$warning = FormHelper::getWarnMessages($field);
 			$class = isset($warning['class']) ? $warning['class'] : null;
 			

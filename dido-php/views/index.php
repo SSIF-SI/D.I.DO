@@ -45,9 +45,7 @@
 		</div>
 	</div>
 	</div>
-	<div class="row"><?php
-		if( isset($_GET['detail']) && $_GET['detail']==='documentToImport'){
-			TemplateHelper::createListGroupToImport();
-	}
-	?></div>
+	<div class="row">
+		<?=$detail?>
+	</div>
 </div>

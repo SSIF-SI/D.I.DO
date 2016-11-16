@@ -7,17 +7,20 @@
 	</types>
 	<inputs>
 		<input from="geco" key="id_missione">Id Missione</input>
-		<input from="geco" key="personale_cf" values="listPersone">Dipendente</input>
+		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="listPersone">Dipendente</input>
+		<input from="geco" key="oggetto">Oggetto</input>
+		<input from="geco" key="localita">Località</input>
 		<input from="geco" key="data_inizio">Data inizio missione</input>
 		<input from="geco" key="data_fine">Data fine missione</input>
-		<input from="geco" key="localita">Località</input>
-		<input>Descrittivo GAE</input>
-		<input from="geco" key="laboratorio">Laboratorio</input>
+		<input from="geco" key="importo">Importo</input>
+		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="listGruppi">Laboratorio</input>
+		<input from="geco" key="gae_nome">Linea attività</input>
+		<input from="geco" key="Natura Finanziamento">Natura finanziamento</input>
 		<input from="geco" key="tipo_trattamento">Tipo trattamento</input>
 		<input from="geco" key="cup">CUP</input>
 		<input type="hidden">tipo</input>
-		<input>titolare dei fondi</input>
-		<input>responsabile di laboratorio</input>
+		<input values="titolariFondi">titolare dei fondi</input>
+		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
