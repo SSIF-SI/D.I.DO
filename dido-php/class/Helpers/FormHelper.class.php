@@ -3,7 +3,7 @@ class FormHelper{
 	private static $warnmessages = array();
 	private static $warnBox = "";
 
-	public static function createInputsFromXml($xmlInputs, $colDivision = 4){
+	public static function createInputsFromXml($xmlInputs, $colDivision = 4, $_IMPORT = array()){
 		$inputs = array();
 
 		foreach ($xmlInputs as $input){
@@ -11,10 +11,10 @@ class FormHelper{
 			$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
 			$label = (string)$input;
 			$field = self::fieldFromLabel($label);
-			$value = $_POST[$field];
+			$value = isset($_POST[$field]) ? $_POST[$field] : $_IMPORT[$field];
 			
 			/* IN REALTA NN VA FATTO QUI... DA VEDERE... */
-			if(!is_null($input['transform'])){
+			if(!is_null($input['transform']) && empty($_POST)){
 				$callback = (string)$input['transform'];
 				$value = ImportHelper::$callback($value);
 			}

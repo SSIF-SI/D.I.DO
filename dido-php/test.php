@@ -9,7 +9,7 @@ if(count($_POST) > 0){
 }
 
 $_POST['id_missione'] = 123;
-$inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDocumentInputs());
+$inputs = FormHelper::createInputsFromXml(XMLParser::getInstance()->getMasterDocumentInputs(),null,$_IMPORT);
 
 $pageScripts = array('datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
