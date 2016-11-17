@@ -157,15 +157,19 @@ class TemplateHelper{
 		<div class="panel-group" id="GroupToImport">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title">
-						<a data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$i; ?>>
-                 		 <span class="glyphicon glyphicon-folder-close">&nbsp;<?php echo(ucfirst($md))?>&nbsp;</span><span class="badge badge-info"><?php echo count($val)?></span></a>
-                    </h4>
+					<div class="row">
+						<div class="col-lg-6">
+							<a data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$i; ?> class="collapsed"><span class="glyphicon glyphicon-folder-close">&nbsp;<?php echo(ucfirst($md))?>&nbsp;</span></a>
+		                </div>
+	                    <div class="col-lg-6 text-right">
+							<span class="badge badge-info"><?php echo count($val)?></span>
+		                </div>
+                    </div>
 				</div>
 				<div id=<?php echo "list".$i;?> class="panel-collapse collapse">
 					<ul class="list-group">
 					<?php foreach ($val as $k=>$id):{?>
-					<li class="list-group-item"><span class="glyphicon glyphicon-file"></span><?php echo"IdMissione: ".($id)?><span class=" bafge fa-sign-in fa-rotate-90"></span></li>
+					<li class="list-group-item"><span class="glyphicon glyphicon-file"></span><?php echo"IdMissione: ".($id)?><span class="badge fa-sign-in fa-rotate-90"> </span></li>
 					<?php }endforeach;?>
 					</ul>
 					
@@ -177,6 +181,7 @@ class TemplateHelper{
 
 			
 <?
+		return ob_get_clean();
 	}
 	
 }

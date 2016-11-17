@@ -51,5 +51,5 @@ if( isset($_GET['detail'])){
 	
 }
 
-$pageScripts = array('datepicker.js');
+$pageScripts = array('index.js','datepicker.js');
 include_once (TEMPLATES_PATH."template.php");
