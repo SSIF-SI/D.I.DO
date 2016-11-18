@@ -1,7 +1,6 @@
 <?php
 class Geko {
 	private static $_instance = null;
-	private $_connection;
 	private static $tablesToRead = array (
 			// Table Name => Alias
 			"geco_missioni_dido" => array (

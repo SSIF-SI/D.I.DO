@@ -169,7 +169,7 @@ class TemplateHelper{
 				<div id=<?php echo "list".$i;?> class="panel-collapse collapse">
 					<ul class="list-group">
 					<?php foreach ($val as $k=>$id):{?>
-					<li class="list-group-item"><span class="glyphicon glyphicon-file"></span><?php echo"IdMissione: ".($id)?><span class="badge fa-sign-in fa-rotate-90"> </span></li>
+					<li class="list-group-item"><span class="glyphicon glyphicon-file"></span><?php echo"IdMissione: ".($id)?><i class="badge fa-sign-in fa-rotate-90"> </i></li>
 					<?php }endforeach;?>
 					</ul>
 					

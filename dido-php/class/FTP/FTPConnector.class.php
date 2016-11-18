@@ -20,7 +20,7 @@ class FTPConnector{
 	
 	public static function getInstance(){
 		if(is_null(self::$_instance)){
-			self::$_instance = new self ();
+			self::$_instance = new self();
 		}	
 		return self::$_instance;
 	}
