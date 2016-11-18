@@ -2,8 +2,9 @@
 abstract class geco_dido_import extends Crud{
 	private static $SQL_GET_RECORDS_TO_IMPORT = "SELECT * FROM %s WHERE id_flusso > %d";
 	
-	protected function __construct(){
-		parent::__construct(Sistemainformativo::getInstance()->getConnection());
+	protected function __construct($connector = null){
+		if(is_null($connector)) $connector = Sistemainformativo::getInstance()->getConnection(); 
+		parent::__construct($connector);
 	}
 	
 	public function getRecordsToImport($idFlusso){

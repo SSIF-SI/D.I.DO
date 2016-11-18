@@ -24,6 +24,9 @@ class Personale {
 		$this->_progetti = Utils::getListfromField ( $progetti, null, "id");
 	}
 	
+	private function __clone(){}
+	private function __wakeup(){}
+	
 	public static function getInstance() {
 		if (self::$_instance == null) {
 			self::$_instance = new self ();

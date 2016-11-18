@@ -11,6 +11,8 @@ class XMLParser{
 	}
 	
 	private function __construct(){}
+	private function __clone(){}
+	private function __wakeup(){}
 	
 	public function setXMLSource($xml, $md_type = null){
 		$this->_xml = $xml;

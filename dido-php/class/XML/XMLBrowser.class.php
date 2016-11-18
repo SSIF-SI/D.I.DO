@@ -22,6 +22,9 @@ class XMLBrowser{
 		}
 	}
 	
+	private function __clone(){}
+	private function __wakeup(){}
+	
 	public function getXmlTree($onlyOwner = false){
 		if(!$onlyOwner)
 			return $this->_xmlTree;

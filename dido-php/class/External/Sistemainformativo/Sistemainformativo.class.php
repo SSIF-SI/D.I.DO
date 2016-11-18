@@ -21,6 +21,9 @@ class Sistemainformativo{
 		$this->_connection = Connector::getInstance("sistemainformativo", self::$dbData);	
 	}
 	
+	private function __clone(){}
+	private function __wakeup(){}
+	
 	public static function getInstance() {
 		if (self::$_instance == null) {
 			self::$_instance = new self ();
