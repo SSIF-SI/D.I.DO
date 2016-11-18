@@ -13,7 +13,7 @@ class XMLParser{
 	private function __construct(){}
 	
 	public function setXMLSource($xml, $md_type = null){
-		$this->_xml = simplexml_load_file($xml);
+		$this->_xml = $xml;
 		
 		if(!is_null($md_type)){// Se il master document è di un certo tipo filtro i documenti associati
 			$this->_filter($md_type);

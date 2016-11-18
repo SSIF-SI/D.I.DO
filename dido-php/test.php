@@ -1,7 +1,7 @@
 <?php 
 require_once 'config.php';
 
-XMLParser::getInstance()->setXMLSource(XML_MD_PATH."missioni/missione.v01.xml");
+XMLParser::getInstance()->setXMLSource(XmlBrowser::getInstance()->getgetSingleXml("missioni/missione.v01.xml"));
 
 if(count($_POST) > 0){
 	FormHelper::check($_POST, XMLParser::getInstance()->getMasterDocumentInputs());

@@ -51,13 +51,18 @@ class XMLBrowser{
 			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
 					if($dividedBycategories) 
-						$list[$categoria][] = $xmlTree['path'].$metadata['file'];
+						$list[$categoria][$xmlData['path'].$metadata['file']] = $metadata['xml'];
 					else
-						$list[] = $xmlTree['path'].$metadata['file'];
+						$list[$xmlData['path'].$metadata['file']] = $metadata['xml'];
 				}
 			}
 		}
 		return $list;
+	}
+	
+	public function getSingleXml($xmlFilename){
+		$list = $this->getXmlList(false);
+		return array_key_exists($xmlFilename, $list) ? $list[$xmlFilename] : null;  
 	}
 	
 	public function getXmlListByOwner($owner = null){
@@ -88,11 +93,12 @@ class XMLBrowser{
 			$xml = simplexml_load_file($xmlFile);
 			$fileName = basename($xmlFile);
 			preg_match("/".self::FILE_REGEX."/", $fileName,$fileInfo);
-			if(!empty($fileInfo[2])) 
+			if(!empty($fileInfo[2]))
 				$fileInfo[2] = "versione ".ltrim($fileInfo[2],".v");
 			$tree[$fileInfo[1]][$fileInfo[2]] = 
 				array(
 					"file" => $fileInfo[0], 
+					"xml" => $xml, 
 					"owner" => $xml['owner'],
 					"visibleFor" => $xml['visibleFor'],						
 					"hiddenFor" => $xml['hiddenFor']					

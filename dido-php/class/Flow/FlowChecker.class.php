@@ -48,7 +48,7 @@ class FlowChecker{
 		
 			//Utils::printr($this->_md);
 			// Parsing con XML (documenti richiesti)
-			$this->_xml->setXMLSource(XML_MD_PATH.$this->_md['xml'],$this->_md['type']);
+			$this->_xml->setXMLSource(XMLBrowser::getInstance()->getSingleXml($this->_md['xml']),$this->_md['type']);
 			// Connessione FTP (documenti esistenti)
 			
 			$ftp = FTPConnector::getInstance();
