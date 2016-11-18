@@ -5,7 +5,7 @@ class XMLParser{
 	
 	public static function getInstance(){
 		if(is_null(self::$_instance)){
-			self::$_instance = new XMLParser();
+			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}

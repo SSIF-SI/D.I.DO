@@ -10,7 +10,7 @@ class FlowChecker{
 	
 	public static function getInstance(){
 		if(is_null(self::$_instance))
-			self::$_instance = new FlowChecker();
+			self::$_instance = new self();
 		return self::$_instance;
 	} 
 	
