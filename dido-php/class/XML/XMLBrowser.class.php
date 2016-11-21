@@ -2,6 +2,7 @@
 class XMLBrowser{
 	private static $_instance = null;
 	private $_xmlTree = array();
+	private $_PermissionHelper;
 	
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(\.v[0-9]{1,}){0,1}(\.xml)$";
 	
@@ -20,10 +21,15 @@ class XMLBrowser{
 			$documenti = self::_createDocTree($xmlList);
 			$this->_xmlTree[$catName] = array('path' => $catName."/", 'documenti' => $documenti);
 		}
+		$this->_PermissionHelper = PermissionHelper::getInstance();
 	}
 	
 	private function __clone(){}
 	private function __wakeup(){}
+	
+	public function setPermissionHelper($ph){
+		$this->_PermissionHelper = $ph;
+	}
 	
 	public function getXmlTree($onlyOwner = false){
 		if(!$onlyOwner)
@@ -34,7 +40,7 @@ class XMLBrowser{
 		foreach($filtered as $catName=>$data){
 			foreach($data['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
-					if(!in_array((string)$metadata['owner'],PermissionHelper::getInstance()->getUserField('gruppi'))){
+					if(!in_array((string)$metadata['owner'],$this->_PermissionHelper->getUserField('gruppi'))){
 						unset($filtered[$catName]['documenti'][$tipoDocumento][$numVersione]);
 					}
 				}
@@ -113,7 +119,7 @@ class XMLBrowser{
 	} 
 	
 	public function filterXmlByServices($services = null){
-		if(is_null($services) || !is_array($services) || PermissionHelper::getInstance()->isAdmin()) return;
+		if(is_null($services) || !is_array($services) || $this->_PermissionHelper->isAdmin()) return;
 		
 		foreach($this->_xmlTree as $catName=>$data){
 			foreach($data['documenti'] as $tipoDocumento=>$versioni){
@@ -122,9 +128,9 @@ class XMLBrowser{
 					if(!in_array((string)$metadata['owner'],$services)){
 						
 						$isMDVisible = 
-							PermissionHelper::getInstance()->isGestore() || 
-							PermissionHelper::getInstance()->isConsultatore() || 
-							PermissionHelper::getInstance()->isSigner();
+							$this->_PermissionHelper->isGestore() || 
+							$this->_PermissionHelper->isConsultatore() || 
+							$this->_PermissionHelper->isSigner();
 						
 						if($isMDVisible){
 							if(!is_null($metadata['visibleFor'])){

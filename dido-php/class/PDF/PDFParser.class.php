@@ -1,17 +1,25 @@
 <?php 
 class PDFParser{
+	private $_sigatureManagerClass;
 	private $_signatures;
 	private $_metadata;
 	private $_annotations;
 	
-	public function __construct($pdf_path){
-		$sigatureManagerClass = new Java('dido.pdfmanager.PdfManager');
-		$sigatureManagerClass->loadPDF($pdf_path);
+	public function __construct(){
+		$this->setSignatureManagerClass(new Java('dido.pdfmanager.PdfManager'));
+	}
+	
+	public function setSignatureManagerClass($smg){
+		$this->_sigatureManagerClass = $smg;
+	}
+	
+	public function loadPDF($pdf_path){
+		$this->_sigatureManagerClass->loadPDF($pdf_path);
 		
-		$this->_signatures = json_decode((string)$sigatureManagerClass->getSignatures());
-		$this->_annotations = json_decode((string)$sigatureManagerClass->getAnnotations());
+		$this->_signatures = json_decode((string)$this->_sigatureManagerClass->getSignatures());
+		$this->_annotations = json_decode((string)$this->_sigatureManagerClass->getAnnotations());
 		
-		$content = json_decode($sigatureManagerClass->getXmlMetadata());
+		$content = json_decode($this->_sigatureManagerClass->getXmlMetadata());
 		$xmp_data_start 	= strpos($content, '<x:xmpmeta');
 		$xmp_data_end   	= strpos($content, '</x:xmpmeta>');
 		$xmp_length     	= $xmp_data_end - $xmp_data_start;
@@ -20,7 +28,7 @@ class PDFParser{
 		
 		$this->_metadata	= simplexml_load_string($xmp_data);
 	}
-	
+
 	public function getSignatures(){
 		return $this->_signatures;
 	}

@@ -2,13 +2,36 @@
 class FlowChecker{
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
-	public static function checkMasterDocument(array $id){
+	private $_Masterdocument;
+	private $_Signature;
+	private $_XMLParser, $_XMLBrowser;
+	private $_FTPConnector;
+	private $_PDFParser;
+	private $_Personale;
+	
+	public function __construct(){
+		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
+		$this->_XMLParser = XMLParser::getInstance();
+		$this->_Signature = new Signature(Connector::getInstance());
+		$this->_XMLBrowser = XMLBrowser::getInstance();
+		$this->_FTPConnector = FTPConnector::getInstance();
+		$this->_PDFParser = new PDFParser();
+		$this->_Personale = Personale::getInstance();
+	}
+	
+	public function setDependency($key,$value){
+		$this->__set($key,$value);
+	}
+	
+	public function __set($key, $value){
+		if(property_exists($this, $key))
+			$this->$key = $value;
+	}
+	
+	public function checkMasterDocument(array $id){
 
-		$masterDocument = new Masterdocument(Connector::getInstance());
-		$md = $masterDocument->get($id);
-		
-		$sigObj = new Signature(Connector::getInstance());
-		$signers = $sigObj->getSigners($id['id_md']);
+		$md = $this->_Masterdocument->get($id);
+		$signers = $this->_Signature->getSigners($id['id_md']);
 		
 		$return = array();
 
@@ -16,20 +39,16 @@ class FlowChecker{
 		
 			//Utils::printr($this->_md);
 			// Parsing con XML (documenti richiesti)
-			$xml = XMLParser::getInstance();
-			$xml->setXMLSource(XMLBrowser::getInstance()->getSingleXml($md['xml']),$md['type']);
+			$this->_XMLParser->setXMLSource($this->_XMLBrowser->getSingleXml($md['xml']),$md['type']);
 			
 			// Connessione FTP (documenti esistenti)
-			$ftp = FTPConnector::getInstance();
-			$fileList = Utils::filterList($ftp->getContents($md['ftp_folder'])['contents'],'isPDF',1);
+			$fileList = Utils::filterList($this->_FTPConnector->getContents($md['ftp_folder'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
-			
-			// Utils::printr($fileList);
 			
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
-			foreach($xml->getDocList() as $document){
+			foreach($this->_XMLParser->getDocList() as $document){
 				$docResult = new FlowCheckerResult();
 				
 				if(!is_null($document['load'])){
@@ -43,7 +62,7 @@ class FlowChecker{
 				} else {
 					$docResult->documentName = (string)$document['name'];
 					foreach($document->attributes() as $k=>$attr){
-						$f_name = "check_$k";
+						$f_name = "_check_$k";
 						if(method_exists(__CLASS__, $f_name)){
 							self::$f_name($document['name'],$fileList,$attr,$docResult);
 						}
@@ -56,7 +75,7 @@ class FlowChecker{
 						
 						foreach($files as $k=>$file){
 							$filename = $md['ftp_folder'].$file;
-							$result = self::checkSignatures($filename, $document, $signers, $k, $docResult);
+							$result = $this->_checkSignatures($filename, $document, $signers, $k, $docResult);
 							$docResult->signatures[$k] = $result;
 						}
 					}
@@ -71,11 +90,10 @@ class FlowChecker{
 		
 	}
 	
-	private static function check_minOccur($docName, $fileList,$value, &$docResult){
+	private static function _check_minOccur($docName, $fileList,$value, &$docResult){
 		$docResult->mandatory = (int)$value;
 			
 		if($value > 0){
-			
 			self::_findFile($docName, $fileList, $docResult);
 			if(count($docResult->found) < $value){
 				$error = ($value-$found) == 1 ? "$docName assente" : ($value-$found)." documenti mancanti per $docName";
@@ -85,7 +103,7 @@ class FlowChecker{
 		} 
 	}
 	
-	private static function check_maxOccur($docName, $fileList,$value,&$docResult){
+	private static function _check_maxOccur($docName, $fileList,$value,&$docResult){
 		$docResult->limit = (int)$value;
 		if($value > 0){
 			self::_findFile($docName, $fileList, $docResult);
@@ -95,11 +113,11 @@ class FlowChecker{
 		}
 	}
 	
-	private static function checkSignatures($filename, $document, $signers, $k, &$docResult){
-		$tmpPDF = FTPConnector::getInstance()->getTempFile($filename);
+	private function _checkSignatures($filename, $document, $signers, $k, &$docResult){
+		$tmpPDF = $this->_FTPConnector->getTempFile($filename);
 
-		$pdfParser = new PDFParser($tmpPDF);
-		$signaturesOnDocument = $pdfParser->getSignatures();
+		$this->_PDFParser->loadPDF($tmpPDF);
+		$signaturesOnDocument = $this->_PDFParser->getSignatures();
 		
 		unlink($tmpPDF);
 	
@@ -107,7 +125,7 @@ class FlowChecker{
 		
 		foreach($document->signatures->signature as $signature){
 			$who = (string)$signature['role'];
-			$persona = Personale::getInstance()->getPersona($signers[$who]['id_persona']);
+			$persona = $this->_Personale->getPersona($signers[$who]['id_persona']);
 				
 			if($who == "REQ") {
 				$checkResult[$who]['result'] = 'skipped';
@@ -123,7 +141,7 @@ class FlowChecker{
 				if($result){
 					if($result != $signers[$who]['id_persona']){
 						$checkResult[$who]['role'] = "Delegato del {$signers[$who]['descrizione']}";
-						$persona = Personale::getInstance()->getPersona($signers[$who]['id_delegato']);
+						$persona = $this->_Personale->getPersona($signers[$who]['id_delegato']);
 					}
 					break;
 				}
