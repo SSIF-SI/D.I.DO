@@ -14,7 +14,6 @@
 		<input from="geco" key="natura">Natura</input>
 		<input from="geco" key="natura">Voce del piano dei conti</input>
 		<input from="geco" key="cup">CUP</input>
-		<input type="hidden">tipo</input>
 		<input>titolare dei fondi</input>
 		<input>responsabile di laboratorio</input>
 	</inputs>

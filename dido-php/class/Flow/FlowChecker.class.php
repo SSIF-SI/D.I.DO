@@ -1,5 +1,5 @@
 <?php 
-class FlowChecker{
+class FlowChecker extends ClassWithDependencies{
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
 	private $_Masterdocument;
@@ -17,15 +17,6 @@ class FlowChecker{
 		$this->_FTPConnector = FTPConnector::getInstance();
 		$this->_PDFParser = new PDFParser();
 		$this->_Personale = Personale::getInstance();
-	}
-	
-	public function setDependency($key,$value){
-		$this->__set($key,$value);
-	}
-	
-	public function __set($key, $value){
-		if(property_exists($this, $key))
-			$this->$key = $value;
 	}
 	
 	public function checkMasterDocument(array $id){

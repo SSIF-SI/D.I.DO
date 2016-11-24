@@ -80,10 +80,11 @@ class XMLBrowser{
 			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
 					if(!is_null($owner)){ 
-						if((string)$metadata['owner'] == $owner)
-							$list[$owner][] = $xmlTree['path'].$metadata['file'];
-					} else {
-						$list[(string)$metadata['owner']][] = $xmlTree['path'].$metadata['file'];
+						if((string)$metadata['owner'] == $owner){
+							$list[$categoria][] = $xmlTree['path'].$metadata['file'];
+						}
+					} else { 
+						$list[$categoria][] = $xmlTree['path'].$metadata['file'];
 					}
 				}
 			}

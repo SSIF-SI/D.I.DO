@@ -148,40 +148,56 @@ class TemplateHelper{
 <?php 
 	}
 	static function createListGroupToImport(){
+		ob_start();
 		$list=Geko::getInstance()->getFileToImport();
 		unset($list['nTot']);
-		$i=1;
-		foreach ($list as $md=>$val):{
-		?>
+?>
+	<style>
+		.panel-heading .accordion-toggle{
+			text-decoration:none;
+		}
+		
+		.panel-heading .accordion-toggle:after {
+		    /* symbol for "opening" panels */
+		    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+		    content: "\e118";    /* adjust as needed, taken from bootstrap.css */
+		    float: left;        /* adjust as needed */
+		}
+		.panel-heading .accordion-toggle.collapsed:after {
+		    /* symbol for "collapsed" panels */
+		    content: "\e117";    /* adjust as needed, taken from bootstrap.css */
+		}
+	</style>
 	<div class="col-lg-12 col-md-12">
 		<div class="panel-group" id="GroupToImport">
+			<?php foreach ($list as $category=>$val):?>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-lg-6">
-							<a data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$i; ?> class="collapsed"><span class="glyphicon glyphicon-folder-close">&nbsp;<?php echo(ucfirst($md))?>&nbsp;</span></a>
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$category; ?>>&nbsp;<?php echo(ucfirst($category))?></a>
 		                </div>
 	                    <div class="col-lg-6 text-right">
 							<span class="badge badge-info"><?php echo count($val)?></span>
 		                </div>
                     </div>
 				</div>
-				<div id=<?php echo "list".$i;?> class="panel-collapse collapse">
+				<div id="<?php echo "list".$category;?>" class="panel-collapse collapse">
 					<ul class="list-group">
-					<?php foreach ($val as $k=>$id):{?>
-					<li class="list-group-item"><span class="glyphicon glyphicon-file"></span><?php echo"IdMissione: ".($id)?><i class="badge fa-sign-in fa-rotate-90"> </i></li>
-					<?php }endforeach;?>
+					<?php foreach ($val as $k=>$data):$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));?>
+					<li class="list-group-item">
+						<?php Utils::printr($obj);?>
+					</li>
+					<?php endforeach;?>
 					</ul>
-					
-			<?php $i++; }endforeach;?>
 				</div>
 			</div>
+			<?php endforeach;?>
 		</div>
     </div>
-
-			
 <?
-		return ob_get_clean();
+	return ob_get_clean();
+		
 	}
 	
 }

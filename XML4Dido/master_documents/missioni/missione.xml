@@ -18,7 +18,6 @@
 		<input from="geco" key="Natura Finanziamento">Natura finanziamento</input>
 		<input from="geco" key="tipo_trattamento">Tipo trattamento</input>
 		<input from="geco" key="cup">CUP</input>
-		<input type="hidden">tipo</input>
 		<input values="titolariFondi">titolare dei fondi</input>
 		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili">responsabile di laboratorio</input>
 	</inputs>
