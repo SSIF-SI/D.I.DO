@@ -110,9 +110,9 @@ class Geko extends ClassWithDependencies{
 						preg_match_all(self::$FILE_REGEXP, $filename,$matches);
 						$fti[basename($type)][] = array(
 							'filename' 	=> basename($file),
-							'xml'		=> $matches[1],
-							'type'		=> $matches[2],
-							'id'		=> $matches[3]
+							'xml'		=> $matches[1][0],
+							'type'		=> $matches[2][0],
+							'id'		=> $matches[3][0]
 						);
 					}
 					$fti['nTot'] += count($fti[basename($type)]);

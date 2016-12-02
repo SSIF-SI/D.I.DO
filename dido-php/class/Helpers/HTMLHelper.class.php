@@ -173,5 +173,12 @@ class HTMLHelper{
 		return array('substitutes' => $substitutes, 'buttons' => $buttons);
 	}
 	
+	static function createDetailFromObj($obj, $xml, $type){
+		$XMLParser = XMLParser::getInstance();
+		$XMLParser->setXMLSource($xml,$type);
+		$inputs = $XMLParser->getMasterDocumentInputs();
+		
+		return FormHelper::createInputsFromXml($inputs,4,$obj);
+	}
 }
 ?> 

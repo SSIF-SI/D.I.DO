@@ -3,6 +3,7 @@ class Personale {
 	
 	private static $_instance = null;
 	private $_persone;
+	private $_cfId;
 	private $_gruppi;
 	private $_email;
 	

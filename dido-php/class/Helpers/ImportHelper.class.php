@@ -1,7 +1,7 @@
 <?php 
 class ImportHelper{
 	static function idPersonaFromCf($cf){
-		return Personale::getInstance()->getPersonabyCf($cf)['id'];
+		return Personale::getInstance()->getPersonabyCf($cf)['idPersona'];
 	}
 	
 	static function gruppoFromCf($cf){

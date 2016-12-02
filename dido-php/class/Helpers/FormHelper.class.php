@@ -10,8 +10,8 @@ class FormHelper{
 			$type = is_null($input['type']) ? 'text' : (string)$input['type'];
 			$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
 			$label = (string)$input;
-			$field = self::fieldFromLabel($label);
-			$value = isset($_POST[$field]) ? $_POST[$field] : $_IMPORT[$field];
+			$field = isset($_POST[$field]) ? self::fieldFromLabel($label) : (string)$input['key'];
+			$value = isset($_POST[$field]) ? $_POST[$field] : (isset($_IMPORT[$field]) ? $_IMPORT[$field] : null);
 			
 			/* IN REALTA NN VA FATTO QUI... DA VEDERE... */
 			if(!is_null($input['transform']) && empty($_POST)){

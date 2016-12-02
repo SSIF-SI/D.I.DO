@@ -170,7 +170,7 @@ class TemplateHelper{
 	</style>
 	<div class="col-lg-12 col-md-12">
 		<div class="panel-group" id="GroupToImport">
-			<?php foreach ($list as $category=>$val):?>
+			<?php foreach ($list as $category=>$val): ?>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<div class="row">
@@ -184,9 +184,21 @@ class TemplateHelper{
 				</div>
 				<div id="<?php echo "list".$category;?>" class="panel-collapse collapse">
 					<ul class="list-group">
-					<?php foreach ($val as $k=>$data):$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));?>
+					<?php 
+					foreach ($val as $k=>$data):
+						$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
+						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['xml'], date('Y-m-d'));
+					?>
 					<li class="list-group-item">
-						<?php Utils::printr($obj);?>
+		                <form role="form" method="POST" name="form2" enctype="multipart/form-data">
+			                <div class="row">
+			                	<?php foreach(HTMLHelper::createDetailFromObj($obj, $xml, $data['type']) as $input): ?>
+			                	<?=$input?>
+			                  	<?php endforeach; ?>
+			                </div>
+			                <br/>
+			                <button class="btn btn-primary" type="submit">Importa</button>
+		                </form>
 					</li>
 					<?php endforeach;?>
 					</ul>

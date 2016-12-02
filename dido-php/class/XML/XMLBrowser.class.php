@@ -69,6 +69,21 @@ class XMLBrowser{
 		return $list;
 	}
 	
+	public function getXmlFromNameAndData($name, $data){
+		foreach($this->_xmlTree as $categoria=>$xmlData){
+			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
+				
+				if($tipoDocumento != $name) continue;
+				foreach($versioni as $numVersione=>$metadata){
+					$xml = $metadata['xml'];
+					if(isset($xml['validEnd']) && (string($xml['validEnd'])) < $data) continue;
+					return $this->getSingleXml($xmlData['path'].$metadata['file']);
+				}
+			}
+		}
+		return null;
+	}
+	
 	public function getSingleXml($xmlFilename){
 		$list = $this->getXmlList(false);
 		return array_key_exists($xmlFilename, $list) ? $list[$xmlFilename] : null;  
