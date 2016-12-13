@@ -77,7 +77,10 @@ class XMLBrowser{
 				foreach($versioni as $numVersione=>$metadata){
 					$xml = $metadata['xml'];
 					if(isset($xml['validEnd']) && (string($xml['validEnd'])) < $data) continue;
-					return $this->getSingleXml($xmlData['path'].$metadata['file']);
+					return array(
+						'xml_filename' => $xmlData['path'].$metadata['file'],
+						'xml' => $this->getSingleXml($xmlData['path'].$metadata['file'])
+					);
 				}
 			}
 		}

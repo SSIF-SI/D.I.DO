@@ -5,7 +5,7 @@ class SignatureHelper{
 		$signersObj = new Signers(Connector::getInstance());
 		$signer = is_null($idP) ? $signersObj->getStub() : $signersObj->get(array('id_persona' => $idP));
 		
-		$listPersone = ListHelper::listPersone(); 
+		$listPersone = ListHelper::persone(); 
 		
 		$signers = array_keys($signersObj->getAll(null,'id_persona'));
 		foreach( $signers as $id_persona){
@@ -90,8 +90,8 @@ class SignatureHelper{
 		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',1),'descrizione');
 		$assignable_roles = array_diff_key($signer_roles,Utils::getListfromField($FixedSigner->getAll(),null,'id_sr'));
 		
-		$listPersone = ListHelper::listSigners();
-		$listDelegati = array(null => "--Nessuno--") + $listPersone;
+		$listSigners = ListHelper::signers();
+		$listDelegati = array(null => "--Nessuno--") + $listSigners;
 		
 		ob_start();
 ?>
@@ -110,7 +110,7 @@ class SignatureHelper{
 			}else{
 				echo HTMLHelper::select("id_sr", "Ruolo", $assignable_roles);		
 			}
-			echo HTMLHelper::select("id_persona", "Persona", $listPersone,$fixed_signer['id_persona']);		
+			echo HTMLHelper::select("id_persona", "Persona", $listSigners,$fixed_signer['id_persona']);		
 			echo HTMLHelper::select("id_delegato", "Delegato", $listDelegati,$fixed_signer['id_delegato']);		
 ?>
 				          </form>

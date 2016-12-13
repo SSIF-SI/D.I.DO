@@ -7,7 +7,12 @@ class ImportHelper{
 	static function gruppoFromCf($cf){
 		$gruppi = Personale::getInstance()->getGruppi();
 		$gruppo = Utils::filterList($gruppi, "cf_responsabile", $cf);
-		return $gruppo['id_responsabile'];
+		$gruppo = reset($gruppo);
+		return $gruppo['sigla'];
+	}
+	
+	static function dateFromDB($data){
+		return Utils::convertDateFormat($data, DB_DATE_FORMAT, "d/m/Y");
 	}
 }
 ?>

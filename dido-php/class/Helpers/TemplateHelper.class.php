@@ -187,17 +187,23 @@ class TemplateHelper{
 					<?php 
 					foreach ($val as $k=>$data):
 						$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
-						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['xml'], date('Y-m-d'));
+						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
+						$formId = str_replace(" ", "_", $data['filename']);
 					?>
 					<li class="list-group-item">
-		                <form role="form" method="POST" name="form2" enctype="multipart/form-data">
+		                <form role="form" method="POST" class="<?=$data['xml']?>" id="importform-<?=$formId?>" enctype="multipart/form-data">
 			                <div class="row">
-			                	<?php foreach(HTMLHelper::createDetailFromObj($obj, $xml, $data['type']) as $input): ?>
+			                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
+			                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
+			                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 
+			                	<?php foreach(HTMLHelper::createDetailFromObj($obj, $xml['xml'], $data['type']) as $input): ?>
 			                	<?=$input?>
 			                  	<?php endforeach; ?>
 			                </div>
 			                <br/>
-			                <button class="btn btn-primary" type="submit">Importa</button>
+			                <a class="btn btn-primary import" href="#importform-<?=$formId?>">
+			                	<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa
+			                </a>
 		                </form>
 					</li>
 					<?php endforeach;?>

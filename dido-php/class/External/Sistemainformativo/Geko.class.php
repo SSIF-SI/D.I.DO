@@ -16,7 +16,17 @@ class Geko extends ClassWithDependencies{
 				"id" => "id_missione",
 				// xml pattern => coppia (chiave,valore) che lo identifica;
 				// se xml pattern => valore allora è sempre quello.
-				"xmlKeyPattern" => "missione"
+				"xmlKeyPattern" => "missione",
+				"xmlKeyType" => array (
+					// tipo => coppia (chiave,valore) che lo identifica
+					"con anticipo" => array(
+						"anticipo" => "s"
+					),
+					"senza anticipo" => array (
+						"anticipo" => "n"
+					)
+				)
+						
 			),
 			
 			"geco_ordini_dido" => array (
@@ -110,7 +120,7 @@ class Geko extends ClassWithDependencies{
 						preg_match_all(self::$FILE_REGEXP, $filename,$matches);
 						$fti[basename($type)][] = array(
 							'filename' 	=> basename($file),
-							'xml'		=> $matches[1][0],
+							'md_nome'	=> $matches[1][0],
 							'type'		=> $matches[2][0],
 							'id'		=> $matches[3][0]
 						);

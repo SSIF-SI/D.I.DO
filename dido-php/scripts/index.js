@@ -1,11 +1,11 @@
 $(document).ready(function(){
-	/*
-	 $('a[data-toggle="collapse"]').click(function () {
-		 var actual = $(this).hasClass("collapsed") ? "close" : "open";
-		 var next = $(this).hasClass("collapsed") ? "open" : "close";
-		 $(this).find("span:first")
-	      .removeClass("glyphicon-folder-"+actual)
-	      .addClass("glyphicon-folder-"+next);
-	 });
-	*/
+	$('a.import').click(function (e) {
+		e.preventDefault();
+		var formId = $(this).attr('href').replace("#","");
+		var data = $('form#'+formId).serializeArray();
+		MyModal.setTitle("Importazinoe "+$('form#'+formId).attr('class'));
+		MyModal.setContent("<h4>Attendere, importazione in corso... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>");
+		MyModal.modal();
+		MyModal.submit($(this), null, data, '.modal-body');
+	});
 });

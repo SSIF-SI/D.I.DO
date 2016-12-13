@@ -26,11 +26,11 @@ class ListHelper{
 		return Utils::getListfromField($persone,'label');
 	}
 	
-	static function listPersone(){
+	static function persone(){
 		return array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField(Personale::getInstance()->getPersone(),'idPersona'));
 	}
 	
-	static function listSigners(){
+	static function signers(){
 		$signersObj=new Signers(Connector::getInstance());
 		$signers=$signersObj->getAll(null,"id_persona");
 		$signers=array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField($signers,'id_persona'));
@@ -38,7 +38,7 @@ class ListHelper{
 		return $signers;
 	}
 	
-	static function listProgetti($data = null){
+	static function progetti($data = null){
 		$list = Personale::getInstance()->getProgetti();
 		if(!is_null($data)){
 			$list= Utils::filterList($list, "inizio", $data, Utils::OP_LESS_THAN.Utils::OP_EQUAL);

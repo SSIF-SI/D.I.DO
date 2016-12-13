@@ -51,5 +51,9 @@ if( isset($_GET['detail'])){
 	
 }
 
-$pageScripts = array('index.js','datepicker.js');
+if(count($_POST) > 0){ // Importazione
+	die(json_encode(array('errors' => false)));
+}
+
+$pageScripts = array('index.js','MyModal.js');
 include_once (TEMPLATES_PATH."template.php");

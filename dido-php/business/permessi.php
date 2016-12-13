@@ -20,7 +20,7 @@ if (Utils::checkAjax ()) {
 			$user_role = $userRolesObj->getStub();
 		}
 		
-		$listPersone = ListHelper::listPersone();
+		$listPersone = ListHelper::persone();
 		
 		$alreadyset = array_keys($userRolesObj->getAll("id_persona",'id_persona'));
 		

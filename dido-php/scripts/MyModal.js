@@ -97,28 +97,29 @@ var MyModal = {
 		MyModal.setContent("<label for=\"conferma\">Confermi:</label><p id=\"conferma\">Sei sicuro di voler eliminare l'elemento?</p>");
 		MyModal.modal();
 	},
-	submit:function (element,href, data){
-		
+	submit:function (element,href, data, innerdiv){
 		var span = element.children("span");
 		var oldClass = span.prop('class');
 		var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
-
+		
 		if(MyModal.busy == false){
+			
 			MyModal.busy = true;
 			span.attr('class', newClass);
-
+			$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
 			$.ajax({
 				url: href,
 				type: "POST", 
 				dataType: "json",
 				data: data,
 				success: function( result ) {
+					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
 					MyModal.busy = false;
 					span.attr('class', oldClass);
 					if(result.errors){
-						MyModal.error(result.errors);
+						MyModal.error(result.errors, innerdiv);
 					} else {
-						MyModal.success();
+						MyModal.success(innerdiv);
 						$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
 							$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
@@ -128,9 +129,10 @@ var MyModal = {
 					}
 				},
 				error: function( result ){
+					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
 					MyModal.busy = false;
 					span.attr('class', oldClass);
-					MyModal.error("Errore imprevisto");
+					MyModal.error("Errore imprevisto", innerdiv);
 				}
 			});
 		} 
