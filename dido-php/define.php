@@ -32,8 +32,6 @@ define ("LIB_PATH",				HTTP_ROOT . "lib/");
 define ("FILES_PATH",			REAL_ROOT . "files/");
 define ("FILES_HTTP_PATH",		HTTP_ROOT . "files/");
 define ("GECO_IMPORT_PATH",		REAL_ROOT . "geco-import/");
-define ("GECO_IMPORT_MISSIONI", GECO_IMPORT_PATH . "missioni/");
-define ("GECO_IMPORT_ORDINI",   GECO_IMPORT_PATH . "ordini/");
 define ("TEMPLATES_PATH",		REAL_ROOT . "templates/");
 define ("SB_ADMIN_2",			HTTP_ROOT . "templates/sb-admin-2/");
 
@@ -46,7 +44,7 @@ define ("ROOT_PASSWORD", 		"emaP4ss!");
 define ("ROOT_DATABASE", 		"didodb");
 
 define ("PAGE_TITLE_PREFIX", 	"DI.DO. [TEST]");
-define ("DB_DATE_FORMAT", 		"Y-m-d H:i:s");
+define ("DB_DATE_FORMAT", 		"Y-m-d");
 define ("ACCESS_DENIED",		"<br><br/><p class='error'>Attenzione!! L'utente non ha i privilegi per accedere a questo contenuto.</p>");
 define ("INEXISTENT",			"<br><br/><p class='error'>Attenzione!! Contenuto inesistente.</p>");
 

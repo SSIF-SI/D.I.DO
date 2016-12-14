@@ -113,7 +113,7 @@ class Geko extends ClassWithDependencies{
 			
 			if(in_array($needle,$catlist)){
 					
-				$files = glob($type."/*");
+				$files = glob($type."/*.imp");
 				if(count($files)){
 					foreach($files as $file){
 						$filename = basename($file);
@@ -176,7 +176,7 @@ class Geko extends ClassWithDependencies{
 			
 		}
 		
-		$filename .= "_" . $record [$data['id']];
+		$filename .= "_" . $record [$data['id']].".imp";
 		
 		Utils::printr($filename);
 		

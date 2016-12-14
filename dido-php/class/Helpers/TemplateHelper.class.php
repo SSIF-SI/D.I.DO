@@ -147,6 +147,7 @@ class TemplateHelper{
 	                </div>
 <?php 
 	}
+	
 	static function createListGroupToImport(){
 		ob_start();
 		$list=Geko::getInstance()->getFileToImport();
@@ -188,11 +189,13 @@ class TemplateHelper{
 					foreach ($val as $k=>$data):
 						$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
 						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
-						$formId = str_replace(" ", "_", $data['filename']);
+						$formId = rtrim(str_replace(" ", "_", $data['filename']),".imp");
+						
 					?>
 					<li class="list-group-item">
 		                <form role="form" method="POST" class="<?=$data['xml']?>" id="importform-<?=$formId?>" enctype="multipart/form-data">
 			                <div class="row">
+			                	<input type="hidden" id="import_filename" name="import_filename" value="<?=$category.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
 			                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
 			                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
 			                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 

@@ -42,6 +42,8 @@ define("KARTIK_FILEINPUT", true);
 if( isset($_GET['detail'])){ 
 	switch($_GET['detail']){
 		case 'documentToImport':
+			$Importer = new Importer();
+			$Importer->clean();
 			$detail = TemplateHelper::createListGroupToImport();
 			break;
 		default:
@@ -52,7 +54,8 @@ if( isset($_GET['detail'])){
 }
 
 if(count($_POST) > 0){ // Importazione
-	die(json_encode(array('errors' => false)));
+	$Importer = new Importer();
+	$Importer->import($_POST); 
 }
 
 $pageScripts = array('index.js','MyModal.js');
