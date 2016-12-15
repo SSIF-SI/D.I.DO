@@ -139,9 +139,10 @@ class HTMLHelper{
 		}
 	}
 	
-	private static function textareaInput($name, $label, $value=null , $required = false){
+	private static function textareaInput($name, $label, $value=null , $required = false, $isImported = false){
+		$more = $isImported ? " readonly=\"readonly\"" : null ;
 		$required = $required ? "required" : null;
-		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\" $required>$value</textarea>";
+		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\" $required $more>$value</textarea>";
 	}
 	
 	static function createMetadata($list, $href, $pKeys, $substitutes_keys){

@@ -6,19 +6,19 @@
 		<type>senza anticipo</type>
 	</types>
 	<inputs>
-		<input from="geco" key="id_missione">Id Missione</input>
-		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome">Dipendente</input>
-		<input from="geco" key="oggetto">Oggetto</input>
-		<input from="geco" key="localita">Località</input>
-		<input from="geco" key="data_inizio" transform="dateFromDB" type="data">Data inizio missione</input>
-		<input from="geco" key="data_fine" transform="dateFromDB" type="data">Data fine missione</input>
-		<input from="geco" key="importo">Importo</input>
-		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="gruppi">Laboratorio</input>
-		<input from="geco" key="gae_nome">Linea attività</input>
-		<input from="geco" key="natura_finanziamento">Natura finanziamento</input>
-		<input from="geco" key="cup">CUP</input>
-		<input values="responsabili">titolare dei fondi</input>
-		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili">responsabile di laboratorio</input>
+		<input from="geco" key="id_missione">id Missione</input>
+		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome">dipendente</input>
+		<input from="geco" key="oggetto">oggetto</input>
+		<input from="geco" key="localita">località</input>
+		<input from="geco" key="data_inizio" transform="dateFromDB" type="data">data inizio missione</input>
+		<input from="geco" key="data_fine" transform="dateFromDB" type="data">data fine missione</input>
+		<input from="geco" key="importo">importo</input>
+		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
+		<input from="geco" key="gae_nome">linea attività</input>
+		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
+		<input from="geco" key="cup">cup</input>
+		<input values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />

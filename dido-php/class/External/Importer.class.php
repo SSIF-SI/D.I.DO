@@ -65,7 +65,7 @@ class Importer{
 		$Masterdocument = new Masterdocument($this->_connInstance);
 		$this->_result = $Masterdocument->save($md);
 		
-		$id_md = $this->_connInstance->getLastInsertId("master_documents_id_md_seq");
+		$id_md = $this->_connInstance->getLastInsertId();
 
 		if(!empty($this->_result['errors'])){
 			$this->_connInstance->query("ROLLBACK");
@@ -78,6 +78,7 @@ class Importer{
 		
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
 		foreach($data as $key=>$value){
+			$key = str_replace("_", " ", $key);
 			$md_data = array(
 				'id_md'	=> $id_md,
 				'key'	=> $key,

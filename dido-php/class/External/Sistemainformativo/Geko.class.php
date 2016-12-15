@@ -31,7 +31,7 @@ class Geko extends ClassWithDependencies{
 			
 			"geco_ordini_dido" => array (
 				"category" => "acquisti",
-				"id" => "id_ordne",
+				"id" => "id_ordine",
 				"xmlKeyPattern" => array (
 					// xml pattern => coppia (chiave,valore) che lo identifica
 					// xml pattern => true =  sempre

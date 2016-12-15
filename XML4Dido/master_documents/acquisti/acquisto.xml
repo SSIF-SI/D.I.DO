@@ -6,16 +6,22 @@
 		<type>fuori mepa</type>
 	</types>
 	<inputs>
-		<input from="geco" key="id_acquisto">Id Acquisto</input>
-		<input from="geco" key="richiedente">Richiedente</input>
-		<input from="geco" key="fornitore">Fornitore</input>
-		<input>Descrittivo GAE</input>
-		<input from="geco" key="laboratorio">Laboratorio</input>
-		<input from="geco" key="natura">Natura</input>
-		<input from="geco" key="natura">Voce del piano dei conti</input>
-		<input from="geco" key="cup">CUP</input>
-		<input>titolare dei fondi</input>
-		<input>responsabile di laboratorio</input>
+		<input from="geco" key="id_ordine">id ordine</input>
+		<input from="geco" key="ditta">fornitore</input>
+		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone">richiedente</input>
+		<input from="geco" key="destinatario_cf" transform="idPersonaFromCf" values="persone">destinatario</input>
+		<input from="geco" key="descrizione" type="textarea">descrizione</input>
+		<input from="geco" key="gae_nome">linea attività</input>
+		<input from="geco" key="gae_anno">linea attività (anno)</input>
+		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
+		<input from="geco" key="piano_conto">voce del piano dei conti</input>
+		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
+		<input from="geco" key="rup_cf" transform="idPersonaFromCf" values="persone" signRole="RUP">rup</input>
+		<input from="geco" key="codice_cig">cig</input>
+		<input from="geco" key="codice_cup">cup</input>
+		<input from="geco" key="numero_mepa">numero mepa</input>
+		<input values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
