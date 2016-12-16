@@ -1,5 +1,5 @@
 <?php
-class Document extends AnyDocument{
+class DocumentData extends AnyDocument{
 	protected $TABLE = "documents_data";
 	protected $id_document_label = "id_document";
 	

@@ -6,7 +6,7 @@
 		<type>senza anticipo</type>
 	</types>
 	<inputs>
-		<input from="geco" key="id_missione">id Missione</input>
+		<input from="geco" key="id_missione">id missione</input>
 		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome">dipendente</input>
 		<input from="geco" key="oggetto">oggetto</input>
 		<input from="geco" key="localita">località</input>

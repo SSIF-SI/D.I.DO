@@ -55,11 +55,13 @@ class TemplateHelper{
 		
 	}
 	
-	static function createTimeline($flowCheckereResult, $visibilityResult=null, $metadata = null){?>
+	static function createTimeline($flowCheckereResult, $visibilityResult=null, $metadata = null){
+		ob_start();
+?>
                             <ul class="timeline">
 <?php 
 		$firstError = false;
-		foreach($flowCheckereResult as $docName=>$docData):
+		foreach($flowCheckereResult['doclist'] as $docName=>$docData):
 			if($firstError) continue;
 			$status = 
 				empty($docData->errors) ? 
@@ -77,9 +79,11 @@ class TemplateHelper{
                                             	<div class="col-lg-8">
                                             		<?php if(!$firstError && $status != 'success'): $firstError = true;?>
 		                                            <form class="text-right">
-		                                            	<a class="btn btn-primary edit-metadata" type="button"><span class="fa fa-pencil fa-1x fa-fw"></span> Modifica Metadati</a>
-		                                               	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> Aggiorna Pdf</a>
-		                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica Pdf</a>
+		                                            	<a class="btn btn-primary edit-metadata" type="button"><span class="fa fa-pencil fa-1x fa-fw"></span> Modifica Informazioni</a>
+		                                               	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Inserisci" : "Aggiorna"?> il Pdf</a>
+		                                            	<?php if(!isset($docData->errors['missing'])):?>
+		                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
+		                                               	<?php endif;?>
 		                                            </form>
 		                                            <?php endif;?>
                                             	</div>
@@ -90,7 +94,7 @@ class TemplateHelper{
                                         	<div class="row">
                                         		<div class="col-lg-<?=count($docData->signatures) ? '6' : '12'?>">
 		                                        	<div class="panel panel-default">
-		                                        		<div class="panel-heading"> Metadati: </div>
+		                                        		<div class="panel-heading"> Informazioni: </div>
 														<div class="panel-body"></div>
 													</div>
 												</div>
@@ -113,6 +117,7 @@ class TemplateHelper{
 <?php 	endforeach; ?> 
                            </ul>
 <?php 
+		return ob_get_clean();
 	}
 	
 	static function createDashboardPanels(){
@@ -217,7 +222,7 @@ class TemplateHelper{
 		</div>
     </div>
 <?
-	return ob_get_clean();
+		return ob_get_clean();
 		
 	}
 	

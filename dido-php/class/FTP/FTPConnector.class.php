@@ -74,8 +74,8 @@ class FTPConnector{
 	
 	private function _ftp_rawlist($dir){
 		$filelist = ftp_rawlist($this->_conn_id, $dir);
-		
-		if($filelist){ $rawlist = join("\n", $filelist);
+		if($filelist !== false){ 
+			$rawlist = join("\n", $filelist);
 			preg_match_all('/^([drwx+-]{10})\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(.{12}) (.*)$/m', $rawlist, $matches, PREG_SET_ORDER);
 		
 			return $this->_map($matches, 7);
@@ -119,6 +119,7 @@ class FTPConnector{
 		uksort($newStuff, 'strcasecmp');
 		$stuff = array_values($newStuff);
 	}
+	
 	private static function trim($dir){
 		return trim($dir,"/");
 	}
@@ -154,6 +155,18 @@ class FTPConnector{
 		$tmpfile = $tmpPath . md5( date( "YmdHisu" ));
 		$result = ftp_get( $this->_conn_id, $tmpfile, $this->_baseDir.$file, FTP_BINARY);
 		return $tmpfile;
+	}
+	
+	public function ftp_mksubdirs($ftpath){
+		@ftp_chdir($this->_conn_id, $this->_baseDir); 
+		$parts = explode(DIRECTORY_SEPARATOR, $ftpath); 
+		foreach($parts as $part){
+			if(!@ftp_chdir($this->_conn_id, $part)){
+				$result = @ftp_mkdir($this->_conn_id, $part) && @ftp_chdir($this->_conn_id, $part);
+				if(!$result) return false;
+			}
+		}
+		return true;
 	}
 }
 

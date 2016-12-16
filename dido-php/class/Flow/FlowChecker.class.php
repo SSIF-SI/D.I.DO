@@ -2,7 +2,8 @@
 class FlowChecker extends ClassWithDependencies{
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
-	private $_Masterdocument;
+	private $_Masterdocument, $_MasterdocumentData;
+	private $_Document, $_DocumentData;
 	private $_Signature;
 	private $_XMLParser, $_XMLBrowser;
 	private $_FTPConnector;
@@ -11,6 +12,9 @@ class FlowChecker extends ClassWithDependencies{
 	
 	public function __construct(){
 		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
+		$this->_MasterdocumentData = new MasterdocumentData(Connector::getInstance());
+		$this->_Document = new Document(Connector::getInstance());
+		$this->_DocumentData = new DocumentData(Connector::getInstance());
 		$this->_XMLParser = XMLParser::getInstance();
 		$this->_Signature = new Signature(Connector::getInstance());
 		$this->_XMLBrowser = XMLBrowser::getInstance();
@@ -22,18 +26,39 @@ class FlowChecker extends ClassWithDependencies{
 	public function checkMasterDocument(array $id){
 
 		$md = $this->_Masterdocument->get($id);
-		$signers = $this->_Signature->getSigners($id['id_md']);
 		
-		$return = array();
+		$return = array(
+			'data' 		=> array(),
+			'doclist'	=> array()
+		);
 
-		if($md){
 		
+		if($md){
+
+			$md_data = Utils::getListfromField($this->_MasterdocumentData->getBy(key($id), $id[key($id)]), "value", "key");
+			
+			$pkD = $this->_Document->getPk();
+			$id_doc_field = reset($pkD);
+			
+			$document = $this->_Document->getBy(key($id), $id[key($id)]);
+			
+			foreach($document as $doc){
+				$document_data[$doc['file_name']] = Utils::getListfromField($this->_DocumentData->getBy($id_doc_field, $doc[$id_doc_field]), "value", "key");
+			}
+			
+			$signers = $this->_Signature->getSigners($id[key($id)]);
+			
+			$return['data']['md_metadata'] = $md_data;
+			
 			//Utils::printr($this->_md);
 			// Parsing con XML (documenti richiesti)
 			$this->_XMLParser->setXMLSource($this->_XMLBrowser->getSingleXml($md['xml']),$md['type']);
+			$return['data']['xml_inputs'] = $this->_XMLParser->getMasterDocumentInputs();
 			
 			// Connessione FTP (documenti esistenti)
-			$fileList = Utils::filterList($this->_FTPConnector->getContents($md['ftp_folder'])['contents'],'isPDF',1);
+			$md['path'] = $md['ftp_folder']. DIRECTORY_SEPARATOR. $md['nome']. "_". $id[key($id)];
+			
+			$fileList = Utils::filterList($this->_FTPConnector->getContents($md['path'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
 			
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
@@ -65,13 +90,15 @@ class FlowChecker extends ClassWithDependencies{
 						$files = self::_getFtpFiles($docResult->documentName, $fileList);
 						
 						foreach($files as $k=>$file){
-							$filename = $md['ftp_folder'].$file;
+							
+							$filename = $md['path'].DIRECTORY_SEPARATOR.$file;
 							$result = $this->_checkSignatures($filename, $document, $signers, $k, $docResult);
 							$docResult->signatures[$k] = $result;
+							$docResult->docData[$k] = isset($document_data[$file]) ? $document_data[$file] : null;
 						}
 					}
 				}
-				$return[$docResult->documentName] = $docResult;
+				$return['doclist'][$docResult->documentName] = $docResult;
 			}
 			
 			return $return;

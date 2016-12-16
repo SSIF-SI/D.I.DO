@@ -2,7 +2,7 @@
 class Importer{
 	private $_FTPConnector;
 	private $_connInstance;
-	private $_result;
+	private $_result, $_oldname, $_newname;
 	
 	public function __construct($FTPConnector = null, $connInstance = null){
 		if(is_null($FTPConnector)) $FTPConnector = FTPConnector::getInstance();
@@ -40,43 +40,38 @@ class Importer{
 			die(json_encode(array('errors' => false)));
 		
 		// Rinomino il file per mettergli un lock non fisico
-		$oldname = GECO_IMPORT_PATH.$data['import_filename'];
-		$newname = GECO_IMPORT_PATH.$data['import_filename'].".".Session::getInstance()->get('AUTH_USER');
-		$rename = rename($oldname, $newname);
+		$this->_oldname = GECO_IMPORT_PATH.$data['import_filename'];
+		$this->_newname = GECO_IMPORT_PATH.$data['import_filename'].".".Session::getInstance()->get('AUTH_USER');
+		$rename = rename($this->_oldname, $this->_newname);
 		if(!$rename)
 			die(json_encode(array('errors' => 'Permessi di scrittura negati')));
 		
 		unset($data['import_filename']);
 				
 		// Tramite un'unica transazione vado a scrivere i dati nelle tabelle 
-		// master_document e maaster_document_data.
+		// master_document e master_document_data.
 		// Al primo errore riscontrato faccio ROLLBACK e segnalo l'errore
 		
 		$this->_connInstance->query("BEGIN");
+		
+		$ftp_folder = dirname($data['md_xml']).DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.date("m");
 		
 		$md = array (
 			'nome' 			=> $data['md_nome'],
 			'type' 			=> $data['md_type'],
 			'xml'  			=> $data['md_xml'],
-			'ftp_folder'	=> dirname($data['md_xml']).DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.date("m"),
+			'ftp_folder'	=> $ftp_folder,
 			'closed'		=> 0				
 		);
 		
 		$Masterdocument = new Masterdocument($this->_connInstance);
 		$this->_result = $Masterdocument->save($md);
-		
-		$id_md = $this->_connInstance->getLastInsertId();
+		$this->_checkErrors();
 
-		if(!empty($this->_result['errors'])){
-			$this->_connInstance->query("ROLLBACK");
-			rename($newname, $oldname);
-			die(json_encode(array('errors' => $this->_result['errors'])));
-		} 
-		
-		
 		unset($data['md_nome'], $data['md_type'], $data['md_xml']);
-		
+		$id_md = $this->_connInstance->getLastInsertId();
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
+		
 		foreach($data as $key=>$value){
 			$key = str_replace("_", " ", $key);
 			$md_data = array(
@@ -86,20 +81,29 @@ class Importer{
 			);
 			
 			$this->_result = $masterdocumentData->save($md_data);
-			
-			if(!empty($this->_result['errors'])){
-				$this->_connInstance->query("ROLLBACK");
-				rename($newname, $oldname);
-				die(json_encode(array('errors' => $this->_result['errors'])));
-			}
-						
+			$this->_checkErrors();
 		}	
 		
+		// Creo la cartella ftp
+		if (!$this->_FTPConnector->ftp_mksubdirs($ftp_folder . DIRECTORY_SEPARATOR . $md['nome'] . "_" . $id_md)){
+			$this->_result['errors'] = "Cannot create subdirs in FTP";
+			$this->_checkErrors();
+		}
+		
 		// Se tutto ok rimuovo il file e faccio COMMIT
-		unlink($newname);
+		unlink($this->_newname);
 		$this->_connInstance->query("COMMIT");
 		die(json_encode(array('errors' => false)));
 		
 	}
+	
+	private function _checkErrors(){
+		if(!empty($this->_result['errors'])){
+			$this->_connInstance->query("ROLLBACK");
+			rename($this->_newname, $this->_oldname);
+			die(json_encode(array('errors' => $this->_result['errors'])));
+		}
+	}
 }
+
 ?>

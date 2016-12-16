@@ -18,7 +18,7 @@ Utils::printr(Personale::getInstance()->getPersone());
 Utils::printr(Personale::getInstance()->getGruppi());
 */
 
-//$fcr = FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>1));
+//$fcr = FlowChecker::getInstance()->checkMasterDocument(array('id_md' =>53));
 //print_r(Personale::getInstance()->getPersonakey(),1);
 //$md = new Masterdocument(Connector::getInstance());
 /*
@@ -47,6 +47,11 @@ if( isset($_GET['detail'])){
 			$detail = TemplateHelper::createListGroupToImport();
 			break;
 		default:
+		case 'documentOpen':
+			$FlowChecker = new FlowChecker();
+			$fcr = $FlowChecker->checkMasterDocument(array('id_md' =>53));
+			$detail = "<pre>".print_r($fcr,1)."</pre>";;//TemplateHelper::createTimeline($fcr);
+			break;
 			$detail = null;
 		
 	}
