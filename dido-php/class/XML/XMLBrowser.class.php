@@ -40,7 +40,7 @@ class XMLBrowser{
 		foreach($filtered as $catName=>$data){
 			foreach($data['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
-					if(!in_array((string)$metadata['owner'],$this->_PermissionHelper->getUserField('gruppi'))){
+					if(!$this->_PermissionHelper->isConsultatore($metadata['owner'])){
 						unset($filtered[$catName]['documenti'][$tipoDocumento][$numVersione]);
 					}
 				}
@@ -59,6 +59,9 @@ class XMLBrowser{
 		foreach($this->_xmlTree as $categoria=>$xmlData){
 			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
+					if(!$this->_PermissionHelper->isConsultatore($metadata['owner'])){
+						continue;
+					}
 					if($dividedBycategories) 
 						$list[$categoria][$xmlData['path'].$metadata['file']] = $metadata['xml'];
 					else

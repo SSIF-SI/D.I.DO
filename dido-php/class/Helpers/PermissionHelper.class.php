@@ -36,6 +36,10 @@ class PermissionHelper{
 		return $this->_user;
 	}
 	
+	public function getUserId(){
+		return $this->_user['idPersona'];
+	}
+	
 	public function getUserField($field){
 		if(!isset($this->_user[$field])) Throw new Exception(__CLASS__.":".__METHOD__." User has no field $field");
 		return $this->_user[$field];

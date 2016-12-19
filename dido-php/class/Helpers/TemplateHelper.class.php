@@ -121,8 +121,21 @@ class TemplateHelper{
 	}
 	
 	static function createDashboardPanels(){
+		// Da Importare
 		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",Geko::getInstance()->getFileToImport()['nTot'],"Documenti da importare","?detail=documentToImport");
-		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",8,"Documenti aperti","?detail=documentOpen");
+		
+		// Aperti
+		$MasterDocument = new Masterdocument(Connector::getInstance());
+		$md_open = $MasterDocument->getBy("closed", "0");
+		$xmlList = XMLBrowser::getInstance()->getXmlList( false );
+			
+		foreach($md_open as $k => $md){
+			if(!array_key_exists($md['xml'], $xmlList)) unset($md_open[$k]);
+		}
+		
+		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",count($md_open),"Documenti aperti","?detail=documentOpen");
+	
+		// Da firmare
 		self::_createDashboardPanel(4,"panel-green","fa-edit",2,"Documenti da firmare","?detail=documentToSign");
 	}
 	

@@ -48,9 +48,22 @@ if( isset($_GET['detail'])){
 			break;
 		default:
 		case 'documentOpen':
-			$FlowChecker = new FlowChecker();
-			$fcr = $FlowChecker->checkMasterDocument(array('id_md' =>53));
-			$detail = "<pre>".print_r($fcr,1)."</pre>";;//TemplateHelper::createTimeline($fcr);
+			
+			$MasterDocument = new Masterdocument(Connector::getInstance());
+			$md_open = Utils::getListfromField($MasterDocument->getBy("closed", "0", "nome, type"), null, "id_md");
+			
+			$MasterDocumentData = new MasterdocumentData(Connector::getInstance());
+			$md_data = Utils::groupListBy($MasterDocumentData->getBy("id_md", join(",",array_keys($md_open))), "id_md");
+				
+			$xmlList = XMLBrowser::getInstance()->getXmlList( false );
+			
+			foreach($md_open as $k => $md){
+				if(!array_key_exists($md['xml'], $xmlList)) unset($md_open[$k]);
+			}
+			
+			
+			$detail = Utils::printr($md_open, true);
+			$detail .= Utils::printr($md_data, true);
 			break;
 			$detail = null;
 		
