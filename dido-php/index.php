@@ -49,21 +49,12 @@ if( isset($_GET['detail'])){
 		default:
 		case 'documentOpen':
 			
-			$MasterDocument = new Masterdocument(Connector::getInstance());
-			$md_open = Utils::getListfromField($MasterDocument->getBy("closed", "0", "nome, type"), null, "id_md");
+			$Responder = new Responder();
+			$Responder->createDocList(true);
 			
-			$MasterDocumentData = new MasterdocumentData(Connector::getInstance());
-			$md_data = Utils::groupListBy($MasterDocumentData->getBy("id_md", join(",",array_keys($md_open))), "id_md");
-				
-			$xmlList = XMLBrowser::getInstance()->getXmlList( false );
-			
-			foreach($md_open as $k => $md){
-				if(!array_key_exists($md['xml'], $xmlList)) unset($md_open[$k]);
-			}
-			
-			
+			$md_open = $Responder->getMyMasterDocuments();
 			$detail = Utils::printr($md_open, true);
-			$detail .= Utils::printr($md_data, true);
+			
 			break;
 			$detail = null;
 		
