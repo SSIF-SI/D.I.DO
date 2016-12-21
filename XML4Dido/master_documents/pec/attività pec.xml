@@ -16,7 +16,7 @@
 		<input values="persone">responsabile scientifico</input>
 		<input values="gruppi">gruppo</input>
 		<input values="areeProgettuali">area progettuale</input>
-		<input>ambito</input>
+		<input mandatory="0">ambito</input>
 		<input>controparti</input>
 		<input values="ruoliAttivitaPec">ruolo</input>
 		<input values="esitiAttivitaPec">esito</input>

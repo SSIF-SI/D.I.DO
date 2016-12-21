@@ -4,7 +4,7 @@ class XMLBrowser{
 	private $_xmlTree = array();
 	private $_PermissionHelper;
 	
-	const FILE_REGEX = "^([A-Za-z_\s]{1,})(\.v[0-9]{1,}){0,1}(\.xml)$";
+	const FILE_REGEX = "^([A-Za-z_àèéìòù\s]{1,})(\.v[0-9]{1,}){0,1}(\.xml)$";
 	
 	public static function getInstance(){
 		if(is_null(self::$_instance)){
@@ -131,6 +131,7 @@ class XMLBrowser{
 					"file" => $fileInfo[0], 
 					"xml" => $xml, 
 					"owner" => $xml['owner'],
+					"validEnd" => isset($xml['validEnd']) ? $xml['validEnd'] : null,
 					"visibleFor" => $xml['visibleFor'],						
 					"hiddenFor" => $xml['hiddenFor']					
 				); 

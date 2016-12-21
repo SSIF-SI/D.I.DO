@@ -1,9 +1,7 @@
 <?php 
 class TemplateHelper{
 	static function LeftMenu(){
-		XMLBrowser::getInstance()->filterXmlByServices(array("SSIF - SI"));
 		$tree = PermissionHelper::getInstance()->isGestore() ? XMLBrowser::getInstance()->getXmlTree(true) : null;
-		
 ?>
 		<li>
 			<a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
@@ -127,9 +125,12 @@ class TemplateHelper{
 		// Aperti
 		$Responder = new Responder();
 		$Responder->createDocList(true);
-		$md_open = count($Responder->getMyMasterDocuments()['md']);
+		$md_open = $Responder->getMyMasterDocuments()['md'];
+		$nTot = 0;
+		foreach($md_open as $docs)
+			$nTot += count($docs);
 		
-		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$md_open,"Documenti aperti","?detail=documentOpen");
+		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$nTot,"Documenti aperti","?detail=documentOpen");
 	
 		// Da firmare
 		self::_createDashboardPanel(4,"panel-green","fa-edit",2,"Documenti da firmare","?detail=documentToSign");
@@ -166,6 +167,7 @@ class TemplateHelper{
 		ob_start();
 		$list=Geko::getInstance()->getFileToImport();
 		unset($list['nTot']);
+		if(count($list)):
 ?>
 	<style>
 		.panel-heading .accordion-toggle{
@@ -231,9 +233,103 @@ class TemplateHelper{
 		</div>
     </div>
 <?
+		else: 
+?>
+		<div class="alert alert-danger">
+			Nessun documento da importare.
+		</div>
+<?php 
+		endif;
 		return ob_get_clean();
 		
 	}
 	
+	static function createListGroupOpen($md_open){
+		ob_start();
+		if(count($md_open['md'])):
+?>
+		<style>
+		.panel-heading .accordion-toggle{
+			text-decoration:none;
+		}
+		
+		.panel-heading .accordion-toggle:after {
+		    /* symbol for "opening" panels */
+		    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+		    content: "\e118";    /* adjust as needed, taken from bootstrap.css */
+		    float: left;        /* adjust as needed */
+		}
+		.panel-heading .accordion-toggle.collapsed:after {
+		    /* symbol for "collapsed" panels */
+		    content: "\e117";    /* adjust as needed, taken from bootstrap.css */
+		}
+	</style>
+	<div class="col-lg-12 col-md-12">
+		<div class="panel-group" id="documentsOpen">
+			<?php 
+			foreach ($md_open['md'] as $xml=>$val): 
+				$category = dirname($xml);
+				$xml = XMLBrowser::getInstance()->getSingleXml($xml);
+				XMLParser::getInstance()->setXMLSource($xml, $data['type']);
+				$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+				if(isset($xml['validEnd']))
+					$category .= "(fino al ".Utils::convertDateFormat($xml['validEnd'], DB_DATE_FORMAT, "d/m/Y").")";
+			?>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-lg-6">
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#documentsOpen" href=<?php echo "#list".str_replace(" ","_", $category); ?>>&nbsp;<?php echo(ucfirst($category))?></a>
+		                </div>
+	                    <div class="col-lg-6 text-right">
+							<span class="badge badge-info"><?php echo count($val)?></span>
+		                </div>
+                    </div>
+				</div>
+			</div>
+			<div id="<?php echo "list".str_replace(" ","_", $category);?>" class="panel-collapse collapse">
+				<table class="table table-condensed table-striped">
+					<tr>
+						<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
+						<th><?=(string)($input);?>
+						<?php endif; endforeach;?>
+						<th></th>
+					</tr>
+					<?php foreach (array_keys($val) as $id_md):?>
+					<tr>
+						<?php 
+							foreach ($inputs as $input): 
+								if(isset($input['shortView'])):
+									$key = (string)$input;
+									$value = $md_open['md_data'][$id_md][$key];
+									if(isset($input['values'])){
+										$callBack = (string)$input['values'];
+										$values = ListHelper::$callBack();
+										$value = $values[$value];
+									}
+									if(isset($input['type']) && $input['type'] == "data")
+										$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y"); 
+						?>
+						<td><?=$value?></td>						
+						<?php endif; endforeach; ?>
+						<td class="text-center"><a class="btn btn-primary" href="?md=<?=$id_md?>"><span class="fa fa-search fa-1x fa-fw"></span> Dettaglio</a></td>
+					</tr>
+						
+					<?php endforeach; ?>
+				</table>
+			</div>
+			<?php endforeach;?>
+		</div>
+	</div>
+<?php 		
+		else:
+?>
+		<div class="alert alert-danger">
+			Nessun documento aperto.
+		</div>
+<?php 
+		endif;
+		return ob_get_clean();
+	}
 }
 ?>

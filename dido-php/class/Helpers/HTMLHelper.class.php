@@ -6,6 +6,10 @@ class HTMLHelper{
 <div class="form-group <?=$class?>">
 	<label class="control-label" for="<?=$name?>"><?=$label?>:</label>
 	<select class="form-control" <?php if(!$isImported):?> id="<?=$name?>" name="<?=$name?>"<?php else:?> disabled="disabled"<?php endif;?>>
+<?php if(!$isImported):?>
+		<option value="">---Scegli---</option>
+<?php endif;?>
+
 <?php	foreach ($options as $value=>$optlabel): ?>
 		<option value="<?=$value?>" <?=$value == $selected ? "selected" : ""?>><?=$optlabel?></option>
 <?php 	endforeach;?>

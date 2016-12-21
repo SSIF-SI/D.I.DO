@@ -54,7 +54,7 @@ class Responder{
 			$this->createDocList();
 		
 		return array(
-			'md' => $this->_md,
+			'md' => Utils::groupListBy($this->_md,"xml"),
 			'md_data' => $this->_md_data,
 			'documents' => $_documents,
 			'documents_data' => $_documents_data

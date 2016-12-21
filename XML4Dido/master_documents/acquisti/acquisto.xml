@@ -7,11 +7,11 @@
 	</types>
 	<inputs>
 		<input from="geco" key="id_ordine">id ordine</input>
-		<input from="geco" key="ditta">fornitore</input>
-		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone">richiedente</input>
-		<input from="geco" key="destinatario_cf" transform="idPersonaFromCf" values="persone">destinatario</input>
+		<input from="geco" key="ditta" shortView="true">fornitore</input>
+		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" shortView="true">richiedente</input>
+		<input from="geco" key="destinatario_cf" transform="idPersonaFromCf" values="persone" shortView="true">destinatario</input>
 		<input from="geco" key="descrizione" type="textarea">descrizione</input>
-		<input from="geco" key="gae_nome">linea attività</input>
+		<input from="geco" key="gae_nome" shortView="true">linea attività</input>
 		<input from="geco" key="gae_anno">linea attività (anno)</input>
 		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
 		<input from="geco" key="piano_conto">voce del piano dei conti</input>

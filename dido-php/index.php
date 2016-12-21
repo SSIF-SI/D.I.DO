@@ -53,13 +53,18 @@ if( isset($_GET['detail'])){
 			$Responder->createDocList(true);
 			
 			$md_open = $Responder->getMyMasterDocuments();
-			$detail = Utils::printr($md_open, true);
-			
+			$detail = TemplateHelper::createListGroupOpen($md_open);
 			break;
 			$detail = null;
 		
 	}
 	
+}
+
+if(isset($_GET['md'])){
+	$FlowChecker = new FlowChecker();
+	$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
+	$detail = TemplateHelper::createTimeline($fcr);
 }
 
 if(count($_POST) > 0){ // Importazione
