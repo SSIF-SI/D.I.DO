@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="attività pec" owner="SAS - PC">
+	<types>
+		<type>progetto</type>
+		<type>contratto</type>
+		<type>accordo</type>
+		<type>convenzione</type>
+		<type>MOU</type>
+		<type>NDA</type>
+		<type>altro</type>
+	</types>
+	<inputs>
+		<input values="progetti" mandatory="0">acronimo progetto</input>
+		<input>titolo</input>
+		<input values="persone">responsabile scientifico</input>
+		<input values="gruppi">gruppo</input>
+		<input values="areeProgettuali">area progettuale</input>
+		<input>ambito</input>
+		<input>controparti</input>
+		<input values="ruoliAttivitaPec">ruolo</input>
+		<input values="esitiAttivitaPec">esito</input>
+	</inputs>
+	<list>
+		<document name="atto" minOccur="1">
+			<signatures>
+				<signature mandatory="0" role="DIR" />
+			</signatures>
+		</document>
+		<document name="allegato" minOccur="0">
+			<inputs>
+				<input>titolo</input>
+			</inputs>
+		</document>
+	</list>
+</masterDocument>

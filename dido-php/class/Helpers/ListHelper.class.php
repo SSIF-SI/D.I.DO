@@ -46,5 +46,45 @@ class ListHelper{
 		}
 		return $list;
 	} 
+	
+	static function tipiElaborazione(){
+		return array(
+			"cassa"			=> "Cassa",
+			"competenza" 	=> "Competenza"
+		);
+	}
+	
+	static function areeProgettuali(){ // TODO
+		return array(
+			"area1"	=> "area1",
+			"area2"	=> "area2",
+			"area3"	=> "area3"
+		);
+	}
+	
+	static function esitiRichiesteDiDelega(){
+		return array (
+			"accolta" 	=> "Accolta",
+			"negata"  	=> "Negata",
+			"parziale" 	=> "Parziale"		
+		);
+	}
+	
+	static function ruoliAttivitaPec(){
+		return array(
+			"coordinatore" 	=> "Coordinatore",
+			"partner"		=> "Partner",
+			"contraente"	=> "Contraente",
+			"subcontraente"	=> "Subcontraente"
+		);
+	}
+	
+	static function esitiAttivitaPec(){
+		return array (
+			"ammessa" 		=> "Ammessa",
+			"non ammessa" 	=> "Non ammessa",
+			"sospesa" 		=> "Sospesa"		
+		);
+	}
 }
 ?>
