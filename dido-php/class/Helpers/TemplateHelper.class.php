@@ -53,7 +53,7 @@ class TemplateHelper{
 		
 	}
 	
-	static function createTimeline($flowCheckereResult, $visibilityResult=null, $metadata = null){
+	static function createTimeline($flowCheckereResult, $visibilityResult=null, $mdInfo = null){
 		ob_start();
 ?>
                             <ul class="timeline">
@@ -77,8 +77,7 @@ class TemplateHelper{
                                             	<div class="col-lg-8">
                                             		<?php if(!$firstError && $status != 'success'): $firstError = true;?>
 		                                            <form class="text-right">
-		                                            	<a class="btn btn-primary edit-metadata" type="button"><span class="fa fa-pencil fa-1x fa-fw"></span> Modifica Informazioni</a>
-		                                               	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Inserisci" : "Aggiorna"?> il Pdf</a>
+		                                            	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
 		                                            	<?php if(!isset($docData->errors['missing'])):?>
 		                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
 		                                               	<?php endif;?>
@@ -93,7 +92,11 @@ class TemplateHelper{
                                         		<div class="col-lg-<?=count($docData->signatures) ? '6' : '12'?>">
 		                                        	<div class="panel panel-default">
 		                                        		<div class="panel-heading"> Informazioni: </div>
-														<div class="panel-body"></div>
+														<div class="panel-body">
+														<?php if(!isset($docData->errors['missing'])):?>
+																
+		                                               	<?php endif;?>
+														</div>
 													</div>
 												</div>
 												<?php if(count($docData->signatures)):?>

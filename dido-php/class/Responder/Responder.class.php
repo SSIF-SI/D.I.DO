@@ -2,6 +2,7 @@
 class Responder{
 	private $_XMLBrowser, $_ownerRules;
 	private $_Masterdocument, $_MasterdocumentData;
+	private $_Document, $_DocumentData;
 	private $_md, $_md_data;
 	private $_documents, $_documents_data;
 	private $_alreadyCreated = false;
@@ -11,6 +12,8 @@ class Responder{
 		$this->_XMLBrowser->filterXmlByServices(PermissionHelper::getInstance()->getUserField('gruppi'));
 		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
 		$this->_MasterdocumentData = new MasterdocumentData(Connector::getInstance());
+		$this->_Document = new Document(Connector::getInstance());
+		$this->_DocumentData = new DocumentData(Connector::getInstance());
 		
 		$this->_ownerRules = (array)simplexml_load_file(FILES_PATH."ownerRules.xml")->inputField;
 	}
@@ -41,12 +44,9 @@ class Responder{
 		$md_ids = array_keys($this->_md);
 		$this->_md_data = $this->_compact(Utils::groupListBy($this->_MasterdocumentData->getBy("id_md", join(",",$md_ids)), "id_md"));
 
-		$Document = new Document(Connector::getInstance());
-		$this->_documents = Utils::getListfromField($Document->getBy("id_md", join(",",$md_ids)), null, "id_doc");
-		
-		$DocumentData = new DocumentData(Connector::getInstance());
-		$this->_documents_data = $this->_compact(Utils::groupListBy($DocumentData->getBy("id_doc", join(",",array_keys($this->_documents))),"id_doc"));
-		
+		$documents = Utils::getListfromField($this->_Document->getBy("id_md", join(",",$md_ids)), null, "id_doc");
+		$this->_documents = Utils::groupListBy($documents,"id_md");
+		$this->_documents_data = $this->_compact(Utils::groupListBy($this->_DocumentData->getBy("id_doc", join(",",array_keys($documents))),"id_doc"));
 	}
 	
 	public function getMyMasterDocuments(){
@@ -56,8 +56,8 @@ class Responder{
 		return array(
 			'md' => Utils::groupListBy($this->_md,"xml"),
 			'md_data' => $this->_md_data,
-			'documents' => $_documents,
-			'documents_data' => $_documents_data
+			'documents' => $this->_documents,
+			'documents_data' => $this->_documents_data
 		);
 	}
 	
@@ -70,5 +70,24 @@ class Responder{
 			$md_data[$id_md] = $metadata;
 		}
 		return $md_data;
+	}
+	
+	public function getSingleMasterDocument($id_md){
+		if(!$this->_alreadyCreated)
+			$this->createDocList();
+		
+		if(!array_key_exists($id_md, $this->_md)) return false;
+		
+		$documents_data = array();
+		foreach($this->_documents[$id_md] as $id_doc=>$data){
+			$documents_data[$id_doc] = $this->_documents_data[$id_doc];
+		}
+		
+		return array(
+			'md' => $this->_md[$id_md],
+			'md_data' => $this->_md_data[$id_md],
+			'documents' => $this->_documents[$id_md],
+			'documents_data' => $documents_data
+		);
 	}
 }

@@ -153,8 +153,8 @@ class FTPConnector{
 	
 	public function getTempFile($file, $tmpPath = FILES_PATH){
 		$tmpfile = $tmpPath . md5( date( "YmdHisu" ));
-		$result = ftp_get( $this->_conn_id, $tmpfile, $this->_baseDir.$file, FTP_BINARY);
-		return $tmpfile;
+		$result = @ftp_get( $this->_conn_id, $tmpfile, $this->_baseDir.$file, FTP_BINARY);
+		return $result ? $tmpfile : false;
 	}
 	
 	public function ftp_mksubdirs($ftpath){

@@ -6,26 +6,37 @@ class Signature extends AnyDocument {
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );
 	}
-	public function getSigners($id_md) {
+	public function getSigners($id_md, $md_inputs) {
+		$signesr = array();
 		$sigle = array ();
 		$result = array ();
 		
 		$fixedSigners = new FixedSigners ( Connector::getInstance () );
-		$id_fs = Utils::getListfromField($fixedSigners->getAll(),'id_persona');
+		$id_fs = array_unique(Utils::getListfromField($fixedSigners->getAll(),'id_persona'));
+		$id_fs = join(", ",array_map("Utils::apici",$id_fs));
+		$fixed = Utils::filterList($this->getBy('id_persona', $id_fs), "fixed_role", 1);
+		$signers = Utils::getListfromField($fixed,null,'sigla');
+		
 		
 		$SignersRoles = new SignersRoles ( Connector::getInstance () );
 		$sigle = $SignersRoles->getRoleDescription ();
 		
+		/*
 		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
 		$id_vs = $masterDocumentData->searchByKeys ( array_keys ( $sigle ), $id_md );
 		$id_vs = Utils::getListfromField ( $id_vs, 'value' );
+		*/
+		
+		$id_vs = array();
+		foreach($md_inputs as $key=>$value){
+			if(in_array($key,$sigle)) array_push($id_vs,$value);
+		}
 		
 		//$signatures = $this->getBy ( 'id_persona', array_merge($id_fs,$id_vs), 'sigla' );
-		$id_s = array_merge($id_fs,$id_vs);
-		$id_s = join(", ",array_map("Utils::apici",$id_s));
-		$signers = Utils::getListfromField($this->getBy('id_persona', $id_s),null,'sigla');
+		//$id_s = array_unique(array_merge($id_fs,$id_vs));
+		$id_vs = join(", ",array_map("Utils::apici",$id_vs));
 		
-		//utils::printr($signers);
+		$signers = array_merge($signers, Utils::getListfromField($this->getBy('id_persona', $id_vs),null,'sigla'));
 		return $signers;
 	}
 }

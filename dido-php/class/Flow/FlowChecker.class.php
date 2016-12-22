@@ -2,8 +2,7 @@
 class FlowChecker extends ClassWithDependencies{
 	const FILE_REGEX = "^([A-Za-z_\s]{1,})(_[0-9]{1,}){0,1}(\.pdf)$";
 	
-	private $_Masterdocument, $_MasterdocumentData;
-	private $_Document, $_DocumentData;
+	private $_Masterdocument;
 	private $_Signature;
 	private $_XMLParser, $_XMLBrowser;
 	private $_FTPConnector;
@@ -13,8 +12,6 @@ class FlowChecker extends ClassWithDependencies{
 	public function __construct(){
 		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
 		$this->_MasterdocumentData = new MasterdocumentData(Connector::getInstance());
-		$this->_Document = new Document(Connector::getInstance());
-		$this->_DocumentData = new DocumentData(Connector::getInstance());
 		$this->_XMLParser = XMLParser::getInstance();
 		$this->_Signature = new Signature(Connector::getInstance());
 		$this->_XMLBrowser = XMLBrowser::getInstance();
@@ -32,35 +29,25 @@ class FlowChecker extends ClassWithDependencies{
 			'doclist'	=> array()
 		);
 
-		
 		if($md){
 
-			$md_data = Utils::getListfromField($this->_MasterdocumentData->getBy(key($id), $id[key($id)]), "value", "key");
+			$Responder = new Responder();
+			$return['data']['info'] = $Responder->getSingleMasterDocument($id['id_md']);
 			
-			$pkD = $this->_Document->getPk();
-			$id_doc_field = reset($pkD);
-			
-			$document = $this->_Document->getBy(key($id), $id[key($id)]);
-			
-			foreach($document as $doc){
-				$document_data[$doc['file_name']] = Utils::getListfromField($this->_DocumentData->getBy($id_doc_field, $doc[$id_doc_field]), "value", "key");
-			}
-			
-			$signers = $this->_Signature->getSigners($id[key($id)]);
-			
-			$return['data']['md_metadata'] = $md_data;
-			
-			//Utils::printr($this->_md);
+			$sigObj = new Signature(Connector::getInstance());
+			$signers = $sigObj->getSigners($id['id_md'],$return['data']['info']['md_data']);
+
 			// Parsing con XML (documenti richiesti)
 			$this->_XMLParser->setXMLSource($this->_XMLBrowser->getSingleXml($md['xml']),$md['type']);
 			$return['data']['xml_inputs'] = $this->_XMLParser->getMasterDocumentInputs();
 			
 			// Connessione FTP (documenti esistenti)
-			$md['path'] = $md['ftp_folder']. DIRECTORY_SEPARATOR. $md['nome']. "_". $id[key($id)];
+			//$md['path'] = $md['ftp_folder']. DIRECTORY_SEPARATOR. $md['nome']. "_". $id[key($id)];
 			
-			$fileList = Utils::filterList($this->_FTPConnector->getContents($md['path'])['contents'],'isPDF',1);
-			$fileList = Utils::getListfromField($fileList, 'filename');
+			//$fileList = Utils::filterList($this->_FTPConnector->getContents($md['path'])['contents'],'isPDF',1);
+			//$fileList = Utils::getListfromField($fileList, 'filename');
 			
+			//Utils::printr($fileList);
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
@@ -77,30 +64,30 @@ class FlowChecker extends ClassWithDependencies{
 					// TODO: controllare se esiste e appendere il risulktato
 				} else {
 					$docResult->documentName = (string)$document['name'];
+					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"file_name");
+					
 					foreach($document->attributes() as $k=>$attr){
 						$f_name = "_check_$k";
 						if(method_exists(__CLASS__, $f_name)){
-							self::$f_name($document['name'],$fileList,$attr,$docResult);
+							self::$f_name($document['name'],array_map("basename", $files),$attr,$docResult);
 						}
 					}
 					
 					if(!is_null($document->signatures->signature) && empty($docResult->errors)){
 						// Conbtrollo el firme secondo i seguewnti step:
 						
-						$files = self::_getFtpFiles($docResult->documentName, $fileList);
-						
-						foreach($files as $k=>$file){
+						//$files = self::_getFtpFiles($docResult->documentName, $fileList);
+						foreach($files as $k=>$filename){
 							
-							$filename = $md['path'].DIRECTORY_SEPARATOR.$file;
-							$result = $this->_checkSignatures($filename, $document, $signers, $k, $docResult);
+							// $filename = $md['path'].DIRECTORY_SEPARATOR.$file;
+							$result = $this->_checkSignatures($filename, $document, $signers, $k, $docResult, $return['data']['info']['md_data']);
 							$docResult->signatures[$k] = $result;
-							$docResult->docData[$k] = isset($document_data[$file]) ? $document_data[$file] : null;
+							//$docResult->docData[$k] = isset($document_data[$file]) ? $document_data[$file] : null;
 						}
 					}
 				}
 				$return['doclist'][$docResult->documentName] = $docResult;
 			}
-			
 			return $return;
 		} else {
 			// Eccezione
@@ -131,15 +118,16 @@ class FlowChecker extends ClassWithDependencies{
 		}
 	}
 	
-	private function _checkSignatures($filename, $document, $signers, $k, &$docResult){
+	private function _checkSignatures($filename, $document, $signers, $k, &$docResult, $md_data){
 		$tmpPDF = $this->_FTPConnector->getTempFile($filename);
-
 		$this->_PDFParser->loadPDF($tmpPDF);
 		$signaturesOnDocument = $this->_PDFParser->getSignatures();
 		
 		unlink($tmpPDF);
 	
 		$checkResult = array();
+		$sigRoles = new SignersRoles(Connector::getInstance());
+		$sigRoles = Utils::getListfromField($sigRoles->getAll(),null,"sigla");
 		
 		foreach($document->signatures->signature as $signature){
 			$who = (string)$signature['role'];
@@ -147,6 +135,15 @@ class FlowChecker extends ClassWithDependencies{
 				
 			if($who == "REQ") {
 				$checkResult[$who]['result'] = 'skipped';
+				continue;
+			}
+			
+			if(!isset($signers[$who])){
+				$docResult->errors[$k][] = 'Manca la firma del '.$sigRoles[$who]['descrizione'].' nel sistema DIDO!!!';
+				$persona = Personale::getInstance()->getPersona($md_data[$sigRoles[$who]['descrizione']]);
+				$checkResult[$who]['who'] = "<em>(Manca la firma nel sistema DIDO)</em><br/><br/>{$persona['nome']} {$persona['cognome']}";
+				$checkResult[$who]['role'] = $sigRoles[$who]['descrizione'];
+				$checkResult[$who]['result'] = false;
 				continue;
 			}
 
@@ -185,10 +182,10 @@ class FlowChecker extends ClassWithDependencies{
 	private static function _getFtpFiles($docName, $fileList){
 		$docName = str_replace(" ", "_", $docName);
 		$files = array();
-		foreach($fileList as $file){
+		foreach($fileList as $k=>$file){
 			preg_match("/".self::FILE_REGEX."/", $file,$fileInfo);
 			if ($fileInfo[1]== $docName){
-				array_push($files,$fileInfo[0]);
+				$files[$k] = $fileInfo[0];
 			}
 		}
 		return $files;
