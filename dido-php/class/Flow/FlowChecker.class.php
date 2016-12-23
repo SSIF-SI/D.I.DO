@@ -52,18 +52,19 @@ class FlowChecker extends ClassWithDependencies{
 			
 			// Confronto liste con check su firme e quant'altro
 			foreach($this->_XMLParser->getDocList() as $document){
-				$docResult = new FlowCheckerResult();
-				
 				if(!is_null($document['load'])){
 					$defaultXml = XML_STD_PATH . (string)$document['load'];
 					$document = simplexml_load_file($defaultXml);
 				}
+				
+				$docResult = new FlowCheckerResult();
 				
 				if(!is_null($document['md'])){
 					// è un documento di tipo esterno (masterDocument)	
 					// TODO: controllare se esiste e appendere il risulktato
 				} else {
 					$docResult->documentName = (string)$document['name'];
+					$docResult->inputs = $document->inputs->input;
 					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"file_name");
 					
 					foreach($document->attributes() as $k=>$attr){

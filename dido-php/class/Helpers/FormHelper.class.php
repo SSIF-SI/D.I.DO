@@ -5,47 +5,48 @@ class FormHelper{
 
 	public static function createInputsFromXml($xmlInputs, $colDivision = 4, $_IMPORT = array()){
 		$inputs = array();
-		
-		foreach ($xmlInputs as $input){
-			$type = is_null($input['type']) ? 'text' : (string)$input['type'];
-			$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
-			$label = (string)$input;
-			$field = /*isset($_POST[$field]) ?*/ self::fieldFromLabel($label) /*: (string)$input['key']*/;
-			$value = isset($_POST[$field]) ? $_POST[$field] : (isset($_IMPORT[(string)$input['key']]) ? $_IMPORT[(string)$input['key']] : null);
-			
-			/* IN REALTA NN VA FATTO QUI... DA VEDERE... */
-			if(!is_null($input['transform']) && empty($_POST)){
-				$callback = (string)$input['transform'];
-				$value = ImportHelper::$callback($value);
-			}
-			
-			
-			$warning = FormHelper::getWarnMessages($field);
-			$class = isset($warning['class']) ? $warning['class'] : null;
-			
-			if(is_null($input['values']))
-				$input_html = HTMLHelper::input($type, $field, $label, $value, $class, $required, !is_null($input['from']));
-			else{
-				$callback = (string)$input['values'];
-				$options = ListHelper::$callback();
-				$input_html = HTMLHelper::select($field, $label, $options, $value, $class, !is_null($input['from']));
-				if(!is_null(($input['alt'])) && !isset($options[$value])) {
-					$alt = (string)$input['alt'];
-					$alt = explode("|", $alt);
-					$alt = array_map(function($el) use ($_IMPORT) { 
-						$el = trim($el);
-						if(!empty($_IMPORT[$el])) return $_IMPORT[$el]; }
-						, $alt);
-					$join = isset($input['join']) ? (string)$input['join'] : " ";
-					$value = join($join, $alt);
-					$input_html = HTMLHelper::input($type, $field, $label, $value, $class, $required, !is_null($input['from']));
+		if(count($xmlInputs)){
+			foreach ($xmlInputs as $input){
+				$type = is_null($input['type']) ? 'text' : (string)$input['type'];
+				$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
+				$label = (string)$input;
+				$field = /*isset($_POST[$field]) ?*/ self::fieldFromLabel($label) /*: (string)$input['key']*/;
+				$value = isset($_POST[$field]) ? $_POST[$field] : (isset($_IMPORT[(string)$input['key']]) ? $_IMPORT[(string)$input['key']] : null);
+				
+				/* IN REALTA NN VA FATTO QUI... DA VEDERE... */
+				if(!is_null($input['transform']) && empty($_POST)){
+					$callback = (string)$input['transform'];
+					$value = ImportHelper::$callback($value);
 				}
 				
+				
+				$warning = FormHelper::getWarnMessages($field);
+				$class = isset($warning['class']) ? $warning['class'] : null;
+				
+				if(is_null($input['values']))
+					$input_html = HTMLHelper::input($type, $field, $label, $value, $class, $required, !is_null($input['from']));
+				else{
+					$callback = (string)$input['values'];
+					$options = ListHelper::$callback();
+					$input_html = HTMLHelper::select($field, $label, $options, $value, $class, !is_null($input['from']));
+					if(!is_null(($input['alt'])) && !isset($options[$value])) {
+						$alt = (string)$input['alt'];
+						$alt = explode("|", $alt);
+						$alt = array_map(function($el) use ($_IMPORT) { 
+							$el = trim($el);
+							if(!empty($_IMPORT[$el])) return $_IMPORT[$el]; }
+							, $alt);
+						$join = isset($input['join']) ? (string)$input['join'] : " ";
+						$value = join($join, $alt);
+						$input_html = HTMLHelper::input($type, $field, $label, $value, $class, $required, !is_null($input['from']));
+					}
+					
+				}
+				
+				if($type != 'hidden') $input_html = "<div class=\"col-lg-$colDivision\">$input_html</div>";
+				array_push($inputs, $input_html);	
+				
 			}
-			
-			if($type != 'hidden') $input_html = "<div class=\"col-lg-$colDivision\">$input_html</div>";
-			array_push($inputs, $input_html);	
-			
 		}
 		
 		return $inputs;

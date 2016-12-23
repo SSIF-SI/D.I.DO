@@ -1,6 +1,7 @@
 <?php
 class FlowCheckerResult{
 	public $documentName = null;
+	public $inputs = null;
 	public $found = null;
 	public $signatures = array();
 	public $limit = null;

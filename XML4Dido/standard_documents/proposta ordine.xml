@@ -7,4 +7,7 @@
 		<signature role="RL" alt="DIR" />
 		<signature role="DIR" afterValidation="AMM" />
 	</signatures>
+	<inputs>
+		<input>test</input>
+	</inputs>
 </document>

@@ -55,8 +55,54 @@ class TemplateHelper{
 	
 	static function createTimeline($flowCheckereResult, $visibilityResult=null, $mdInfo = null){
 		ob_start();
+		$info = $flowCheckereResult['data']['info'];
+		$xml = XMLBrowser::getInstance()->getSingleXml($info['md']['xml']);
+		XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
+		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+		
+		
 ?>
-                            <ul class="timeline">
+					<div class="row">
+						<div class="col-lg-12 col-md-12">
+		                    <div class="panel panel-primary">
+		                        <div class="panel-heading">
+		                            <strong><?=$info['md']['nome']." ".$info['md']['type']?></strong>
+		                        </div>
+		                        <div class="panel-body">
+		                        	<div class="row">
+		                        	<?php 
+		                        	foreach ($inputs as $input): 
+										$key = (string)$input;
+										$value = $info['md_data'][$key];
+										if(isset($input['values'])){
+											$callBack = (string)$input['values'];
+											$values = ListHelper::$callBack();
+											$value = $values[$value];
+										}
+										if(isset($input['type']) && $input['type'] == "data")
+											$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
+									?>
+										<div class="col-lg-4">
+                                           	<strong><?=ucfirst($key)?></strong><br/>
+											<em><?=$value?></em>
+											<hr/>
+										</div>
+										
+									<?php endforeach;?>
+			                        </div>
+		                        	<div class="row  text-center">
+		                        		<a class="btn btn-primary">
+		                                	<span class="fa fa-pencil fa-1x fa-fw">&nbsp;</span> Modifica informazioni
+		                               	</a>
+	                               	</div>
+	                               	<hr/>
+		                       		<div class="panel panel-info">
+			                        <div class="panel-heading">
+			                            <strong>Flusso documentale</strong>
+			                        </div>
+			                        <div class="panel-body">
+			                            
+			                        	<ul class="timeline">
 <?php 
 		$firstError = false;
 		foreach($flowCheckereResult['doclist'] as $docName=>$docData):
@@ -94,8 +140,27 @@ class TemplateHelper{
 		                                        		<div class="panel-heading"> Informazioni: </div>
 														<div class="panel-body">
 														<?php if(!isset($docData->errors['missing'])):?>
-																
-		                                               	<?php endif;?>
+															<div class="row">
+															<?php foreach ($docData->inputs as $input): 
+																	$key = (string)$input;
+																	$value = $info['md_data'][$key];
+																	if(isset($input['values'])){
+																		$callBack = (string)$input['values'];
+																		$values = ListHelper::$callBack();
+																		$value = $values[$value];
+																	}
+																	if(isset($input['type']) && $input['type'] == "data")
+																		$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
+																?>
+																	<div class="col-lg-4">
+							                                           	<strong><?=ucfirst($key)?></strong><br/>
+																		<em><?=$value?></em>
+																		<hr/>
+																	</div>
+																	
+																<?php endforeach;?>
+										                	</div>
+									                    <?php endif;?>
 														</div>
 													</div>
 												</div>
@@ -117,6 +182,13 @@ class TemplateHelper{
                                 </li>
 <?php 	endforeach; ?> 
                            </ul>
+                           </div>
+                           </div>
+                           </div>
+                           	</div>
+		                </div>
+		           </div>
+                           
 <?php 
 		return ob_get_clean();
 	}
@@ -334,5 +406,6 @@ class TemplateHelper{
 		endif;
 		return ob_get_clean();
 	}
+	
 }
 ?>
