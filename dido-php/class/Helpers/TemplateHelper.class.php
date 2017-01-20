@@ -195,7 +195,7 @@ class TemplateHelper{
 	
 	static function createDashboardPanels(){
 		// Da Importare
-		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",Geko::getInstance()->getFileToImport()['nTot'],"Documenti da importare","?detail=documentToImport");
+		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",Geko::getInstance()->getFileToImport()['nTot'],"Proposte da Geco","?detail=documentToImport");
 		
 		// Aperti
 		$Responder = new Responder();
@@ -205,7 +205,7 @@ class TemplateHelper{
 		foreach($md_open as $docs)
 			$nTot += count($docs);
 		
-		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$nTot,"Documenti aperti","?detail=documentOpen");
+		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$nTot,"Procedimenti in sospeso","?detail=documentOpen");
 	
 		// Da firmare
 		self::_createDashboardPanel(4,"panel-green","fa-edit",2,"Documenti da firmare","?detail=documentToSign");
@@ -275,33 +275,68 @@ class TemplateHelper{
                     </div>
 				</div>
 				<div id="<?php echo "list".$category;?>" class="panel-collapse collapse">
-					<ul class="list-group">
-					<?php 
+					<table class="table table-condensed table-striped">
+					<?php
+					$th = false;
 					foreach ($val as $k=>$data):
 						$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
 						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
+						// aggiunto da federico
+						XMLParser::getInstance()->setXMLSource($xml['xml'], $data['type']);
+						$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+						// fine
 						$formId = rtrim(str_replace(" ", "_", $data['filename']),".imp");
-						
+						if(!$th):
+							$th = true;
 					?>
-					<li class="list-group-item">
-		                <form role="form" method="POST" class="<?=$data['xml']?>" id="importform-<?=$formId?>" enctype="multipart/form-data">
-			                <div class="row">
-			                	<input type="hidden" id="import_filename" name="import_filename" value="<?=$category.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
-			                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
-			                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
-			                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 
-			                	<?php foreach(HTMLHelper::createDetailFromObj($obj, $xml['xml'], $data['type']) as $input): ?>
-			                	<?=$input?>
-			                  	<?php endforeach; ?>
-			                </div>
-			                <br/>
-			                <a class="btn btn-primary import" href="#importform-<?=$formId?>">
-			                	<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa
-			                </a>
-		                </form>
-					</li>
+						<tr>
+							<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
+							<th><?=(string)($input);?>
+							<?php endif; endforeach;?>
+							<th></th>
+						</tr>
+					<?php endif;?>
+						 <tr>
+						    <?php 
+						    $obj_new = array();
+						    foreach ($inputs as $input): 
+								$key = (string)$input['key'];
+								$value = $obj[$key];
+								$obj_new[(string)$input] = $value;
+
+								if(isset($input['transform'])){
+									$callback = (string)$input['transform'];
+									$value = ImportHelper::$callback($value);
+									if($input['type'] != 'data')
+										$obj_new[(string)$input] = $value;
+								} 
+								
+								if(isset($input['values'])){
+									$callBack = (string)$input['values'];
+									$values = ListHelper::$callBack();
+									$value = $values[$value];
+								}
+								if(isset($input['shortView'])):
+								?>
+							<td><?=$value?></td>						
+							<?php endif; endforeach; ?>
+						    <td>
+						    	<form style="display:none" role="form" method="POST" class="<?=$data['xml']?>" id="importform-<?=$formId?>" enctype="multipart/form-data">
+									<input type="hidden" id="import_filename" name="import_filename" value="<?=$category.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
+				                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
+				                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
+				                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 
+				                	<?php foreach($obj_new as $id=>$val_n):?>
+				                	<input type="hidden" id="<?=$id?>" name="<?=$id?>" value="<?=$val_n?>"/> 
+				                	<?php endforeach;?>
+								</form>
+					            <a class="btn btn-primary import" href="#importform-<?=$formId?>">
+				                	<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa
+				                </a>
+			                </td>
+						</tr>
 					<?php endforeach;?>
-					</ul>
+					</table>
 				</div>
 			</div>
 			<?php endforeach;?>
