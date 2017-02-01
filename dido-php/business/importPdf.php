@@ -8,7 +8,8 @@ if(count($_FILES)){
 	foreach($_FILES as $inputKey => $file){
 		if($file['error'])
 			die(json_encode(array("error" => "Errore nel caricamento del file {$file['name']}")));
-		$PDFParser = new PDFParser($file['tmp_name']);
+		$PDFParser = new PDFParser();
+		$PDFParser->loadPDF($file['tmp_name']);
 		/*
 		if(!$PDFParser->isPDFA()){
 			die(json_encode(array("error" => "Il file {$file['name']} non è un pdf di tipo A")));

@@ -15,7 +15,6 @@ class PDFParser{
 	
 	public function loadPDF($pdf_path){
 		$this->_sigatureManagerClass->loadPDF($pdf_path);
-		
 		$this->_signatures = json_decode((string)$this->_sigatureManagerClass->getSignatures());
 		$this->_annotations = json_decode((string)$this->_sigatureManagerClass->getAnnotations());
 		
