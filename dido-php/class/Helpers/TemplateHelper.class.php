@@ -66,7 +66,7 @@ class TemplateHelper{
 						<div class="col-lg-12 col-md-12">
 		                    <div class="panel panel-primary">
 		                        <div class="panel-heading">
-		                            <strong><?=$info['md']['nome']." ".$info['md']['type']?></strong>
+		                            <h3 style="margin:0px;padding:0px; font-weight:bold"><?=ucfirst($info['md']['nome']).(!empty($info['md']['type']) ? " ".$info['md']['type'] : "")?></h3>
 		                        </div>
 		                        <div class="panel-body">
 		                        	<div class="row">
@@ -90,9 +90,10 @@ class TemplateHelper{
 										
 									<?php endforeach;?>
 			                        </div>
-		                        	<div class="row  text-center">
-		                        		<a class="btn btn-primary">
-		                                	<span class="fa fa-pencil fa-1x fa-fw">&nbsp;</span> Modifica informazioni
+		                        	<div class="row text-center">
+		                        		<a class="btn btn-primary editMDinfo" href="?md=<?=$_GET['md']?>&edit">
+		                                	<span class="fa fa-pencil fa-1x fa-fw"></span> 
+		                                	Modifica informazioni
 		                               	</a>
 	                               	</div>
 	                               	<hr/>

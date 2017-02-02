@@ -64,7 +64,17 @@ if( isset($_GET['detail'])){
 if(isset($_GET['md'])){
 	$FlowChecker = new FlowChecker();
 	$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
-	$detail = TemplateHelper::createTimeline($fcr);
+	
+	if(isset($_GET['edit'])){
+		$info = $fcr['data']['info'];
+		$xml = XMLBrowser::getInstance()->getSingleXml($info['md']['xml']);
+		XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
+		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+		$htmlInputs = FormHelper::createInputsFromXml($inputs);
+		die(join(PHP_EOL,$htmlInputs));
+	} else {
+		$detail = TemplateHelper::createTimeline($fcr);
+	}
 }
 
 if(count($_POST) > 0){ // Importazione

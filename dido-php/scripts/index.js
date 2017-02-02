@@ -8,4 +8,10 @@ $(document).ready(function(){
 		MyModal.modal();
 		MyModal.submit($(this), null, data, '.modal-body');
 	});
+	
+	$('a.editMDinfo').click(function (e) {
+		e.preventDefault();
+		MyModal.setTitle("Modifica informazioni");
+		MyModal.editModal(this);
+	});
 });

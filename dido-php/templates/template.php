@@ -12,7 +12,7 @@
     <title><?=PAGE_TITLE_PREFIX?></title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="<?=SB_ADMIN_2?>vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?=SB_ADMIN_2?>vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
 	<link href="<?=SB_ADMIN_2?>vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css" rel="stylesheet">
     
     <!-- MetisMenu CSS -->

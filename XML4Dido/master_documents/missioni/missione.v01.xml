@@ -10,9 +10,9 @@
 		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
 		<input from="geco" key="oggetto" shortView="true">oggetto</input>
 		<input from="geco" key="localita" shortView="true">località</input>
-		<input from="geco" key="data_inizio" transform="dateFromDB" type="data" shortView="true">data inizio missione</input>
-		<input from="geco" key="data_fine" transform="dateFromDB" type="data">data fine missione</input>
-		<input from="geco" key="importo">importo</input>
+		<input from="geco" key="data_inizio" transform="dateFromDB" type="data" shortView="true" editable="true">data inizio missione</input>
+		<input from="geco" key="data_fine" transform="dateFromDB" type="data" editable="true">data fine missione</input>
+		<input from="geco" key="importo" editable="true">importo</input>
 		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
 		<input from="geco" key="gae_nome">linea attività</input>
 		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
