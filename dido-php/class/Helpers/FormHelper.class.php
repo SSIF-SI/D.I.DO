@@ -3,6 +3,41 @@ class FormHelper{
 	private static $warnmessages = array();
 	private static $warnBox = "";
 
+	public static function createInputsFromDB($inputs, $mdData, $readonly = false){
+		ob_start();
+		foreach ($inputs as $input):
+			$editable = (isset($input['editable']) && $input['editable']); 
+			$key = (string)$input;
+			$value = $mdData[$key];
+			if(isset($input['values'])){
+				$callBack = (string)$input['values'];
+				$values = ListHelper::$callBack();
+				$rValue = $value;
+				$value = $values[$value];
+			} 
+			if(isset($input['type']) && $input['type'] == "data")
+				$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
+				
+		?>
+			<div class="col-lg-4">
+        <?php if($readonly || !$editable):?>
+		        <strong><?=ucfirst($key)?></strong><br/>
+				<em><?=$value?></em>
+		<?php else:
+				if(is_null($input['values']))
+					$input_html = HTMLHelper::input($input['type'], $key, ucfirst($key), $value);
+				else{
+					$input_html = HTMLHelper::select($key, ucFirst($key), $values, $rValue);
+				}
+				echo $input_html;
+			endif; ?>
+				<hr/>
+			</div>
+		<?php 
+		endforeach;
+		return ob_get_clean();
+	}
+	
 	public static function createInputsFromXml($xmlInputs, $colDivision = 4, $_IMPORT = array()){
 		$inputs = array();
 		if(count($xmlInputs)){

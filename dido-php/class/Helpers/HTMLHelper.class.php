@@ -136,7 +136,7 @@ class HTMLHelper{
 		$class = $type == "hidden" ? null : "class=\"form-control $class\"";
 		if(isImported && $type == "data"){
 			$valueMod = Utils::convertDateFormat($value, "d/m/Y", DB_DATE_FORMAT);
-			return "<input type=\"text\" $class value=\"$value\" $required $more/>\n" .
+			return "<input type=\"$type\" $class value=\"$value\" $required $more/>\n" .
 				   "<input type=\"hidden\" name=\"$name\" id=\"$name\" value=\"$valueMod\"/>";
 		} else {
 			return "<input type=\"$type\" $class name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";

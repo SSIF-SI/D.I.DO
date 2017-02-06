@@ -70,7 +70,7 @@ class TemplateHelper{
 		                        </div>
 		                        <div class="panel-body">
 		                        	<div class="row">
-		                        	<?php 
+		                        	<?php /*
 		                        	foreach ($inputs as $input): 
 										$key = (string)$input;
 										$value = $info['md_data'][$key];
@@ -88,7 +88,7 @@ class TemplateHelper{
 											<hr/>
 										</div>
 										
-									<?php endforeach;?>
+									<?php endforeach;*/ echo FormHelper::createInputsFromDB($inputs, $info['md_data'],true)?>
 			                        </div>
 		                        	<div class="row text-center">
 		                        		<a class="btn btn-primary editMDinfo" href="?md=<?=$_GET['md']?>&edit">
