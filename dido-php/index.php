@@ -64,8 +64,9 @@ if( isset($_GET['detail'])){
 if(isset($_GET['md'])){
 	if(isset($_GET['edit'])){
 		if(count($_POST) > 0){
-			Utils::printr($_POST);
-			die();
+			$MasterdocumentData = new MasterdocumentData(Connector::getInstance());
+			$result = $MasterdocumentData->saveInfo($_POST, $_GET['md']);
+			die($result);
 		}
 ?>
 	<form role="form" method="POST" name="edit-md-<?=$_GET['md']?>" enctype="multipart/form-data">

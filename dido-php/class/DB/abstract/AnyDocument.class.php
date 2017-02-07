@@ -51,5 +51,12 @@ abstract class AnyDocument extends Crud{
 		return $this->_connInstance->allResults();
 		
 	}
+	
+	public function saveInfo($inputs,$id_parent){
+		Utils::printr($inputs);
+		$existents_input = $this->searchByKeys(array_keys($inputs), $id_parent);
+		Utils::printr($existents_input);
+		return;
+	}
 }
 ?>
