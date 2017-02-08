@@ -4,3 +4,4 @@ $('input[type="data"]').datepicker({
 	language: "it",
     todayHighlight: true
 });
+
