@@ -72,18 +72,6 @@ var MyModal = {
 			} 
 		}
 	},
-	signModal: function(context){
-		var href=$(context).prop("href");
-		MyModal.addButtons(
-			[
-				{id:"firma", type: "submit", label: "Firma", cssClass: "btn-primary sign", spanClass: "fa-pencil", callback: function(){;
-					MyModal.submit($(context),href,$('form').serializeArray());
-					}
-				}
-			]
-		);
-		MyModal.load($(context));
-	},
 	editModal: function(context){
 		var href=$(context).prop("href");
 		MyModal.addButtons(
