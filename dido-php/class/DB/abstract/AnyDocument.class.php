@@ -51,5 +51,28 @@ abstract class AnyDocument extends Crud{
 		return $this->_connInstance->allResults();
 		
 	}
+	
+	public function saveInfo($inputs,$id_parent,$docInputs){
+		$existents_input = Utils::getListfromField($this->searchByKeys(array_keys($inputs), $id_parent),null,'key');
+		foreach($inputs as $key=>$value){
+			
+			$this->_connInstance->query("BEGIN");
+			if(!isset($existents_input[$key]) || $value != $existents_input[$key]['value']){
+				$existents_input[$key]['key'] = $key;
+				$existents_input[$key]['value'] = $value;
+				
+				$object = Utils::stubFill($this->_stub,$existents_input[$key]);
+				
+				$result = $this->save($object,null);
+				
+				if(!empty($result['errors'])){
+					$this->_connInstance->query("ROLLBACK");
+					return json_encode($result);
+				}
+			}
+		}
+		$this->_connInstance->query("COMMIT");
+		return json_encode(array('errors' => false));
+	}
 }
 ?>

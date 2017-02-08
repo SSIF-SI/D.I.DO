@@ -134,13 +134,14 @@ class HTMLHelper{
 		$more .= $isImported ? " readonly=\"readonly\"" : null ;
 		$required = $required ? "required" : null;
 		$class = $type == "hidden" ? null : "class=\"form-control $class\"";
-		if(isImported && $type == "data"){
+		
+		if($imported === true && $type=="data"){
 			$valueMod = Utils::convertDateFormat($value, "d/m/Y", DB_DATE_FORMAT);
-			return "<input type=\"$type\" $class value=\"$value\" $required $more/>\n" .
+			return "<input type=\"$type\" $class value=\"$value\" linkto=\"$name\" $required $more/>\n" .
 				   "<input type=\"hidden\" name=\"$name\" id=\"$name\" value=\"$valueMod\"/>";
-		} else {
-			return "<input type=\"$type\" $class name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";
 		}
+		else
+			return "<input type=\"$type\" $class name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";
 	}
 	
 	private static function textareaInput($name, $label, $value=null , $required = false, $isImported = false){

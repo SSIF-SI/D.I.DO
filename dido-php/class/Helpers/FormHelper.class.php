@@ -131,6 +131,38 @@ class FormHelper{
 		return self::$warnBox;  
 	}
 	
+	public static function editInfo($id_parent, $postData, $inputs, $infoData){
+		if(count($postData) > 0){
+		
+			foreach($postData as $k=>$input){
+				unset($postData[$k]);
+				$postData[str_replace("_"," ",$k)] = $input;
+			}
+				
+			foreach($inputs as $input){
+				$key = (string)$input;
+				if(isset($postData[$key]) && $input['type'] == 'data'){
+					$postData[$key] = Utils::convertDateFormat($postData[$key], "d/m/Y", DB_DATE_FORMAT);
+				}
+			}
+				
+			$MasterdocumentData = new MasterdocumentData(Connector::getInstance());
+			$result = $MasterdocumentData->saveInfo($postData, $_GET['md'],$inputs);
+			die($result);
+		}
+		?>
+			<form role="form" method="POST" name="edit-inputs-<?=$_GET['md']?>" enctype="multipart/form-data">
+				<div class="row">
+		<?php 	
+				$htmlInputs = self::createInputsFromDB($inputs,$infoData);
+				echo($htmlInputs);
+				echo'<script type="text/javascript" src="'.SCRIPTS_PATH.'datepicker.js" />';
+		?>
+				</div>
+			</form>
+		<?php 
+	}
+	
 	private static function fieldFromLabel($label){
 		return strtolower(str_replace(" ", "_", $label));
 	}

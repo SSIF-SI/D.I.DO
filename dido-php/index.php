@@ -62,28 +62,15 @@ if( isset($_GET['detail'])){
 }
 
 if(isset($_GET['md'])){
+	$Responder = new Responder();
+	$info = $Responder->getSingleMasterDocument($_GET['md']);
+	
+	$xml = simplexml_load_file(XML_MD_PATH.$info['md']['xml']);
+	XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
+	$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+	
 	if(isset($_GET['edit'])){
-		if(count($_POST) > 0){
-			Utils::printr($_POST);
-			die();
-		}
-?>
-	<form role="form" method="POST" name="edit-md-<?=$_GET['md']?>" enctype="multipart/form-data">
-		<div class="row">
-<?php 	
-		$Responder = new Responder();
-		$info = $Responder->getSingleMasterDocument($_GET['md']);
-			
-		$xml = simplexml_load_file(XML_MD_PATH.$info['md']['xml']);
-		XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
-		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
-		$htmlInputs = FormHelper::createInputsFromDB($inputs,$info['md_data']);
-		echo($htmlInputs);
-		echo'<script type="text/javascript" src="'.SCRIPTS_PATH.'datepicker.js" />';
-?>
-		</div>
-	</form>
-<?php 
+		FormHelper::editInfo($_GET['md'], $_POST, $inputs, $info['md_data']);
 		die();
 	} else {
 		$FlowChecker = new FlowChecker();

@@ -113,7 +113,6 @@ var MyModal = {
 		var span = element.children("span");
 		var oldClass = span.prop('class');
 		var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
-		
 		if(MyModal.busy == false){
 			
 			MyModal.busy = true;
