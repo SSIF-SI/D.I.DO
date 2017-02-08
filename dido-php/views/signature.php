@@ -15,6 +15,8 @@
 	                                </li>
 	                                <li class=""><a href="#firmatari-variabili" data-toggle="tab" aria-expanded="true">Firmatari variabili</a>
 	                                </li>
+	                                <li class=""><a href="#applica-firma" data-toggle="tab" aria-expanded="true">Applica Firma</a>
+	                                </li>
 	                            </ul>
 	
 	                            <!-- Tab panes -->
@@ -40,6 +42,12 @@
 				                    	</div>
 					                	<?=$signers['variable']?>
 	                                </div>
+	                          		<div class="tab-pane" id="applica-firma">
+	                                    <h4>Applica firma</h4>
+	                                    <div>
+				                    		<a class="btn btn-primary mymodal sign" href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span class="fa fa-plus fa-1x fa-fw"></span> Applica firma</a>
+				                    	</div>
+					                </div>
 					        	</div>
 	                       	</div>
 	                        <!-- /.panel-body -->

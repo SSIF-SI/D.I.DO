@@ -141,7 +141,7 @@ class SignatureHelper{
 		$signersRoles = new SignersRoles(Connector::getInstance());
 		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',0),'descrizione');
 		
-		$listPersone = ListHelper::listSigners();
+		$listPersone = ListHelper::Signers();
 		
 		ob_start();
 		?>
@@ -182,6 +182,56 @@ class SignatureHelper{
 	static function createMetadata($list, $table_suffix,$idname, $substitutes_keys){
 		return HTMLHelper::createMetadata($list, basename($_SERVER['PHP_SELF'])."?list=$table_suffix", array($idname), $substitutes_keys);
 	}
+	
+	static function createModalApplySign($idP = null){
+		ob_start();
+		?>
+						<form id="firmatario" name="firmatario" method="POST">
+				            <div class="signatures list-group"></div>
+				            <div class="errorbox"></div>
+				            <label for="pdfDaFirmare">Pdf da firmare digitalmente:</label><br/>
+				            <input class="file" type="file" id="pdfDaFirmare" name="pdfDaFirmare" data-allowed-file-extensions='[".pdf", ".p7m"]'/>
+				           	<label for="keystore">Keystore da utilizzare per la firma:</label><br/>
+				           	<input class="file" type="file" id="keystore" name="keystore" data-allowed-file-extensions='[".ks", ".jks"]'/>
+				        </form>
+			            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
+	    				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
+	    				<script>
+	    					signPdf();	
+			    	    	
+	            			$("#keystore").on('filebatchuploadsuccess', function(event, data) {
+				    	    	$(".signatures").html("");
+				    	    	});
+		            		$("#pdfDaFirmare").on('filebatchuploadsuccess', function(event, data) {
+					    	    $(".signatures").html("");
+					    	    });
+				    	    	signPdf();	
+				    	    
+							function signPdf(){
+								$("#keystore").fileinput('destroy')
+			    	    		.fileinput({
+					    	        language: "it",
+					    	        uploadUrl: 'signPdf.php',
+					    	        uploadAsync: false,
+					    	        showPreview: false,
+					    	        elErrorContainer: '.errorbox'
+					    	    })
+				    	    	.fileinput('enable');
+				    	    	
+		    					$("#pdfDaFirmare").fileinput('destroy')
+			    	    		.fileinput({
+					    	        language: "it",
+					    	        uploadUrl: 'signPdf.php',
+					    	        uploadAsync: false,
+					    	        showPreview: false,
+					    	        elErrorContainer: '.errorbox'
+					    	    })
+				    	    	.fileinput('enable');
+	            			}
+			    	    </script>
+	<?php	
+			return ob_get_clean();
+		}
 
 }
 ?>

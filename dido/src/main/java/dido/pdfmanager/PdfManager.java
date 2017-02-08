@@ -257,7 +257,7 @@ public class PdfManager implements InterfacePdfManager {
 		}
 	}
 
-	public boolean sign(String src, String dest, String pathKeystore, String pass)
+	public void sign(String src, String dest, String pathKeystore, String pass)
 			throws GeneralSecurityException, IOException, DocumentException {
 		KeyStore ks=null;
 		ks = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -276,14 +276,13 @@ public class PdfManager implements InterfacePdfManager {
 		PdfStamper stamper = PdfStamper.createSignature(reader, os, '\0');
 		// Creating the appearance
 		PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
-		appearance.setReason("prova");
-	    appearance.setLocation("Pisa");
-		appearance.setVisibleSignature(new Rectangle(250, 620, 370, 720), 1, "PdfManagerSigner");
+//		appearance.setReason("prova");
+//	    appearance.setLocation("Pisa");
+//		appearance.setVisibleSignature(new Rectangle(250, 620, 370, 720), 1, "PdfManagerSigner");
 		// Creating the signature
 		ExternalDigest digest = new BouncyCastleDigest();
 		ExternalSignature signature = new PrivateKeySignature(pk, digestAlgorithm, provider.getName());
 		MakeSignature.signDetached(appearance, digest, signature, chain, null, null, null, 0, subfilter);
-		return false;
 	}
 
 	

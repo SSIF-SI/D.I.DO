@@ -18,4 +18,10 @@ $(document).ready(function(){
 		MyModal.deleteModal(this);
 	});
 	
+	$("a.mymodal.sign").click(function (e){
+		e.preventDefault();
+		MyModal.setTitle("Firma Documento");
+		MyModal.deleteModal(this);
+	});
+	
 });

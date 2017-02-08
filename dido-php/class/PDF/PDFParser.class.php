@@ -1,6 +1,6 @@
 <?php 
 class PDFParser{
-	private $_sigatureManagerClass;
+	private $_signatureManagerClass;
 	private $_signatures;
 	private $_metadata;
 	private $_annotations;
@@ -10,13 +10,13 @@ class PDFParser{
 	}
 	
 	public function setSignatureManagerClass($smg){
-		$this->_sigatureManagerClass = $smg;
+		$this->_signatureManagerClass = $smg;
 	}
 	
 	public function loadPDF($pdf_path){
-		$this->_sigatureManagerClass->loadPDF($pdf_path);
-		$this->_signatures = json_decode((string)$this->_sigatureManagerClass->getSignatures());
-		$this->_annotations = json_decode((string)$this->_sigatureManagerClass->getAnnotations());
+		$this->_signatureManagerClass->loadPDF($pdf_path);
+		$this->_signatures = json_decode((string)$this->_signatureManagerClass->getSignatures());
+		$this->_annotations = json_decode((string)$this->_signatureManagerClass->getAnnotations());
 		
 		$content = json_decode($this->_sigatureManagerClass->getXmlMetadata());
 		$xmp_data_start 	= strpos($content, '<x:xmpmeta');

@@ -2,11 +2,9 @@
 require_once ("../config.php");
 
 if (Utils::checkAjax ()) {
-	
-	
-	
 	$classname = $_GET ['list'];
-	$userRolesObj = new $classname ( Connector::getInstance () );
+	if($classname!='ApplySign')
+		$userRolesObj = new $classname ( Connector::getInstance () );
 	
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	if ($delete){
@@ -33,6 +31,9 @@ if (Utils::checkAjax ()) {
 				break;
 			case 'VariableSigners' :
 				die ( SignatureHelper::createModalVariableSigner ( $id ) );
+				break;
+			case 'ApplySign' :				
+				die ( SignatureHelper::createModalApplySign ( $id ) );
 				break;
 		}
 	}

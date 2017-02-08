@@ -2,10 +2,8 @@ package dido.signatureTests;
 
 //Tipo A.pdf Tipo A-1 commento.pdf	Tipo A-2 comment1.pdf Tipo A-ex 2 commenti.pdf Tipo NON A.pdf
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -52,7 +50,6 @@ public class SignatureTest1 {
 
 		sigMan.loadPDF(SRC5);
 		sigMan.getAnnotations();
-		
 		sigMan.sign(SRC6, SRC7, KEYSTORE, PASSWORD);
 		sigMan.loadPDF(SRC7);
 		sigMan.getAnnotations();
