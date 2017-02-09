@@ -183,16 +183,18 @@ class SignatureHelper{
 		return HTMLHelper::createMetadata($list, basename($_SERVER['PHP_SELF'])."?list=$table_suffix", array($idname), $substitutes_keys);
 	}
 	
-	static function createModalApplySign($idP = null){
+	static function createModalApplySign(){
 		ob_start();
 		?>
 						<form id="firmatario" name="firmatario" method="POST">
 				            <div class="signatures list-group"></div>
 				            <div class="errorbox"></div>
 				            <label for="pdfDaFirmare">Pdf da firmare digitalmente:</label><br/>
-				            <input class="file" type="file" id="pdfDaFirmare" name="pdfDaFirmare" data-allowed-file-extensions='[".pdf", ".p7m"]'/>
+				            <input class="file" type="file" id="pdfDaFirmare" name="pdfDaFirmare" data-allowed-file-extensions='["pdf", "p7m"]'/>
 				           	<label for="keystore">Keystore da utilizzare per la firma:</label><br/>
-				           	<input class="file" type="file" id="keystore" name="keystore" data-allowed-file-extensions='[".ks", ".jks"]'/>
+				           	<input class="file" type="file" id="keystore" name="keystore" data-allowed-file-extensions='["ks", "jks"]'/>
+				            <label for="pwd">Password:</label>
+  							<input type="password" class="form-control" name="pwd" id="pwd">	
 				        </form>
 			            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
 	    				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
@@ -201,11 +203,13 @@ class SignatureHelper{
 			    	    	
 	            			$("#keystore").on('filebatchuploadsuccess', function(event, data) {
 				    	    	$(".signatures").html("");
+				    	    	signPdf();	
 				    	    	});
 		            		$("#pdfDaFirmare").on('filebatchuploadsuccess', function(event, data) {
 					    	    $(".signatures").html("");
-					    	    });
 				    	    	signPdf();	
+					    	     });
+
 				    	    
 							function signPdf(){
 								$("#keystore").fileinput('destroy')
@@ -214,17 +218,22 @@ class SignatureHelper{
 					    	        uploadUrl: 'signPdf.php',
 					    	        uploadAsync: false,
 					    	        showPreview: false,
-					    	        elErrorContainer: '.errorbox'
+					    	        uploadExtraData: {keystore:true},
+					    	        elErrorContainer: '.errorbox',
+					    	        allowedFileExtensions:['ks', 'jks']
+					    	        
 					    	    })
 				    	    	.fileinput('enable');
-				    	    	
-		    					$("#pdfDaFirmare").fileinput('destroy')
+				    	    	$("#pdfDaFirmare").fileinput('destroy')
 			    	    		.fileinput({
 					    	        language: "it",
 					    	        uploadUrl: 'signPdf.php',
 					    	        uploadAsync: false,
 					    	        showPreview: false,
-					    	        elErrorContainer: '.errorbox'
+					    	        uploadExtraData: {pdf:true},
+					    	        elErrorContainer: '.errorbox',
+					    	        allowedFileExtensions:['pdf', 'p7m']
+							    	        
 					    	    })
 				    	    	.fileinput('enable');
 	            			}

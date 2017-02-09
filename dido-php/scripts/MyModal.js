@@ -97,6 +97,18 @@ var MyModal = {
 		MyModal.setContent("<label for=\"conferma\">Confermi:</label><p id=\"conferma\">Sei sicuro di voler eliminare l'elemento?</p>");
 		MyModal.modal();
 	},
+	signModal: function(context){
+		var href=$(context).prop("href");
+		MyModal.addButtons(
+			[
+				{id:"Firma", type: "submit", label: "Firma", cssClass: "btn-primary", spanClass: "fa-pencil", callback: function(){;
+				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),$('form').serializeArray());
+					}
+				}
+			]
+		);
+		MyModal.load($(context));
+	},
 	submit:function (element,href, data, innerdiv){
 		var span = element.children("span");
 		var oldClass = span.prop('class');

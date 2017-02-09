@@ -33,7 +33,7 @@ if (Utils::checkAjax ()) {
 				die ( SignatureHelper::createModalVariableSigner ( $id ) );
 				break;
 			case 'ApplySign' :				
-				die ( SignatureHelper::createModalApplySign ( $id ) );
+				die ( SignatureHelper::createModalApplySign () );
 				break;
 		}
 	}

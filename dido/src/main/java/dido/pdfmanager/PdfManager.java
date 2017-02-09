@@ -222,7 +222,7 @@ public class PdfManager implements InterfacePdfManager {
 				continue;
 			}
 			annotsArray = page.getAsArray(PdfName.ANNOTS);
-			for (ListIterator iter = annotsArray.listIterator(); iter.hasNext();)
+			for (ListIterator<PdfObject> iter = annotsArray.listIterator(); iter.hasNext();)
 			{
 				Annotation ann=new Annotation();
 				PdfDictionary annot = (PdfDictionary) PdfReader.getPdfObject((PdfObject) iter.next());

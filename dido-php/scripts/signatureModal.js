@@ -21,7 +21,7 @@ $(document).ready(function(){
 	$("a.mymodal.sign").click(function (e){
 		e.preventDefault();
 		MyModal.setTitle("Firma Documento");
-		MyModal.deleteModal(this);
+		MyModal.signModal(this);
 	});
 	
 });
