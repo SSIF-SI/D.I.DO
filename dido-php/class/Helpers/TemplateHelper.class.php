@@ -70,128 +70,111 @@ class TemplateHelper{
 		                        </div>
 		                        <div class="panel-body">
 		                        	<div class="row">
-		                        	<?php /*
-		                        	foreach ($inputs as $input): 
-										$key = (string)$input;
-										$value = $info['md_data'][$key];
-										if(isset($input['values'])){
-											$callBack = (string)$input['values'];
-											$values = ListHelper::$callBack();
-											$value = $values[$value];
-										}
-										if(isset($input['type']) && $input['type'] == "data")
-											$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
-									?>
-										<div class="col-lg-4">
-                                           	<strong><?=ucfirst($key)?></strong><br/>
-											<em><?=$value?></em>
-											<hr/>
-										</div>
-										
-									<?php endforeach;*/ echo FormHelper::createInputsFromDB($inputs, $info['md_data'],true)?>
+		                        	<?php echo FormHelper::createInputsFromDB($inputs, $info['md_data'],true)?>
 			                        </div>
 		                        	<div class="row text-center">
-		                        		<a class="btn btn-primary editMDinfo" href="?md=<?=$_GET['md']?>&edit">
+		                        		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&edit">
 		                                	<span class="fa fa-pencil fa-1x fa-fw"></span> 
 		                                	Modifica informazioni
 		                               	</a>
 	                               	</div>
 	                               	<hr/>
 		                       		<div class="panel panel-info">
-			                        <div class="panel-heading">
-			                            <strong>Flusso documentale</strong>
-			                        </div>
-			                        <div class="panel-body">
-			                            
-			                        	<ul class="timeline">
-<?php 
-		$firstError = false;
-		foreach($flowCheckereResult['doclist'] as $docName=>$docData):
-			if($firstError) continue;
-			$status = 
-				empty($docData->errors) ? 
-					($docData->mandatory ? 'success' : 'not-mandatory') :
-					(isset($docData->errors['missing']) ? 'missing-document' : 'missing-signatures');
-		?>
-                                <li>
-                                    <?php echo self::_createtimelineBadge($status);?>
-                                    <div class="timeline-panel">
-                                        <div class="timeline-heading">
-                                        	<div class="row">
-                                        		<div class="col-lg-4">
-                                            		<h4 class="timeline-title"><?=ucfirst($docData->documentName)?></h4>
-                                            	</div>
-                                            	<div class="col-lg-8">
-                                            		<?php if(!$firstError && $status != 'success'): $firstError = true;?>
-		                                            <form class="text-right">
-		                                            	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
-		                                            	<?php if(!isset($docData->errors['missing'])):?>
-		                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
-		                                               	<?php endif;?>
-		                                            </form>
-		                                            <?php endif;?>
-                                            	</div>
-                                            </div>
-                                        </div>
-                                        <br/>
-                                        <div class="timeline-body">
-                                        	<div class="row">
-                                        		<div class="col-lg-<?=count($docData->signatures) ? '6' : '12'?>">
-		                                        	<div class="panel panel-default">
-		                                        		<div class="panel-heading"> Informazioni: </div>
-														<div class="panel-body">
-														<?php if(!isset($docData->errors['missing'])):?>
-															<div class="row">
-															<?php foreach ($docData->inputs as $input): 
-																	$key = (string)$input;
-																	$value = $info['md_data'][$key];
-																	if(isset($input['values'])){
-																		$callBack = (string)$input['values'];
-																		$values = ListHelper::$callBack();
-																		$value = $values[$value];
-																	}
-																	if(isset($input['type']) && $input['type'] == "data")
-																		$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
-																?>
-																	<div class="col-lg-4">
-							                                           	<strong><?=ucfirst($key)?></strong><br/>
-																		<em><?=$value?></em>
-																		<hr/>
-																	</div>
-																	
-																<?php endforeach;?>
-										                	</div>
-									                    <?php endif;?>
-														</div>
-													</div>
-												</div>
-												<?php if(count($docData->signatures)):?>
-												<div class="col-lg-6">
-			                                        <div class="panel panel-info">
-														<div class="panel-heading"> Firme Digitali: </div>
-														<div class="panel-body">
-													<?php foreach($docData->signatures as $nDoc => $signature):foreach($signature as $signData):if($signData['result'] == 'skipped') continue;?>
-		                                        		<div class="alert <?=$signData['result'] == false ? 'alert-danger' : 'alert-success'?>"><span class="fa fa-<?=$signData['result'] == false ? 'times' : 'check'?>"></span>&nbsp;<?=$signData['who']." ({$signData['role']})"?></div>
-		                                        	<?php endforeach; endforeach;?>
-		                                        		</div>
-		                                            </div>
-		                                        </div>
-												<?php endif;?>
-	                                        </div>
-                                        </div>
-                                    </div>
-                                </li>
-<?php 	endforeach; ?> 
-                           </ul>
-                           </div>
-                           </div>
-                           </div>
+				                        <div class="panel-heading">
+				                            <strong>Flusso documentale</strong>
+				                        </div>
+				                        <div class="panel-body">
+				                            
+				                        	<ul class="timeline">
+											<?php 
+											$firstError = false;
+											foreach($flowCheckereResult['doclist'] as $docName=>$docData):
+												if($firstError) continue;
+												if(empty($docData->found)):
+													$firstError = self::_createTimelineDocList('missing-document',$docData,0);
+												else:
+													foreach($docData->found as $id_doc => $pdf_name):
+													$status = 
+														empty($docData->errors) ? 
+															($docData->mandatory ? 'success' : 'not-mandatory') :
+															(isset($docData->errors['missing']) ? 'missing-document' : 'missing-signatures');
+														$firstError = self::_createTimelineDocList($status, $docData,$info['documents_data'][$id_doc],$id_doc);
+									                                   
+													endforeach;
+												endif;
+											endforeach; ?> 
+									        </ul>
+	                           			</div>
+	                           		</div>
+                           		</div>
                            	</div>
 		                </div>
 		           </div>
                            
 <?php 
 		return ob_get_clean();
+	}
+	
+	private static function _createTimelineDocList($status, $docData, $info, $id_doc){
+		$error = false;
+		echo "<li>".self::_createtimelineBadge($status);?>
+										    <div class="timeline-panel">
+		                                        <div class="timeline-heading">
+		                                        	<div class="row">
+		                                        		<div class="col-lg-4">
+		                                            		<h4 class="timeline-title"><?=ucfirst($docData->documentName)?></h4>
+		                                            	</div>
+		                                            	<div class="col-lg-8">
+		                                            		<?php if($status != 'success'): $error = true;?>
+				                                            <form class="text-right">
+				                                            	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
+				                                            	<?php if(!isset($docData->errors['missing'])):?>
+				                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
+				                                               	<?php endif;?>
+				                                            </form>
+				                                            <?php endif;?>
+		                                            	</div>
+		                                            </div>
+		                                        </div>
+		                                        <br/>
+		                                        <div class="timeline-body">
+		                                        	<div class="row">
+		                                        		<div class="col-lg-<?=count($docData->signatures) ? '6' : '12'?>">
+				                                        	<div class="panel panel-default">
+				                                        		<div class="panel-heading"> Informazioni: </div>
+																<div class="panel-body">
+																<?php if(!isset($docData->errors['missing'])): $docData->found?>
+																	<div class="row">
+																	<?php echo FormHelper::createInputsFromDB($docData->inputs,$info, true); ?>
+												                	<?php echo FormHelper::createInputsFromDB($docData->defaultInputs,$info,true); ?>
+												                	</div>
+												                	<div class="row text-center">
+																		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&d=<?=$id_doc?>&edit">
+																		<span class="fa fa-pencil fa-1x fa-fw"></span> 
+																			Modifica informazioni documento
+																		</a>
+																	</div>
+											                    <?php endif;?>
+																</div>
+															</div>
+														</div>
+														<?php if(count($docData->signatures)):?>
+														<div class="col-lg-6">
+					                                        <div class="panel panel-info">
+																<div class="panel-heading"> Firme Digitali: </div>
+																<div class="panel-body">
+															<?php foreach($docData->signatures[$id_doc] as $signData):if($signData['result'] == 'skipped') continue;?>
+				                                        		<div class="alert <?=$signData['result'] == false ? 'alert-danger' : 'alert-success'?>"><span class="fa fa-<?=$signData['result'] == false ? 'times' : 'check'?>"></span>&nbsp;<?=$signData['who']." ({$signData['role']})"?></div>
+				                                        	<?php endforeach; //endforeach;?>
+				                                        		</div>
+				                                            </div>
+				                                        </div>
+														<?php endif;?>
+			                                        </div>
+		                                        </div>
+		                                    </div>
+		                                </li>
+	<?php return $error;
 	}
 	
 	static function createDashboardPanels(){
@@ -282,11 +265,12 @@ class TemplateHelper{
 					foreach ($val as $k=>$data):
 						$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
 						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
+						
 						// aggiunto da federico
 						XMLParser::getInstance()->setXMLSource($xml['xml'], $data['type']);
 						$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
 						// fine
-						$formId = rtrim(FormHelper::labelFromField($data['filename']),".imp");
+						$formId = rtrim(FormHelper::fieldFromLabel($data['filename']),".imp");
 						if(!$th):
 							$th = true;
 					?>
@@ -322,7 +306,7 @@ class TemplateHelper{
 							<td><?=$value?></td>						
 							<?php endif; endforeach; ?>
 						    <td>
-						    	<form style="display:none" role="form" method="POST" class="<?=$data['xml']?>" id="importform-<?=$formId?>" enctype="multipart/form-data">
+						    	<form style="display:none" role="form" method="POST" id="importform-<?=$formId?>" enctype="multipart/form-data">
 									<input type="hidden" id="import_filename" name="import_filename" value="<?=$category.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
 				                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
 				                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 

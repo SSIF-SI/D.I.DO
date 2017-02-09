@@ -8,6 +8,7 @@ class FlowChecker extends ClassWithDependencies{
 	private $_FTPConnector;
 	private $_PDFParser;
 	private $_Personale;
+	private $_defaultInputs;
 	
 	public function __construct(){
 		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
@@ -18,6 +19,7 @@ class FlowChecker extends ClassWithDependencies{
 		$this->_FTPConnector = FTPConnector::getInstance();
 		$this->_PDFParser = new PDFParser();
 		$this->_Personale = Personale::getInstance();
+		$this->_defaultInputs = simplexml_load_file(FILES_PATH."defaultDocumentsInputs.xml");
 	}
 	
 	public function checkMasterDocument(array $id){
@@ -65,6 +67,8 @@ class FlowChecker extends ClassWithDependencies{
 				} else {
 					$docResult->documentName = (string)$document['name'];
 					$docResult->inputs = $document->inputs->input;
+					$docResult->defaultInputs = $this->_defaultInputs;
+					
 					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"file_name");
 					
 					foreach($document->attributes() as $k=>$attr){
@@ -96,6 +100,14 @@ class FlowChecker extends ClassWithDependencies{
 		
 	}
 	
+	public static function getDocInputsByIdDoc($result, $id_doc){
+		
+		if(isset($result['data']['info']['documents'][$id_doc])){
+			$document = $result['doclist'][$result['data']['info']['documents'][$id_doc]['nome']];
+			if(empty($document->inputs)) return $document->defaultInputs;
+			return array($document->inputs, $document->defaultInputs);
+		} else return array();
+	}
 	private static function _check_minOccur($docName, $fileList,$value, &$docResult){
 		$docResult->mandatory = (int)$value;
 			

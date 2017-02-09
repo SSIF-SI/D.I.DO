@@ -3,12 +3,12 @@ class FormHelper{
 	private static $warnmessages = array();
 	private static $warnBox = "";
 
-	public static function createInputsFromDB($inputs, $mdData, $readonly = false){
+	public static function createInputsFromDB($inputs, $data, $readonly = false, $forceEditable = false){
 		ob_start();
 		foreach ($inputs as $input):
-			$editable = (isset($input['editable']) && $input['editable']); 
+			$editable = $forceEditable || (isset($input['editable']) && $input['editable']); 
 			$key = (string)$input;
-			$value = $mdData[$key];
+			$value = $data[$key];
 			if(isset($input['values'])){
 				$callBack = (string)$input['values'];
 				$values = ListHelper::$callBack();
@@ -131,32 +131,40 @@ class FormHelper{
 		return self::$warnBox;  
 	}
 	
-	public static function editInfo($id_parent, $postData, $inputs, $infoData){
+	public static function editInfo($id_parent, $postData, $inputs, $infoData, $dataObj){
+		$docInfo = is_array($inputs);
+		if(!$docInfo) $inputs = array($inputs);
+			
 		if(count($postData) > 0){
 		
 			foreach($postData as $k=>$input){
 				unset($postData[$k]);
 				$postData[self::labelFromField($k)] = $input;
 			}
-				
-			foreach($inputs as $input){
-				$key = (string)$input;
-				if(isset($postData[$key]) && $input['type'] == 'data'){
-					$postData[$key] = Utils::convertDateFormat($postData[$key], "d/m/Y", DB_DATE_FORMAT);
+			
+			foreach($inputs as $list){
+				foreach($list as $input){
+					$key = (string)$input;
+					if(isset($postData[$key]) && $input['type'] == 'data'){
+						$postData[$key] = Utils::convertDateFormat($postData[$key], "d/m/Y", DB_DATE_FORMAT);
+					}
 				}
 			}
 				
-			$MasterdocumentData = new MasterdocumentData(Connector::getInstance());
-			$result = $MasterdocumentData->saveInfo($postData, $_GET['md'],$inputs);
+			$result = $dataObj->saveInfo($postData, $id_parent,$inputs);
 			die($result);
 		}
 		?>
 			<form role="form" method="POST" name="edit-inputs-<?=$_GET['md']?>" enctype="multipart/form-data">
 				<div class="row">
-		<?php 	
-				$htmlInputs = self::createInputsFromDB($inputs,$infoData);
-				echo($htmlInputs);
-				echo'<script type="text/javascript" src="'.SCRIPTS_PATH.'datepicker.js" />';
+		<?php
+		$htmlInputs = "";
+		foreach($inputs as $k=>$input){
+			$htmlInputs .= self::createInputsFromDB($input,$infoData,false,$docInfo);
+		}
+		
+		echo($htmlInputs);
+		echo'<script type="text/javascript" src="'.SCRIPTS_PATH.'datepicker.js" />';
 		?>
 				</div>
 			</form>

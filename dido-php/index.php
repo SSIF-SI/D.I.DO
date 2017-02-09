@@ -62,15 +62,16 @@ if( isset($_GET['detail'])){
 }
 
 if(isset($_GET['md'])){
-	$Responder = new Responder();
-	$info = $Responder->getSingleMasterDocument($_GET['md']);
-	
-	$xml = simplexml_load_file(XML_MD_PATH.$info['md']['xml']);
-	XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
-	$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
-	
+	$FlowChecker = new FlowChecker();
+	$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
+		
 	if(isset($_GET['edit'])){
-		FormHelper::editInfo($_GET['md'], $_POST, $inputs, $info['md_data']);
+		if(isset($_GET['d'])){
+			$docInputs = FlowChecker::getDocInputsByIdDoc($fcr, $_GET['d']);
+			FormHelper::editInfo($_GET['d'], $_POST, $docInputs, $fcr['data']['info']['documents_data'][$_GET['d']], new DocumentData(Connector::getInstance()));
+		} else {
+			FormHelper::editInfo($_GET['md'], $_POST, $fcr['data']['xml_inputs'], $fcr['data']['info']['md_data'], new MasterdocumentData(Connector::getInstance()));
+		}
 		die();
 	} else {
 		$FlowChecker = new FlowChecker();

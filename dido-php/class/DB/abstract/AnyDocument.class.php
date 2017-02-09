@@ -60,9 +60,11 @@ abstract class AnyDocument extends Crud{
 			if(!isset($existents_input[$key]) || $value != $existents_input[$key]['value']){
 				$existents_input[$key]['key'] = $key;
 				$existents_input[$key]['value'] = $value;
+				$existents_input[$key][$this->id_document_label] = $id_parent;
+				Utils::printr($existents_input[$key]);
 				
 				$object = Utils::stubFill($this->_stub,$existents_input[$key]);
-				
+				Utils::printr($object);
 				$result = $this->save($object,null);
 				
 				if(!empty($result['errors'])){

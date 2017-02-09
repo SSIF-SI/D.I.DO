@@ -2,6 +2,7 @@
 class FlowCheckerResult{
 	public $documentName = null;
 	public $inputs = null;
+	public $defaultInputs = null;
 	public $found = null;
 	public $signatures = array();
 	public $limit = null;
