@@ -286,7 +286,7 @@ class TemplateHelper{
 						XMLParser::getInstance()->setXMLSource($xml['xml'], $data['type']);
 						$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
 						// fine
-						$formId = rtrim(str_replace(" ", "_", $data['filename']),".imp");
+						$formId = rtrim(FormHelper::labelFromField($data['filename']),".imp");
 						if(!$th):
 							$th = true;
 					?>
@@ -390,7 +390,7 @@ class TemplateHelper{
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-lg-6">
-							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#documentsOpen" href=<?php echo "#list".str_replace(" ","_", $category); ?>>&nbsp;<?php echo(ucfirst($category))?></a>
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#documentsOpen" href=<?php echo "#list".FormHelper::fieldFromLabel($category); ?>>&nbsp;<?php echo(ucfirst($category))?></a>
 		                </div>
 	                    <div class="col-lg-6 text-right">
 							<span class="badge badge-info"><?php echo count($val)?></span>
@@ -398,7 +398,7 @@ class TemplateHelper{
                     </div>
 				</div>
 			</div>
-			<div id="<?php echo "list".str_replace(" ","_", $category);?>" class="panel-collapse collapse">
+			<div id="<?php echo "list".FormHelper::fieldFromLabel($category);?>" class="panel-collapse collapse">
 				<table class="table table-condensed table-striped">
 					<tr>
 						<?php foreach($inputs as $input):if(isset($input['shortView'])):?>

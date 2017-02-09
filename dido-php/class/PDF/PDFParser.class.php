@@ -18,7 +18,7 @@ class PDFParser{
 		$this->_signatures = json_decode((string)$this->_signatureManagerClass->getSignatures());
 		$this->_annotations = json_decode((string)$this->_signatureManagerClass->getAnnotations());
 		
-		$content = json_decode($this->_sigatureManagerClass->getXmlMetadata());
+		$content = json_decode($this->_signatureManagerClass->getXmlMetadata());
 		$xmp_data_start 	= strpos($content, '<x:xmpmeta');
 		$xmp_data_end   	= strpos($content, '</x:xmpmeta>');
 		$xmp_length     	= $xmp_data_end - $xmp_data_start;

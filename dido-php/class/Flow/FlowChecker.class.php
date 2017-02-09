@@ -181,7 +181,7 @@ class FlowChecker extends ClassWithDependencies{
 	}
 	
 	private static function _getFtpFiles($docName, $fileList){
-		$docName = str_replace(" ", "_", $docName);
+		$docName = FormHelper::fieldFromLabel($docName);
 		$files = array();
 		foreach($fileList as $k=>$file){
 			preg_match("/".self::FILE_REGEX."/", $file,$fileInfo);

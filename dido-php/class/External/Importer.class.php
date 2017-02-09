@@ -73,7 +73,7 @@ class Importer{
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
 		
 		foreach($data as $key=>$value){
-			$key = str_replace("_", " ", $key);
+			$key = FormHelper::labelFromField($key);
 			$md_data = array(
 				'id_md'	=> $id_md,
 				'key'	=> $key,

@@ -136,7 +136,7 @@ class FormHelper{
 		
 			foreach($postData as $k=>$input){
 				unset($postData[$k]);
-				$postData[str_replace("_"," ",$k)] = $input;
+				$postData[self::labelFromField($k)] = $input;
 			}
 				
 			foreach($inputs as $input){
@@ -163,8 +163,12 @@ class FormHelper{
 		<?php 
 	}
 	
-	private static function fieldFromLabel($label){
+	public static function fieldFromLabel($label){
 		return strtolower(str_replace(" ", "_", $label));
+	}
+	
+	public static function labelFromField($field){
+		return strtolower(str_replace("_", " ", $field));
 	}
 	
 	private static function checkField($type, $var, $field, $label){
