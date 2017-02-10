@@ -57,7 +57,11 @@ abstract class AnyDocument extends Crud{
 		foreach($inputs as $key=>$value){
 			
 			$this->_connInstance->query("BEGIN");
-			if(!isset($existents_input[$key]) || $value != $existents_input[$key]['value']){
+			if(isset($existents_input[$key]) && empty($value)){
+				$pkFields = $existents_input[$key];
+				unset($pkFields[$this->id_document_label],$pkFields['key'],$pkFields['value']);
+				$result = $this->delete($pkFields);
+			} elseif(!isset($existents_input[$key]) || $value != $existents_input[$key]['value']){
 				$existents_input[$key]['key'] = $key;
 				$existents_input[$key]['value'] = $value;
 				$existents_input[$key][$this->id_document_label] = $id_parent;
@@ -65,10 +69,12 @@ abstract class AnyDocument extends Crud{
 				$object = Utils::stubFill($this->_stub,$existents_input[$key]);
 				$result = $this->save($object,null);
 				
-				if(!empty($result['errors'])){
-					$this->_connInstance->query("ROLLBACK");
-					return json_encode($result);
-				}
+				
+			}
+			
+			if(!empty($result['errors'])){
+				$this->_connInstance->query("ROLLBACK");
+				return json_encode($result);
 			}
 		}
 		$this->_connInstance->query("COMMIT");
