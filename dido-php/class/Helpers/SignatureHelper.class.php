@@ -186,7 +186,7 @@ class SignatureHelper{
 	static function createModalApplySign(){
 		ob_start();
 		?>
-						<form id="firmatario" name="firmatario" method="POST">
+						<form id="firmatario" name="firmatario" method="POST" enctype="multipart/form-data">
 				            <div class="signatures list-group"></div>
 				            <div class="errorbox"></div>
 				            <label for="pdfDaFirmare">Pdf da firmare digitalmente:</label><br/>
@@ -196,28 +196,47 @@ class SignatureHelper{
 				            <label for="pwd">Password:</label>
   							<input type="password" class="form-control" name="pwd" id="pwd">	
 				        </form>
+				        
 			            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
 	    				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
 	    				<script>
 	    					signPdf();	
-			    	    	
-	            			$("#keystore").on('filebatchuploadsuccess', function(event, data) {
-				    	    	$(".signatures").html("");
-				    	    	signPdf();	
-				    	    	});
-		            		$("#pdfDaFirmare").on('filebatchuploadsuccess', function(event, data) {
-					    	    $(".signatures").html("");
-				    	    	signPdf();	
-					    	     });
+// 	    					var formData = new FormData();
+// 	    					 $('#pdfDaFirmare').on('filebatchpreupload', function(event, data, previewId, index) {
+// 	    							files = data.files;
+// 	    							$.each(files, function (key, value) {
+// 	    								if(value != null){
+// 	    									formData.append("pdfDaFirmare", value, value.name);
+// 	    								}
+// 	    							}); 
+// 	    					});
+// 	    					 $('#keystore').on('filebatchpreupload', function(event, data, previewId, index) {
+// 	    							var files = data.files;
 
-				    	    
+// 	    							$.each(files, function (key, value) {
+// 	    								if(value != null){
+// 	    									formData.append("keystore", value, value.name);
+// 	    								}
+// 	    							}); 
+// 	    					});
+// 	            			$("#keystore").on('filebatchuploadsuccess', function(event, data) {
+// 				    	    	$(".signatures").html("");
+// 				    	    	signPdf();	
+// 				    	    	});
+// 		            		$("#pdfDaFirmare").on('filebatchuploadsuccess', function(event, data) {
+// 					    	    $(".signatures").html("");
+// 				    	    	signPdf();	
+// 					    	     });
+
+		            		
 							function signPdf(){
 								$("#keystore").fileinput('destroy')
 			    	    		.fileinput({
 					    	        language: "it",
-					    	        uploadUrl: 'signPdf.php',
-					    	        uploadAsync: false,
+// 					    	        uploadUrl: 'signPdf.php',
+					    	        uploadAsync: true,
 					    	        showPreview: false,
+					    	        showUpload:	false,
 					    	        uploadExtraData: {keystore:true},
 					    	        elErrorContainer: '.errorbox',
 					    	        allowedFileExtensions:['ks', 'jks']
@@ -227,9 +246,10 @@ class SignatureHelper{
 				    	    	$("#pdfDaFirmare").fileinput('destroy')
 			    	    		.fileinput({
 					    	        language: "it",
-					    	        uploadUrl: 'signPdf.php',
-					    	        uploadAsync: false,
+// 					    	        uploadUrl: 'signPdf.php',
+					    	        uploadAsync: true,
 					    	        showPreview: false,
+					    	        showUpload: false,
 					    	        uploadExtraData: {pdf:true},
 					    	        elErrorContainer: '.errorbox',
 					    	        allowedFileExtensions:['pdf', 'p7m']

@@ -101,8 +101,13 @@ var MyModal = {
 		var href=$(context).prop("href");
 		MyModal.addButtons(
 			[
-				{id:"Firma", type: "submit", label: "Firma", cssClass: "btn-primary", spanClass: "fa-pencil", callback: function(){;
-				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),$('form').serializeArray());
+				{id:"Firma", type: "submit", label: "Firma", cssClass: "btn-primary", spanClass: "fa-pencil", callback: function(){	
+					var formData = new FormData($('#firmatario')[0]);
+					$('#pdfDaFirmare').fileinput('upload');
+					$('#keystore').fileinput('upload');
+					formData.append('pdfDaFirmare', $('#pdfDaFirmare')[0].files[0]); 
+					formData.append('keystore', $('#keystore')[0].files[0]); 
+				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),formData);
 					}
 				}
 			]
