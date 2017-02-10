@@ -7,6 +7,8 @@ class FormHelper{
 		ob_start();
 		foreach ($inputs as $input):
 			$editable = $forceEditable || (isset($input['editable']) && $input['editable']); 
+			$type = is_null($input['type']) ? 'text' : (string)$input['type'];
+			$required = is_null($input['mandatory']) ? true : boolvar($input['mandatory']);
 			$key = (string)$input;
 			$value = $data[$key];
 			if(isset($input['values'])){
@@ -15,7 +17,7 @@ class FormHelper{
 				$rValue = $value;
 				$value = $values[$value];
 			} 
-			if(isset($input['type']) && $input['type'] == "data")
+			if($type == "data")
 				$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
 				
 		?>
@@ -25,7 +27,7 @@ class FormHelper{
 				<em><?=$value?></em>
 		<?php else:
 				if(is_null($input['values']))
-					$input_html = HTMLHelper::input($input['type'], $key, ucfirst($key), $value);
+					$input_html = HTMLHelper::input($type, $key, ucfirst($key), $value,null, $required);
 				else{
 					$input_html = HTMLHelper::select($key, ucFirst($key), $values, $rValue);
 				}

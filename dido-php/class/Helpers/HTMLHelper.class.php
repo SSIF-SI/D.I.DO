@@ -137,7 +137,7 @@ class HTMLHelper{
 		
 		if($imported === true && $type=="data"){
 			$valueMod = Utils::convertDateFormat($value, "d/m/Y", DB_DATE_FORMAT);
-			return "<input type=\"$type\" $class value=\"$value\" linkto=\"$name\" $required $more/>\n" .
+			return "<input type=\"$type\" $class value=\"$value\" linkto=\"$name\" $more $required/>\n" .
 				   "<input type=\"hidden\" name=\"$name\" id=\"$name\" value=\"$valueMod\"/>";
 		}
 		else

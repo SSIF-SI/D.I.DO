@@ -8,6 +8,6 @@
 		<signature role="DIR" afterValidation="AMM" />
 	</signatures>
 	<inputs>
-		<input>Test</input>
+		<input>test</input>
 	</inputs>
 </document>

@@ -110,43 +110,65 @@ var MyModal = {
 		MyModal.load($(context));
 	},
 	submit:function (element,href, data, innerdiv){
-		var span = element.children("span");
-		var oldClass = span.prop('class');
-		var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
-		if(MyModal.busy == false){
-			
-			MyModal.busy = true;
-			span.attr('class', newClass);
-			$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
-			$.ajax({
-				url: href,
-				type: "POST", 
-				dataType: "json",
-				data: data,
-				success: function( result ) {
-					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-					MyModal.busy = false;
-					span.attr('class', oldClass);
-					if(result.errors){
-						MyModal.error(result.errors, innerdiv);
-					} else {
-						MyModal.success(innerdiv);
-						$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
-						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
-							$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
-							$(this).remove();
-							location.reload();
-						});
+		$('.modal-result').html("");
+		if(MyModal.checkRequired(data, innerdiv)){
+			var span = element.children("span");
+			var oldClass = span.prop('class');
+			var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
+			if(MyModal.busy == false){
+				
+				MyModal.busy = true;
+				span.attr('class', newClass);
+				$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
+				$.ajax({
+					url: href,
+					type: "POST", 
+					dataType: "json",
+					data: data,
+					success: function( result ) {
+						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
+						MyModal.busy = false;
+						span.attr('class', oldClass);
+						if(result.errors){
+							MyModal.error(result.errors, innerdiv);
+						} else {
+							MyModal.success(innerdiv);
+							$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
+							$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
+								$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
+								$(this).remove();
+								location.reload();
+							});
+						}
+					},
+					error: function( result ){
+						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
+						MyModal.busy = false;
+						span.attr('class', oldClass);
+						MyModal.error("Errore imprevisto", innerdiv);
 					}
-				},
-				error: function( result ){
-					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-					MyModal.busy = false;
-					span.attr('class', oldClass);
-					MyModal.error("Errore imprevisto", innerdiv);
-				}
-			});
-		} 
+				});
+			}
+		}
+	},
+	checkRequired: function (data, innerdiv){
+		var requiredFields = [];
+		for(var i = 0; i< data.length ; i++){
+			var el = $('#'+data[i].name);
+			var required = el.attr('required');
+			if(required !== undefined && data[i].value.trim().length == 0){
+				requiredFields.push(data[i].name);
+				el.addClass("alert-danger");
+			} else {
+				el.removeClass("alert-danger");
+			}
+		}
+		if( requiredFields.length > 0){
+			MyModal.error("Compilare i seguenti campi obbligatori: "+requiredFields.join(), innerdiv);
+			return false;
+		} else {
+			return true;
+		}
 	},
 	error: function (message, innerdiv){
 		MyModal._resultMessage(message, true, innerdiv);
