@@ -24,7 +24,7 @@ class FormHelper{
 			<div class="col-lg-4">
         <?php if($readonly || !$editable):?>
 		        <strong><?=ucfirst($key)?></strong><br/>
-				<em><?=$value?></em>
+				<em><?=empty($value) ? "&nbsp;" : $value?></em>
 		<?php else:
 				if(is_null($input['values']))
 					$input_html = HTMLHelper::input($type, $key, ucfirst($key), $value,null, $required);
