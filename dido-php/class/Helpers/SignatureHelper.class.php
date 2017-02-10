@@ -201,34 +201,6 @@ class SignatureHelper{
 	    				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
 	    				<script>
 	    					signPdf();	
-// 	    					var formData = new FormData();
-// 	    					 $('#pdfDaFirmare').on('filebatchpreupload', function(event, data, previewId, index) {
-// 	    							files = data.files;
-// 	    							$.each(files, function (key, value) {
-// 	    								if(value != null){
-// 	    									formData.append("pdfDaFirmare", value, value.name);
-// 	    								}
-// 	    							}); 
-// 	    					});
-// 	    					 $('#keystore').on('filebatchpreupload', function(event, data, previewId, index) {
-// 	    							var files = data.files;
-
-// 	    							$.each(files, function (key, value) {
-// 	    								if(value != null){
-// 	    									formData.append("keystore", value, value.name);
-// 	    								}
-// 	    							}); 
-// 	    					});
-// 	            			$("#keystore").on('filebatchuploadsuccess', function(event, data) {
-// 				    	    	$(".signatures").html("");
-// 				    	    	signPdf();	
-// 				    	    	});
-// 		            		$("#pdfDaFirmare").on('filebatchuploadsuccess', function(event, data) {
-// 					    	    $(".signatures").html("");
-// 				    	    	signPdf();	
-// 					    	     });
-
-		            		
 							function signPdf(){
 								$("#keystore").fileinput('destroy')
 			    	    		.fileinput({
