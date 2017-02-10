@@ -107,14 +107,14 @@ var MyModal = {
 					$('#keystore').fileinput('upload');
 					formData.append('pdfDaFirmare', $('#pdfDaFirmare')[0].files[0]); 
 					formData.append('keystore', $('#keystore')[0].files[0]); 
-				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),formData);
+				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),formData,' .modal-result', false, false);
 					}
 				}
 			]
 		);
 		MyModal.load($(context));
 	},
-	submit:function (element,href, data, innerdiv){
+	submit:function (element,href, data, innerdiv, contentType, processData){
 		$('.modal-result').html("");
 		if(MyModal.checkRequired(data, innerdiv)){
 			var span = element.children("span");
@@ -129,7 +129,10 @@ var MyModal = {
 					url: href,
 					type: "POST", 
 					dataType: "json",
-					data: data,
+					contentType: contentType === undefined ? true : contentType,
+			        cache: false,
+			        processData: processData === undefined ? true : processData,
+			        data: data,
 					success: function( result ) {
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
 						MyModal.busy = false;
