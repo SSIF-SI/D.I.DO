@@ -1,10 +1,10 @@
 <?php
 class PDFSigner{
 	private $_signatureManagerClass;
-	private $_pdfpath;
+	private $_keystore;
 	private $_password;
 	private $_outputStream;
-	private $_keystore;
+	private $_pdfpath;
 	
 	public function __construct(){
 		$this->setSignatureManagerClass(new Java('dido.pdfmanager.PdfManager'));
@@ -21,12 +21,17 @@ class PDFSigner{
 		
 	}
 	public function setOutputStream($outputStream){
-		$this->_outputStream=$_outputStream;
+		$this->_outputStream=$outputStream;
 		
 	}
 	public function setKeystore($keystore){
-		$this->_keystore=$_keystore;
-	
+		$this->_keystore=$keystore;
+	}
+	public function getPdf(){
+		return $this->_pdfpath;
+	}
+	public function getKeystore(){
+		return $this->_keystore;
 	}
 	
 	public function signPDF($pdf_path=null,$outputStream=null,$keystore=null,$password=null){
@@ -38,7 +43,7 @@ class PDFSigner{
 			$this->setKeystore($keystore);
 		if($password!=null)
 			$this->setPassword($password);
-		$this->_signatureManagerClass->sign(_pdfpath,_outputStream,_keystore,_outputStream);
+		$this->_signatureManagerClass->sign($this->_pdfpath,$this->_outputStream,$this->_keystore,$this->_outputStream);
 	}
 }
 ?>
