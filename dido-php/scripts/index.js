@@ -14,4 +14,44 @@ $(document).ready(function(){
 		MyModal.setTitle($(this).html());
 		MyModal.editModal(this);
 	});
+	
+	$('.select-one').click(function(e){
+		var checked = false;
+		var panel = $(this).attr('rel');
+		$('.'+panel+' .select-one').each(function(){
+			if($(this).prop('checked')){
+				checked = true;
+				return false;
+			}
+		});
+		$('.'+panel+' .select-all').prop('checked',false);
+		toggleActionButtons(panel, checked);
+	});
+	
+	$('.select-all').click(function(e){
+		var checked = $(this).prop('checked');
+		var panel = $(this).attr('rel');
+		var els = $('.'+panel+' .select-one');
+		els.each(function(){
+			$(this).prop('checked', checked);
+		});
+		toggleActionButtons(panel, checked);
+	});
+	
+	function toggleActionButtons(panel, checked){
+		$('.'+panel+' .action').each(function(){ 
+			if(checked) $(this).removeClass('disabled');
+			else $(this).addClass('disabled');
+		});
+	}
+	
+	$('.action .link-selected').click(function(e){
+		e.preventDefault();
+		
+	});
+
+	$('.action .import-selected').click(function(e){
+		e.preventDefault();
+		
+	});
 });

@@ -247,7 +247,7 @@ class TemplateHelper{
 	<div class="col-lg-12 col-md-12">
 		<div class="panel-group" id="GroupToImport">
 			<?php foreach ($list as $category=>$val): ?>
-			<div class="panel panel-default">
+			<div class="panel panel-default <?=$category?>">
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-lg-6">
@@ -275,14 +275,31 @@ class TemplateHelper{
 							$th = true;
 					?>
 						<tr>
+							<th>
+							    <input type="checkbox" class="select-all" rel="<?=$category?>">&nbsp;Seleziona tutti
+				            </th>
 							<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
 							<th><?=(string)($input);?>
 							<?php endif; endforeach;?>
-							<th></th>
+							<th>
+								<a class="btn btn-primary disabled action import-selected" href="#<?=$category?>">
+				               		<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa Selezionati
+				                </a>&nbsp;
+				                <a class="btn btn-primary disabled action link-selected" href="#<?=$category?>">
+				               		<span class="fa fa-link fa-1x fa-fw"></span> Collega
+				                </a>
+							</th>
 						</tr>
 					<?php endif;?>
 						 <tr>
-						    <?php 
+						 	<td>
+						 		<div class="checkbox">
+									<label>
+									<input class="select-one" rel="<?=$category?>" id="form-<?=$formId?>" type="checkbox">
+									</label>
+								</div>
+							</td>
+							<?php 
 						    $obj_new = array();
 						    foreach ($inputs as $input): 
 								$key = (string)$input['key'];

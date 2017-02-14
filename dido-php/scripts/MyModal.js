@@ -11,8 +11,9 @@ var MyModal = {
 								'<h4 class="modal-title" id="myModalLabel"></h4>'+
 							'</div>'+
 							'<div class="modal-body"></div>'+
-							'<div class="modal-result"></div>'+
 							'<div class="modal-footer">'+
+								'<div style="visibility:hidden" class="progress progress-striped active"><div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div>' +
+								'<div class="modal-result"></div>'+
 								'<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-backward fa-1x fa-fw"></span> Torna indietro</button>'+
 							'</div>'+
 			            '</div>'+
@@ -55,6 +56,16 @@ var MyModal = {
 				span.attr('class', newClass);
 
 				$.ajax({
+					xhr: function() {
+				        var xhr = new window.XMLHttpRequest();
+				        xhr.addEventListener("progress", function(evt) {
+							if (evt.lengthComputable) {
+							var percentComplete = evt.loaded / evt.total * 100;
+							//Do something with download progress
+							}
+						}, false);
+						return xhr;
+				    },
 					url: href, 
 					success: function( result ) {
 						MyModal.busy = false;
@@ -116,6 +127,9 @@ var MyModal = {
 	},
 	submit:function (element,href, data, innerdiv, contentType, processData){
 		$('.modal-result').html("");
+		
+		$('.modal .progress').css("visibility", 'visible');
+		$('.modal .progress-bar').css("width", '1%');
 		if(MyModal.checkRequired(data, innerdiv)){
 			var span = element.children("span");
 			var oldClass = span.prop('class');
@@ -126,12 +140,23 @@ var MyModal = {
 				span.attr('class', newClass);
 				$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
 				$.ajax({
+					xhr: function() {
+				        var xhr = new window.XMLHttpRequest();
+				        
+						xhr.addEventListener("progress", function(evt) {
+							if (evt.lengthComputable) {
+							var percentComplete = evt.loaded / evt.total * 100;
+								$('.modal .progress-bar').css("width", percentComplete+'%');
+							}
+						}, false);
+						return xhr;
+				    },
 					url: href,
 					type: "POST", 
 					dataType: "json",
-					contentType: contentType === undefined ? true : contentType,
-			        cache: false,
-			        processData: processData === undefined ? true : processData,
+					contentType: contentType,
+					cache: false,
+			        processData: processData,
 			        data: data,
 					success: function( result ) {
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
@@ -139,6 +164,7 @@ var MyModal = {
 						span.attr('class', oldClass);
 						if(result.errors){
 							MyModal.error(result.errors, innerdiv);
+							$('.modal .progress').css("visibility", 'hidden');
 						} else {
 							MyModal.success(innerdiv);
 							$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
@@ -150,6 +176,7 @@ var MyModal = {
 						}
 					},
 					error: function( result ){
+						$('.modal .progress').css("visibility", 'hidden');
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
 						MyModal.busy = false;
 						span.attr('class', oldClass);
