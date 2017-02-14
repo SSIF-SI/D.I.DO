@@ -18,8 +18,8 @@ public class SignatureTest1 {
 	public static final String SRC3 = "/testresources/TipoA-ex2commenti.pdf";
 	public static final String SRC4 = "/testresources/TipoNONA.pdf";
 	public static final String SRC5 = "/testresources/sample06.pdf";
-	public static final String KEYSTORE = "/home/giuseppe/git/D.I.DO/dido/src/test/java/testresources/chiaveRSA.ks";
-	public static final String PASSWORD = "provakey";
+	public static final String KEYSTORE = "/home/giuseppe/git/D.I.DO/dido/src/test/java/testresources/signsotreT.jks";
+	public static final String PASSWORD = "PROVACHIAVE";
 
 	public static final String SRC6 = "/home/giuseppe/git/D.I.DO/dido/src/test/java/testresources/TipoA.pdf";	
 	public static final String SRC7 = "/home/giuseppe/git/D.I.DO/dido/src/test/java/testresources/TipoASigned.pdf";	

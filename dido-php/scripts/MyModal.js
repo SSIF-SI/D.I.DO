@@ -118,7 +118,7 @@ var MyModal = {
 					$('#keystore').fileinput('upload');
 					formData.append('pdfDaFirmare', $('#pdfDaFirmare')[0].files[0]); 
 					formData.append('keystore', $('#keystore')[0].files[0]); 
-				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),formData,' .modal-result', false, false);
+				MyModal.submit($(context),href.replace('signature.php','signPdf.php'),formData,' .modal-result', true, true);
 					}
 				}
 			]

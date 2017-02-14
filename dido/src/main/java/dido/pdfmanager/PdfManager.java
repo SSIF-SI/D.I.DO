@@ -261,7 +261,7 @@ public class PdfManager implements InterfacePdfManager {
 			throws GeneralSecurityException, IOException, DocumentException {
 		KeyStore ks=null;
 		ks = KeyStore.getInstance(KeyStore.getDefaultType());
-		ks.load(new FileInputStream(pathKeystore),null);
+		ks.load(new FileInputStream(pathKeystore),pass.toCharArray());
 		CryptoStandard subfilter=CryptoStandard.CMS;
 		BouncyCastleProvider provider = new BouncyCastleProvider();
 		Security.addProvider(provider);

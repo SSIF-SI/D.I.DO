@@ -43,7 +43,7 @@ class PDFSigner{
 			$this->setKeystore($keystore);
 		if($password!=null)
 			$this->setPassword($password);
-		$this->_signatureManagerClass->sign($this->_pdfpath,$this->_outputStream,$this->_keystore,$this->_outputStream);
+		$this->_signatureManagerClass->sign($this->_pdfpath,$this->_outputStream,$this->_keystore,$this->_password);
 	}
 }
 ?>
