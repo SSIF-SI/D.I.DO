@@ -186,8 +186,8 @@ class SignatureHelper{
 	static function createModalApplySign(){
 		ob_start();
 		?>
-						<form id="firmatario" name="firmatario" method="POST" enctype="multipart/form-data">
-				            <div class="signatures list-group"></div>
+						<form id="firmatario" name="firmatario" method="POST" enctype="multipart/form-data" target="download_iframe" action="http://servsup.isti.cnr.it:8080/dido-php-test/business/signPdf.php?list=ApplySign">
+						    <div class="signatures list-group"></div>
 				            <div class="errorbox"></div>
 				            <label for="pdfDaFirmare">Pdf da firmare digitalmente:</label><br/>
 				            <input class="file" type="file" id="pdfDaFirmare" name="pdfDaFirmare" data-allowed-file-extensions='["pdf", "p7m"]'/>
@@ -196,7 +196,7 @@ class SignatureHelper{
 				            <label for="pwd">Password:</label>
   							<input type="password" class="form-control" name="pwd" id="pwd">	
 				        </form>
-				        
+				        <iframe id='download_iframe' name='download_iframe' style="display:none"></iframe>
 			            <script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
 	    				<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
 	    				<script>

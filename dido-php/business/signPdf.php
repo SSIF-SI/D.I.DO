@@ -1,10 +1,6 @@
 <?php
 require_once ("../config.php");
 
-if (! Utils::checkAjax ()) {
-	header ( "location: " . HTTP_ROOT );
-	die ();
-}
 $PDFSigner = new PDFSigner ();
 
 if (count ( $_FILES )) {
@@ -40,8 +36,6 @@ header ( "Cache-control: private" ); // use this to open files directly
 header ("Expires: 0");
 
 readfile ( $pdfname );
-// ob_clean ();
-// flush ();
+flush ();
 unlink ( $pdfname );
-die ( json_encode ( array ("error" => "" ) ) );
 ?>
