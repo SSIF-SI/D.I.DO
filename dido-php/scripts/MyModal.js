@@ -125,7 +125,7 @@ var MyModal = {
 		);
 		MyModal.load($(context));
 	},
-	submit:function (element,href, data, innerdiv, contentType, processData){
+	submit:function (element,href, data, innerdiv, contentType, processData,storeresult){
 		$('.modal-result').html("");
 		
 		$('.modal .progress').css("visibility", 'visible');
@@ -139,52 +139,63 @@ var MyModal = {
 				MyModal.busy = true;
 				span.attr('class', newClass);
 				$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
-				$.ajax({
-					xhr: function() {
-				        var xhr = new window.XMLHttpRequest();
-				        
-						xhr.addEventListener("progress", function(evt) {
-							if (evt.lengthComputable) {
-							var percentComplete = evt.loaded / evt.total * 100;
-								$('.modal .progress-bar').css("width", percentComplete+'%');
-							}
-						}, false);
-						return xhr;
-				    },
-					url: href,
-					type: "POST", 
-					dataType: "json",
-					contentType: contentType,
-					cache: false,
-			        processData: processData,
-			        data: data,
-					success: function( result ) {
-						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-						MyModal.busy = false;
-						span.attr('class', oldClass);
-						if(result.errors){
-							MyModal.error(result.errors, innerdiv);
-							$('.modal .progress').css("visibility", 'hidden');
-						} else {
-							MyModal.success(innerdiv);
-							$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
-							$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
-								$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
-								$(this).remove();
-								location.reload();
-							});
-						}
-					},
-					error: function( result ){
-						$('.modal .progress').css("visibility", 'hidden');
-						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-						MyModal.busy = false;
-						span.attr('class', oldClass);
-						MyModal.error("Errore imprevisto", innerdiv);
-					}
-				});
+				MyModal.ajax(span, oldClass, newClass, href, data, innerdiv, contentType, processData,storeresult)
 			}
 		}
+	},
+	ajax: function(span, oldClass, newClass, href, data, innerdiv, contentType, processData,storeresult){
+		$.ajax({
+			xhr: function() {
+		        var xhr = new window.XMLHttpRequest();
+		        
+				xhr.addEventListener("progress", function(evt) {
+					if (evt.lengthComputable && storeresult === undefined || !storeresult) {
+					var percentComplete = evt.loaded / evt.total * 100;
+						$('.modal .progress-bar').css("width", percentComplete+'%');
+					}
+				}, false);
+				return xhr;
+		    },
+			url: href,
+			type: "POST", 
+			dataType: "json",
+			contentType: contentType,
+			cache: false,
+	        processData: processData,
+	        data: data,
+			success: function( result ) {
+				if(storeresult !== undefined && storeresult){
+					return result;
+				} else {
+					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
+					MyModal.busy = false;
+					span.attr('class', oldClass);
+					if(result.errors){
+						MyModal.error(result.errors, innerdiv);
+						$('.modal .progress').css("visibility", 'hidden');
+					} else {
+						MyModal.success(innerdiv);
+						$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
+						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
+							$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
+							$(this).remove();
+							location.reload();
+						});
+					}
+				}
+			},
+			error: function( result ){
+				if(storeresult !== undefined && storeresult){
+					return false;
+				} else {
+					$('.modal .progress').css("visibility", 'hidden');
+					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
+					MyModal.busy = false;
+					span.attr('class', oldClass);
+					MyModal.error("Errore imprevisto", innerdiv);
+				}
+			}
+		});
 	},
 	checkRequired: function (data, innerdiv){
 		var requiredFields = [];
