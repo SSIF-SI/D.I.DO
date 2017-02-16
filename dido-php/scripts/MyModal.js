@@ -1,5 +1,8 @@
 var MyModal = {
-		MyModalId: 'MyModal', 
+		MyModalId: 'MyModal',
+		oldClass: null,
+		span: null,
+		newClass: "fa fa-refresh fa-spin fa-1x fa-fw",
 		busy: false,
 		init: function(){
 			if( $('#'+MyModal.MyModalId).length == 0 ){
@@ -40,6 +43,7 @@ var MyModal = {
 			}
 		},
 		setContent: function(html){
+			MyModal.init();
 			$('#'+MyModal.MyModalId+' .modal-body').html(html);
 		},
 		load: function(anchor, callbackSuccess, callbackFailure){
@@ -47,35 +51,22 @@ var MyModal = {
 			if(anchor.prop('href') != undefined){
 				var href = anchor.prop('href');
 
-				var span = anchor.children("span");
-				var oldClass = span.prop('class');
-				var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
-
+				MyModal.span = anchor.children("span");
+				MyModal.oldClass = MyModal.span.prop('class');
+				
 				if(MyModal.busy == false){
 					MyModal.busy = true;
-					span.attr('class', newClass);
+					MyModal.span.attr('class', MyModal.newClass);
 
 					$.ajax({
-						xhr: function() {
-							var xhr = new window.XMLHttpRequest();
-							xhr.addEventListener("progress", function(evt) {
-								if (evt.lengthComputable) {
-									var percentComplete = evt.loaded / evt.total * 100;
-									//Do something with download progress
-								}
-							}, false);
-							return xhr;
-						},
 						url: href, 
 						success: function( result ) {
 							MyModal.busy = false;
-							span.attr('class', oldClass);
 							$('#'+MyModal.MyModalId+' .modal-body').html(result);
 							MyModal.modal();
 							if (callbackSuccess && typeof(callbackSuccess) === "function") callbackSuccess(result);
 						},error: function( result ){
 							MyModal.busy = false;
-							span.attr('class', oldClass);
 							MyModal.error("Errore imprevisto");
 							if (callbackFailure && typeof(callbackFailure) === "function") callbackFailure(result);
 						}
@@ -128,18 +119,21 @@ var MyModal = {
 			);
 			MyModal.load($(context));
 		},
-		submit:function (element,href, data, innerdiv, contentType, processData,storeresult,download){
-			$('.modal-result').html("");
-			$('.modal .progress').css("visibility", 'visible');
-			$('.modal .progress-bar').css("width", '1%');
-			if(MyModal.checkRequired(data, innerdiv)){
-				var span = element.children("span");
-				var oldClass = span.prop('class');
-				var newClass = "fa fa-refresh fa-spin fa-1x fa-fw";
-				if(MyModal.busy == false){
+		submit:function (element,href, data, innerdiv, contentType, processData,callback,download){
+			if(MyModal.busy == false){
+				MyModal.busy = true;
 
-					MyModal.busy = true;
-					span.attr('class', newClass);
+				$('.modal-result').html("");
+				$('.modal .progress').css("visibility", 'visible');
+				if(callback === undefined)
+					MyModal.setProgress(1);
+				if(MyModal.checkRequired(data, innerdiv)){
+					/*
+					MyModal.span = element.children("span");
+					MyModal.oldClass = MyModal.span.prop('class');
+					
+					MyModal.span.attr('class', MyModal.newClass);
+					*/
 					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
 					if(download){
 						$('.modal-body #firmatario').submit();
@@ -148,19 +142,19 @@ var MyModal = {
 					    });
 					}
 					else
-						MyModal.ajax(span, oldClass, newClass, href, data, innerdiv, contentType, processData,storeresult);
+						MyModal.ajax(href, data, innerdiv, contentType, processData,callback);
 				}
 			}
 		}, 
-		ajax: function(span, oldClass, newClass, href, data, innerdiv, contentType, processData,storeresult){
+		ajax: function(href, data, innerdiv, contentType, processData,callback){
 			$.ajax({
 				xhr: function() {
 					var xhr = new window.XMLHttpRequest();
 
 					xhr.addEventListener("progress", function(evt) {
-						if (evt.lengthComputable && storeresult === undefined || !storeresult) {
+						if (evt.lengthComputable && callback === undefined || !callback) {
 							var percentComplete = evt.loaded / evt.total * 100;
-							$('.modal .progress-bar').css("width", percentComplete+'%');
+							MyModal.setProgress(percentComplete);
 						}
 					}, false);
 					return xhr;
@@ -173,12 +167,11 @@ var MyModal = {
 				processData: processData,
 				data: data,
 				success: function( result ) {
-					if(storeresult !== undefined && storeresult){
-						return result;
+					MyModal.busy = false;
+					if(callback !== undefined && callback){
+						return callback(result);
 					} else {
-						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-						MyModal.busy = false;
-						span.attr('class', oldClass);
+						MyModal.unlockButtons();
 						if(result.errors){
 							MyModal.error(result.errors, innerdiv);
 							$('.modal .progress').css("visibility", 'hidden');
@@ -194,17 +187,26 @@ var MyModal = {
 					}
 				},
 				error: function( result ){
-					if(storeresult !== undefined && storeresult){
-						return false;
+					MyModal.busy = false;
+					if(callback !== undefined && callback){
+						return callback(false);
 					} else {
 						$('.modal .progress').css("visibility", 'hidden');
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-						MyModal.busy = false;
-						span.attr('class', oldClass);
+						MyModal.span.attr('class', MyModal.oldClass);
 						MyModal.error("Errore imprevisto", innerdiv);
 					}
 				}
 			});
+		},
+		unlockButtons: function(){
+			$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
+			if(MyModal.span != null )
+				MyModal.span.attr('class', MyModal.oldClass);
+		},
+		setProgress: function(percentage){
+			percentage = percentage > 100 ? 100 : percentage;
+			$('.modal .progress-bar').css("width", percentage+'%');
 		},
 		checkRequired: function (data, innerdiv){
 			var requiredFields = [];
@@ -236,10 +238,13 @@ var MyModal = {
 		_resultMessage: function(message, error, innerdiv){
 			$('#'+MyModal.MyModalId+(innerdiv == undefined ? ' .modal-result' : ' '+innerdiv))
 			.html(error ? 
-					"<div style='word-wrap: break-word;' class=\"alert alert-danger\"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+message+"</p></div>" : 
+					"<div style='word-wrap: break-word; text-align:left !important' class=\"alert alert-danger \"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+message+"</p></div>" : 
 			"<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Operazione andata a buon fine</p></div>");
 		},
 		modal: function(){
+			MyModal.init();
+			if(MyModal.span != null )
+				MyModal.span.attr('class', MyModal.oldClass);
 			if(!$('#'+MyModal.MyModalId).is(':visible')){
 				$('#'+MyModal.MyModalId).modal({
 					backdrop: 'static'

@@ -45,13 +45,72 @@ $(document).ready(function(){
 		});
 	}
 	
-	$('.action .link-selected').click(function(e){
+	$('.link-selected').click(function(e){
 		e.preventDefault();
 		
 	});
 
-	$('.action .import-selected').click(function(e){
+	$('.import-selected').click(function(e){
 		e.preventDefault();
-		
+		var selected = $('.select-one:checkbox:checked');
+		selected.each(function(index){
+			var id_formToImport = $(selected[index]).prop('id').replace(/^form-/,"importform-");
+			var form = $('#'+id_formToImport);
+			
+		})
 	});
+	
+	$('.import-selected').click(function(e){
+		e.preventDefault();
+		var selected = $('.select-one:checkbox:checked');
+		MultiImport.start($(this), selected);
+	});
+	
+	var MultiImport = {
+		context: null,
+		errors: [],
+		forms: [],
+		imported: 0,
+		start: function (context, selected){
+			MultiImport.context = context;
+			selected.each(function(index){
+				var id_formToImport = $(selected[index]).prop('id').replace(/^form-/,"importform-");
+				var form = $('#'+id_formToImport);
+				MultiImport.forms.push(form);
+			})
+			MyModal.setContent("<h4>Attendere, importazione in corso... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>");
+			MyModal.setProgress(1);
+			MyModal.modal();
+			MultiImport.import(MultiImport.forms[MultiImport.imported]);
+		},
+		more: function(result){
+			if(result == false || result.errors != false)
+			MultiImport.errors.push("Errore durante l'importazione del documento "+(MultiImport.imported+1)+"; "+(result.errors != undefined ? result.errors : null));
+			MultiImport.imported++;
+			MyModal.setProgress(MultiImport.imported/MultiImport.forms.length*100);
+			if(MultiImport.imported == MultiImport.forms.length) {
+				MyModal.setTitle("Importazione terminata");
+				MyModal.setContent("");
+				MyModal.unlockButtons();
+				
+				if(MultiImport.errors.length == 0)
+					MyModal.success();
+				else
+					MyModal.error(MultiImport.errors.join("<hr/>\n"));
+				
+				$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
+					$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
+					$(this).remove();
+					location.reload();
+				});
+			} else {
+				MultiImport.import(MultiImport.forms[MultiImport.imported]);
+			}
+		},
+		import(item){
+			MyModal.setTitle("Importazione ("+(MultiImport.imported+1)+" di "+MultiImport.forms.length+")");
+			var data = item.serializeArray();
+			MyModal.submit(MultiImport.context, null, data, '.modal-body',undefined, undefined, MultiImport.more);
+		}
+	}
 });
