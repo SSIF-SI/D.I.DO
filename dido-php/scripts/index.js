@@ -107,7 +107,7 @@ $(document).ready(function(){
 				MultiImport.import(MultiImport.forms[MultiImport.imported]);
 			}
 		},
-		import(item){
+		import: function(item){
 			MyModal.setTitle("Importazione ("+(MultiImport.imported+1)+" di "+MultiImport.forms.length+")");
 			var data = item.serializeArray();
 			MyModal.submit(MultiImport.context, null, data, '.modal-body',undefined, undefined, MultiImport.more);
