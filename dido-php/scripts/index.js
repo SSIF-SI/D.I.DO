@@ -47,19 +47,13 @@ $(document).ready(function(){
 	
 	$('.link-selected').click(function(e){
 		e.preventDefault();
+		var selected = $('.select-one:checkbox:checked');
+		MyModal.setTitle("Collegamento e importazione documenti");
+		var tr = [];
+		
 		
 	});
 
-	$('.import-selected').click(function(e){
-		e.preventDefault();
-		var selected = $('.select-one:checkbox:checked');
-		selected.each(function(index){
-			var id_formToImport = $(selected[index]).prop('id').replace(/^form-/,"importform-");
-			var form = $('#'+id_formToImport);
-			
-		})
-	});
-	
 	$('.import-selected').click(function(e){
 		e.preventDefault();
 		var selected = $('.select-one:checkbox:checked');
@@ -77,7 +71,7 @@ $(document).ready(function(){
 				var id_formToImport = $(selected[index]).prop('id').replace(/^form-/,"importform-");
 				var form = $('#'+id_formToImport);
 				MultiImport.forms.push(form);
-			})
+			});
 			MyModal.setContent("<h4>Attendere, importazione in corso... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>");
 			MyModal.setProgress(1);
 			MyModal.modal();

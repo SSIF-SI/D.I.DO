@@ -35,6 +35,9 @@ class Importer{
 			!isset($data['md_xml'])) 
 				die(json_encode(array('errors' => 'Mancano argomenti')));
 		
+		Utils::printr($data);
+		die();
+		
 		// Se non trovo il file vuol dire che è stato importato correttamente da qualcun'altro
 		if(!file_exists(GECO_IMPORT_PATH.$data['import_filename']))
 			die(json_encode(array('errors' => false)));
@@ -90,8 +93,13 @@ class Importer{
 			$this->_checkErrors();
 		}
 		
-		// Se tutto ok rimuovo il file e faccio COMMIT
-		unlink($this->_newname);
+		// TODO: Importo/Creo il documento pdf
+		
+		// Se tutto ok sposto il file nella cartella imported e faccio COMMIT
+		if(!file_exists(GECO_IMPORT_PATH.dirname($this->_newname)."/import"))
+			mkdir(GECO_IMPORT_PATH.dirname($this->_newname)."/import");
+		rename($this->_newname, GECO_IMPORT_PATH.dirname($this->_newname)."/import/".basename($this->_newname));
+		
 		$this->_connInstance->query("COMMIT");
 		die(json_encode(array('errors' => false)));
 		
