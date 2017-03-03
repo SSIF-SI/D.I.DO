@@ -246,99 +246,104 @@ class TemplateHelper{
 	</style>
 	<div class="col-lg-12 col-md-12">
 		<div class="panel-group" id="GroupToImport">
-			<?php foreach ($list as $category=>$val): ?>
+			<?php foreach ($list as $category=>$subcategory): ?>
 			<div class="panel panel-default <?=$category?>">
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-lg-6">
-							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$category; ?>>&nbsp;<?php echo(ucfirst($category))?></a>
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$category; ?>>&nbsp;Sezione&nbsp;<?php echo(ucfirst($category))?></a>
 		                </div>
 	                    <div class="col-lg-6 text-right">
-							<span class="badge badge-info"><?php echo count($val)?></span>
+							<span class="badge badge-info"><?php echo $subcategory['nTot']; unset($subcategory['nTot'])?></span>
 		                </div>
                     </div>
 				</div>
 				<div id="<?php echo "list".$category;?>" class="panel-collapse collapse">
-					<table class="table table-condensed table-striped">
-					<?php
-					$th = false;
-					foreach ($val as $k=>$data):
-						$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
-						$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
+					<?php foreach($subcategory as $catName=>$val):?>
 						
-						// aggiunto da federico
-						XMLParser::getInstance()->setXMLSource($xml['xml'], $data['type']);
-						$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
-						// fine
-						$formId = rtrim(FormHelper::fieldFromLabel($data['filename']),".imp");
-						if(!$th):
-							$th = true;
-					?>
-						<tr>
-							<th>
-							    <input type="checkbox" class="select-all" rel="<?=$category?>">&nbsp;Seleziona tutti
-				            </th>
-							<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
-							<th><?=(string)($input);?>
-							<?php endif; endforeach;?>
-							<th>
-								<a class="btn btn-primary disabled action import-selected" href="#<?=$category?>">
-				               		<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa Selezionati
-				                </a>&nbsp;
-				                <a class="btn btn-primary disabled action link-selected" href="#<?=$category?>">
-				               		<span class="fa fa-link fa-1x fa-fw"></span> Collega
-				                </a>
-							</th>
-						</tr>
-					<?php endif;?>
-						 <tr>
-						 	<td>
-						 		<div class="checkbox">
-									<label>
-									<input class="select-one" rel="<?=$category?>" id="form-<?=$formId?>" type="checkbox">
-									</label>
-								</div>
-							</td>
-							<?php 
-						    $obj_new = array();
-						    foreach ($inputs as $input): 
-								$key = (string)$input['key'];
-								$value = $obj[$key];
-								$obj_new[(string)$input] = $value;
-
-								if(isset($input['transform'])){
-									$callback = (string)$input['transform'];
-									$value = ImportHelper::$callback($value);
-									if($input['type'] != 'data')
-										$obj_new[(string)$input] = $value;
-								} 
-								
-								if(isset($input['values'])){
-									$callBack = (string)$input['values'];
-									$values = ListHelper::$callBack();
-									$value = $values[$value];
-								}
-								if(isset($input['shortView'])):
-								?>
-							<td><?=$value?></td>						
-							<?php endif; endforeach; ?>
-						    <td>
-						    	<form style="display:none" role="form" method="POST" id="importform-<?=$formId?>" enctype="multipart/form-data">
-									<input type="hidden" id="import_filename" name="import_filename" value="<?=$category.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
-				                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
-				                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
-				                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 
-				                	<?php foreach($obj_new as $id=>$val_n):?>
-				                	<input type="hidden" id="<?=$id?>" name="<?=$id?>" value="<?=$val_n?>"/> 
-				                	<?php endforeach;?>
-								</form>
-					            <a class="btn btn-primary import" href="#importform-<?=$formId?>">
-				                	<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa
-				                </a>
-			                </td>
-						</tr>
+						<h4 class="text-center alert alert-info" ><?=ucfirst($catName)?></h4>
+						<?php $catName = str_replace(" ", "_", $catName);?>
+						<table class="table table-condensed table-striped <?=$catName?>">
+						<?php
+						$th = false;
+						foreach ($val as $k=>$data):
+							$obj = unserialize(file_get_contents(GECO_IMPORT_PATH.$category.DIRECTORY_SEPARATOR.$data['filename']));
+							$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
+							
+							// aggiunto da federico
+							XMLParser::getInstance()->setXMLSource($xml['xml'], $data['type']);
+							$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+							// fine
+							$formId = rtrim(FormHelper::fieldFromLabel($data['filename']),".imp");
+							if(!$th):
+								$th = true;
+						?>
+							<tr>
+								<th>
+								    <input type="checkbox" class="select-all" rel="<?=$catName?>">&nbsp;Seleziona tutti
+					            </th>
+								<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
+								<th><?=(string)($input);?>
+								<?php endif; endforeach;?>
+								<th>
+									<a class="btn btn-primary disabled action import-selected" href="#<?=$catName?>">
+					               		<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa Selezionati
+					                </a>&nbsp;
+					                <a class="btn btn-primary disabled action link-selected" href="#<?=$catName?>">
+					               		<span class="fa fa-link fa-1x fa-fw"></span> Collega
+					                </a>
+								</th>
+							</tr>
+						<?php endif;?>
+							 <tr>
+							 	<td>
+							 		<div class="checkbox">
+										<label>
+										<input class="select-one" rel="<?=$catName?>" id="form-<?=$formId?>" type="checkbox">
+										</label>
+									</div>
+								</td>
+								<?php 
+							    $obj_new = array();
+							    foreach ($inputs as $input): 
+									$key = (string)$input['key'];
+									$value = $obj[$key];
+									$obj_new[(string)$input] = $value;
+	
+									if(isset($input['transform'])){
+										$callback = (string)$input['transform'];
+										$value = ImportHelper::$callback($value);
+										if($input['type'] != 'data')
+											$obj_new[(string)$input] = $value;
+									} 
+									
+									if(isset($input['values'])){
+										$callBack = (string)$input['values'];
+										$values = ListHelper::$callBack();
+										$value = $values[$value];
+									}
+									if(isset($input['shortView'])):
+									?>
+								<td><?=$value?></td>						
+								<?php endif; endforeach; ?>
+							    <td>
+							    	<form style="display:none" role="form" method="POST" id="importform-<?=$formId?>" enctype="multipart/form-data">
+										<input type="hidden" id="import_filename" name="import_filename" value="<?=$catName.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
+					                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
+					                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
+					                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 
+					                	<?php foreach($obj_new as $id=>$val_n):?>
+					                	<input type="hidden" id="<?=$id?>" name="<?=$id?>" value="<?=$val_n?>"/> 
+					                	<?php endforeach;?>
+									</form>
+						            <a class="btn btn-primary import" href="#importform-<?=$formId?>">
+					                	<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> Importa
+					                </a>
+				                </td>
+							</tr>
+						<?php endforeach;?>
+						</table>
 					<?php endforeach;?>
-					</table>
 				</div>
 			</div>
 			<?php endforeach;?>

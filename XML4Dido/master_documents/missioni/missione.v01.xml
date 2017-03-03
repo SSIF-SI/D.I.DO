@@ -17,7 +17,7 @@
 		<input from="geco" key="gae_nome">linea attività</input>
 		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
 		<input from="geco" key="cup">cup</input>
-		<input values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input from="geco" key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
 		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>

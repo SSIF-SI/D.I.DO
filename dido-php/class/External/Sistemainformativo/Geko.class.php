@@ -20,10 +20,10 @@ class Geko extends ClassWithDependencies{
 				"xmlKeyType" => array (
 					// tipo => coppia (chiave,valore) che lo identifica
 					"con anticipo" => array(
-						"anticipo" => "s"
+						"anticipo" => 1
 					),
 					"senza anticipo" => array (
-						"anticipo" => "n"
+						"anticipo" => 0
 					)
 				)
 						
@@ -36,20 +36,20 @@ class Geko extends ClassWithDependencies{
 					// xml pattern => coppia (chiave,valore) che lo identifica
 					// xml pattern => true =  sempre
 					"acquisto" => array	(
-						"ordine_cassa" => "n"	
+						"ordine_cassa" => 0	
 					),
 					"ordine cassa" => array	(
-						"ordine_cassa" => "s"
+						"ordine_cassa" => 1
 					),
 					
 				),
 				"xmlKeyType" => array (
 					// tipo => coppia (chiave,valore) che lo identifica
 					"mepa" => array(
-						"ordine_mepa" => "s"
+						"ordine_mepa" => 1
 					),
 					"fuori mepa" => array (
-						"ordine_mepa" => "n"
+						"ordine_mepa" => 0
 					)
 				)
 			) 
@@ -90,6 +90,7 @@ class Geko extends ClassWithDependencies{
 		$ml = new master_log ();
 		
 		foreach ( $this->_tablesToRead as $table => $k ) {
+			Utils::printr("Inporting $table");
 			$lastId = $ml->getLastIdFlussoOk ( $table );
 			$ormTable = new $table ();
 			$recordsToImport = $ormTable->getRecordsToImport ( $lastId );
@@ -106,7 +107,7 @@ class Geko extends ClassWithDependencies{
 		
 		$catlist = array_keys($this->_XMLBrowser->getXmlListByOwner($owner));
 		$fti = array("nTot" => 0);
-		
+			
 		$types = glob(GECO_IMPORT_PATH."*");
 		foreach($types as $type){
 			$needle = basename($type);
@@ -118,14 +119,24 @@ class Geko extends ClassWithDependencies{
 					foreach($files as $file){
 						$filename = basename($file);
 						preg_match_all(self::$FILE_REGEXP, $filename,$matches);
-						$fti[basename($type)][] = array(
+						$fti[basename($type)][$matches[1][0]][] = array(
 							'filename' 	=> basename($file),
 							'md_nome'	=> $matches[1][0],
 							'type'		=> $matches[2][0],
 							'id'		=> $matches[3][0]
 						);
 					}
-					$fti['nTot'] += count($fti[basename($type)]);
+					
+					$nTot = 0;
+					
+					foreach($fti[basename($type)] as $subType => $item){
+						$nType = count($fti[basename($type)][$subType]);
+						$nTot += $nType;
+						
+					}
+					
+					$fti[basename($type)]['nTot'] = $nTot;
+					$fti['nTot'] += $nTot;
 				}
 			}
 			

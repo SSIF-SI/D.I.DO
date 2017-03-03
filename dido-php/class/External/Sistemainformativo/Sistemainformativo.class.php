@@ -3,16 +3,16 @@ class Sistemainformativo{
 	
 	private static $_instance = null;
 	private static $dbData = array(
-// 		'DB_ENGINE' 	=> 'pgsql',
-// 		'HOST' 			=> 'sistemainformativo-dev.isti.cnr.it',
-// 		'ROOT_DATABASE' => 'sistemainformativo',
-// 		'ROOT_USER' 	=> 'dido',
-// 		'ROOT_PASSWORD' => '!dido2k_16!'
-		'DB_ENGINE' 	=> 'pgsql',
-		'HOST' 			=> 'localhost',
-		'ROOT_DATABASE' => 'testImport',
-		'ROOT_USER' 	=> 'dido',
-		'ROOT_PASSWORD' => 'emaP4ss!'
+ 		'DB_ENGINE' 	=> 'pgsql',
+ 		'HOST' 			=> 'sistemainformativo-dev.isti.cnr.it',
+ 		'ROOT_DATABASE' => 'sistemainformativo',
+ 		'ROOT_USER' 	=> 'dido',
+ 		'ROOT_PASSWORD' => '!dido2k_16!'
+//		'DB_ENGINE' 	=> 'pgsql',
+//		'HOST' 			=> 'localhost',
+//		'ROOT_DATABASE' => 'testImport',
+//		'ROOT_USER' 	=> 'dido',
+//		'ROOT_PASSWORD' => 'emaP4ss!'
 	);
 	
 	private $_connection;

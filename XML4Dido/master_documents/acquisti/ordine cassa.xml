@@ -2,15 +2,18 @@
 
 <masterDocument name="ordine cassa" owner="SA">
 	<inputs>
-		<input>Richiedente</input>
-		<input>Fornitore</input>
-		<input>Descrittivo GAE</input>
-		<input>Laboratorio</input>
-		<input>Natura</input>
-		<input>Voce del piano dei conti</input>
-		<input>CUP</input>
-		<input>titolare dei fondi</input>
-		<input>responsabile di laboratorio</input>
+		<input from="geco" key="id_ordine">id ordine</input>
+		<input from="geco" key="ditta" shortView="true">fornitore</input>
+		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" shortView="true">richiedente</input>
+		<input from="geco" key="destinatario_cf" transform="idPersonaFromCf" values="persone" shortView="true">destinatario</input>
+		<input from="geco" key="descrizione" type="textarea">descrizione</input>
+		<input from="geco" key="gae_nome" shortView="true">linea attività</input>
+		<input from="geco" key="gae_anno">linea attività (anno)</input>
+		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
+		<input from="geco" key="piano_conto">voce del piano dei conti</input>
+		<input from="geco" key="codice_cup">cup</input>
+		<input from="geco" key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />

@@ -20,7 +20,7 @@
 		<input from="geco" key="codice_cig">cig</input>
 		<input from="geco" key="codice_cup">cup</input>
 		<input from="geco" key="numero_mepa">numero mepa</input>
-		<input values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input from="geco" key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
 		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
