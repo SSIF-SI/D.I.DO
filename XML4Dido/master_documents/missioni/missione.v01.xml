@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="missione" owner="SA">
+<masterDocument name="missione" owner="SA" from="geco">
 	<types>
 		<type>con anticipo</type>
 		<type>senza anticipo</type>
 	</types>
 	<inputs>
-		<input from="geco" key="id_missione">id missione</input>
-		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
-		<input from="geco" key="oggetto" shortView="true">oggetto</input>
-		<input from="geco" key="localita" shortView="true">località</input>
-		<input from="geco" key="data_inizio" transform="dateFromDB" type="data" shortView="true" editable="true">data inizio missione</input>
-		<input from="geco" key="data_fine" transform="dateFromDB" type="data" editable="true">data fine missione</input>
-		<input from="geco" key="importo" editable="true">importo</input>
-		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
-		<input from="geco" key="gae_nome">linea attività</input>
-		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
-		<input from="geco" key="cup">cup</input>
-		<input from="geco" key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
-		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
+		<input key="id_missione">id missione</input>
+		<input key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
+		<input key="oggetto" shortView="true">oggetto</input>
+		<input key="localita" shortView="true">località</input>
+		<input key="data_inizio" transform="dateFromDB" type="data" shortView="true" editable="true">data inizio missione</input>
+		<input key="data_fine" transform="dateFromDB" type="data" editable="true">data fine missione</input>
+		<input key="importo" editable="true">importo</input>
+		<input key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
+		<input key="gae_nome">linea attività</input>
+		<input key="natura_finanziamento">natura finanziamento</input>
+		<input key="cup">cup</input>
+		<input key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />

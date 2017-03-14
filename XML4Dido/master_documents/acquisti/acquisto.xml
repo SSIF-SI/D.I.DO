@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="acquisto" owner="SA">
+<masterDocument name="acquisto" owner="SA" from="geco">
 	<types>
 		<type>mepa</type>
 		<type>fuori mepa</type>
 	</types>
 	<inputs>
-		<input from="geco" key="id_ordine">id ordine</input>
-		<input from="geco" key="ditta" shortView="true">fornitore</input>
-		<input from="geco" key="personale_cf" transform="idPersonaFromCf" values="persone" shortView="true">richiedente</input>
-		<input from="geco" key="destinatario_cf" transform="idPersonaFromCf" values="persone" shortView="true">destinatario</input>
-		<input from="geco" key="descrizione" type="textarea">descrizione</input>
-		<input from="geco" key="gae_nome" shortView="true">linea attività</input>
-		<input from="geco" key="gae_anno">linea attività (anno)</input>
-		<input from="geco" key="natura_finanziamento">natura finanziamento</input>
-		<input from="geco" key="piano_conto">voce del piano dei conti</input>
-		<input from="geco" key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
-		<input from="geco" key="rup_cf" transform="idPersonaFromCf" values="persone" signRole="RUP">rup</input>
-		<input from="geco" key="codice_cig">cig</input>
-		<input from="geco" key="codice_cup">cup</input>
-		<input from="geco" key="numero_mepa">numero mepa</input>
-		<input from="geco" key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
-		<input from="geco" key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
+		<input key="id_ordine">id ordine</input>
+		<input key="ditta" shortView="true">fornitore</input>
+		<input key="personale_cf" transform="idPersonaFromCf" values="persone" shortView="true">richiedente</input>
+		<input key="destinatario_cf" transform="idPersonaFromCf" values="persone" shortView="true">destinatario</input>
+		<input key="descrizione" type="textarea">descrizione</input>
+		<input key="gae_nome" shortView="true">linea attività</input>
+		<input key="gae_anno">linea attività (anno)</input>
+		<input key="natura_finanziamento">natura finanziamento</input>
+		<input key="piano_conto">voce del piano dei conti</input>
+		<input key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
+		<input key="rup_cf" transform="idPersonaFromCf" values="persone" signRole="RUP">rup</input>
+		<input key="codice_cig">cig</input>
+		<input key="codice_cup">cup</input>
+		<input key="numero_mepa">numero mepa</input>
+		<input key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
