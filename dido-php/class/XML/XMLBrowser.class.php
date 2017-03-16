@@ -131,6 +131,7 @@ class XMLBrowser{
 					"file" => $fileInfo[0], 
 					"xml" => $xml, 
 					"owner" => $xml['owner'],
+					"from" => $xml['from'],
 					"validEnd" => isset($xml['validEnd']) ? $xml['validEnd'] : null,
 					"visibleFor" => $xml['visibleFor'],						
 					"hiddenFor" => $xml['hiddenFor']					

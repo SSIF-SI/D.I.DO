@@ -72,12 +72,14 @@ class TemplateHelper{
 		                        	<div class="row">
 		                        	<?php echo FormHelper::createInputsFromDB($inputs, $info['md_data'],true)?>
 			                        </div>
-		                        	<div class="row text-center">
+			                        <?php if(empty($xml['from'])):?>
+			                        <div class="row text-center">
 		                        		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&edit">
 		                                	<span class="fa fa-pencil fa-1x fa-fw"></span> 
 		                                	Modifica informazioni
 		                               	</a>
 	                               	</div>
+	                               	<?php endif;?>
 	                               	<hr/>
 		                       		<div class="panel panel-info">
 				                        <div class="panel-heading">

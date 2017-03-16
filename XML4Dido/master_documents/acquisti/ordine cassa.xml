@@ -6,7 +6,7 @@
 		<input key="ditta" shortView="true">fornitore</input>
 		<input key="personale_cf" transform="idPersonaFromCf" values="persone" shortView="true">richiedente</input>
 		<input key="destinatario_cf" transform="idPersonaFromCf" values="persone" shortView="true">destinatario</input>
-		<input key="descrizione" type="textarea">descrizione</input>
+		<input key="descrizione" type="textarea" shortView="true">descrizione</input>
 		<input key="gae_nome" shortView="true">linea attività</input>
 		<input key="gae_anno">linea attività (anno)</input>
 		<input key="natura_finanziamento">natura finanziamento</input>
