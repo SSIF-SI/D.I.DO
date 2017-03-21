@@ -153,7 +153,7 @@ class FormHelper{
 				}
 			}
 				
-			$result = $dataObj->saveInfo($postData, $id_parent,$inputs);
+			$result = $dataObj->saveInfo($postData, $id_parent/*,$inputs*/,true);
 			die($result);
 		}
 		?>

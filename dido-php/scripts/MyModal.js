@@ -193,7 +193,8 @@ var MyModal = {
 					} else {
 						$('.modal .progress').css("visibility", 'hidden');
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
-						MyModal.span.attr('class', MyModal.oldClass);
+						if(MyModal.span != null )
+							MyModal.span.attr('class', MyModal.oldClass);
 						MyModal.error("Errore imprevisto", innerdiv);
 					}
 				}

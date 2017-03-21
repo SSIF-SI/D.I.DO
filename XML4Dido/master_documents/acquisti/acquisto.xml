@@ -12,7 +12,7 @@
 		<input key="destinatario_cf" transform="idPersonaFromCf" values="persone" shortView="true">destinatario</input>
 		<input key="descrizione" type="textarea" shortView="true">descrizione</input>
 		<input key="gae_nome" shortView="true">linea attività</input>
-		<input key="gae_anno">linea attività (anno)</input>
+		<input key="gae_anno">linea attività anno</input>
 		<input key="natura_finanziamento">natura finanziamento</input>
 		<input key="piano_conto">voce del piano dei conti</input>
 		<input key="responsabile_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>

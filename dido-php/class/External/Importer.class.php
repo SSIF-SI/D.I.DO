@@ -4,6 +4,8 @@ class Importer{
 	private $_connInstance;
 	private $_result, $_oldname, $_newname;
 	
+	const IMPORTED = "imported";
+	
 	public function __construct($FTPConnector = null, $connInstance = null){
 		if(is_null($FTPConnector)) $FTPConnector = FTPConnector::getInstance();
 		if(is_null($connInstance)) $connInstance = Connector::getInstance();
@@ -20,11 +22,19 @@ class Importer{
 				$files = glob($folder."/*.".Session::getInstance()->get('AUTH_USER'));
 				foreach($files as $file){
 					$oldname = $file;
-					$newname = str_replace(".".Session::getInstance()->get('AUTH_USER'),"",$file);
+					$newname = $this->_unlock($file);
 					@rename($oldname, $newname);
 				}
 			}
 		}
+	}
+	
+	private function _lock($filename){
+		return $filename.".".Session::getInstance()->get('AUTH_USER');
+	}
+	
+	private function _unlock($filename){
+		return str_replace(".".Session::getInstance()->get('AUTH_USER'),"",$filename);
 	}
 	
 	public function import($data){
@@ -35,16 +45,13 @@ class Importer{
 			!isset($data['md_xml'])) 
 				die(json_encode(array('errors' => 'Mancano argomenti')));
 		
-		Utils::printr($data);
-		die();
-		
 		// Se non trovo il file vuol dire che è stato importato correttamente da qualcun'altro
 		if(!file_exists(GECO_IMPORT_PATH.$data['import_filename']))
-			die(json_encode(array('errors' => false)));
+			die(json_encode(array('errors' => "Il file è già stato umportato")));
 		
 		// Rinomino il file per mettergli un lock non fisico
 		$this->_oldname = GECO_IMPORT_PATH.$data['import_filename'];
-		$this->_newname = GECO_IMPORT_PATH.$data['import_filename'].".".Session::getInstance()->get('AUTH_USER');
+		$this->_newname = $this->_lock(GECO_IMPORT_PATH.$data['import_filename']);
 		$rename = rename($this->_oldname, $this->_newname);
 		if(!$rename)
 			die(json_encode(array('errors' => 'Permessi di scrittura negati')));
@@ -74,18 +81,15 @@ class Importer{
 		unset($data['md_nome'], $data['md_type'], $data['md_xml']);
 		$id_md = $this->_connInstance->getLastInsertId();
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
-		
 		foreach($data as $key=>$value){
-			$key = FormHelper::labelFromField($key);
-			$md_data = array(
-				'id_md'	=> $id_md,
-				'key'	=> $key,
-				'value' => $value
-			);
-			
-			$this->_result = $masterdocumentData->save($md_data);
-			$this->_checkErrors();
+			$new_key = FormHelper::labelFromField($key);
+			unset($data[$key]);
+			$data[$new_key] = $value;
 		}	
+		
+		$this->_result = $masterdocumentData->saveInfo($data, $id_md, true);
+		$this->_checkErrors();
+		
 		
 		// Creo la cartella ftp
 		if (!$this->_FTPConnector->ftp_mksubdirs($ftp_folder . DIRECTORY_SEPARATOR . $md['nome'] . "_" . $id_md)){
@@ -96,11 +100,14 @@ class Importer{
 		// TODO: Importo/Creo il documento pdf
 		
 		// Se tutto ok sposto il file nella cartella imported e faccio COMMIT
-		if(!file_exists(GECO_IMPORT_PATH.dirname($this->_newname)."/import"))
-			mkdir(GECO_IMPORT_PATH.dirname($this->_newname)."/import");
-		rename($this->_newname, GECO_IMPORT_PATH.dirname($this->_newname)."/import/".basename($this->_newname));
+		if(!file_exists(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED)){
+			mkdir(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED);
+		}
+		rename($this->_newname, dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED.DIRECTORY_SEPARATOR. basename($this->_newname));
 		
 		$this->_connInstance->query("COMMIT");
+		
+		
 		die(json_encode(array('errors' => false)));
 		
 	}

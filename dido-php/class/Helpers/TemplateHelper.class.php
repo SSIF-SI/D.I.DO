@@ -330,12 +330,12 @@ class TemplateHelper{
 								<?php endif; endforeach; ?>
 							    <td>
 							    	<form style="display:none" role="form" method="POST" id="importform-<?=$formId?>" enctype="multipart/form-data">
-										<input type="hidden" id="import_filename" name="import_filename" value="<?=$catName.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
+										<input type="hidden" id="import_filename" name="import_filename" value="<?=$category.DIRECTORY_SEPARATOR.$data['filename']?>"/> 
 					                	<input type="hidden" id="md_xml" name="md_xml" value="<?=$xml['xml_filename']?>"/> 
 					                	<input type="hidden" id="md_nome" name="md_nome" value="<?=$data['md_nome']?>"/> 
 					                	<input type="hidden" id="md_type" name="md_type" value="<?=$data['type']?>"/> 
 					                	<?php foreach($obj_new as $id=>$val_n):?>
-					                	<input type="hidden" id="<?=$id?>" name="<?=$id?>" value="<?=$val_n?>"/> 
+					                	<input type="hidden" id="<?=FormHelper::fieldFromLabel($id)?>" name="<?=FormHelper::fieldFromLabel($id)?>" value="<?=$val_n?>"/> 
 					                	<?php endforeach;?>
 									</form>
 						            <a class="btn btn-primary import" href="#importform-<?=$formId?>">
