@@ -12,8 +12,8 @@
 		<input key="natura_finanziamento">natura finanziamento</input>
 		<input key="piano_conto">voce del piano dei conti</input>
 		<input key="codice_cup">cup</input>
-		<input key="titolare_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
-		<input key="responsabile_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
+		<input key="titolare_fondi_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input key="responsabile_lab_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />
