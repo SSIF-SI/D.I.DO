@@ -38,7 +38,7 @@ class FlowChecker extends ClassWithDependencies{
 			
 			$sigObj = new Signature(Connector::getInstance());
 			$signers = $sigObj->getSigners($id['id_md'],$return['data']['info']['md_data']);
-
+			
 			// Parsing con XML (documenti richiesti)
 			$this->_XMLParser->setXMLSource($this->_XMLBrowser->getSingleXml($md['xml']),$md['type']);
 			$return['data']['xml_inputs'] = $this->_XMLParser->getMasterDocumentInputs();

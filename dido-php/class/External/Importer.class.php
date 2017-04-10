@@ -82,8 +82,6 @@ class Importer{
 		$id_md = $this->_connInstance->getLastInsertId();
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
 		
-		$data['responsabile_lab_cf'] = null;
-		
 		foreach($data as $key=>$value){
 			if(empty($value)){
 				$this->_result['errors'] = "Manca il valore di $key, impossibile continuare.";

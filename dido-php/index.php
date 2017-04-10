@@ -48,11 +48,11 @@ if( isset($_GET['detail'])){
 			break;
 		default:
 		case 'documentOpen':
-			
 			$Responder = new Responder();
 			$Responder->createDocList(true);
 			
 			$md_open = $Responder->getMyMasterDocuments();
+			
 			$detail = TemplateHelper::createListGroupOpen($md_open);
 			break;
 			$detail = null;
@@ -64,7 +64,7 @@ if( isset($_GET['detail'])){
 if(isset($_GET['md'])){
 	$FlowChecker = new FlowChecker();
 	$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
-		
+	
 	if(isset($_GET['edit'])){
 		if(isset($_GET['d'])){
 			$docInputs = FlowChecker::getDocInputsByIdDoc($fcr, $_GET['d']);

@@ -186,6 +186,7 @@ class TemplateHelper{
 		// Aperti
 		$Responder = new Responder();
 		$Responder->createDocList(true);
+		
 		$md_open = $Responder->getMyMasterDocuments()['md'];
 		$nTot = 0;
 		foreach($md_open as $docs)

@@ -3,8 +3,8 @@ class Responder{
 	private $_XMLBrowser, $_ownerRules;
 	private $_Masterdocument, $_MasterdocumentData;
 	private $_Document, $_DocumentData;
-	private $_md, $_md_data;
-	private $_documents, $_documents_data;
+	private $_md = array(), $_md_data = array();
+	private $_documents = array(), $_documents_data = array();
 	private $_alreadyCreated = false;
 	
 	public function __construct(){
@@ -20,7 +20,6 @@ class Responder{
 	
 	public function createDocList($notClosed = false){
 		$this->_alreadyCreated = true;
-		
 		if(!PermissionHelper::getInstance()->isConsultatore()){
 			// Utente Normale, può vedere solo i documenti di cui è proprietario o firmatario e basta
 			$key_value = array();
@@ -42,11 +41,14 @@ class Responder{
 		$this->_md = Utils::getListfromField($this->_md,null,"id_md");
 		
 		$md_ids = array_keys($this->_md);
-		$this->_md_data = $this->_compact(Utils::groupListBy($this->_MasterdocumentData->getBy("id_md", join(",",$md_ids)), "id_md"));
-
-		$documents = Utils::getListfromField($this->_Document->getBy("id_md", join(",",$md_ids)), null, "id_doc");
-		$this->_documents = Utils::groupListBy($documents,"id_md");
-		$this->_documents_data = $this->_compact(Utils::groupListBy($this->_DocumentData->getBy("id_doc", join(",",array_keys($documents))),"id_doc"));
+		if(count($md_ids)){
+			$this->_md_data = $this->_compact(Utils::groupListBy($this->_MasterdocumentData->getBy("id_md", join(",",$md_ids)), "id_md"));
+			$documents = Utils::getListfromField($this->_Document->getBy("id_md", join(",",$md_ids)), null, "id_doc");
+			if(!empty ($documents)){
+				$this->_documents = Utils::groupListBy($documents,"id_md");
+				$this->_documents_data = $this->_compact(Utils::groupListBy($this->_DocumentData->getBy("id_doc", join(",",array_keys($documents))),"id_doc"));
+			} 
+		}
 	}
 	
 	public function getMyMasterDocuments(){
