@@ -7,7 +7,7 @@
 	</types>
 	<inputs>
 		<input key="id_missione">id missione</input>
-		<input key="personale_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
+		<input key="richiedente_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
 		<input key="oggetto" shortView="true">oggetto</input>
 		<input key="localita" shortView="true">località</input>
 		<input key="data_inizio" transform="dateFromDB" type="data" shortView="true">data inizio missione</input>

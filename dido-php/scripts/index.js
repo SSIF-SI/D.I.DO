@@ -51,7 +51,6 @@ $(document).ready(function(){
 		MyModal.setTitle("Collegamento e importazione documenti");
 		var tr = [];
 		
-		
 	});
 
 	$('.import-selected').click(function(e){

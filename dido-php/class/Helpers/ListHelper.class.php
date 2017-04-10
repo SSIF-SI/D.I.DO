@@ -9,7 +9,7 @@ class ListHelper{
 	}
 		
 	static function titolariFondi(){
-		return array();
+		return self::responsabili();
 	}
 	
 	static function responsabili(){

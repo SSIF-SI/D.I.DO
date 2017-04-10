@@ -81,11 +81,19 @@ class Importer{
 		unset($data['md_nome'], $data['md_type'], $data['md_xml']);
 		$id_md = $this->_connInstance->getLastInsertId();
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
+		
+		$data['responsabile_lab_cf'] = null;
+		
 		foreach($data as $key=>$value){
+			if(empty($value)){
+				$this->_result['errors'] = "Manca il valore di $key, impossibile continuare.";
+				break;
+			}
 			$new_key = FormHelper::labelFromField($key);
 			unset($data[$key]);
 			$data[$new_key] = $value;
 		}	
+		$this->_checkErrors();
 		
 		$this->_result = $masterdocumentData->saveInfo($data, $id_md, true);
 		$this->_checkErrors();
@@ -103,7 +111,7 @@ class Importer{
 		if(!file_exists(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED)){
 			mkdir(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED);
 		}
-		rename($this->_newname, dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED.DIRECTORY_SEPARATOR. basename($this->_newname));
+		rename($this->_newname, dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED.DIRECTORY_SEPARATOR. basename($this->_unlock($this->_newname)));
 		
 		$this->_connInstance->query("COMMIT");
 		

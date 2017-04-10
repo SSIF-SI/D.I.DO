@@ -79,8 +79,11 @@ class Responder{
 		if(!array_key_exists($id_md, $this->_md)) return false;
 		
 		$documents_data = array();
-		foreach($this->_documents[$id_md] as $id_doc=>$data){
-			$documents_data[$id_doc] = $this->_documents_data[$id_doc];
+		
+		if(count($this->_documents[$id_md])){
+			foreach($this->_documents[$id_md] as $id_doc=>$data){
+				$documents_data[$id_doc] = $this->_documents_data[$id_doc];
+			}
 		}
 		
 		return array(

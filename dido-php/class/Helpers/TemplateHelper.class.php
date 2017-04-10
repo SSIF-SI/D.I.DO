@@ -117,7 +117,7 @@ class TemplateHelper{
 		return ob_get_clean();
 	}
 	
-	private static function _createTimelineDocList($status, $docData, $info, $id_doc){
+	private static function _createTimelineDocList($status, $docData, $info, $id_doc = 0){
 		$error = false;
 		echo "<li>".self::_createtimelineBadge($status);?>
 										    <div class="timeline-panel">
@@ -307,9 +307,9 @@ class TemplateHelper{
 								</td>
 								<?php 
 							    $obj_new = array();
-							    foreach ($inputs as $input): 
-									$key = (string)$input['key'];
-									$value = $obj[$key];
+							    foreach ($inputs as $input):
+							    	$key = (string)$input['key'];
+									$value = isset($obj[$key]) ? $obj[$key] : null;
 									$obj_new[(string)$input] = $value;
 	
 									if(isset($input['transform'])){
@@ -324,6 +324,7 @@ class TemplateHelper{
 										$values = ListHelper::$callBack();
 										$value = $values[$value];
 									}
+								
 									if(isset($input['shortView'])):
 									?>
 								<td><?=$value?></td>						
