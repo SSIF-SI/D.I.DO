@@ -170,7 +170,7 @@ class FTPConnector{
 	}
 	
 	public function upload($source, $destination){
-		$result = ftp_put($this->_conn_id, $destination, $source, FTP_BINARY);
+		$result = ftp_put($this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY);
 		if(!$result) throw new Exception("Errore nel trasferimento del file", 666);
 	}
 	
