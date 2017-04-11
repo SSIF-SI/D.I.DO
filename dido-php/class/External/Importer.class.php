@@ -78,19 +78,41 @@ class Importer{
 		$this->_result = $Masterdocument->save($md);
 		$this->_checkErrors();
 
+		$xml = XMLBrowser::getInstance()->getSingleXml($data['md_xml']);
+		XMLParser::getInstance()->setXMLSource($xml, $data['md_type']);
+		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+		
 		unset($data['md_nome'], $data['md_type'], $data['md_xml']);
 		$id_md = $this->_connInstance->getLastInsertId();
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
 		
-		foreach($data as $key=>$value){
-			if(empty($value)){
-				$this->_result['errors'] = "Manca il valore di $key, impossibile continuare.";
-				break;
+		//Utils::printr($data);
+		
+		foreach($inputs as $input){
+			$data_key = FormHelper::fieldFromLabel((string)$input);
+			
+			//Utils::printr("checking $data_key");
+			if(empty($data[$data_key])){
+				if (!isset($input['mandatory']) || $input['mandatory']){
+					Utils::printr("Not found $data_key, but MANDATORY");
+					$this->_result['errors'] = "Manca il valore di \"$input\", impossibile continuare.";
+					break;
+				} else {
+					Utils::printr("Not found $data_key, SKIPPING");
+					continue;
+				}
 			}
-			$new_key = FormHelper::labelFromField($key);
-			unset($data[$key]);
-			$data[$new_key] = $value;
+			
+			//Utils::printr("found $data_key, converting to $input");
+				
+			$value = $data[$data_key];
+			unset($data[$data_key]);
+			$data[(string)$input] = $value;
 		}	
+		
+		//Utils::printr($data);
+		//die();
+		
 		$this->_checkErrors();
 		
 		$this->_result = $masterdocumentData->saveInfo($data, $id_md, true);
