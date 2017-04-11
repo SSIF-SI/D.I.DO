@@ -144,7 +144,7 @@ class FTPConnector{
 			   	}
 				if($file['size']< 2147483647) header("Content-length: {$file['size']}");
 		   		header("Cache-control: private"); //use this to open files directly
-				$result = ftp_get($this->_conn_id, "php://output", $file['filename'], self::_get_ftp_mode($file));
+				$result = ftp_get($this->_conn_id, "php://output", $file['filename'], FTP_BINARY);
 				flush();
 			} else return null;
 			
@@ -167,6 +167,11 @@ class FTPConnector{
 			}
 		}
 		return true;
+	}
+	
+	public function upload($source, $destination){
+		$result = ftp_put($this->_conn_id, $destination, $source, FTP_BINARY);
+		if(!$result) throw new Exception("Errore nel trasferimento del file", 666);
 	}
 	
 }
