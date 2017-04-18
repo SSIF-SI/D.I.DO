@@ -44,33 +44,32 @@ class FlowChecker extends ClassWithDependencies{
 			$return['data']['xml_inputs'] = $this->_XMLParser->getMasterDocumentInputs();
 			
 			// Connessione FTP (documenti esistenti)
-			//$md['path'] = $md['ftp_folder']. DIRECTORY_SEPARATOR. $md['nome']. "_". $id[key($id)];
+			$md['path'] = $md['ftp_folder']. DIRECTORY_SEPARATOR. $md['nome']. "_". $id[key($id)];
 			
-			//$fileList = Utils::filterList($this->_FTPConnector->getContents($md['path'])['contents'],'isPDF',1);
-			//$fileList = Utils::getListfromField($fileList, 'filename');
+			$fileList = Utils::filterList($this->_FTPConnector->getContents($md['path'])['contents'],'isPDF',1);
+			$fileList = Utils::getListfromField($fileList, 'filename');
 			
-			//Utils::printr($fileList);
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
 			foreach($this->_XMLParser->getDocList() as $document){
+				
 				if(!is_null($document['load'])){
 					$defaultXml = XML_STD_PATH . (string)$document['load'];
 					$document = simplexml_load_file($defaultXml);
+						
 				}
 				
-				$docResult = new FlowCheckerResult();
-				
+				$docResult = new FlowCheckerResult();				
 				if(!is_null($document['md'])){
 					// è un documento di tipo esterno (masterDocument)	
 					// TODO: controllare se esiste e appendere il risulktato
 				} else {
-					$docResult->documentName = (string)$document['name'];
+					$docResult->documentName = (string)$document['name'];					
 					$docResult->inputs = $document->inputs->input;
 					$docResult->defaultInputs = $this->_defaultInputs;
 					
 					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"file_name");
-					
 					foreach($document->attributes() as $k=>$attr){
 						$f_name = "_check_$k";
 						if(method_exists(__CLASS__, $f_name)){
@@ -81,13 +80,13 @@ class FlowChecker extends ClassWithDependencies{
 					if(!is_null($document->signatures->signature) && empty($docResult->errors)){
 						// Conbtrollo el firme secondo i seguewnti step:
 						
-						//$files = self::_getFtpFiles($docResult->documentName, $fileList);
+						$files = self::_getFtpFiles($docResult->documentName, $fileList);
 						foreach($files as $k=>$filename){
 							
-							// $filename = $md['path'].DIRECTORY_SEPARATOR.$file;
+							$filename = $md['path'].DIRECTORY_SEPARATOR.$file;
 							$result = $this->_checkSignatures($filename, $document, $signers, $k, $docResult, $return['data']['info']['md_data']);
 							$docResult->signatures[$k] = $result;
-							//$docResult->docData[$k] = isset($document_data[$file]) ? $document_data[$file] : null;
+							$docResult->docData[$k] = isset($document_data[$file]) ? $document_data[$file] : null;
 						}
 					}
 				}

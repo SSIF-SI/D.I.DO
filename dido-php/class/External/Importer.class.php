@@ -5,6 +5,8 @@ class Importer{
 	private $_result, $_oldname, $_newname;
 	
 	const IMPORTED = "imported";
+	const FAKEFILE = "fakefile/sample06.pdf";
+	
 	
 	public function __construct($FTPConnector = null, $connInstance = null){
 		if(is_null($FTPConnector)) $FTPConnector = FTPConnector::getInstance();
@@ -118,14 +120,15 @@ class Importer{
 		$this->_result = $masterdocumentData->saveInfo($data, $id_md, true);
 		$this->_checkErrors();
 		
-		
+		$ftpPath=$ftp_folder . DIRECTORY_SEPARATOR.$md['nome'] . "_" . $id_md;
 		// Creo la cartella ftp
-		if (!$this->_FTPConnector->ftp_mksubdirs($ftp_folder . DIRECTORY_SEPARATOR . $md['nome'] . "_" . $id_md)){
+		if (!$this->_FTPConnector->ftp_mksubdirs($ftpPath)){
 			$this->_result['errors'] = "Cannot create subdirs in FTP";
 			$this->_checkErrors();
 		}
 		
 		// TODO: Importo/Creo il documento pdf
+		$this->_importFakePdf($ftpPath,$md['nome']."."."pdf");
 		
 		// Se tutto ok sposto il file nella cartella imported e faccio COMMIT
 		if(!file_exists(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED)){
@@ -139,7 +142,11 @@ class Importer{
 		die(json_encode(array('errors' => false)));
 		
 	}
-	
+	// Rinomino e Copio il file sample06.pdf nella directory FTP dove dovrà essere trasferito il file importato  
+	private function _importFakePdf($ftpPath, $fakefile){
+		copy(REAL_ROOT.self::FAKEFILE ,REAL_ROOT."fakefile".DIRECTORY_SEPARATOR.$fakefile);
+		$this->_FTPConnector->upload(REAL_ROOT."fakefile".DIRECTORY_SEPARATOR.$fakefile, $ftpPath.DIRECTORY_SEPARATOR.$fakefile);
+	}
 	private function _checkErrors(){
 		if(!empty($this->_result['errors'])){
 			$this->_connInstance->query("ROLLBACK");
