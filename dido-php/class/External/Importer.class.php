@@ -57,7 +57,7 @@ class Importer{
 		$rename = rename($this->_oldname, $this->_newname);
 		if(!$rename)
 			die(json_encode(array('errors' => 'Permessi di scrittura negati')));
-		
+		$importfilename=$data['import_filename'];
 		unset($data['import_filename']);
 				
 		// Tramite un'unica transazione vado a scrivere i dati nelle tabelle 
@@ -128,13 +128,19 @@ class Importer{
 		}
 		
 		// TODO: Importo/Creo il documento pdf
-		$this->_importFakePdf($ftpPath,$md['nome']."."."pdf");
-		
-		// Se tutto ok sposto il file nella cartella imported e faccio COMMIT
+		$fakefile=$md['nome']."_".$id_md.".pdf";
+		$this->_importFakePdf($ftpPath,$fakefile);
+	
+		if($this->_FTPConnector->file_exists($ftpPath.DIRECTORY_SEPARATOR.$fakefile)){
+			$this->addDocument($md,$id_md,$importfilename);
+		}
 		if(!file_exists(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED)){
 			mkdir(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED);
 		}
+		// Se tutto ok sposto il file nella cartella imported e faccio COMMIT
 		rename($this->_newname, dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED.DIRECTORY_SEPARATOR. basename($this->_unlock($this->_newname)));
+		
+
 		
 		$this->_connInstance->query("COMMIT");
 		
@@ -146,6 +152,20 @@ class Importer{
 	private function _importFakePdf($ftpPath, $fakefile){
 		copy(REAL_ROOT.self::FAKEFILE ,REAL_ROOT."fakefile".DIRECTORY_SEPARATOR.$fakefile);
 		$this->_FTPConnector->upload(REAL_ROOT."fakefile".DIRECTORY_SEPARATOR.$fakefile, $ftpPath.DIRECTORY_SEPARATOR.$fakefile);
+		
+	}
+	
+	private function addDocument($data,$id_md,$importfilename){
+		$doc = array (
+				'nome' 			=> $data['nome'],
+				'id_md' 			=> $id_md,
+				'type'  			=> ".pdf",
+				'imported_file_name'	=> $importfilename,
+				'closed'		=> 0
+		);
+		$document = new Document($this->_connInstance);
+		$this->_result = $document->save($doc);
+		$this->_checkErrors();
 	}
 	private function _checkErrors(){
 		if(!empty($this->_result['errors'])){
