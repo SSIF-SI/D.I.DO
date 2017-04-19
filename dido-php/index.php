@@ -74,8 +74,8 @@ if(isset($_GET['md'])){
 		}
 		die();
 	} else {
-		$FlowChecker = new FlowChecker();
-		$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
+		//$FlowChecker = new FlowChecker();
+		//$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
 		$detail = TemplateHelper::createTimeline($fcr);
 	}
 }
