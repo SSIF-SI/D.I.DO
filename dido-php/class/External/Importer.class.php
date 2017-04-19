@@ -49,7 +49,7 @@ class Importer{
 		
 		// Se non trovo il file vuol dire che è stato importato correttamente da qualcun'altro
 		if(!file_exists(GECO_IMPORT_PATH.$data['import_filename']))
-			die(json_encode(array('errors' => "Il file è già stato umportato")));
+			die(json_encode(array('errors' => "Il file è già stato importato")));
 		
 		// Rinomino il file per mettergli un lock non fisico
 		$this->_oldname = GECO_IMPORT_PATH.$data['import_filename'];
@@ -132,7 +132,7 @@ class Importer{
 		$this->_importFakePdf($ftpPath,$fakefile);
 	
 		if($this->_FTPConnector->file_exists($ftpPath.DIRECTORY_SEPARATOR.$fakefile)){
-			$this->addDocument($md,$id_md,$importfilename);
+			$this->addDocument($md['nome'],$id_md,"pdf",$importfilename);
 		}
 		if(!file_exists(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED)){
 			mkdir(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED);
@@ -155,11 +155,11 @@ class Importer{
 		
 	}
 	
-	private function addDocument($data,$id_md,$importfilename){
+	private function addDocument($nome,$id_md,$extension,$importfilename){
 		$doc = array (
-				'nome' 			=> $data['nome'],
+				'nome' 			=> $nome,
 				'id_md' 			=> $id_md,
-				'type'  			=> ".pdf",
+				'extensione'  			=> $extension,
 				'imported_file_name'	=> $importfilename,
 				'closed'		=> 0
 		);
