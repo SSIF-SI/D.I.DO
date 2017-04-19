@@ -70,6 +70,7 @@ class FlowChecker extends ClassWithDependencies{
 					$docResult->defaultInputs = $this->_defaultInputs;
 					
 					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"file_name");
+					
 					foreach($document->attributes() as $k=>$attr){
 						$f_name = "_check_$k";
 						if(method_exists(__CLASS__, $f_name)){
