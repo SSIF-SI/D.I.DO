@@ -4,7 +4,7 @@ class HTMLHelper{
 		ob_start();
 ?>
 <div class="form-group <?=$class?>">
-	<label class="control-label" for="<?=$name?>"><?=$label?>:</label>
+	<label class="control-label" for="<?=$name?>"><?=$label?>: </label>
 	<select class="form-control" <?php if(!$isImported):?> id="<?=$name?>" name="<?=$name?>"<?php else:?> disabled="disabled"<?php endif;?>>
 <?php if(!$isImported):?>
 		<option value="">---Scegli---</option>
@@ -192,5 +192,12 @@ class HTMLHelper{
 		
 		return FormHelper::createInputsFromXml($inputs,4,$obj);
 	}
+	
+	public static function checkRequired($required){
+		if($required){
+			echo "<span style='color:red'>*</span>";
+		}
+	}
+	
 }
 ?> 

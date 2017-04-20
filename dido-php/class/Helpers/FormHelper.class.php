@@ -9,8 +9,9 @@ class FormHelper{
 		foreach ($inputs as $input):
 			$editable = $forceEditable || (isset($input['editable']) && $input['editable']); 
 			$type = is_null($input['type']) ? 'text' : (string)$input['type'];
-			$required = is_null($input['mandatory']) ? true : (bool)$input['mandatory'];
-//			$required = is_null($input['mandatory']) ? true : false;
+			
+			$required = is_null($input['mandatory']) ? true : (bool)(string)$input['mandatory'];
+			//			$required = is_null($input['mandatory']) ? true : false;
 				
 			$key = (string)$input;
 			$value = $data[$key];
@@ -26,7 +27,7 @@ class FormHelper{
 		?>
 			<div class="col-lg-4">
         <?php if($readonly || !$editable):?>
-		        <strong><?=ucfirst($key)?></strong><br/>
+		        <strong><?=ucfirst($key)?> <?php HTMLHelper::checkRequired($required);?></strong><br/>
 				<em><?=empty($value) ? "&nbsp;" : $value?></em>
 		<?php else:
 				if(is_null($input['values']))

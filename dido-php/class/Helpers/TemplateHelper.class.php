@@ -59,8 +59,6 @@ class TemplateHelper{
 		$xml = XMLBrowser::getInstance()->getSingleXml($info['md']['xml']);
 		XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
 		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
-		
-		
 ?>
 					<div class="row">
 						<div class="col-lg-12 col-md-12">
@@ -118,8 +116,17 @@ class TemplateHelper{
 		return ob_get_clean();
 	}
 	
+	private static function _compare($inputs, $data){
+		foreach($inputs as $input){
+			$key = (string)$input;
+			if(empty($data[$key])) return false;
+		}
+		return true;
+	}
+	
 	private static function _createTimelineDocList($status, $docData, $info, $id_doc = 0){
-		$error = false;
+		$inputsFilled = self::_compare($docData->inputs, $info);
+		$error = $status != 'success' || $inputsFilled;
 		echo "<li>".self::_createtimelineBadge($status);?>
 										    <div class="timeline-panel">
 		                                        <div class="timeline-heading">
@@ -127,16 +134,23 @@ class TemplateHelper{
 		                                        		<div class="col-lg-4">
 		                                            		<h4 class="timeline-title"><?=ucfirst($docData->documentName)?></h4>
 		                                            	</div>
-		                                            	<div class="col-lg-8">
-		                                            		<?php if($status != 'success'): $error = true;?>
-				                                            <form class="text-right">
-				                                            	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
-				                                            	<?php if(!isset($docData->errors['missing'])):?>
-				                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
-				                                               	<?php endif;?>
-				                                            </form>
-				                                            <?php endif;?>
-		                                            	</div>
+	                                            		<div class="col-lg-8">
+		                                            		<?php if($error):?>
+		                                            			<?php if($inputsFilled):?>
+		                                                        <form class="text-right">
+					                                            	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
+					                                            	<?php if(!isset($docData->errors['missing'])):?>
+					                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
+					                                               	<?php endif;?>
+					                                            </form>
+					                                            <?php else:?>
+					                                            <div class="alert alert-danger alert-dismissable">
+									                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+									                                Prima di poter caricare o aggiornare il documento, riempire le informazioni obbligatorie (<?php HTMLHelper::checkRequired(true)?>) del documento.
+									                            </div>
+                            									<?php endif;?>
+			                                        	</div>
+			                                        	<?php endif;?>
 		                                            </div>
 		                                        </div>
 		                                        <br/>

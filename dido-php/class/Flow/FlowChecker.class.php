@@ -138,6 +138,8 @@ class FlowChecker extends ClassWithDependencies{
 		$this->_PDFParser->loadPDF($tmpPDF);
 		$signaturesOnDocument = $this->_PDFParser->getSignatures();
 		
+		unlink($tmpPDF);
+		
 		$checkResult = array();
 		$sigRoles = new SignersRoles(Connector::getInstance());
 		$sigRoles = Utils::getListfromField($sigRoles->getAll(),null,"sigla");

@@ -25,7 +25,7 @@ var MyModal = {
 				$('#'+MyModal.MyModalId).on('hidden.bs.modal', function (e) {
 					$('#'+MyModal.MyModalId).remove();
 				});
-			}
+			} 
 		},
 		setTitle: function(title){
 			MyModal.init();
@@ -141,8 +141,11 @@ var MyModal = {
 					        // controlli
 					    });
 					}
-					else
+					else{
 						MyModal.ajax(href, data, innerdiv, contentType, processData,callback);
+					}
+				} else {
+					MyModal.busy = false;
 				}
 			}
 		}, 
