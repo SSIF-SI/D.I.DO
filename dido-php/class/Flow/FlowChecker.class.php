@@ -49,6 +49,8 @@ class FlowChecker extends ClassWithDependencies{
 			$fileList = Utils::filterList($this->_FTPConnector->getContents($md['path'])['contents'],'isPDF',1);
 			$fileList = Utils::getListfromField($fileList, 'filename');
 			
+			//Utils::printr($fileList);
+			
 			//$fileList = array("ordine di missione.pdf","allegato_1.pdf","allegato_2.pdf");
 			
 			// Confronto liste con check su firme e quant'altro
@@ -69,8 +71,10 @@ class FlowChecker extends ClassWithDependencies{
 					$docResult->inputs = $document->inputs->input;
 					$docResult->defaultInputs = $this->_defaultInputs;
 					
-					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"file_name");
+					$files = Utils::getListfromField(Utils::filterList($return['data']['info']['documents'], "nome", $docResult->documentName),"ftp_name");
 					
+					//$files = self::_getFtpFiles($docResult->documentName, $fileList);
+
 					foreach($document->attributes() as $k=>$attr){
 						$f_name = "_check_$k";
 						if(method_exists(__CLASS__, $f_name)){
@@ -81,13 +85,11 @@ class FlowChecker extends ClassWithDependencies{
 					if(!is_null($document->signatures->signature) && empty($docResult->errors)){
 						// Conbtrollo el firme secondo i seguewnti step:
 						
-						$files = self::_getFtpFiles($docResult->documentName, $fileList);
-						foreach($files as $k=>$filename){
-							
-							$filename = $md['path'].DIRECTORY_SEPARATOR.$file;
+						//$files = self::_getFtpFiles($docResult->documentName, $fileList);
+						if(count($files)) foreach($files as $k=>$filename){
+							$filename = $md['path'].DIRECTORY_SEPARATOR.$filename;
 							$result = $this->_checkSignatures($filename, $document, $signers, $k, $docResult, $return['data']['info']['md_data']);
 							$docResult->signatures[$k] = $result;
-							$docResult->docData[$k] = isset($document_data[$file]) ? $document_data[$file] : null;
 						}
 					}
 				}
@@ -136,8 +138,6 @@ class FlowChecker extends ClassWithDependencies{
 		$this->_PDFParser->loadPDF($tmpPDF);
 		$signaturesOnDocument = $this->_PDFParser->getSignatures();
 		
-		unlink($tmpPDF);
-	
 		$checkResult = array();
 		$sigRoles = new SignersRoles(Connector::getInstance());
 		$sigRoles = Utils::getListfromField($sigRoles->getAll(),null,"sigla");

@@ -65,6 +65,11 @@ if(isset($_GET['md'])){
 	$FlowChecker = new FlowChecker();
 	$fcr = $FlowChecker->checkMasterDocument(array('id_md' => $_GET['md']));
 	
+	if(empty($fcr)){
+		header("Location: ".HTTP_ROOT);
+		die();
+	}
+	
 	if(isset($_GET['edit'])){
 		if(isset($_GET['d'])){
 			$docInputs = FlowChecker::getDocInputsByIdDoc($fcr, $_GET['d']);

@@ -45,6 +45,9 @@ class Responder{
 			$this->_md_data = $this->_compact(Utils::groupListBy($this->_MasterdocumentData->getBy("id_md", join(",",$md_ids)), "id_md"));
 			$documents = Utils::getListfromField($this->_Document->getBy("id_md", join(",",$md_ids)), null, "id_doc");
 			if(!empty ($documents)){
+				foreach($documents as $k=>$document){
+					$documents[$k]['ftp_name'] = FormHelper::fieldFromLabel($documents[$k]['nome']." ".$documents[$k]['id_doc'].".".$documents[$k]['extension']);
+				}
 				$this->_documents = Utils::groupListBy($documents,"id_md");
 				$this->_documents_data = $this->_compact(Utils::groupListBy($this->_DocumentData->getBy("id_doc", join(",",array_keys($documents))),"id_doc"));
 			} 

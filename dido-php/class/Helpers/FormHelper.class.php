@@ -177,11 +177,11 @@ class FormHelper{
 	}
 	
 	public static function fieldFromLabel($label){
-		return strtolower(str_replace(" ", "_", $label));
+		return strtolower(str_replace(array(" ","'","/"), "_", $label));
 	}
 	
 	public static function labelFromField($field){
-		return strtolower(str_replace("_", " ", $field));
+		return strtolower(str_replace(array(" ","'","/"), " ", $field));
 	}
 	
 	private static function checkField($type, $var, $field, $label){

@@ -95,7 +95,8 @@ class TemplateHelper{
 												if(empty($docData->found)):
 													$firstError = self::_createTimelineDocList('missing-document',$docData,0);
 												else:
-													foreach($docData->found as $id_doc => $pdf_name):
+													foreach($docData->found as $id_doc=>$found):
+													
 													$status = 
 														empty($docData->errors) ? 
 															($docData->mandatory ? 'success' : 'not-mandatory') :
@@ -265,7 +266,7 @@ class TemplateHelper{
 					<?php foreach($subcategory as $catName=>$val):?>
 						
 						<h4 class="text-center alert alert-info" ><?=ucfirst($catName)?></h4>
-						<?php $catName = str_replace(" ", "_", $catName);?>
+						<?php $catName = FormHelper::fieldFromLabel($catName);?>
 						<table class="table table-condensed table-striped <?=$catName?>">
 						<?php
 						$th = false;

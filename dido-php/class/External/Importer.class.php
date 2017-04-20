@@ -84,11 +84,22 @@ class Importer{
 		XMLParser::getInstance()->setXMLSource($xml, $data['md_type']);
 		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
 		
+		// Recupero il primo documento dell'xml
+		$firstDoc = null;
+		
+		foreach(XMLParser::getInstance()->getDocList() as $document){
+			if(!is_null($document['load'])){
+				$defaultXml = XML_STD_PATH . (string)$document['load'];
+				$document = simplexml_load_file($defaultXml);
+			}	
+			$firstDoc = $document;
+			break;			
+		}
+			
+		
 		unset($data['md_nome'], $data['md_type'], $data['md_xml']);
 		$id_md = $this->_connInstance->getLastInsertId();
 		$masterdocumentData = new MasterdocumentData($this->_connInstance);
-		
-		//Utils::printr($data);
 		
 		foreach($inputs as $input){
 			$data_key = FormHelper::fieldFromLabel((string)$input);
@@ -128,12 +139,16 @@ class Importer{
 		}
 		
 		// TODO: Importo/Creo il documento pdf
-		$fakefile=$md['nome']."_".$id_md.".pdf";
+		
+		$this->addDocument($firstDoc['name'],$id_md,"pdf",$importfilename);
+		
+		$fakefile=FormHelper::fieldFromLabel($firstDoc['name']." ".$this->_result['lastInsertId'].".pdf");
 		$this->_importFakePdf($ftpPath,$fakefile);
 	
-		if($this->_FTPConnector->file_exists($ftpPath.DIRECTORY_SEPARATOR.$fakefile)){
-			$this->addDocument($md['nome'],$id_md,"pdf",$importfilename);
-		}
+		//if($this->_FTPConnector->file_exists($ftpPath.DIRECTORY_SEPARATOR.$fakefile)){
+		//	$this->addDocument($firstDoc['nome'],$id_md,"pdf",$importfilename);
+		//}
+		
 		if(!file_exists(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED)){
 			mkdir(dirname($this->_newname).DIRECTORY_SEPARATOR.self::IMPORTED);
 		}
@@ -159,7 +174,7 @@ class Importer{
 		$doc = array (
 				'nome' 			=> $nome,
 				'id_md' 			=> $id_md,
-				'extensione'  			=> $extension,
+				'extension'  			=> $extension,
 				'imported_file_name'	=> $importfilename,
 				'closed'		=> 0
 		);
@@ -167,6 +182,7 @@ class Importer{
 		$this->_result = $document->save($doc);
 		$this->_checkErrors();
 	}
+	
 	private function _checkErrors(){
 		if(!empty($this->_result['errors'])){
 			$this->_connInstance->query("ROLLBACK");
