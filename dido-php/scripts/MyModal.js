@@ -121,6 +121,7 @@ var MyModal = {
 			MyModal.load($(context));
 		},
 		submit:function (element,href, data, innerdiv, contentType, processData,callback,download){
+			
 			if(MyModal.busy == false){
 				MyModal.busy = true;
 
@@ -128,6 +129,7 @@ var MyModal = {
 				$('.modal .progress').css("visibility", 'visible');
 				if(callback === undefined)
 					MyModal.setProgress(1);
+				
 				if(MyModal.checkRequired(data, innerdiv)){
 					/*
 					MyModal.span = element.children("span");
