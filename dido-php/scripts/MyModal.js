@@ -24,6 +24,7 @@ var MyModal = {
 				'</div>').appendTo("#page-wrapper");
 				$('#'+MyModal.MyModalId).on('hidden.bs.modal', function (e) {
 					$('#'+MyModal.MyModalId).remove();
+					MyModal.busy = false;
 				});
 			} 
 		},

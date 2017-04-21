@@ -3,6 +3,7 @@ $(document).ready(function(){
 		e.preventDefault();
 		var formId = $(this).attr('href').replace("#","");
 		var data = $('form#'+formId).serializeArray();
+		alert(data);
 		MyModal.setTitle("Importazione ");
 		MyModal.setContent("<h4>Attendere, importazione in corso... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>");
 		MyModal.modal();
@@ -50,7 +51,6 @@ $(document).ready(function(){
 		var selected = $('.select-one:checkbox:checked');
 		MyModal.setTitle("Collegamento e importazione documenti");
 		var tr = [];
-		
 	});
 
 	$('.import-selected').click(function(e){
