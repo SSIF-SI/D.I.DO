@@ -128,7 +128,7 @@ class FTPConnector{
 		if(self::$_instance != null){
 			
 			//$this->cd($_SESSION[$this->_baseDir]);
-			$this->_createContentList(true);
+			//$this->_createContentList(true);
 				
 			if(file_exists($file)){
 				
