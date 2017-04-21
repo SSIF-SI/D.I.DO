@@ -103,15 +103,16 @@ class Importer{
 		
 		foreach($inputs as $input){
 			$data_key = FormHelper::fieldFromLabel((string)$input);
+			$mandatory = isset($input['mandatory']) ? (bool)(string)$input['mandatory'] : true;
+			//var_dump($mandatory);
 			
-			//Utils::printr("checking $data_key");
 			if(empty($data[$data_key])){
-				if (!isset($input['mandatory']) || $input['mandatory']){
-					Utils::printr("Not found $data_key, but MANDATORY");
+				if ($mandatory){
+					//Utils::printr("Not found $data_key, but MANDATORY");
 					$this->_result['errors'] = "Manca il valore di \"$input\", impossibile continuare.";
 					break;
 				} else {
-					Utils::printr("Not found $data_key, SKIPPING");
+					//Utils::printr("Not found $data_key, SKIPPING");
 					continue;
 				}
 			}
@@ -119,7 +120,7 @@ class Importer{
 			//Utils::printr("found $data_key, converting to $input");
 				
 			$value = $data[$data_key];
-			unset($data[$data_key]);
+			unset($data[$data_key],$input['mandatory']);
 			$data[(string)$input] = $value;
 		}	
 		

@@ -1,10 +1,10 @@
 <?php 
 class HTMLHelper{
-	static function select($name, $label, $options, $selected = null, $class = null, $isImported = false){
+	static function select($name, $label, $options, $selected = null, $class = null, $isImported = false,$required = true){
 		ob_start();
 ?>
 <div class="form-group <?=$class?>">
-	<label class="control-label" for="<?=$name?>"><?=$label?>: </label>
+	<label class="control-label" for="<?=$name?>"><?=$label?>:<?php self::checkRequired($required)?></label>
 	<select class="form-control" <?php if(!$isImported):?> id="<?=$name?>" name="<?=$name?>"<?php else:?> disabled="disabled"<?php endif;?>>
 <?php if(!$isImported):?>
 		<option value="">---Scegli---</option>
@@ -25,7 +25,7 @@ class HTMLHelper{
 		if($type == 'hidden' || $type == 'file'):
 			if($type != 'hidden' && !is_null($label)):
 ?>
-    <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
+    <label class="control-label" for="<?=$name?>"><?=$label?>:<?php self::checkRequired($required)?></label>
 <?php 		
 			endif;
 			echo self::lineInput($type, $name, $label, $value, $class, $required, $isImported);
@@ -34,7 +34,7 @@ class HTMLHelper{
 ?>
 	<div class="form-group <?=$class?>">
 <?php 	if($type != 'hidden'):?>	
-	    <label class="control-label" for="<?=$name?>"><?=$label?>:</label>
+	    <label class="control-label" for="<?=$name?>"><?=$label?>:<?php self::checkRequired($required)?></label>
 <?php 	endif; ?>
 		<?=$innerInput;?> 
 	</div>		
@@ -43,17 +43,17 @@ class HTMLHelper{
 		return ob_get_clean();
 	}
 	
-	static function multipleInput($type, $name, $label, $options, $selected = array(), $class = null, $inline = false){
+	static function multipleInput($type, $name, $label, $options, $selected = array(), $class = null, $inline = false, $required = false){
 		ob_start();		
 ?>
 <div class="form-group <?=$class?>">
-	<label class="control-label"><?=$label?></label>
+	<label class="control-label"><?=$label?>:<?php self::checkRequired($required)?></label>
 <?php 
 		foreach ($options as $option):
 			$input = "<input type=\"$type\" id=\"{$option['id']}\" name=\"$name\" value=\"{$option['value']}\" ".(in_array($option['value'], $selected) ? "checked" : "").">{$option['label']}";
 			if($inline):
 ?>
-	<label class="control-label" class="<?=$type?>-inline"><?=$input?></label>
+	<label class="control-label" class="<?=$type?>-inline"><?=$input?>:</label>
 <?php	 	else :?>	
 	<div class="<?=$type?>">
 		<label class="control-label"><?=$input?></label>
