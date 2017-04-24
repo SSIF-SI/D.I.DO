@@ -54,18 +54,51 @@ class XMLBrowser{
 		return $filtered;
 	}
 	
-	public function getXmlList($dividedBycategories = true){
+	public function getXmlList($dividedBycategories = true, $services = null){
 		$list = array();
 		foreach($this->_xmlTree as $categoria=>$xmlData){
 			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
-					if(!$this->_PermissionHelper->isConsultatore($metadata['owner'])){
-						continue;
+					if(!is_null($services)){
+						if(!in_array((string)$metadata['owner'],$services)){
+						
+							$isMDVisible =
+							$this->_PermissionHelper->isGestore() ||
+							$this->_PermissionHelper->isConsultatore() ||
+							$this->_PermissionHelper->isSigner();
+						
+							if($isMDVisible){
+								if(!is_null($metadata['visibleFor'])){
+									$isMDVisible = false;
+									$list = split(",", (string)$metadata['visibleFor']);
+									foreach($services as $service){
+										if(in_array($service, $list)){
+											$isMDVisible = true;
+											break;
+										}
+									}
+								}
+									
+								if(!is_null($metadata['hiddenFor'])){
+									$list = split(",", (string)$metadata['hiddenFor']);
+									foreach($services as $service){
+										if(in_array($service, $list)){
+											$isMDVisible = false;
+											break;
+										}
+									}
+								}
+							}
+						}
+					} else $isMDVisible = true;
+					
+					if($isMDVisible){
+						if($dividedBycategories) 
+							$list[$categoria][$xmlData['path'].$metadata['file']] = $metadata['xml'];
+						else
+							$list[$xmlData['path'].$metadata['file']] = $metadata['xml'];
 					}
-					if($dividedBycategories) 
-						$list[$categoria][$xmlData['path'].$metadata['file']] = $metadata['xml'];
-					else
-						$list[$xmlData['path'].$metadata['file']] = $metadata['xml'];
+					
 				}
 			}
 		}
@@ -142,10 +175,12 @@ class XMLBrowser{
 		return $tree;
 	} 
 	
+	/*
 	public function filterXmlByServices($services = null){
-		if(is_null($services) || !is_array($services) || $this->_PermissionHelper->isAdmin()) return;
+		if(is_null($services) || !is_array($services) || $this->_PermissionHelper->isAdmin()) return $this->getXmlList(false);
 		
-		foreach($this->_xmlTree as $catName=>$data){
+		$filtered = $this->_xmlTree;
+		foreach($filtered as $catName=>$data){
 			foreach($data['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
 					
@@ -179,17 +214,20 @@ class XMLBrowser{
 							}
 						
 							if(!$isMDVisible){
-								unset($this->_xmlTree[$catName]['documenti'][$tipoDocumento][$numVersione]);					
+								unset($filtered[$catName]['documenti'][$tipoDocumento][$numVersione]);					
 							}
 						} else 
-							unset($this->_xmlTree[$catName]['documenti'][$tipoDocumento][$numVersione]);
+							unset($filtered[$catName]['documenti'][$tipoDocumento][$numVersione]);
 					}
 				}
-				if(empty($this->_xmlTree[$catName]['documenti'][$tipoDocumento]))
-					unset($this->_xmlTree[$catName]['documenti'][$tipoDocumento]);
+				if(empty($filtered[$catName]['documenti'][$tipoDocumento]))
+					unset($filtered[$catName]['documenti'][$tipoDocumento]);
 			}
-			if(empty($this->_xmlTree[$catName]['documenti'])) unset($this->_xmlTree[$catName]);
+			if(empty($filtered[$catName]['documenti'])) unset($filtered[$catName]);
 		}
+		
+		return $this->getXmlList(false, true, $filtered);
 	}
+	*/
 }
 ?>

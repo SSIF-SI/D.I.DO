@@ -8,7 +8,7 @@ abstract class AnyDocument extends Crud{
 		parent::__construct($connInstance);
 	}
 	
-	public function searchByKeyValue($key_value, $id = null) {
+	public function searchByKeyValue($key_value, $id = null, $link = 'AND') {
 		$where = array ();
 		if(!is_null($id) && !is_null($this->id_document_label))
 			$where[] = "{$this->id_document_label} = '$id'";
@@ -20,13 +20,13 @@ abstract class AnyDocument extends Crud{
 				
 				if(is_array($value)){
 					$value = array_map('Utils::apici', $value);
-					$where [] = "key='{$key}' AND value IN (".join(",",$value).")";
+					$where [] = "(key='{$key}' AND value IN (".join(",",$value)."))";
 				} else {
-					$where [] = "key='{$key}' AND value={$value}";
+					$where [] = "(key='{$key}' AND value='{$value}')";
 				}
 			}
 		}
-		$where = join ( " AND ", $where );
+		$where = join ( " $link ", $where );
 		$sql = sprintf ( $this->SQL_SEARCH, isset ( $this->VIEW ) ? $this->VIEW : $this->TABLE, $where );
 		$this->_connInstance->query ( $sql );
 		return $this->_connInstance->allResults();

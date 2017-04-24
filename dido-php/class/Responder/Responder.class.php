@@ -5,11 +5,9 @@ class Responder{
 	private $_Document, $_DocumentData;
 	private $_md = array(), $_md_data = array();
 	private $_documents = array(), $_documents_data = array();
-	private $_alreadyCreated = false;
 	
 	public function __construct(){
 		$this->_XMLBrowser = XMLBrowser::getInstance();
-		$this->_XMLBrowser->filterXmlByServices(PermissionHelper::getInstance()->getUserField('gruppi'));
 		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
 		$this->_MasterdocumentData = new MasterdocumentData(Connector::getInstance());
 		$this->_Document = new Document(Connector::getInstance());
@@ -18,25 +16,28 @@ class Responder{
 		$this->_ownerRules = (array)simplexml_load_file(FILES_PATH."ownerRules.xml")->inputField;
 	}
 	
-	public function createDocList($notClosed = false){
-		$this->_alreadyCreated = true;
-		if(!PermissionHelper::getInstance()->isConsultatore()){
-			// Utente Normale, può vedere solo i documenti di cui è proprietario o firmatario e basta
-			$key_value = array();
-			foreach($this->_ownerRules as $inputField){
-				$key_value[$inputField] = PermissionHelper::getInstance()->getUserId();
-			}
-			$md_data = $this->_Masterdocument->searchByKeyValue($key_value);
-			$ids_md = Utils::getListfromField($md_data, "id_md");
-			$this->_md = $this->_Masterdocument->getBy("id_md",join(",", array_values($ids_md)));
-		} else {
-			$xmlList = array_keys($this->_XMLBrowser->getXmlList(false));
-			$xmlList = array_map("Utils::apici",$xmlList);
-			// Altrimenti filtro in base agli XML di cui ho visione secondo il mio ruolo
-			$this->_md = $this->_Masterdocument->getBy("xml",join(",", $xmlList));
+	public function createDocList($filters = array()){
+		// Utente Normale, può vedere solo i documenti di cui è proprietario o firmatario e basta
+		$key_value = array();
+		foreach($this->_ownerRules as $inputField){
+			$key_value[$inputField] = (string)PermissionHelper::getInstance()->getUserId();
 		}
-		if($notClosed) 
-			$this->_md = Utils::filterList($this->_md, "closed", 0);
+		$md_data = $this->_MasterdocumentData->searchByKeyValue($key_value,null,'OR');
+		$ids_md = Utils::getListfromField($md_data, "id_md");
+		$this->_md = $this->_Masterdocument->getBy("id_md",join(",", array_values($ids_md)));
+		
+		// In base al ruolo posso vedere anche altri Md
+		//$this->_XMLBrowser->filterXmlByServices(PermissionHelper::getInstance()->getUserField('gruppi'));
+		$xmlList = array_keys($this->_XMLBrowser->getXmlList(false, PermissionHelper::getInstance()->getUserField('gruppi')));
+		$xmlList = array_map("Utils::apici",$xmlList);
+		if(count($xmlList)) $this->_md = array_merge($this->_md, $this->_Masterdocument->getBy("xml",join(",", $xmlList)));
+		
+		
+		if(count($filters)>0){
+			foreach($filters as $field=>$value){
+				$this->_md = Utils::filterList($this->_md, $field, $value);
+			}
+		}
 		
 		$this->_md = Utils::getListfromField($this->_md,null,"id_md");
 		
@@ -52,14 +53,22 @@ class Responder{
 				$this->_documents_data = $this->_compact(Utils::groupListBy($this->_DocumentData->getBy("id_doc", join(",",array_keys($documents))),"id_doc"));
 			} 
 		}
+		
+		
 	}
 	
-	public function getMyMasterDocuments(){
-		if(!$this->_alreadyCreated) 
-			$this->createDocList();
+	public function getMyMasterDocuments($filters = array()){
+		$this->createDocList($filters);
+		
+		
+		foreach($this->_md as $id=>$item){
+			$type = dirname($item['xml']);
+			$this->_md[$type][$item['nome']][$id] = $item;
+			unset($this->_md[$id]);
+		}
 		
 		return array(
-			'md' => Utils::groupListBy($this->_md,"xml"),
+			'md' => $this->_md,
 			'md_data' => $this->_md_data,
 			'documents' => $this->_documents,
 			'documents_data' => $this->_documents_data

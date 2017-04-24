@@ -25,12 +25,14 @@ class TemplateHelper{
 			</ul>
 		</li>
 		<?php endif; ?>
+		<?php if(PermissionHelper::getInstance()->isAdmin()):?>
 		<li>
         	<a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i class="fa fa-pencil fa-fw"></i> Gestione firme</a>
         </li>
 		<li>
         	<a href="<?=BUSINESS_HTTP_PATH."permessi.php"?>"><i class="fa fa-key fa-fw"></i> Gestione permessi</a>
         </li>
+        <?php endif;?>
 <?php 
 	}
 	
@@ -70,7 +72,7 @@ class TemplateHelper{
 		                        	<div class="row">
 		                        	<?php echo FormHelper::createInputsFromDB($inputs, $info['md_data'],true)?>
 			                        </div>
-			                        <?php if(empty($xml['from'])):?>
+			                        <?php if(empty($xml['from']) && PermissionHelper::getInstance()->isGestore(array(XMLParser::getInstance()->getOwner()))):?>
 			                        <div class="row text-center">
 		                        		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&edit">
 		                                	<span class="fa fa-pencil fa-1x fa-fw"></span> 
@@ -165,12 +167,14 @@ class TemplateHelper{
 																	<?php echo FormHelper::createInputsFromDB($docData->inputs,$info, true); ?>
 												                	<?php echo FormHelper::createInputsFromDB($docData->defaultInputs,$info,true); ?>
 												                	</div>
-												                	<div class="row text-center">
+												                	<?php if(PermissionHelper::getInstance()->isGestore(array(XMLParser::getInstance()->getOwner()))):?>
+			                        								<div class="row text-center">
 																		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&d=<?=$id_doc?>&edit">
 																		<span class="fa fa-pencil fa-1x fa-fw"></span> 
 																			Modifica informazioni documento
 																		</a>
 																	</div>
+																	<?php endif;?>
 											                    <?php endif;?>
 																</div>
 															</div>
@@ -200,12 +204,10 @@ class TemplateHelper{
 		
 		// Aperti
 		$Responder = new Responder();
-		$Responder->createDocList(true);
+		$Responder->createDocList(array('cloded' => 0));
 		
-		$md_open = $Responder->getMyMasterDocuments()['md'];
-		$nTot = 0;
-		foreach($md_open as $docs)
-			$nTot += count($docs);
+		$md_open = $Responder->getMyMasterDocuments()['md_data'];
+		$nTot = count($md_open);
 		
 		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$nTot,"Procedimenti in sospeso","?detail=documentOpen");
 	
@@ -382,7 +384,7 @@ class TemplateHelper{
 	
 	static function createListGroupOpen($md_open){
 		ob_start();
-		if(count($md_open['md'])):
+		if(count($md_open['md_data'])):
 ?>
 		<style>
 		.panel-heading .accordion-toggle{
@@ -400,63 +402,79 @@ class TemplateHelper{
 		    content: "\e117";    /* adjust as needed, taken from bootstrap.css */
 		}
 	</style>
+	
+	
+	
+	
+	
+	
 	<div class="col-lg-12 col-md-12">
 		<div class="panel-group" id="documentsOpen">
-			<?php 
-			foreach ($md_open['md'] as $xml=>$val): 
-				$category = dirname($xml);
-				$xml = XMLBrowser::getInstance()->getSingleXml($xml);
-				XMLParser::getInstance()->setXMLSource($xml, $data['type']);
-				$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
-				if(isset($xml['validEnd']))
-					$category .= "(fino al ".Utils::convertDateFormat($xml['validEnd'], DB_DATE_FORMAT, "d/m/Y").")";
-			?>
-			<div class="panel panel-default">
+			<?php foreach ($md_open['md'] as $category=>$subcategory): ?>
+			<div class="panel panel-default <?=$category?>">
 				<div class="panel-heading">
 					<div class="row">
 						<div class="col-lg-6">
-							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#documentsOpen" href=<?php echo "#list".FormHelper::fieldFromLabel($category); ?>>&nbsp;<?php echo(ucfirst($category))?></a>
+							<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#GroupToImport" href=<?php echo "#list".$category; ?>>&nbsp;Sezione&nbsp;<?php echo(ucfirst($category))?></a>
 		                </div>
 	                    <div class="col-lg-6 text-right">
-							<span class="badge badge-info"><?php echo count($val)?></span>
+							<span class="badge badge-info"><?php echo $subcategory['nTot']; unset($subcategory['nTot'])?></span>
 		                </div>
                     </div>
 				</div>
-			</div>
-			<div id="<?php echo "list".FormHelper::fieldFromLabel($category);?>" class="panel-collapse collapse">
-				<table class="table table-condensed table-striped">
-					<tr>
-						<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
-						<th><?=(string)($input);?>
-						<?php endif; endforeach;?>
-						<th></th>
-					</tr>
-					<?php foreach (array_keys($val) as $id_md):?>
-					<tr>
-						<?php 
-							foreach ($inputs as $input): 
-								if(isset($input['shortView'])):
-									$key = (string)$input;
-									$value = $md_open['md_data'][$id_md][$key];
-									if(isset($input['values'])){
-										$callBack = (string)$input['values'];
-										$values = ListHelper::$callBack();
-										$value = $values[$value];
-									}
-									if(isset($input['type']) && $input['type'] == "data")
-										$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y"); 
-						?>
-						<td><?=$value?></td>						
-						<?php endif; endforeach; ?>
-						<td class="text-center"><a class="btn btn-primary" href="?md=<?=$id_md?>"><span class="fa fa-search fa-1x fa-fw"></span> Dettaglio</a></td>
-					</tr>
+				<div id="<?php echo "list".$category;?>" class="panel-collapse collapse">
+					<?php foreach($subcategory as $catName=>$val):?>
 						
-					<?php endforeach; ?>
-				</table>
+						<h4 class="text-center alert alert-info" ><?=ucfirst($catName)?></h4>
+						<?php $catName = FormHelper::fieldFromLabel($catName);?>
+						<table class="table table-condensed table-striped <?=$catName?>">
+						<?php
+						$th = false;
+						foreach ($val as $id_md=>$data):
+							$xml = XMLBrowser::getInstance()->getSingleXml($data['xml']);
+							XMLParser::getInstance()->setXMLSource($xml, $data['type']);
+							$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+							if(isset($xml['validEnd']))
+								$category .= "(fino al ".Utils::convertDateFormat($xml['validEnd'], DB_DATE_FORMAT, "d/m/Y").")";
+							if(!$th):
+								$th = true;
+							?>
+							<tr>
+								<?php foreach($inputs as $input):if(isset($input['shortView'])):?>
+								<th><?=(string)($input);?>
+								<?php endif; endforeach;?>
+								<th>
+								</th>
+							</tr>
+							<?php endif;?>
+
+							<tr>
+								<?php 
+									foreach ($inputs as $input): 
+										if(isset($input['shortView'])):
+											$key = (string)$input;
+											$value = $md_open['md_data'][$id_md][$key];
+											if(isset($input['values'])){
+												$callBack = (string)$input['values'];
+												$values = ListHelper::$callBack();
+												$value = $values[$value];
+											}
+											if(isset($input['type']) && $input['type'] == "data")
+												$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y"); 
+								?>
+								<td><?=$value?></td>						
+								<?php endif; endforeach; ?>
+								<td class="text-center"><a class="btn btn-primary" href="?md=<?=$id_md?>"><span class="fa fa-search fa-1x fa-fw"></span> Dettaglio</a></td>
+							</tr>
+									
+							<?php endforeach; ?>
+						</table>
+					<?php endforeach;?>
+				</div>
 			</div>
 			<?php endforeach;?>
 		</div>
-	</div>
+    </div>
 <?php 		
 		else:
 ?>

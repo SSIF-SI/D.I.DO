@@ -80,7 +80,7 @@ class Importer{
 		$this->_result = $Masterdocument->save($md);
 		$this->_checkErrors();
 
-		$xml = XMLBrowser::getInstance()->getSingleXml($data['md_xml']);
+		$xml = XMLBrowser::getInstance()->getSingleXml($data['md_xml'], PermissionHelper::getInstance()->getUserField('gruppi'));
 		XMLParser::getInstance()->setXMLSource($xml, $data['md_type']);
 		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
 		

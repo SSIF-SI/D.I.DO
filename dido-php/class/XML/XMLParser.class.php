@@ -49,6 +49,10 @@ class XMLParser{
 	public function getDocTypes(){
 		return (array)$this->_xml->types;
 	}
+	
+	public function getOwner(){
+		return $this->_xml['owner'];
+	}
 }
 
 class XMLParserException extends Exception{}

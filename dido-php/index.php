@@ -49,10 +49,8 @@ if( isset($_GET['detail'])){
 		default:
 		case 'documentOpen':
 			$Responder = new Responder();
-			$Responder->createDocList(true);
 			
-			$md_open = $Responder->getMyMasterDocuments();
-			
+			$md_open = $Responder->getMyMasterDocuments(array('closed' => 0));
 			$detail = TemplateHelper::createListGroupOpen($md_open);
 			break;
 			$detail = null;

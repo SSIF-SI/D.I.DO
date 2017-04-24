@@ -58,7 +58,7 @@
                 <li class="dropdown">
                     <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-user fa-fw"></i><?=Utils::operatore(Session::getInstance()->get("AUTH_USER"));?>&nbsp;<i class="fa fa-caret-down"></i>
+                        <i class="fa fa-user fa-fw"></i><?=PersonaleHelper::getNominativo(PermissionHelper::getInstance()->getUserId());?>&nbsp;<i class="fa fa-caret-down"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
                         <li><a href="<?=HTTP_ROOT."?logout"?>"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
