@@ -63,9 +63,8 @@ class XMLBrowser{
 						if(!in_array((string)$metadata['owner'],$services)){
 						
 							$isMDVisible =
-							$this->_PermissionHelper->isGestore() ||
-							$this->_PermissionHelper->isConsultatore() ||
-							$this->_PermissionHelper->isSigner();
+							$this->_PermissionHelper->isGestore($metadata['owner']) ||
+							$this->_PermissionHelper->isConsultatore($metadata['owner']);
 						
 							if($isMDVisible){
 								if(!is_null($metadata['visibleFor'])){
