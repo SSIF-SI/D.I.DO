@@ -38,7 +38,6 @@ define("KARTIK_FILEINPUT", true);
 */
 //Utils::printr(Personale::getInstance()->getPeopleByGroupType("Servizio"));
 
-
 if( isset($_GET['detail'])){ 
 	switch($_GET['detail']){
 		case 'documentToImport':

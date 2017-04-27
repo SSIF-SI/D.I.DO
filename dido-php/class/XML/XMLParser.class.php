@@ -43,6 +43,7 @@ class XMLParser{
 	}
 	
 	public function getDocList(){
+		
 		return $this->_xml->list->document;
 	}
 	
@@ -52,6 +53,17 @@ class XMLParser{
 	
 	public function getOwner(){
 		return $this->_xml['owner'];
+	}
+	
+	public function getDocByName($docname){
+		foreach($this->_xml->list->document as $document){
+			if(!is_null($document['load'])){
+				$defaultXml = XML_STD_PATH . (string)$document['load'];
+				$document = simplexml_load_file($defaultXml);
+			}
+			if((string)$document['name'] == $docname) return $document;
+		}
+		return null;
 	}
 }
 

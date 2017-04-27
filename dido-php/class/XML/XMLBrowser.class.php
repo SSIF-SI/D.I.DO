@@ -155,6 +155,7 @@ class XMLBrowser{
 		$ownerTree = array();
 		foreach($xmlList as $xmlFile){
 			$xml = simplexml_load_file($xmlFile);
+			
 			$fileName = basename($xmlFile);
 			preg_match("/".self::FILE_REGEX."/", $fileName,$fileInfo);
 			if(!empty($fileInfo[2]))

@@ -20,9 +20,15 @@ class PermissionHelper{
 		$this->_role = isset($user_role[$user_id]) ? $user_role[$user_id] : null;
 		
 		// Set user Signature, if exists
-		$signerObj = new Signers(Connector::getInstance());
-		$signer = Utils::getListfromField($signerObj->getBy("id_persona",$user_id ),"pkey","id_persona");
-		$this->_sign = isset($signer[$user_id]) ? $signer[$user_id] : null;	
+		$signersObj = new Signers(Connector::getInstance());
+		$mySignature = Utils::getListfromField($signersObj->getBy('id_persona', $user_id), 'pkey','id_persona');
+		$signatureObj = new Signature(Connector::getInstance());
+		$signatures = $signatureObj->getAll('sigla','id_item');
+		
+		$signer = array_merge(
+					Utils::filterList($signatures,"id_persona",$user_id ),
+					Utils::filterList($signatures,"id_delegato",$user_id ));
+		$this->_sign = array('mySignature' => reset($mySignature), 'signRoles' => Utils::getListfromField($signer,null,'sigla'));	
 	}
 	
 	public static function getInstance() {
@@ -78,6 +84,6 @@ class PermissionHelper{
 	}
 	
 	public function isSigner(){
-		return !is_null($this->_sign);
+		return !empty($this->_sign);
 	}
 }

@@ -204,15 +204,14 @@ class TemplateHelper{
 		
 		// Aperti
 		$Responder = new Responder();
-		$Responder->createDocList(array('cloded' => 0));
 		
-		$md_open = $Responder->getMyMasterDocuments()['md_data'];
-		$nTot = count($md_open);
+		$md_open = count($Responder->getMyMasterDocuments(array('closed' => 0))['md_data']);
 		
-		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$nTot,"Procedimenti in sospeso","?detail=documentOpen");
+		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$md_open,"Procedimenti in sospeso","?detail=documentOpen");
 	
+		$toSign = count($Responder->getMyMasterDocumentsToSign()['md']);
 		// Da firmare
-		self::_createDashboardPanel(4,"panel-green","fa-edit",2,"Documenti da firmare","?detail=documentToSign");
+		self::_createDashboardPanel(4,"panel-green","fa-edit",$toSign,"Documenti da firmare","?detail=documentToSign");
 	}
 	
 	private static function _createDashboardPanel($panel_measure, $panel_class, $icon_class,$nTot,$label,$href){
