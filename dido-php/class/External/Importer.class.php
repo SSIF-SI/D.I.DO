@@ -80,7 +80,7 @@ class Importer{
 		$this->_result = $Masterdocument->save($md);
 		$this->_checkErrors();
 
-		$xml = XMLBrowser::getInstance()->getSingleXml($data['md_xml'], PermissionHelper::getInstance()->getUserField('gruppi'));
+		$xml = XMLBrowser::getInstance()->getSingleXml($data['md_xml']);
 		XMLParser::getInstance()->setXMLSource($xml, $data['md_type']);
 		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
 		
@@ -88,14 +88,10 @@ class Importer{
 		$firstDoc = null;
 		
 		foreach(XMLParser::getInstance()->getDocList() as $document){
-			if(!is_null($document['load'])){
-				$defaultXml = XML_STD_PATH . (string)$document['load'];
-				$document = simplexml_load_file($defaultXml);
-			}	
+			XMLParser::getInstance()->checkIfMustBeLoaded($document);
 			$firstDoc = $document;
 			break;			
 		}
-			
 		
 		unset($data['md_nome'], $data['md_type'], $data['md_xml']);
 		$id_md = $this->_connInstance->getLastInsertId();

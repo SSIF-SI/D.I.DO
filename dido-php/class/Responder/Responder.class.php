@@ -20,8 +20,8 @@ class Responder{
 		$this->_ownerRules = (array)simplexml_load_file(FILES_PATH."ownerRules.xml")->inputField;
 	}
 	
-	public function createDocList($filters = array()){
-		// Utente Normale, può vedere solo i documenti di cui è proprietario o firmatario e basta
+	public function firstCleanList($filters){
+		// Step1. Lista di md di cui uno è proprietario
 		$key_value = array();
 		foreach($this->_ownerRules as $inputField){
 			$key_value[$inputField] = (string)PermissionHelper::getInstance()->getUserId();
@@ -30,19 +30,32 @@ class Responder{
 		$ids_md = Utils::getListfromField($md_data, "id_md");
 		$this->_md = $this->_Masterdocument->getBy("id_md",join(",", array_values($ids_md)));
 		
-		// In base al ruolo posso vedere anche altri Md
-		//$this->_XMLBrowser->filterXmlByServices(PermissionHelper::getInstance()->getUserField('gruppi'));
+		// Step 2. Lista di md visibili in base al ruolo
 		$xmlList = array_keys($this->_XMLBrowser->getXmlList(false, PermissionHelper::getInstance()->getUserField('gruppi')));
 		$xmlList = array_map("Utils::apici",$xmlList);
+		
+		// Unione di questi due elenchi
 		if(count($xmlList)) $this->_md = array_merge($this->_md, $this->_Masterdocument->getBy("xml",join(",", $xmlList)));
 		
-		
 		if(count($filters)>0){
-			foreach($filters as $field=>$value){
-				$this->_md = Utils::filterList($this->_md, $field, $value);
+			foreach($filters as $k=>$rule){
+				if(!isset($rule['operator']))
+					$rule['operator'] = Utils::OP_EQUAL;
+				$this->_md = Utils::filterList($this->_md, $rule['field'], $rule['value'], $rule['operator']);
 			}
+		} else {
+			$this->_md = Utils::filterList($this->_md, 'closed', 0); // Di default ho quelli aperti
 		}
 		
+		
+	}
+	
+	
+	public function createDocList($filters = array()){
+		// Step1. Lista di md di cui uno è proprietario + elenco di md visibili in base al ruolo
+		$this->firstCleanList($filters);
+				
+		// Creo l'albero di documenti
 		$this->_md = Utils::getListfromField($this->_md,null,"id_md");
 		
 		$md_ids = array_keys($this->_md);
@@ -58,6 +71,8 @@ class Responder{
 			} 
 		}
 		
+		//Step 2. Se sono firmatario dovrei vedere anche quelli hanno o necessitano la mia firma
+		$this->getMyMasterDocumentsWithSign();
 		
 	}
 	
@@ -70,7 +85,6 @@ class Responder{
 			unset($this->_md[$id]);
 		}
 		
-		
 		return array(
 			'md' => $this->_md,
 			'md_data' => $this->_md_data,
@@ -79,10 +93,7 @@ class Responder{
 		);
 	}
 	
-	public function getMyMasterDocumentsToSign(){
-		// Il controllo viene fatto solo sui procedimenti aperti
-		$this->createDocList(array('closed' => 0));
-		
+	private function getMyMasterDocumentsWithSign(){
 		if(PermissionHelper::getInstance()->isSigner()){
 			//Utils::printr("Sono un firmatario");
 			$roles_signatures = PermissionHelper::getInstance()->getUserSign(); //(Ruolo => dati firma )
@@ -98,7 +109,7 @@ class Responder{
 				//Utils::printr($docList);
 				
 				if(count($docList)){
-					foreach($docList as $document){
+					foreach($docList as $id_doc=>$document){
 						
 						$filename = $md['ftp_folder']. DIRECTORY_SEPARATOR. $md['nome']. "_". $id_md . DIRECTORY_SEPARATOR . $document['ftp_name'];
 						
@@ -106,12 +117,16 @@ class Responder{
 						
 						$xmlDoc = XMLParser::getInstance()->getDocByName($document['nome']);
 						
+						// Di default non deve essere firmato da me e non devo firmarlo;
+						$this->_documents[$id_md][$id_doc]['mustBeSigned'] = 0;
+						$this->_documents[$id_md][$id_doc]['signed'] = 0;
 						if(count($xmlDoc->signatures->signature)){
 							$found = 0;
 							foreach($xmlDoc->signatures->signature as $signature){
 								//Utils::printr("This document must be signed by {$signature['role']}");
 								if(isset($roles_signatures['signRoles'][(string)$signature['role']])){
 									if($roles_signatures['signRoles'][(string)$signature['role']]['fixed_role']){
+										$this->_documents[$id_md][$id_doc]['mustBeSigned'] = 1;
 										//Utils::printr("I'm the {$signature['role']}");
 										// è un ruolo fisso, devo verificarlo sempre
 										if($this->_checkSignature($filename,$roles_signatures['mySignature']))
@@ -124,46 +139,53 @@ class Responder{
 										//Utils::printr("Need to find $inputToFind in inputs");
 										if(isset($this->_md_data[$id_md][$inputToFind])){
 											//Utils::printr("found in the inputs");
+											if($this->_md_data[$id_md][$inputToFind] == PermissionHelper::getInstance()->getUserId()){
+												//Utils::printr("Ok, I'm the signer");
+												$this->_documents[$id_md][$id_doc]['mustBeSigned'] = 1;
+											}
+											//Utils::printr($this->_documents[$id_md]);
 											if($this->_checkSignature($filename,$roles_signatures['mySignature'])){
 												//Utils::printr("already signed");
 												$found++;
 											}
 										} 
 									}
-								} else $this->_purge($id_md);
+								} 
 							}
 							if($found>0){
-								$this->_purge($id_md);
+								$this->_documents[$id_md][$id_doc]['signed'] = 1;
 							}
-						} else {
-							$this->_purge($id_md);
-						}
+						} 
 					}
-				} else {
-					$this->_purge($id_md);
-				}
-				
+				} 
 			}
-			
-
 		}	
 		
-		if(count($this->_md)){
-			foreach($this->_md as $id=>$item){
-				$type = dirname($item['xml']);
-				$this->_md[$type][$item['nome']][$id] = $item;
-				unset($this->_md[$id]);
-			}
-		}
+	}
+	
+	public function actions($info, $id_doc){
+		// Posso scaricare un documento se il documento fa perte di quelli che posso vedere o che posso scaricare:
+		$docICanSee = $this->getMyMasterDocuments([['field' => 'id_md', 'value' => $info['md']['id_md']]]);
 		
-		//Utils::printr(count($this->_md));
-		return array(
-				'md' => $this->_md,
-				'md_data' => $this->_md_data,
-				'documents' => $this->_documents,
-				'documents_data' => $this->_documents_data
-		);
+		// Il documento può essere sempre scaricato se visibile dall'utente
+		$canDownload = isset($docICanSee['documents'][$info['md']['id_md']][$id_doc]);
 		
+		// Il documento può essere caricato solo se:
+		// 1. Il documento non è chiuso;
+		$isDocumentstillOpen = $info['documents'][$id_doc]['closed'] == 0;
+		
+		// 2. L'utente può gestire il master document padre
+		XMLParser::getInstance()->setXMLSource(XMLBrowser::getInstance()->getSingleXml($info['md']['xml']));
+		$UserCanManageThis = PermissionHelper::getInstance()->isGestore(XMLParser::getInstance()->getOwner());
+		
+		// 3. L'utente ha firmato o deve firmare il documento.
+		$DocMustBeSignedByUser = $info['documents'][$id_doc]['mustBeSigned'] == 0;
+		
+		// Quindi:
+		$canUpload = $isDocumentstillOpen && ($UserCanManageThis || $DocMustBeSignedByUser);
+		
+		// L'utente può modificare le info solo se è gestore del master document padre
+		return ['canDownload' => $canDownload, 'canUpload' => $canUpload, 'canEditInfo' => $UserCanManageThis];
 	}
 	
 	private function _checkSignature($filename,$signature){
@@ -185,14 +207,15 @@ class Responder{
 		
 	}
 	
-	private function _purge($id_md){
-		//Utils::printr("No stuff for me");
-		$ddata = count($this->_documents[$id_md]) ? array_keys($this->_documents[$id_md]) : null;
-		unset($this->_md[$id_md], $this->_md_data[$id_md],$this->_documents[$id_md]);
-		if(count($ddata)){ 
-			foreach($ddata as $id_ddata){
-				unset($this->_documents_data[$id_ddata]);
+	public static function _purge(&$md, $id_md, $id_doc){
+		unset($md['md_data'][$id_md], $md['documents'][$id_md],$md['documents_data'][$id_md]);
+		foreach ($md['md'] as $category=>$subcategory){
+			foreach($subcategory as $name => $md_data){
+				unset($md['md'][$category][$name][$id_md]);
+				if(count($md['md'][$category][$name]) == 0)
+					unset($md['md'][$category][$name]);
 			}
+			if(count($md['md'][$category]) == 0) unset($md['md'][$category]);
 		}
 	}
 	

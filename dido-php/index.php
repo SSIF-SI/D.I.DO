@@ -47,10 +47,11 @@ if( isset($_GET['detail'])){
 			break;
 		default:
 		case 'documentOpen':
+		case 'documentToSign':
 			$Responder = new Responder();
 			
-			$md_open = $Responder->getMyMasterDocuments(array('closed' => 0));
-			$detail = TemplateHelper::createListGroupOpen($md_open);
+			$md_open = $Responder->getMyMasterDocuments();
+			$detail = TemplateHelper::createListGroupOpen($md_open, $_GET['detail'] == 'documentToSign');
 			break;
 			$detail = null;
 		
@@ -86,6 +87,7 @@ if(count($_POST) > 0){ // Importazione
 	$Importer = new Importer();
 	$Importer->import($_POST); 
 }
+
 
 $pageScripts = array('index.js','MyModal.js');
 include_once (TEMPLATES_PATH."template.php");

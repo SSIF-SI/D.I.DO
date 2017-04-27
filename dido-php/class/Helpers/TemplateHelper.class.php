@@ -101,7 +101,7 @@ class TemplateHelper{
 														empty($docData->errors) ? 
 															($docData->mandatory ? 'success' : 'not-mandatory') :
 															(isset($docData->errors['missing']) ? 'missing-document' : 'missing-signatures');
-														$firstError = self::_createTimelineDocList($status, $docData,$info['documents_data'][$id_doc],$id_doc);
+														$firstError = self::_createTimelineDocList($status, $docData,$info,$id_doc);
 									                                   
 													endforeach;
 												endif;
@@ -127,7 +127,10 @@ class TemplateHelper{
 	}
 	
 	private static function _createTimelineDocList($status, $docData, $info, $id_doc = 0){
-		$inputsFilled = self::_compare($docData->inputs, $info);
+		$r = new Responder();
+		$actions = $r->actions($info, $id_doc);
+		$infodata = $info['document_data'][$id_doc];
+		$inputsFilled = self::_compare($docData->inputs, $infodata);
 		$error = $status != 'success' || $inputsFilled;
 		echo "<li>".self::_createtimelineBadge($status);?>
 										    <div class="timeline-panel">
@@ -140,8 +143,10 @@ class TemplateHelper{
 		                                            		<?php if($error):?>
 		                                            			<?php if($inputsFilled):?>
 		                                                        <form class="text-right">
-					                                            	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
-					                                            	<?php if(!isset($docData->errors['missing'])):?>
+		                                                        	<?php if($actions['canUpload']):?>
+		                                                        	<a class="btn btn-info upload-pdf" type="button"><span class="fa fa-upload fa-1x fa-fw"></span> <?= isset($docData->errors['missing']) ? "Carica" : "Aggiorna"?> il Pdf</a>
+					                                            	<?php endif; ?>
+					                                            	<?php if(!isset($docData->errors['missing']) && $actions['canDownload']):?>
 					                                               	<a class="btn btn-info download-pdf" type="button"><span class="fa fa-download fa-1x fa-fw"></span> Scarica il Pdf</a>
 					                                               	<?php endif;?>
 					                                            </form>
@@ -164,10 +169,10 @@ class TemplateHelper{
 																<div class="panel-body">
 																<?php if(!isset($docData->errors['missing'])): $docData->found?>
 																	<div class="row">
-																	<?php echo FormHelper::createInputsFromDB($docData->inputs,$info, true); ?>
-												                	<?php echo FormHelper::createInputsFromDB($docData->defaultInputs,$info,true); ?>
+																	<?php echo FormHelper::createInputsFromDB($docData->inputs,$infodata, true); ?>
+												                	<?php echo FormHelper::createInputsFromDB($docData->defaultInputs,$infodata,true); ?>
 												                	</div>
-												                	<?php if(PermissionHelper::getInstance()->isGestore(array(XMLParser::getInstance()->getOwner()))):?>
+												                	<?php if($actions['canEditInfo']):?>
 			                        								<div class="row text-center">
 																		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&d=<?=$id_doc?>&edit">
 																		<span class="fa fa-pencil fa-1x fa-fw"></span> 
@@ -204,13 +209,19 @@ class TemplateHelper{
 		
 		// Aperti
 		$Responder = new Responder();
+		$md = $Responder->getMyMasterDocuments();
 		
-		$md_open = count($Responder->getMyMasterDocuments(array('closed' => 0))['md_data']);
-		
+		$md_open = count($md['md_data']);
 		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$md_open,"Procedimenti in sospeso","?detail=documentOpen");
 	
-		$toSign = count($Responder->getMyMasterDocumentsToSign()['md']);
 		// Da firmare
+		$toSign = 0;
+		if(count($md['documents'])){
+			foreach($md['documents'] as $id_md=>$doc){
+				$mustBeSigned = Utils::filterList($doc, 'mustBeSigned', 1);
+				$toSign += count(Utils::filterList($doc, 'signed', 0));
+			}
+		}
 		self::_createDashboardPanel(4,"panel-green","fa-edit",$toSign,"Documenti da firmare","?detail=documentToSign");
 	}
 	
@@ -381,7 +392,16 @@ class TemplateHelper{
 		
 	}
 	
-	static function createListGroupOpen($md_open){
+	static function createListGroupOpen($md_open, $onlyToSign = false){
+		if($onlyToSign){
+			foreach($md_open['documents'] as $id_md=>$doc){
+				$mustBeSigned = Utils::filterList($doc, 'mustBeSigned', 1);
+				$mustBeSigned = Utils::filterList($mustBeSigned, 'signed', 0);
+				if(count($mustBeSigned) == 0) {
+					Responder::_purge($md_open, $id_md, $id_doc);
+				}
+			}
+		}
 		ob_start();
 		if(count($md_open['md_data'])):
 ?>

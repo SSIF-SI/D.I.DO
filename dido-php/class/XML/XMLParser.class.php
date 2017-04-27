@@ -43,7 +43,6 @@ class XMLParser{
 	}
 	
 	public function getDocList(){
-		
 		return $this->_xml->list->document;
 	}
 	
@@ -57,15 +56,20 @@ class XMLParser{
 	
 	public function getDocByName($docname){
 		foreach($this->_xml->list->document as $document){
-			if(!is_null($document['load'])){
-				$defaultXml = XML_STD_PATH . (string)$document['load'];
-				$document = simplexml_load_file($defaultXml);
-			}
+			$this->checkIfMustBeLoaded($document);
 			if((string)$document['name'] == $docname) return $document;
 		}
 		return null;
 	}
+	
+	public function checkIfMustBeLoaded(&$document){
+		if(!is_null($document['load'])){
+			$defaultXml = XML_STD_PATH . (string)$document['load'];
+			$document = simplexml_load_file($defaultXml);
+		}
+	}
 }
+
 
 class XMLParserException extends Exception{}
 ?>

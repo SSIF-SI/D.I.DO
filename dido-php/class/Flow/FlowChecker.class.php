@@ -56,11 +56,7 @@ class FlowChecker extends ClassWithDependencies{
 			// Confronto liste con check su firme e quant'altro
 			foreach($this->_XMLParser->getDocList() as $document){
 				
-				if(!is_null($document['load'])){
-					$defaultXml = XML_STD_PATH . (string)$document['load'];
-					$document = simplexml_load_file($defaultXml);
-						
-				}
+				$this->_XMLParser->checkIfMustBeLoaded($document);
 				
 				$docResult = new FlowCheckerResult();				
 				if(!is_null($document['md'])){

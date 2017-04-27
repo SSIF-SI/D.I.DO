@@ -40,7 +40,7 @@ class XMLBrowser{
 		foreach($filtered as $catName=>$data){
 			foreach($data['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
-					if(!$this->_PermissionHelper->isConsultatore($metadata['owner'])){
+					if(!$this->_PermissionHelper->isGestore($metadata['owner'])){
 						unset($filtered[$catName]['documenti'][$tipoDocumento][$numVersione]);
 					}
 				}
@@ -123,8 +123,8 @@ class XMLBrowser{
 		return null;
 	}
 	
-	public function getSingleXml($xmlFilename){
-		$list = $this->getXmlList(false);
+	public function getSingleXml($xmlFilename, $services = null){
+		$list = $this->getXmlList(false, $services);
 		return array_key_exists($xmlFilename, $list) ? $list[$xmlFilename] : null;  
 	}
 	
@@ -133,9 +133,12 @@ class XMLBrowser{
 		foreach($this->_xmlTree as $categoria=>$xmlData){
 			foreach($xmlData['documenti'] as $tipoDocumento=>$versioni){
 				foreach($versioni as $numVersione=>$metadata){
-					if(!is_null($owner)){ 
-						if((string)$metadata['owner'] == $owner){
-							$list[$categoria][] = $xmlTree['path'].$metadata['file'];
+					if(is_array($owner) and count($owner)){ 
+						foreach($owner as $o){
+							if((string)$metadata['owner'] == $o){
+								$list[$categoria][] = $xmlTree['path'].$metadata['file'];
+								break;
+							}
 						}
 					} else { 
 						$list[$categoria][] = $xmlTree['path'].$metadata['file'];

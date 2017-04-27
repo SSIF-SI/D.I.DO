@@ -105,14 +105,15 @@ class Geko extends ClassWithDependencies{
 		$owner = $this->_PermissionHelper->isAdmin() ? null : $this->_PermissionHelper->getUserField("gruppi");
 		
 		$catlist = array_keys($this->_XMLBrowser->getXmlListByOwner($owner));
+		
 		$fti = array("nTot" => 0);
 			
 		$types = glob(GECO_IMPORT_PATH."*");
+		
 		foreach($types as $type){
 			$needle = basename($type);
-			
 			if(in_array($needle,$catlist)){
-					
+				
 				$files = glob($type."/*.imp");
 				if(count($files)){
 					foreach($files as $file){
