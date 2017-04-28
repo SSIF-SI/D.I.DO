@@ -59,8 +59,8 @@ class TemplateHelper{
 		ob_start();
 		$info = $flowCheckereResult['data']['info'];
 		$xml = XMLBrowser::getInstance()->getSingleXml($info['md']['xml']);
-		XMLParser::getInstance()->setXMLSource($xml, $info['md']['type']);
-		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+		$XMLParser = new XMLParser($xml, $info['md']['type']);
+		$inputs = $XMLParser->getMasterDocumentInputs();
 ?>
 					<div class="row">
 						<div class="col-lg-12 col-md-12">
@@ -72,7 +72,7 @@ class TemplateHelper{
 		                        	<div class="row">
 		                        	<?php echo FormHelper::createInputsFromDB($inputs, $info['md_data'],true)?>
 			                        </div>
-			                        <?php if(empty($xml['from']) && PermissionHelper::getInstance()->isGestore(array(XMLParser::getInstance()->getOwner()))):?>
+			                        <?php if(empty($xml['from']) && PermissionHelper::getInstance()->isGestore(array($XMLParser->getOwner()))):?>
 			                        <div class="row text-center">
 		                        		<a class="btn btn-primary edit-info" href="?md=<?=$_GET['md']?>&edit">
 		                                	<span class="fa fa-pencil fa-1x fa-fw"></span> 
@@ -217,9 +217,10 @@ class TemplateHelper{
 		// Da firmare
 		$toSign = 0;
 		if(count($md['documents'])){
+			
 			foreach($md['documents'] as $id_md=>$doc){
 				$mustBeSigned = Utils::filterList($doc, 'mustBeSigned', 1);
-				$toSign += count(Utils::filterList($doc, 'signed', 0));
+				$toSign += count(Utils::filterList($mustBeSigned, 'signed', 0));
 			}
 		}
 		self::_createDashboardPanel(4,"panel-green","fa-edit",$toSign,"Documenti da firmare","?detail=documentToSign");
@@ -301,8 +302,8 @@ class TemplateHelper{
 							$xml = XMLBrowser::getInstance()->getXmlFromNameAndData($data['md_nome'], date('Y-m-d'));
 							
 							// aggiunto da federico
-							XMLParser::getInstance()->setXMLSource($xml['xml'], $data['type']);
-							$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+							$XMLParser = new XMLParser($xml['xml'], $data['type']);
+							$inputs = $XMLParser->getMasterDocumentInputs();
 							// fine
 							$formId = rtrim(FormHelper::fieldFromLabel($data['filename']),".imp");
 							if(!$th):
@@ -398,7 +399,7 @@ class TemplateHelper{
 				$mustBeSigned = Utils::filterList($doc, 'mustBeSigned', 1);
 				$mustBeSigned = Utils::filterList($mustBeSigned, 'signed', 0);
 				if(count($mustBeSigned) == 0) {
-					Responder::_purge($md_open, $id_md, $id_doc);
+					MasterDocumentManager::_purge($md_open, $id_md, $id_doc);
 				}
 			}
 		}
@@ -451,8 +452,8 @@ class TemplateHelper{
 						$th = false;
 						foreach ($val as $id_md=>$data):
 							$xml = XMLBrowser::getInstance()->getSingleXml($data['xml']);
-							XMLParser::getInstance()->setXMLSource($xml, $data['type']);
-							$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+							$XMLParser = new XMLParser($xml, $data['type']);
+							$inputs = $XMLParser->getMasterDocumentInputs();
 							if(isset($xml['validEnd']))
 								$category .= "(fino al ".Utils::convertDateFormat($xml['validEnd'], DB_DATE_FORMAT, "d/m/Y").")";
 							if(!$th):

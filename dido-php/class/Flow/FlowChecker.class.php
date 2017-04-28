@@ -13,7 +13,7 @@ class FlowChecker extends ClassWithDependencies{
 	public function __construct(){
 		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
 		$this->_MasterdocumentData = new MasterdocumentData(Connector::getInstance());
-		$this->_XMLParser = XMLParser::getInstance();
+		$this->_XMLParser = new XMLParser();
 		$this->_Signature = new Signature(Connector::getInstance());
 		$this->_XMLBrowser = XMLBrowser::getInstance();
 		$this->_FTPConnector = FTPConnector::getInstance();

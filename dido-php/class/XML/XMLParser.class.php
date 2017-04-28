@@ -1,18 +1,10 @@
 <?php 
 class XMLParser{
-	private static $_instance = null;
 	private $_xml = null;
 	
-	public static function getInstance(){
-		if(is_null(self::$_instance)){
-			self::$_instance = new self();
-		}
-		return self::$_instance;
+	public function __construct($xml = null, $md_type = null){
+		$this->setXMLSource($xml, $md_type);
 	}
-	
-	private function __construct(){}
-	private function __clone(){}
-	private function __wakeup(){}
 	
 	public function setXMLSource($xml, $md_type = null){
 		$this->_xml = $xml;

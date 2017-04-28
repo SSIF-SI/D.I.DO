@@ -186,8 +186,7 @@ class HTMLHelper{
 	}
 	
 	static function createDetailFromObj($obj, $xml, $type){
-		$XMLParser = XMLParser::getInstance();
-		$XMLParser->setXMLSource($xml,$type);
+		$XMLParser = new XMLParser($xml,$type);
 		$inputs = $XMLParser->getMasterDocumentInputs();
 		
 		return FormHelper::createInputsFromXml($inputs,4,$obj);

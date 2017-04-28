@@ -81,14 +81,15 @@ class Importer{
 		$this->_checkErrors();
 
 		$xml = XMLBrowser::getInstance()->getSingleXml($data['md_xml']);
-		XMLParser::getInstance()->setXMLSource($xml, $data['md_type']);
-		$inputs = XMLParser::getInstance()->getMasterDocumentInputs();
+		
+		$XMLParser = new XMLParser($xml, $data['md_type']);
+		$inputs = $XMLParser->getMasterDocumentInputs();
 		
 		// Recupero il primo documento dell'xml
 		$firstDoc = null;
 		
-		foreach(XMLParser::getInstance()->getDocList() as $document){
-			XMLParser::getInstance()->checkIfMustBeLoaded($document);
+		foreach($XMLParser->getDocList() as $document){
+			$XMLParser->checkIfMustBeLoaded($document);
 			$firstDoc = $document;
 			break;			
 		}
