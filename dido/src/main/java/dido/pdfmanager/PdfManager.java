@@ -158,6 +158,7 @@ public class PdfManager implements InterfacePdfManager {
 			this.addSignature();
 		}
 		logger.info("end ispection");
+		reader.close();
 
 	}
 
@@ -255,6 +256,7 @@ public class PdfManager implements InterfacePdfManager {
 					annotations.add(ann);
 			}
 		}
+		reader.close();
 	}
 
 	public void sign(String src, String dest, String pathKeystore, String pass)
@@ -283,6 +285,7 @@ public class PdfManager implements InterfacePdfManager {
 		ExternalDigest digest = new BouncyCastleDigest();
 		ExternalSignature signature = new PrivateKeySignature(pk, digestAlgorithm, provider.getName());
 		MakeSignature.signDetached(appearance, digest, signature, chain, null, null, null, 0, subfilter);
+		reader.close();
 	}
 
 	
