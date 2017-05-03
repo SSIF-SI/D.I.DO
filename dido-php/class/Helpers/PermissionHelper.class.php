@@ -28,7 +28,11 @@ class PermissionHelper{
 		$signer = array_merge(
 					Utils::filterList($signatures,"id_persona",$user_id ),
 					Utils::filterList($signatures,"id_delegato",$user_id ));
-		$this->_sign = array('mySignature' => reset($mySignature), 'signRoles' => Utils::getListfromField($signer,null,'sigla'));	
+		
+		$this->_sign = array(
+			'mySignature' => reset($mySignature), 
+			'signRoles' => Utils::getListfromField($signer,null,'sigla')
+		);	
 	}
 	
 	public static function getInstance() {
@@ -64,6 +68,8 @@ class PermissionHelper{
 	}
 	
 	public function isGestore($service = null){
+		if(is_null($service)) return $this->_role == self::RUOLO_GESTORE;
+		
 		if($this->_role == self::RUOLO_AMMINISTRATORE) return true;
 		
 		if(in_array($service, $this->_user['gruppi']) || is_null($service)){
@@ -75,11 +81,14 @@ class PermissionHelper{
 	}
 	
 	public function isConsultatore($service=null){
+		if(is_null($service)) return $this->_role == self::RUOLO_CONSULTATORE;
+		
 		if($this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE) return true;
 		
 		if(in_array($service, $this->_user['gruppi']) || is_null($service)){
 			return true && $this->_role == self::RUOLO_CONSULTATORE;
-		}	
+		}
+
 		return false;
 	}
 	

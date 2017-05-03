@@ -5,7 +5,7 @@ abstract class ClassWithDependencies{
 	}
 	
 	public function __set($key, $value){
-		if(property_exists($this, $key))
+		if(property_exists($this, $key) && is_object($this->$key))
 			$this->$key = $value;
 	}
 }

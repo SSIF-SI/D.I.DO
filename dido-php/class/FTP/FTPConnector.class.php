@@ -3,14 +3,18 @@ class FTPConnector{
 	private static $_instance;
 	private $_conn_id;
 	private $_baseDir = null;
+	
 	private $_pdfExtensions = array('pdf','p7m');
 	
-	private function __construct(){
-		$config = parse_ini_file("config.ini");
-		$this->_conn_id = ftp_connect($config['FTP_SERVER']);
+	public function __construct(){
+		
+		$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile();
+		$FTPConfigurator = new FTPConfigurator($FTPConfiguratorSource);
+		
+		$this->_conn_id = ftp_connect($FTPConfigurator->getHost());
 		if($this->_conn_id){
-			if(!ftp_login($this->_conn_id, $config['FTP_USER_NAME'], $config['FTP_USER_PASS'])) return false;
-			$this->setBaseDir($config['FTP_BASEDIR']);
+			if(!ftp_login($this->_conn_id, $FTPConfigurator->getUsername(), $FTPConfigurator->getPassword())) return false;
+			$this->setBaseDir($FTPConfigurator->getBasedir());
 		}
 	}
 
@@ -152,7 +156,7 @@ class FTPConnector{
 	}
 	
 	public function getTempFile($file, $tmpPath = FILES_PATH){
-		$tmpfile = $tmpPath . md5( date( "YmdHisu" ));
+		$tmpfile = $tmpPath . md5( date( "YmdHis".microtime() ));
 		$result = ftp_get( $this->_conn_id, $tmpfile, $this->_baseDir.$file, FTP_BINARY);
 		return $result ? $tmpfile : false;
 	}
@@ -171,7 +175,7 @@ class FTPConnector{
 	
 	public function upload($source, $destination){
 		$result = ftp_put($this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY);
-		if(!$result) throw new Exception("Errore nel trasferimento del file", 666);
+		if(!$result) throw new Exception("Errore nel trasferimento del file $source", 666);
 	}
 	
 }

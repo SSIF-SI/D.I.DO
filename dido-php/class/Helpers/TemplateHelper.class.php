@@ -203,13 +203,13 @@ class TemplateHelper{
 	<?php return $error;
 	}
 	
-	static function createDashboardPanels(){
+	static function createDashboardPanels($md){
 		// Da Importare
 		self::_createDashboardPanel(4,"panel-red","fa-sign-in fa-rotate-90",Geko::getInstance()->getFileToImport()['nTot'],"Proposte da Geco","?detail=documentToImport");
 		
 		// Aperti
-		$Responder = new Responder();
-		$md = $Responder->getMyMasterDocuments();
+		//$Responder = new Responder();
+		//$md = $Responder->getMyMasterDocuments();
 		
 		$md_open = count($md['md_data']);
 		self::_createDashboardPanel(4,"panel-yellow","fa-file-text",$md_open,"Procedimenti in sospeso","?detail=documentOpen");

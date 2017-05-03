@@ -38,6 +38,9 @@ define("KARTIK_FILEINPUT", true);
 */
 //Utils::printr(Personale::getInstance()->getPeopleByGroupType("Servizio"));
 
+$Responder = new Responder();
+$md = $Responder->getMyMasterDocuments();
+	
 if( isset($_GET['detail'])){ 
 	switch($_GET['detail']){
 		case 'documentToImport':
@@ -48,10 +51,7 @@ if( isset($_GET['detail'])){
 		default:
 		case 'documentOpen':
 		case 'documentToSign':
-			$Responder = new Responder();
-			
-			$md_open = $Responder->getMyMasterDocuments();
-			$detail = TemplateHelper::createListGroupOpen($md_open, $_GET['detail'] == 'documentToSign');
+			$detail = TemplateHelper::createListGroupOpen($md, $_GET['detail'] == 'documentToSign');
 			break;
 			$detail = null;
 		
