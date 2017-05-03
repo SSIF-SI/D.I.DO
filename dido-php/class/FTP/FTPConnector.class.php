@@ -1,5 +1,5 @@
 <?php 
-class FTPConnector{
+class FTPConnector implements IFTPConnector{
 	private static $_instance;
 	private $_conn_id;
 	private $_baseDir = null;

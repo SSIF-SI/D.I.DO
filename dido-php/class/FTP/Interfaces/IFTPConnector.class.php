@@ -1,0 +1,11 @@
+<?php 
+interface IFTPConnector{
+	public function setBaseDir($baseDir);
+	public function file_exists( $pathFile );
+	public function getContents($dir);
+	public function download($file = null);
+	public function getTempFile($file, $tmpPath = FILES_PATH);
+	public function ftp_mksubdirs($ftpath);
+	public function upload($source, $destination);
+}
+?>
