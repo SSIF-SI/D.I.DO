@@ -55,28 +55,16 @@ class UserManager{
 		return $this->_role == self::RUOLO_AMMINISTRATORE;
 	}
 	
-	public function isGestore($service = null){
-		if($this->_role == self::RUOLO_AMMINISTRATORE) return true;
-	
-		if(is_null($service)) return $this->_role == self::RUOLO_GESTORE;
-	
-		if(in_array($service, $this->_user->getGruppi()) || is_null($service)){
-			return true && $this->_role == self::RUOLO_GESTORE;
-		}
-	
-		return false;
+	public function isGestore($strict = false){
+		return $strict ? 
+			$this->_role == self::RUOLO_GESTORE : 
+			$this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE;
 	}
 	
-	public function isConsultatore($service = null){
-		if($this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE) return true;
-
-		if(is_null($service)) return $this->_role == self::RUOLO_CONSULTATORE;
-		
-		if(in_array($service, $this->_user->getGruppi()) || is_null($service)){
-			return true && $this->_role == self::RUOLO_CONSULTATORE;
-		}
-	
-		return false;
+	public function isConsultatore($strict = false){
+		return $strict ?
+			$this->_role == self::RUOLO_CONSULTATORE :		
+			$this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE || $this->_role == self::RUOLO_CONSULTATORE;
 	}
 }
 ?>

@@ -19,9 +19,9 @@ class Application{
 	/*
 	 * Sorgenti di dati
 	 */
-	private $_FTP_Data_Source;
-	private $_DB_Data_Source;
-	private $_XML_Data_Source;
+	private $_FTPDataSource;
+	private $_DBDataSource;
+	private $_XMLDataSource;
 	
 	/*
 	 * ImportManager per gestire i dati importati/Da importare
@@ -35,13 +35,20 @@ class Application{
 	private $_UserManager;
 	
 	public function __construct(){
-		$this->_FTP_Data_Source = new FTPDataSource();
+		
+		$this->_FTPDataSource = new FTPDataSource();
 		$this->_UserManager = new UserManager();
-		$this->_ImportManager = new ImportManager();
+		$this->_XMLDataSource = new XMLDataSource($XMLParser);
+		$this->_ImportManager = new ImportManager($this->_UserManager->getUserRole(), $this->_XMLDataSource->getXMLList);
 	}
 	
 	public function saveDataToBeImported(){
+		// Funzione eseguita in cron
 		$this->_ImportManager->saveDataToBeImported();
+	}
+	
+	public function getSavedDataToBeImported(){
+		$this->_ImportManager->getSavedDataToBeImported();
 	}
 	
 	public function import($data){

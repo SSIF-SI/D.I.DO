@@ -1,5 +1,7 @@
 <?php 
 class GecoDataSource implements IExternalDataSource{
+	private $_master_log;
+	
 	private $_tablesToRead = array (
 				
 			// Table Name => data
@@ -50,28 +52,70 @@ class GecoDataSource implements IExternalDataSource{
 	
 	public function saveDataToBeImported(){
 		$data_to_import = $this->getDataToImport();
-		
 		foreach ( $this->_tablesToRead as $table => $data ) {
 			foreach ( $data_to_import [$data['category']] as $record ) {
-				$this->createFilesToImport ( $table, $data, $record );
+				$result = $this->createFilesToImport ( $table, $data, $record );
+				if(!$result){
+					return false;
+				}					
+				
 			}
 		}
-	}
-	
-	public function getDataToBeImported(){
+		//Per adesso non scriviamo mai l'esito
+		//$this->_master_log->updateMasterLog("S", array_keys($this->_tablesToRead));
 		
 	}
 	
-	public function import(){
+	public function getSavedDataToBeImported(){
+		$owner = $this->_PermissionHelper->isAdmin() ? null : $this->_PermissionHelper->getUserField("gruppi");
+		
+		$catlist = array_keys($this->_XMLBrowser->getXmlListByOwner($owner));
+		
+		$fti = array("nTot" => 0);
+			
+		$types = glob(GECO_IMPORT_PATH."*");
+		
+		foreach($types as $type){
+			$needle = basename($type);
+			if(in_array($needle,$catlist)){
+		
+				$files = glob($type."/*.imp");
+				if(count($files)){
+					foreach($files as $file){
+						$filename = basename($file);
+						preg_match_all(self::FILE_REGEXP, $filename,$matches);
+						$fti[basename($type)][$matches[1][0]][] = array(
+								'filename' 	=> basename($file),
+								'md_nome'	=> $matches[1][0],
+								'type'		=> $matches[2][0],
+								'id'		=> $matches[3][0]
+						);
+					}
+						
+					$nTot = 0;
+						
+					foreach($fti[basename($type)] as $subType => $item){
+						$nType = count($fti[basename($type)][$subType]);
+						$nTot += $nType;
+		
+					}
+						
+					$fti[basename($type)]['nTot'] = $nTot;
+					$fti['nTot'] += $nTot;
+				}
+			}
+				
+		}
+		return $fti;
 		
 	}
 	
 	private function getDataToImport() {
 		$data_to_import = array ();
-		$ml = new master_log ();
+		$this->_master_log = new master_log ();
 	
 		foreach ( $this->_tablesToRead as $table => $k ) {
-			$lastId = $ml->getLastIdFlussoOk ( $table );
+			$lastId = $this->_master_log->getLastIdFlussoOk ( $table );
 			$ormTable = new $table ();
 			$recordsToImport = $ormTable->getRecordsToImport ( $lastId );
 			$data_to_import [$k['category']] = $recordsToImport;
@@ -126,8 +170,14 @@ class GecoDataSource implements IExternalDataSource{
 		$filename .= "_" . $record [$data['id']].".imp";
 	
 		$importfile = fopen ( $dirname . DIRECTORY_SEPARATOR . $filename, "w" ) or die ( "unable to open file" );
-		fwrite ( $importfile, serialize($record ) );
-		fclose ( $importfile );
+		
+		if($importfile){
+			fwrite ( $importfile, serialize($record ) );
+			fclose ( $importfile );
+			return true;
+		}
+		
+		return false;
 	}
 }
 ?>
