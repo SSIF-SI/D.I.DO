@@ -131,27 +131,29 @@ class FTPConnector implements IFTPConnector{
 	public function download($file = null){
 		if(self::$_instance != null){
 			
-			//$this->cd($_SESSION[$this->_baseDir]);
-			//$this->_createContentList(true);
-				
-			if(file_exists($file)){
-				
-				$path_parts = pathinfo($file['filename']);
-			    $ext = isset($path_parts["extension"]) ? strtolower( $path_parts["extension"] ) : "";
-				    
-			    if(in_array($ext, $this->_pdfExtensions)){
-			        header("Content-type: application/pdf"); // add here more headers for diff. extensions
-			        header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a download
-			    } else {
-			        header("Content-type: application/octet-stream");
-			        header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
-			   	}
-				if($file['size']< 2147483647) header("Content-length: {$file['size']}");
-		   		header("Cache-control: private"); //use this to open files directly
-				$result = ftp_get($this->_conn_id, "php://output", $file['filename'], FTP_BINARY);
-				flush();
-			} else return null;
+			$tmpfile = $this->getTempFile($file);
+			if(!$tmpfile) return null;
+
+			$filesize = filesize($tmpfile);
+			$path_parts = pathinfo($file);
 			
+		    $ext = isset($path_parts["extension"]) ? strtolower( $path_parts["extension"] ) : "";
+			    
+		    if(in_array($ext, $this->_pdfExtensions)){
+		        header("Content-type: application/pdf"); // add here more headers for diff. extensions
+		        header("Content-Disposition: attachment; filename=\"".$path_parts["basename"]."\""); // use 'attachment' to force a download
+		    } else {
+		        header("Content-type: application/octet-stream");
+		        header("Content-Disposition: filename=\"".$path_parts["basename"]."\"");
+		   	}
+			
+		   	if($filesize < 2147483647) header("Content-length: {$filesize}");
+	   		header("Cache-control: private"); //use this to open files directly
+			readfile($tmpfile);
+	   		unlink($tmpfile);
+	   		flush();
+	   		exit();
+	   		
 		} else return null;	
 	}
 	

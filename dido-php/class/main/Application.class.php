@@ -3,30 +3,33 @@ class Application{
 	/*
 	 * La classe principale di DIDO
 	 * 
-	 * Dido gestisce i dati di 3 sorgenti principali:
+	 * Dido gestisce i documenti utilizzando 3 sorgenti principali:
 	 * 
 	 * - Repository FTP
-	 * - Database 
-	 * - Lista di XML
+	 * - Master Document Manager (Database) 
+	 * - Lista di XML descrittivi per ogni tipologia di documento (files)
 	 * 
-	 * Dido Importa i dati da sorgenti esterne, attualmente solo da GECO
+	 * Dido Importa i documenti anche da sorgenti esterne (attualmente solo da GECO)
 	 * 
-	 *
 	 * L'accesso a Dido è riservato agli utenti ISTI con vari livelli di permessi.
 	 * 
 	 */
 	
 	/*
+	 * Connettore al DB, verrà utilizzato da svariate classi
+	 */
+	private $_dbConnector;
+	
+	/*
 	 * Sorgenti di dati
 	 */
 	private $_FTPDataSource;
-	private $_DBDataSource;
+	private $_MasterdocumentManager;
 	private $_XMLDataSource;
 	
 	/*
 	 * Per gestire i dati importati/Da importare
 	 */	
-	
 	private $_ImportManager;
 	/*
 	 * 
@@ -35,16 +38,20 @@ class Application{
 	private $_UserManager;
 	
 	public function __construct(){
+		$this->_dbConnector = Connector::getInstance();
 		
 		$this->_FTPDataSource = new FTPDataSource();
-		$this->_DBDataSource = new DBDataSource();
+		$this->_MasterdocumentManager = new MasterdocumentManager($this->_dbConnector);
 		$this->_XMLDataSource = new XMLDataSource();
 		
 		$this->_ImportManager = new ImportManager();
-		$this->_UserManager = new UserManager();
+		$this->_UserManager = new UserManager($this->_DBDataSource->getConnector());
 		
 	}
 	
+	public function getAllMyMasterDocuments(){
+		$this->_MasterdocumentManager->getAllMyMasterDocuments();
+	}
 	
 	/*
 	 * Sezione di Import dei dati

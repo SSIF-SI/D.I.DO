@@ -12,7 +12,7 @@ class UserManager{
 	private $_role;
 	private $_signature;
 	
-	public function __construct(){
+	public function __construct(IConnector $connector){
 		// Ad oggi i dati dell'utente li peschiamo dal Web service del personale
 		$sourceUserData = new PersonaleSourceUserData();
 		$this->_user = new User($sourceUserData);
@@ -21,7 +21,7 @@ class UserManager{
 		$this->_fieldToWriteOnDb = $this->_user->getUid();
 		
 		// Ora setto il ruolo
-		$user_roleObj = new UsersRoles(Connector::getInstance());
+		$user_roleObj = new UsersRoles($connector);
 		$user_role = Utils::getListfromField($user_roleObj->getBy("id_persona", $this->_fieldToWriteOnDb), "ruolo", "id_persona");
 		$this->_role = isset($user_role[$this->_fieldToWriteOnDb]) ? $user_role[$this->_fieldToWriteOnDb] : null;
 				

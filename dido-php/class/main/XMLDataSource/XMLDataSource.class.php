@@ -22,8 +22,12 @@ class XMLDataSource{
 	
 	
 	public function getXmlTree($onlyFilelist = false){
-		if(!$onlyFilelist)
-			return $this->_filtered;
+		if(!$onlyFilelist){
+			$filtered = $this->_filtered;
+			$this->resetFilters();
+			return $filtered;
+		}
+			
 		
 		$xmlList = [];
 		foreach($this->_filtered as $catName=>$data){
@@ -41,7 +45,7 @@ class XMLDataSource{
 		return $this;
 	}
 	
-	public function resetFilters(){
+	private function resetFilters(){
 		$this->_filtered = $this->_xmlTree;
 	}
 	
