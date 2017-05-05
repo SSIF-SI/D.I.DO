@@ -9,6 +9,8 @@ class FTPDataSource{
 	public function getNewPathFromXml($xml){
 		return dirname($xml).DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.date("m");
 	}
+	
+	
 }
 
 ?>

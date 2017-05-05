@@ -78,7 +78,7 @@ class GecoDataSource implements IExternalDataSource{
 			$needle = basename($type);
 			if(in_array($needle,$catlist)){
 		
-				$files = glob($type."/*.");
+				$files = glob($type."/*.".self::FILE_EXTENSION_TO_BE_IMPORTED);
 				if(count($files)){
 					foreach($files as $file){
 						$filename = basename($file);
@@ -166,7 +166,7 @@ class GecoDataSource implements IExternalDataSource{
 				
 		}
 	
-		$filename .= "_" . $record [$data['id']].".";
+		$filename .= "_" . $record [$data['id']].".".self::FILE_EXTENSION_TO_BE_IMPORTED;
 	
 		$importfile = fopen ( $dirname . DIRECTORY_SEPARATOR . $filename, "w" ) or die ( "unable to open file" );
 		
