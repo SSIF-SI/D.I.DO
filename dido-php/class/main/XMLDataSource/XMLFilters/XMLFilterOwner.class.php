@@ -1,7 +1,7 @@
 <?php 
 class XMLFilterOwner extends AXMLFilter implements IXMLFilter{
 	public function apply(&$list){
-		$this->init();
+		if(!$this->init()) return;
 		
 		foreach($list as $catName=>$data){
 			foreach($data as $tipoDocumento=>$versioni){
@@ -17,19 +17,5 @@ class XMLFilterOwner extends AXMLFilter implements IXMLFilter{
 				unset($list[$catName]);
 		}
 		
-		/*foreach($list as $catName=>$data){
-			foreach($data['documenti'] as $tipoDocumento=>$versioni){
-				foreach($versioni as $numVersione=>$metadata){
-					if(!in_array($owner, $metadata['owner'])){
-						unset($list[$catName]['documenti'][$tipoDocumento][$numVersione]);
-					}
-				}
-				if(empty($list[$catName]['documenti'][$tipoDocumento]))
-					unset($list[$catName]['documenti'][$tipoDocumento]);
-			}
-				
-			if(empty($list[$catName]['documenti'])) unset($list[$catName]);
-		}
-		*/
 	}
 }

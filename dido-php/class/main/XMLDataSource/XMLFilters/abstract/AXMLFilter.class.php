@@ -3,7 +3,7 @@ abstract class AXMLFilter{
 	protected $_filters;
 	protected $_XMLParser;
 	
-	public function __construct(array $filters){
+	public function __construct($filters){
 		$this->_filters = $filters;
 	}
 	
@@ -12,7 +12,7 @@ abstract class AXMLFilter{
 	}
 	
 	public function init(){
-		if(empty($this->_filters) || empty ($this->_XMLParser)) return;
+		return !(empty($this->_filters) || empty ($this->_XMLParser));
 	}
 }
 ?>

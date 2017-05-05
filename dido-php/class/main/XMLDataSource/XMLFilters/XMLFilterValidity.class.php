@@ -1,5 +1,5 @@
 <?php 
-class XMLFilterVisibility extends AXMLFilter implements IXMLFilter{
+class XMLFilterValidity extends AXMLFilter implements IXMLFilter{
 	public function apply(&$list){
 		if(!$this->init()) return;
 		
@@ -7,7 +7,7 @@ class XMLFilterVisibility extends AXMLFilter implements IXMLFilter{
 			foreach($data as $tipoDocumento=>$versioni){
 				foreach($versioni as $nv=>$xmlData){
 					$this->_XMLParser->setXMLSource($xmlData['xml']);
-					if(!$this->_XMLParser->isVisible($this->_filters))
+					if(!$this->_XMLParser->isValid($this->_filters))
 						unset($list[$catName][$tipoDocumento][$nv]);
 				}
 				if(empty($list[$catName][$tipoDocumento]))

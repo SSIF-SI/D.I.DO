@@ -1,5 +1,7 @@
 <?php
 class UserManager{
+	// Se aggiungiamo/Modifichiamo ruoli nella tabella roles, dobbiano aggiornare questa classe
+	
 	const RUOLO_AMMINISTRATORE 	= 'Amministratore';
 	const RUOLO_GESTORE 		= 'Gestore Dati';
 	const RUOLO_CONSULTATORE 	= 'Consultatore';

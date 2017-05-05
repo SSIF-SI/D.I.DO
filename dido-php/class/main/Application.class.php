@@ -38,8 +38,8 @@ class Application{
 		
 		$this->_FTPDataSource = new FTPDataSource();
 		$this->_UserManager = new UserManager();
-		$this->_XMLDataSource = new XMLDataSource($XMLParser);
-		$this->_ImportManager = new ImportManager($this->_UserManager->getUserRole(), $this->_XMLDataSource->getXMLList);
+		$this->_XMLDataSource = new XMLDataSource();
+		$this->_ImportManager = new ImportManager();
 	}
 	
 	public function saveDataToBeImported(){
@@ -48,7 +48,15 @@ class Application{
 	}
 	
 	public function getSavedDataToBeImported(){
-		$this->_ImportManager->getSavedDataToBeImported();
+		$owners = $this->_UserManager->isAdmin() ? [] : $this->_UserManager->getUser()->getGruppi();
+		
+		$xmlList = $this->_XMLDataSource
+							->filter(new XMLFilterOwner($owners))
+							->filter(new XMLFilterValidity(date("Y-m-d")))
+							->getXmlTree();
+		
+		$catlist = array_keys($xmlList);
+		return $this->_ImportManager->getSavedDataToBeImported($owners, $catlist);
 	}
 	
 	public function import($data){

@@ -1,5 +1,8 @@
 <?php 
 class GecoDataSource implements IExternalDataSource{
+	
+	const GECO_IMPORT_PATH = REAL_ROOT . "geco-import/";
+
 	private $_master_log;
 	
 	private $_tablesToRead = array (
@@ -66,11 +69,7 @@ class GecoDataSource implements IExternalDataSource{
 		
 	}
 	
-	public function getSavedDataToBeImported(){
-		$owner = $this->_PermissionHelper->isAdmin() ? null : $this->_PermissionHelper->getUserField("gruppi");
-		
-		$catlist = array_keys($this->_XMLBrowser->getXmlListByOwner($owner));
-		
+	public function getSavedDataToBeImported($owner, $catlist){
 		$fti = array("nTot" => 0);
 			
 		$types = glob(GECO_IMPORT_PATH."*");
@@ -126,7 +125,7 @@ class GecoDataSource implements IExternalDataSource{
 	
 	private function createFilesToImport($table, $data, $record) {
 		// Creiamo la direcrory in base alla categoria
-		$dirname = GECO_IMPORT_PATH . $data['category'];
+		$dirname = self::GECO_IMPORT_PATH . $data['category'];
 		if (! is_dir ( $dirname )) {
 			mkdir ( $dirname, 0777, true );
 		}

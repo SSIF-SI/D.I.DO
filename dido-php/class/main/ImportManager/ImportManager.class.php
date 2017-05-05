@@ -19,10 +19,10 @@ class ImportManager{
 		}
 	}
 	
-	public function getSavedDataToBeImported(){
+	public function getSavedDataToBeImported($owner, $catList){
 		$toBeImported = [];
 		foreach($this->_externalDataSourceRepository as $label => $externalDataSource){
-			$dataToBeImported = array_merge($dataToBeImported, $externalDataSource->getSavedDataToBeImported());
+			$toBeImported = array_merge($toBeImported, $externalDataSource->getSavedDataToBeImported($owner, $catList));
 		}
 		return $toBeImported;
 	}
