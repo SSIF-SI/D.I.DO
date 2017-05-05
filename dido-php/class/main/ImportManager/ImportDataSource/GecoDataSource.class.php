@@ -1,7 +1,7 @@
 <?php 
 class GecoDataSource implements IExternalDataSource{
 	
-	const GECO_IMPORT_PATH = REAL_ROOT . "geco-import/";
+	const IMPORT_PATH = "geco-import/";
 
 	private $_master_log;
 	
@@ -72,13 +72,13 @@ class GecoDataSource implements IExternalDataSource{
 	public function getSavedDataToBeImported($owner, $catlist){
 		$fti = array("nTot" => 0);
 			
-		$types = glob(GECO_IMPORT_PATH."*");
+		$types = glob(self::IMPORT_PATH ."*");
 		
 		foreach($types as $type){
 			$needle = basename($type);
 			if(in_array($needle,$catlist)){
 		
-				$files = glob($type."/*.imp");
+				$files = glob($type."/*.");
 				if(count($files)){
 					foreach($files as $file){
 						$filename = basename($file);
@@ -125,7 +125,7 @@ class GecoDataSource implements IExternalDataSource{
 	
 	private function createFilesToImport($table, $data, $record) {
 		// Creiamo la direcrory in base alla categoria
-		$dirname = self::GECO_IMPORT_PATH . $data['category'];
+		$dirname = self::IMPORT_PATH . $data['category'];
 		if (! is_dir ( $dirname )) {
 			mkdir ( $dirname, 0777, true );
 		}
@@ -166,7 +166,7 @@ class GecoDataSource implements IExternalDataSource{
 				
 		}
 	
-		$filename .= "_" . $record [$data['id']].".imp";
+		$filename .= "_" . $record [$data['id']].".";
 	
 		$importfile = fopen ( $dirname . DIRECTORY_SEPARATOR . $filename, "w" ) or die ( "unable to open file" );
 		

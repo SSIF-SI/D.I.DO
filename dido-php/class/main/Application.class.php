@@ -24,7 +24,7 @@ class Application{
 	private $_XMLDataSource;
 	
 	/*
-	 * ImportManager per gestire i dati importati/Da importare
+	 * Per gestire i dati importati/Da importare
 	 */	
 	
 	private $_ImportManager;
@@ -37,17 +37,24 @@ class Application{
 	public function __construct(){
 		
 		$this->_FTPDataSource = new FTPDataSource();
-		$this->_UserManager = new UserManager();
+		$this->_DBDataSource = new DBDataSource();
 		$this->_XMLDataSource = new XMLDataSource();
+		
 		$this->_ImportManager = new ImportManager();
+		$this->_UserManager = new UserManager();
+		
 	}
 	
+	
+	/*
+	 * Sezione di Import dei dati
+	 */
 	public function saveDataToBeImported(){
 		// Funzione eseguita in cron
 		$this->_ImportManager->saveDataToBeImported();
 	}
 	
-	public function getSavedDataToBeImported(){
+	public function getSavedDataToBeImported($from = null){
 		$owners = $this->_UserManager->isAdmin() ? [] : $this->_UserManager->getUser()->getGruppi();
 		
 		$xmlList = $this->_XMLDataSource
@@ -56,11 +63,11 @@ class Application{
 							->getXmlTree();
 		
 		$catlist = array_keys($xmlList);
-		return $this->_ImportManager->getSavedDataToBeImported($owners, $catlist);
+		return $this->_ImportManager->getSavedDataToBeImported($owners, $catlist, $from);
 	}
 	
-	public function import($data){
-		$this->_ImportManager->import($data);
+	public function import($from, $data){
+		return $this->_ImportManager->import($from, $data);
 	}
 	
 }
