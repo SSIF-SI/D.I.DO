@@ -20,7 +20,7 @@ abstract class AProcedureManager{
 		return $this->_ftpConnector;
 	}
 	
-	abstract public function create($main, $data, $uploadPath);
+	abstract public function create($main, $data, $uploadPath = null);
 	abstract public function update($data, $uploadPath = null);
 	abstract public function delete($main, $ftpFilePath);
 }
