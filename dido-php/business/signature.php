@@ -4,7 +4,7 @@ require_once ("../config.php");
 if (Utils::checkAjax ()) {
 	$classname = $_GET ['list'];
 	if($classname!='ApplySign')
-		$userRolesObj = new $classname ( Connector::getInstance () );
+		$userRolesObj = new $classname ( DBConnector::getInstance () );
 	
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	if ($delete){

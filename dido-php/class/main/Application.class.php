@@ -38,7 +38,7 @@ class Application{
 	private $_UserManager;
 	
 	public function __construct(){
-		$this->_dbConnector = Connector::getInstance();
+		$this->_dbConnector = DBConnector::getInstance();
 		
 		$this->_FTPDataSource = new FTPDataSource();
 		$this->_MasterdocumentManager = new MasterdocumentManager($this->_dbConnector);

@@ -10,7 +10,7 @@ class Importer{
 	
 	public function __construct($FTPConnector = null, $connInstance = null){
 		if(is_null($FTPConnector)) $FTPConnector = FTPConnector::getInstance();
-		if(is_null($connInstance)) $connInstance = Connector::getInstance();
+		if(is_null($connInstance)) $connInstance = DBConnector::getInstance();
 		$this->_FTPConnector = $FTPConnector;
 		$this->_connInstance = $connInstance;
 	} 

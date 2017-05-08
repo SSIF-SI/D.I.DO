@@ -1,7 +1,7 @@
 <?php 
 require_once ("../config.php");
 
-$userRolesObj = new UsersRoles( Connector::getInstance () );
+$userRolesObj = new UsersRoles( DBConnector::getInstance () );
 
 if (Utils::checkAjax ()) {
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
@@ -44,7 +44,7 @@ include_once (TEMPLATES_PATH . "template.php");
 
 
 function createModal($user_role, $listPersone){
-	$rolesObj = new Roles(Connector::getInstance());
+	$rolesObj = new Roles(DBConnector::getInstance());
 	$listaRuoli = Utils::getListfromField($rolesObj->getAll("ruolo"),"ruolo","id_ruolo");
 	ob_start();
 	if(is_null($user_role['id_persona']) && count($listPersone) == 0): ?>

@@ -12,7 +12,7 @@ class UserManager{
 	private $_role;
 	private $_signature;
 	
-	public function __construct(IConnector $connector){
+	public function __construct(IDBConnector $connector){
 		// Ad oggi i dati dell'utente li peschiamo dal Web service del personale
 		$sourceUserData = new PersonaleSourceUserData();
 		$this->_user = new User($sourceUserData);

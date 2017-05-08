@@ -11,18 +11,18 @@ class Signature extends AnyDocument {
 		$sigle = array ();
 		$result = array ();
 		
-		$fixedSigners = new FixedSigners ( Connector::getInstance () );
+		$fixedSigners = new FixedSigners ( DBConnector::getInstance () );
 		$id_fs = array_unique(Utils::getListfromField($fixedSigners->getAll(),'id_persona'));
 		$id_fs = join(", ",array_map("Utils::apici",$id_fs));
 		$fixed = Utils::filterList($this->getBy('id_persona', $id_fs), "fixed_role", 1);
 		$signers = Utils::getListfromField($fixed,null,'sigla');
 		
 		
-		$SignersRoles = new SignersRoles ( Connector::getInstance () );
+		$SignersRoles = new SignersRoles ( DBConnector::getInstance () );
 		$sigle = $SignersRoles->getRoleDescription ();
 		
 		/*
-		$masterDocumentData = new MasterdocumentData ( Connector::getInstance () );
+		$masterDocumentData = new MasterdocumentData ( DBConnector::getInstance () );
 		$id_vs = $masterDocumentData->searchByKeys ( array_keys ( $sigle ), $id_md );
 		$id_vs = Utils::getListfromField ( $id_vs, 'value' );
 		*/

@@ -2,7 +2,7 @@
 class SignatureHelper{
 	
 	static function createModalSigner($idP = null){
-		$signersObj = new Signers(Connector::getInstance());
+		$signersObj = new Signers(DBConnector::getInstance());
 		$signer = is_null($idP) ? $signersObj->getStub() : $signersObj->get(array('id_persona' => $idP));
 		
 		$listPersone = ListHelper::persone(); 
@@ -83,10 +83,10 @@ class SignatureHelper{
 	}
 	
 	static function createModalFixedSigner($id_fs = null){
-		$FixedSigner = new FixedSigners(Connector::getInstance());
+		$FixedSigner = new FixedSigners(DBConnector::getInstance());
 		$fixed_signer = is_null($id_fs) ? $FixedSigner->getStub() : $FixedSigner->get(array('id_fs' =>$id_fs));
 		
-		$signersRoles = new SignersRoles(Connector::getInstance());
+		$signersRoles = new SignersRoles(DBConnector::getInstance());
 		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',1),'descrizione');
 		$assignable_roles = array_diff_key($signer_roles,Utils::getListfromField($FixedSigner->getAll(),null,'id_sr'));
 		
@@ -135,10 +135,10 @@ class SignatureHelper{
 	}
 	
 	static function createModalVariableSigner($id_vs = null){
-		$VariableSigner = new VariableSigners(Connector::getInstance());
+		$VariableSigner = new VariableSigners(DBConnector::getInstance());
 		$variable_signer = is_null($id_vs) ? $VariableSigner->getStub() : $VariableSigner->get(array('id_vs' =>$id_vs));
 	
-		$signersRoles = new SignersRoles(Connector::getInstance());
+		$signersRoles = new SignersRoles(DBConnector::getInstance());
 		$signer_roles = Utils::getListfromField(Utils::filterList($signersRoles->getAll('sigla','id_sr'),'fixed_role',0),'descrizione');
 		
 		$listPersone = ListHelper::Signers();
@@ -159,13 +159,13 @@ class SignatureHelper{
 	
 	static function getSigners(){
 
-		$signersObj = new Signers(Connector::getInstance());
+		$signersObj = new Signers(DBConnector::getInstance());
 		$signers = $signersObj->getAll(null,'id_persona');
 		
 		$metadata = self::createMetadata($signers,"Signers",'id_persona', array('id_persona' => 'PersonaleHelper::getNominativo', 'pkey' => 'Utils::shorten'));
 		$signers = HTMLHelper::editTable($signers, $metadata['buttons'], $metadata['substitutes']);
 		
-		$signatureObj = new Signature(Connector::getInstance());
+		$signatureObj = new Signature(DBConnector::getInstance());
 		$signatures = $signatureObj->getAll('sigla','id_item');
 		
 		$fixed_signers = Utils::filterList($signatures, 'fixed_role', 1);

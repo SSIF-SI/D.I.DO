@@ -7,10 +7,10 @@ class UserSignature{
 	private $_signatureRoles;
 	
 	public function __construct($user_id){
-		$signersObj = new Signers(Connector::getInstance());
+		$signersObj = new Signers(DBConnector::getInstance());
 		$mySignature = Utils::getListfromField($signersObj->getBy(self::$UID, $user_id), 'pkey',self::$UID);
 		
-		$signatureObj = new Signature(Connector::getInstance());
+		$signatureObj = new Signature(DBConnector::getInstance());
 		$signatures = $signatureObj->getAll('sigla','id_item');
 		
 		$signer = array_merge(

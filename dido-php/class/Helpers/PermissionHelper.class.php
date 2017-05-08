@@ -15,14 +15,14 @@ class PermissionHelper{
 		$user_id = $this->_user['idPersona'];
 		
 		// Set User Role
-		$user_roleObj = new UsersRoles(Connector::getInstance());
+		$user_roleObj = new UsersRoles(DBConnector::getInstance());
 		$user_role = Utils::getListfromField($user_roleObj->getBy("id_persona", $user_id),"ruolo","id_persona");
 		$this->_role = isset($user_role[$user_id]) ? $user_role[$user_id] : null;
 		
 		// Set user Signature, if exists
-		$signersObj = new Signers(Connector::getInstance());
+		$signersObj = new Signers(DBConnector::getInstance());
 		$mySignature = Utils::getListfromField($signersObj->getBy('id_persona', $user_id), 'pkey','id_persona');
-		$signatureObj = new Signature(Connector::getInstance());
+		$signatureObj = new Signature(DBConnector::getInstance());
 		$signatures = $signatureObj->getAll('sigla','id_item');
 		
 		$signer = array_merge(

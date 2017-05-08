@@ -11,10 +11,10 @@ class FlowChecker extends ClassWithDependencies{
 	private $_defaultInputs;
 	
 	public function __construct(){
-		$this->_Masterdocument = new Masterdocument(Connector::getInstance());
-		$this->_MasterdocumentData = new MasterdocumentData(Connector::getInstance());
+		$this->_Masterdocument = new Masterdocument(DBConnector::getInstance());
+		$this->_MasterdocumentData = new MasterdocumentData(DBConnector::getInstance());
 		$this->_XMLParser = new XMLParser();
-		$this->_Signature = new Signature(Connector::getInstance());
+		$this->_Signature = new Signature(DBConnector::getInstance());
 		$this->_XMLBrowser = XMLBrowser::getInstance();
 		$this->_FTPConnector = FTPConnector::getInstance();
 		$this->_PDFParser = new PDFParser();
@@ -36,7 +36,7 @@ class FlowChecker extends ClassWithDependencies{
 			$Responder = new Responder();
 			$return['data']['info'] = $Responder->getSingleMasterDocument($id['id_md']);
 			
-			$sigObj = new Signature(Connector::getInstance());
+			$sigObj = new Signature(DBConnector::getInstance());
 			$signers = $sigObj->getSigners($id['id_md'],$return['data']['info']['md_data']);
 			
 			// Parsing con XML (documenti richiesti)
@@ -137,7 +137,7 @@ class FlowChecker extends ClassWithDependencies{
 		unlink($tmpPDF);
 		
 		$checkResult = array();
-		$sigRoles = new SignersRoles(Connector::getInstance());
+		$sigRoles = new SignersRoles(DBConnector::getInstance());
 		$sigRoles = Utils::getListfromField($sigRoles->getAll(),null,"sigla");
 		
 		foreach($document->signatures->signature as $signature){

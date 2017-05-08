@@ -18,7 +18,7 @@ class Sistemainformativo{
 	private $_connection;
 	
 	private function __construct(){
-		$this->_connection = Connector::getInstance("sistemainformativo", self::$dbData);	
+		$this->_connection = DBConnector::getInstance("sistemainformativo", self::$dbData);	
 	}
 	
 	private function __clone(){}

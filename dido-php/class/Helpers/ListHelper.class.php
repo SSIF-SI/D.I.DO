@@ -31,7 +31,7 @@ class ListHelper{
 	}
 	
 	static function signers(){
-		$signersObj=new Signers(Connector::getInstance());
+		$signersObj=new Signers(DBConnector::getInstance());
 		$signers=$signersObj->getAll(null,"id_persona");
 		$signers=array_map(function($id){ return PersonaleHelper::getNominativo($id);}, Utils::getListfromField($signers,'id_persona'));
 		asort($signers);
