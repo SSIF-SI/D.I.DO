@@ -52,12 +52,12 @@ abstract class AnyDocument extends Crud{
 		
 	}
 	
-	public function saveInfo($inputs,$id_parent/*,$docInputs*/, $alreadyInTransaction = false){
+	public function saveInfo($inputs,$id_parent/*,$docInputs*/){
 		$existents_input = Utils::getListfromField($this->searchByKeys(array_keys($inputs), $id_parent),null,'key');
 		
 		foreach($inputs as $key=>$value){
 			
-			if(!$alreadyInTransaction) $this->_connInstance->query("BEGIN");
+			$this->_connInstance->begin();
 			if(isset($existents_input[$key]) && empty($value)){
 				$pkFields = $existents_input[$key];
 				unset($pkFields[$this->id_document_label],$pkFields['key'],$pkFields['value']);
@@ -75,12 +75,13 @@ abstract class AnyDocument extends Crud{
 			}
 			
 			if(!empty($result['errors'])){
-				if(!$alreadyInTransaction) $this->_connInstance->query("ROLLBACK");
-				return json_encode($result);
+				$this->_connInstance->rollback();
+				return $result;
 			}
 		}
-		if(!$alreadyInTransaction) $this->_connInstance->query("COMMIT");
-		return json_encode(array('errors' => false));
+		$this->_connInstance->commit();
+		
+		return (array('errors' => false));
 	}
 }
 ?>

@@ -176,8 +176,11 @@ class FTPConnector implements IFTPConnector{
 	}
 	
 	public function upload($source, $destination){
-		$result = ftp_put($this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY);
-		if(!$result) throw new Exception("Errore nel trasferimento del file $source", 666);
+		return ftp_put($this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY);
+	}
+	
+	public function delete($filePath){
+		return ftp_delete($this->_conn_id, $this->_baseDir . $filepath);
 	}
 	
 }

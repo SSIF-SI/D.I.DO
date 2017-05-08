@@ -22,6 +22,6 @@ abstract class AProcedureManager{
 	
 	abstract public function create($main, $data, $uploadPath);
 	abstract public function update($data, $uploadPath = null);
-	abstract public function delete($main);
+	abstract public function delete($main, $ftpFilePath);
 }
 ?>
