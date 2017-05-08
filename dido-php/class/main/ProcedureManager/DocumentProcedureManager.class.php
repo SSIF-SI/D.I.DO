@@ -63,7 +63,7 @@ class DocumentProcedureManager extends AProcedureManager{
 	}
 	
 	private function _saveDocData($data, $id_doc){
-		$DocumentData = new DocumentData($this->getDBConnector());
+		$DocumentData = new DocumentData($this->getDBconnector());
 		$result = $DocumentData->saveInfo($data, $id_doc, true);
 		return !empty($result['errors']);
 	}
