@@ -10,6 +10,10 @@ abstract class AProcedureManager{
 		$this->_dbConnector = $dbConnector;
 	}
 	
+	public function getConnector(){
+		return $this->_dbConnector;
+	}
+	
 	abstract public function create($main, $data, $uploadPath);
 	abstract public function update($data, $uploadPath = null);
 	abstract public function delete($main);
