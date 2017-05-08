@@ -12,7 +12,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 	/*
 	 * Il connettore
 	 */
-	private $_Connector;
+	private $_DBConnector;
 	
 	/*
 	 * Le variabili delle classi per recuperare dati dal DB
@@ -37,12 +37,12 @@ class MasterDocumentManager extends ClassWithDependencies {
 	 */
 	private $_PDFParser;
 	public function __construct() {
-		$this->_Connector = Connector::getInstance ();
+		$this->_DBConnector = DBConnector::getInstance ();
 		
-		$this->_Masterdocument = new Masterdocument ( $this->_Connector );
-		$this->_MasterdocumentData = new MasterdocumentData ( $this->_Connector );
-		$this->_Document = new Document ( $this->_Connector );
-		$this->_DocumentData = new DocumentData ( $this->_Connector );
+		$this->_Masterdocument = new Masterdocument ( $this->_DBConnector );
+		$this->_MasterdocumentData = new MasterdocumentData ( $this->_DBConnector );
+		$this->_Document = new Document ( $this->_DBConnector );
+		$this->_DocumentData = new DocumentData ( $this->_DBConnector );
 		
 		$this->_PermissionHelper = PermissionHelper::getInstance ();
 		
