@@ -12,7 +12,7 @@ class ProcedureManager{
 		$this->_FTPDataSource = $ftpDataSource;
 	}
 	
-	public function createMasterDocument($md, $md_data){
+	public function createMasterdocument($md, $md_data){
 		// Creo cartella ftp
 		$md[Masterdocument::FTP_FOLDER] = $this->_FTPDataSource->getNewPathFromXml($md['xml']);
 		if (!$this->_FTPDataSource->createFolder($md['ftp_folder'])){
@@ -32,11 +32,11 @@ class ProcedureManager{
 		return $new_md;
 	}
 	
-	public function updateMasterDocument($md_data){
+	public function updateMasterdocument($md_data){
 		return $this->_MDPManager->update($md_data);
 	}
 	
-	public function deleteMasterDocument($md_data){
+	public function deleteMasterdocument($md){
 		return $this->_MDPManager->delete($md);
 	}
 	

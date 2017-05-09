@@ -57,7 +57,7 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	public function delete($main){
 		$main[Masterdocument::CLOSED] = self::INCOMPLETE;
 		
-		$Masterdocument = new Masterdocument($this->$this->getDbConnector());
+		$Masterdocument = new Masterdocument($this->getDbConnector());
 		$result = $Masterdocument->save($main);
 		
 		return $result->getErrors() === false ? true : false;
