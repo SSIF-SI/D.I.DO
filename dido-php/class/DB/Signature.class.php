@@ -8,6 +8,7 @@ class Signature extends AnyDocument {
 	const ID_DELEGATO 	= "id_delegato";
 	const PKEY_DELEGATO = "pkey_delegato";
 	const FIXED_ROLE	= SignersRoles::FIXED_ROLE;
+	
 	protected $VIEW 	= "signers_view";
 	protected $TABLE 	= "signers";
 	

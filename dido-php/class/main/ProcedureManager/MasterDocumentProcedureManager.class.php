@@ -10,25 +10,26 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 		);
 	 */ 
 	public function create($main, $data){
-		$dbConnector=$this->getDBConnector();
-		$dbConnector->begin();
-		$Masterdocument = new Masterdocument($this->$dbConnector);
+		$this->getDbConnector()->begin();
+		
+		$Masterdocument = new Masterdocument($this->$this->getDbConnector());
 		$result = $Masterdocument->save($main);
-		if(!empty($result->getErrors())){
-			$dbConnector->rollback();
+		if($result->getErrors() !== false){
+			$this->getDbConnector()->rollback();
 			return false;
 		}
 		
-		$id_md = $dbConnector->getLastInsertId();
+		$id_md = $this->getDbConnector()->getLastInsertId();
 		$main[Masterdocument::ID_MD] = $id_md;
-		$masterdocumentData = new MasterdocumentData($dbConnector);
+		
+		$masterdocumentData = new MasterdocumentData($this->getDbConnector());
 		$result= $masterdocumentData->saveInfo($data, $id_md);
-		if(!empty($result->getErrors())){
-			$dbConnector->rollback();
+		if($result->getErrors() !== false){
+			$this->getDbConnector()->rollback();
 			return false;
 		}
 		
-		$dbConnector->commit();
+		$this->getDbConnector()->commit();
 		return $main;
 	}
 	/* $data
@@ -39,43 +40,26 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	 * 			
 	 */
 	public function update($data){
-		$dbConnector=$this->getDBConnector();
-		$dbConnector->begin();
+		$this->getDbConnector()->begin();
 		
 		$id_md = current(array_keys($data));
 
-		$masterdocumentData = new MasterdocumentData($dbConnector);
+		$masterdocumentData = new MasterdocumentData($this->getDbConnector());
 		$result = $masterdocumentData->saveInfo($data[$id_md], $id_md, true);
-		if(!empty($result->getErrors())){
-			$dbConnector->rollback();
+		if($result->getErrors() !== false){
+			$this->getDbConnector()->rollback();
 			return false;
 		}
-		$dbConnector->commit();
+		$this->getDbConnector()->commit();
 		return true;
 	}
 	
 	public function delete($main){
 		$main[Masterdocument::CLOSED] = self::INCOMPLETE;
-		$dbConnector=$this->getDBConnector();
 		
-		/*
-		 $dbConnector->begin();
-		 $id_md = $main['id_md'];
-		 $closed = array (
-		 'closed' => self::INCOMPLETE
-		 );
-		
-		 $masterdocumentData = new MasterdocumentData($dbConnector);
-		 if(!$masterdocumentData->saveInfo($closed, $id_md)){
-		 $dbConnector->rollback();
-		 return false;
-		 }
-		 $dbConnector->commit();
-		 return true;
-		*/
-		
-		$Masterdocument = new Masterdocument($this->$dbConnector);
+		$Masterdocument = new Masterdocument($this->$this->getDbConnector());
 		$result = $Masterdocument->save($main);
-		return empty($result->getErrors()) ? true : false;
+		
+		return $result->getErrors() === false ? true : false;
 	}
 }

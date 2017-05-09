@@ -22,8 +22,9 @@ class FTPDataSource{
 	}
 	
 	public function getFilenameFromDocument($document){
-		return FormHelper::fieldFromLabel($document['nome']." ".$document['id_doc'].".".$document['extension']);
+		return FormHelper::fieldFromLabel($document[Document::NOME]." ".$document[Document::ID_DOC].".".$document[Document::EXTENSION]);
 	}
+	
 	public function deleteFile($filePath){
 		return $this->_ftpConnector->delete($filePath);
 	}

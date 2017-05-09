@@ -8,7 +8,7 @@ class DocumentProcedureManager extends AProcedureManager{
 		// Step 1. Salvo il record nella tabella document
 		$Document = new Document($this->getDBConnector());
 		$result = $Document->save($main);
-		if(!empty($result->getErrors())){
+		if($result->getErrors() !== false){
 			$this->getDBConnector()->rollback();
 			return false;
 		}
@@ -22,7 +22,6 @@ class DocumentProcedureManager extends AProcedureManager{
 		}
 		
 		$this->getDBConnector()->commit();
-		 
 		return $main;
 	}
 	
@@ -49,11 +48,7 @@ class DocumentProcedureManager extends AProcedureManager{
 	private function _saveDocData($data, $id_doc){
 		$DocumentData = new DocumentData($this->getDBconnector());
 		$result = $DocumentData->saveInfo($data, $id_doc, true);
-		return !empty($result->getErrors());
-	}
-
-	private function _checkResult($result){
-		
+		return $result->getErrors() === false;
 	}
 }
 ?>
