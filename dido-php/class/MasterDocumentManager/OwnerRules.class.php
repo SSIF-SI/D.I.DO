@@ -23,7 +23,7 @@ class OwnerRules implements IOwnerRules {
 		if (! empty ( $path ))
 			$this->_XMLpath = $path;
 		else
-			$this->_XMLpath = FILES_PATH . DEFAULT_FILENAME;
+			$this->_XMLpath = FILES_PATH . self::DEFAULT_FILENAME;
 		$this->load ();
 	}
 	

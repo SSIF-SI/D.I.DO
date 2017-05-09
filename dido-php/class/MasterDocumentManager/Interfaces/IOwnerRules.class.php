@@ -3,8 +3,7 @@ interface IOwnerRules{
 
 	function getInputField();
 	function getXMLPath();
-	function setXMLPath($list);
-	function load();
+	function setXMLPath($path);
 
 }
 ?>

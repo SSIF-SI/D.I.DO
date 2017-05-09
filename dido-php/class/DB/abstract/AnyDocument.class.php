@@ -55,13 +55,16 @@ abstract class AnyDocument extends Crud{
 	public function saveInfo($inputs,$id_parent/*,$docInputs*/){
 		$existents_input = Utils::getListfromField($this->searchByKeys(array_keys($inputs), $id_parent),null,'key');
 		
+		$this->_connInstance->begin();
+		
 		foreach($inputs as $key=>$value){
+			$result = new ErrorHandler(false);
 			
-			$this->_connInstance->begin();
 			if(isset($existents_input[$key]) && empty($value)){
 				$pkFields = $existents_input[$key];
 				unset($pkFields[$this->id_document_label],$pkFields['key'],$pkFields['value']);
 				$result = $this->delete($pkFields);
+				
 			} elseif(!isset($existents_input[$key]) || $value != $existents_input[$key]['value']){
 				if(!empty($value)){
 					$existents_input[$key]['key'] = $key;
@@ -70,18 +73,18 @@ abstract class AnyDocument extends Crud{
 					
 					$object = Utils::stubFill($this->_stub,$existents_input[$key]);
 					$result = $this->save($object,null);
-					
+
 				}
 			}
 			
-			if(!empty($result['errors'])){
+			if(!empty($result->getErrors())){
 				$this->_connInstance->rollback();
 				return $result;
 			}
 		}
 		$this->_connInstance->commit();
 		
-		return (array('errors' => false));
+		return $result;
 	}
 }
 ?>

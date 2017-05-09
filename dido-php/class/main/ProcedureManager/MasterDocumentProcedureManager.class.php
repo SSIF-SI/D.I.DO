@@ -9,33 +9,27 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 			'closed'		=> 0				
 		);
 	 */ 
-	public function create($main, $data, $uploadPath){
+	public function create($main, $data){
 		$dbConnector=$this->getDBConnector();
 		$dbConnector->begin();
 		$Masterdocument = new Masterdocument($this->$dbConnector);
 		$result = $Masterdocument->save($main);
-		if(!empty($result['errors'])){
+		if(!empty($result->getErrors())){
 			$dbConnector->rollback();
 			return false;
 		}
 		
 		$id_md = $dbConnector->getLastInsertId();
+		$main['id_md'] = $id_md;
 		$masterdocumentData = new MasterdocumentData($dbConnector);
-			$result= $masterdocumentData->saveInfo($data, $id_md);
-		if(!empty($result['errors'])){
+		$result= $masterdocumentData->saveInfo($data, $id_md);
+		if(!empty($result->getErrors())){
 			$dbConnector->rollback();
 			return false;
 		}
 		
-		$ftp_folder = dirname($main['xml']).DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.date("m");
-			$ftpPath=$ftp_folder . DIRECTORY_SEPARATOR.$main['nome'] . "_" . $id_md;
-			if (!$this->getFTPConnector()->ftp_mksubdirs($ftpPath)){
-				$result['errors'] = "Cannot create subdirs in FTP";
-				$dbConnector->rollback();
-				return false;
-			}
 		$dbConnector->commit();
-		return true;
+		return $main;
 	}
 	/* $data
 	 * [id_md]->Array()-|
@@ -44,7 +38,7 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	 * 				[keyn]->[valuen]
 	 * 			
 	 */
-	public function update($data, $uploadPath = null){
+	public function update($data){
 		$dbConnector=$this->getDBConnector();
 		$dbConnector->begin();
 		
@@ -52,7 +46,7 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 
 		$masterdocumentData = new MasterdocumentData($dbConnector);
 		$result = $masterdocumentData->saveInfo($data[$id_md], $id_md, true);
-		if(!empty($result['errors'])){
+		if(!empty($result->getErrors())){
 			$dbConnector->rollback();
 			return false;
 		}
@@ -61,22 +55,27 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	}
 	
 	public function delete($main){
+		$main['closed'] = self::INCOMPLETE;
 		$dbConnector=$this->getDBConnector();
-		$dbConnector->begin();
 		
-		$id_md = $main['id_md'];
-		$closed = array (
-				'closed' => INCOMPLETE
-		);
+		/*
+		 $dbConnector->begin();
+		 $id_md = $main['id_md'];
+		 $closed = array (
+		 'closed' => self::INCOMPLETE
+		 );
 		
-		$masterdocumentData = new MasterdocumentData($dbConnector);	
-		if(!$masterdocumentData->saveInfo($closed, $id_md)){
-			$dbConnector->rollback();
-			return false;
-		}
-		$dbConnector->commit();
-		return true;
+		 $masterdocumentData = new MasterdocumentData($dbConnector);
+		 if(!$masterdocumentData->saveInfo($closed, $id_md)){
+		 $dbConnector->rollback();
+		 return false;
+		 }
+		 $dbConnector->commit();
+		 return true;
+		*/
 		
+		$Masterdocument = new Masterdocument($this->$dbConnector);
+		$result = $Masterdocument->save($main);
+		return empty($result->getErrors()) ? true : false;
 	}
-	
 }

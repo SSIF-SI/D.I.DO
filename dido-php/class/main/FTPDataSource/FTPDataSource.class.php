@@ -1,15 +1,29 @@
 <?php 
 class FTPDataSource{
-	private $_connector;
+	private $_ftpConnector;
 	
-	public function __construct(IFTPConnector $connector = null){
-		$this->_connector = is_null($connector) ? new FTPConnector() : $connector;
+	public function __construct(IFTPConnector $ftpConnector = null){
+		$this->_ftpConnector = is_null($ftpConnector) ? new FTPConnector() : $ftpConnector;
+	}
+	
+	public function createFolder($folder){
+		return $this->_ftpConnector->mksubdirs($folder);
+	}
+	
+	public function deleteFolder($folder){
+		return $this->_ftpConnector->deleteFolder($folder);
 	}
 	
 	public function getNewPathFromXml($xml){
-		return dirname($xml).DIRECTORY_SEPARATOR.date("Y").DIRECTORY_SEPARATOR.date("m");
+		return 
+			dirname($xml).DIRECTORY_SEPARATOR.
+			date("Y").DIRECTORY_SEPARATOR.
+			date("m").DIRECTORY_SEPARATOR;
 	}
 	
+	public function getFilenameFromDocument($document){
+		return FormHelper::fieldFromLabel($document['nome']." ".$document['id_doc'].".".$document['extension']);
+	}
 	
 }
 

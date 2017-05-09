@@ -163,7 +163,7 @@ class FTPConnector implements IFTPConnector{
 		return $result ? $tmpfile : false;
 	}
 	
-	public function ftp_mksubdirs($ftpath){
+	public function mksubdirs($ftpath){
 		@ftp_chdir($this->_conn_id, $this->_baseDir); 
 		$parts = explode(DIRECTORY_SEPARATOR, $ftpath); 
 		foreach($parts as $part){
@@ -173,6 +173,10 @@ class FTPConnector implements IFTPConnector{
 			}
 		}
 		return true;
+	}
+	
+	public function deleteFolder($folder){
+		return ftp_rmdir($this->_conn_id, $this->_baseDir . $folder);
 	}
 	
 	public function upload($source, $destination){
