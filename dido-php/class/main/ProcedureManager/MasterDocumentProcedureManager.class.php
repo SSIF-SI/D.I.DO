@@ -12,7 +12,7 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	public function create($main, $data){
 		$this->getDbConnector()->begin();
 		
-		$Masterdocument = new Masterdocument($this->$this->getDbConnector());
+		$Masterdocument = new Masterdocument($this->getDbConnector());
 		$result = $Masterdocument->save($main);
 		if($result->getErrors() !== false){
 			$this->getDbConnector()->rollback();
