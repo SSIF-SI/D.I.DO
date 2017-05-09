@@ -40,15 +40,14 @@ class ProcedureManager{
 		return $this->_MDPManager->delete($md);
 	}
 	
-	public function createDocument($doc, $data, $filePath, $ftpFolder){
+	public function createDocument($doc, $data, $filePath, $repositoryPath){
 		$this->_dbConnector->begin();
 		$new_doc = $this->_DPManager->create($doc, $data); 
 		if(!$new_doc){
 			$this->_dbConnector->rollback();
 			return false;
 		}
-		$filename = $ftpFolder . $this->_FTPDataSource->getFilenameFromDocument($new_doc);
-		if(!$this->_FTPDataSource->upload($filePath, $filename)){
+		if(!$this->upload($new_doc, $filePath,$repositoryPath)){
 			$this->_dbConnector->rollback();
 			return false;
 		}
@@ -57,15 +56,14 @@ class ProcedureManager{
 		return $new_doc;
 	}
 	
-	public function updateDocument($data, $filePath = null){
+	public function updateDocument($document, $data, $filePath=null, $repositoryPath=null){
 		$this->_dbConnector->begin();
 		if(!$this->_DPManager->update($data)){
 			$this->_dbConnector->rollback();
 			return false;	
 		}
-		if(!is_null($filePath)){
-			$filename = $ftpFolder . $this->_FTPDataSource->getFilenameFromDocument($new_doc);
-			if(!$this->_FTPDataSource->upload($filePath, $filename)){
+		if(!is_null($filePath)&&!is_null($repositoryPath)){
+			if(!$this->uploadFile($document,$filePath,$repositoryPath)){
 				$this->_dbConnector->rollback();
 				return false;
 			}
@@ -73,6 +71,29 @@ class ProcedureManager{
 		
 		$this->_dbConnector->commit();
 		return $new_doc;
+	}
+	
+	public function deleteDocument($doc, $ftpFolder){
+		$this->_dbConnector->begin();
+		if(!$this->_DPManager->delete($doc, $ftpFolder)){
+			$this->_dbConnector->rollback();
+			return false;
+		}
+		$filePath=$ftpFolder.$this->_FTPDataSource->getFilenameFromDocument($doc);
+		if (! $this->_FTPDataSource->deleteFile ( $filePath )) {
+			$this->_dbConnector->rollback ();
+			return false;
+		}
+		$this->_dbConnector->commit();
+		return true;
+	}
+	
+	private function uploadFile($doc, $filePath, $repositoryPath){
+		$filename = $repositoryPath . $this->_FTPDataSource->getFilenameFromDocument ( $doc );
+		if (! $this->_FTPDataSource->upload ( $filePath, $filename )) {
+			return false;
+		}
+		return true;
 	}
 }
 ?>
