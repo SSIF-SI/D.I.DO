@@ -1,24 +1,21 @@
 <?php 
 class UserSignature{
-	private static $UID = "id_persona";
-	private static $OUID = "id_delegato";
-	
 	private $_signature;
 	private $_signatureRoles;
 	
 	public function __construct($user_id){
 		$signersObj = new Signers(DBConnector::getInstance());
-		$mySignature = Utils::getListfromField($signersObj->getBy(self::$UID, $user_id), 'pkey',self::$UID);
+		$mySignature = Utils::getListfromField($signersObj->getBy(Signers::ID_PERSONA, $user_id), Signers::PKEY, Signers::ID_PERSONA);
 		
 		$signatureObj = new Signature(DBConnector::getInstance());
-		$signatures = $signatureObj->getAll('sigla','id_item');
+		$signatures = $signatureObj->getAll(Signature::SIGLA, Signature::ID_ITEM);
 		
 		$signer = array_merge(
-				Utils::filterList($signatures,self::$UID, $user_id),
-				Utils::filterList($signatures,self::$OUID, $user_id));
+				Utils::filterList($signatures,Signature::ID_PERSONA, $user_id),
+				Utils::filterList($signatures,Signature::ID_DELEGATO, $user_id));
 		
 		$this->_signature = reset($mySignature);
-		$this->_signatureRoles = Utils::getListfromField($signer,null,'sigla');
+		$this->_signatureRoles = Utils::getListfromField($signer,null,SignersRoles::SIGLA);
 	}
 	
 	public function getSignature(){

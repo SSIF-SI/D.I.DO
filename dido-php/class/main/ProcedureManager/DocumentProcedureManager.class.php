@@ -15,7 +15,7 @@ class DocumentProcedureManager extends AProcedureManager{
 		
 		// Step 2. salvo i dati associati nella tabella document_data
 		$id_doc = $result->getOtherData('lastInsertId');
-		$main['id_doc'] = $id_doc;
+		$main[Document::ID_DOC] = $id_doc;
 		if(!$this->_saveDocData($data, $id_doc)){
 			$this->getDBConnector()->rollback();
 			return false;
@@ -38,7 +38,7 @@ class DocumentProcedureManager extends AProcedureManager{
 	
 	public function delete($main, $ftpFilePath){
 		// Step 1. cancello i dati del doc
-		$id_doc = $main['id_doc'];
+		$id_doc = $main[Document::ID_DOC];
 		$Document = new Document($this->getDBConnector());
 		if(!$Document->delete($main)){
 			return false;

@@ -1,7 +1,15 @@
 <?php
 class Signature extends AnyDocument {
-	protected $VIEW = "signers_view";
-	protected $TABLE = "signers";
+	const ID_ITEM 		= "id_item";
+	const SIGLA			= SignersRoles::SIGLA;
+	const DESCRIZIONE 	= SignersRoles::DESCRIZIONE;
+	const ID_PERSONA 	= Signers::ID_PERSONA;
+	const PKEY 			= Signers::PKEY;
+	const ID_DELEGATO 	= "id_delegato";
+	const PKEY_DELEGATO = "pkey_delegato";
+	const FIXED_ROLE	= SignersRoles::FIXED_ROLE;
+	protected $VIEW 	= "signers_view";
+	protected $TABLE 	= "signers";
 	
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );
@@ -12,10 +20,10 @@ class Signature extends AnyDocument {
 		$result = array ();
 		
 		$fixedSigners = new FixedSigners ( DBConnector::getInstance () );
-		$id_fs = array_unique(Utils::getListfromField($fixedSigners->getAll(),'id_persona'));
+		$id_fs = array_unique(Utils::getListfromField($fixedSigners->getAll(),FixedSigners::ID_PERSONA));
 		$id_fs = join(", ",array_map("Utils::apici",$id_fs));
-		$fixed = Utils::filterList($this->getBy('id_persona', $id_fs), "fixed_role", 1);
-		$signers = Utils::getListfromField($fixed,null,'sigla');
+		$fixed = Utils::filterList($this->getBy(FixedSigners::ID_PERSONA, $id_fs), self::FIXED_SIGNER, 1);
+		$signers = Utils::getListfromField($fixed,null,self::SIGLA);
 		
 		
 		$SignersRoles = new SignersRoles ( DBConnector::getInstance () );
@@ -36,7 +44,7 @@ class Signature extends AnyDocument {
 		//$id_s = array_unique(array_merge($id_fs,$id_vs));
 		$id_vs = join(", ",array_map("Utils::apici",$id_vs));
 		
-		$signers = array_merge($signers, Utils::getListfromField($this->getBy('id_persona', $id_vs),null,'sigla'));
+		$signers = array_merge($signers, Utils::getListfromField($this->getBy(self::ID_PERSONA, $id_vs),null,self::SIGLA));
 		return $signers;
 	}
 }

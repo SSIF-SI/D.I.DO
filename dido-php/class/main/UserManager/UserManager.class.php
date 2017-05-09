@@ -12,20 +12,20 @@ class UserManager{
 	private $_role;
 	private $_signature;
 	
-	public function __construct(IDBConnector $connector){
+	public function __construct(IDBConnector $connector) {
 		// Ad oggi i dati dell'utente li peschiamo dal Web service del personale
-		$sourceUserData = new PersonaleSourceUserData();
-		$this->_user = new User($sourceUserData);
+		$sourceUserData = new PersonaleSourceUserData ();
+		$this->_user = new User ( $sourceUserData );
 		
 		// Setto il campo da scrivere nel DB che mi identifica l'utente
-		$this->_fieldToWriteOnDb = $this->_user->getUid();
+		$this->_fieldToWriteOnDb = $this->_user->getUid ();
 		
 		// Ora setto il ruolo
-		$user_roleObj = new UsersRoles($connector);
-		$user_role = Utils::getListfromField($user_roleObj->getBy("id_persona", $this->_fieldToWriteOnDb), "ruolo", "id_persona");
-		$this->_role = isset($user_role[$this->_fieldToWriteOnDb]) ? $user_role[$this->_fieldToWriteOnDb] : null;
-				
-		$this->_signature = new UserSignature($this->_fieldToWriteOnDb);
+		$user_roleObj = new UsersRoles ( $connector );
+		$user_role = Utils::getListfromField ( $user_roleObj->getBy ( UsersRoles::ID_PERSONA, $this->_fieldToWriteOnDb ), UsersRoles::RUOLO, UsersRoles::ID_PERSONA );
+		$this->_role = isset ( $user_role [$this->_fieldToWriteOnDb] ) ? $user_role [$this->_fieldToWriteOnDb] : null;
+		
+		$this->_signature = new UserSignature ( $this->_fieldToWriteOnDb );
 	}
 	
 	public function getUser(){

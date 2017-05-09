@@ -20,7 +20,7 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 		}
 		
 		$id_md = $dbConnector->getLastInsertId();
-		$main['id_md'] = $id_md;
+		$main[Masterdocument::ID_MD] = $id_md;
 		$masterdocumentData = new MasterdocumentData($dbConnector);
 		$result= $masterdocumentData->saveInfo($data, $id_md);
 		if(!empty($result->getErrors())){
@@ -55,7 +55,7 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	}
 	
 	public function delete($main){
-		$main['closed'] = self::INCOMPLETE;
+		$main[Masterdocument::CLOSED] = self::INCOMPLETE;
 		$dbConnector=$this->getDBConnector();
 		
 		/*

@@ -14,7 +14,7 @@ class ProcedureManager{
 	
 	public function createMasterDocument($md, $md_data){
 		// Creo cartella ftp
-		$md['ftp_folder'] = $this->_FTPDataSource->getNewPathFromXml($md['xml']);
+		$md[Masterdocument::FTP_FOLDER] = $this->_FTPDataSource->getNewPathFromXml($md['xml']);
 		if (!$this->_FTPDataSource->createFolder($md['ftp_folder'])){
 			return false;
 		}
@@ -23,7 +23,7 @@ class ProcedureManager{
 		$this->_dbConnector->begin();
 		$new_md = $this->_MDPManager->create($md, $data);
 		if(!$new_md){
-			$this->_FTPDataSource->deleteFolder($md['ftp_folder']);
+			$this->_FTPDataSource->deleteFolder($md[Masterdocument::FTP_FOLDER]);
 			$this->_dbConnector->rollback();
 			return false;
 		}

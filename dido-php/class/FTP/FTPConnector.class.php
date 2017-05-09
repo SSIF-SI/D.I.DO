@@ -4,7 +4,7 @@ class FTPConnector implements IFTPConnector{
 	private $_conn_id;
 	private $_baseDir = null;
 	
-	private $_pdfExtensions = array('pdf','p7m');
+	private static $_pdfExtensions = array('pdf','p7m');
 	
 	public function __construct(){
 		

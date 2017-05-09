@@ -1,6 +1,10 @@
 <?php 
 class XMLDataSource{
-	const FILE_REGEX = "^([A-Za-z_àèéìòù\s]{1,})(\.v[0-9]{1,}){0,1}(\.xml)$";
+	const FILE_REGEX 		= "^([A-Za-z_àèéìòù\s]{1,})(\.v[0-9]{1,}){0,1}(\.xml)$";
+	
+	const LABEL_FILE 		= "file";
+	const LABEL_VERSIONE 	= "versione";
+	const LABEL_XML 		= "xml";
 	
 	private $_xmlTree = [];
 	private $_filtered = [];
@@ -33,7 +37,7 @@ class XMLDataSource{
 		foreach($this->_filtered as $catName=>$data){
 			foreach($data as $tipoDocumento=>$versioni){
 				foreach($versioni as $xml);
-					array_push($xmlList,$xml['file']);
+					array_push($xmlList,$xml[self::LABEL_FILE]);
 			}
 		}
 		return $xmlList;
@@ -66,9 +70,9 @@ class XMLDataSource{
 			
 			$tree[$fileInfo[1]][$fileInfo[2]] = 
 				array(
-					"file" => $catName.DIRECTORY_SEPARATOR.$fileName, 
-					"versione" => $fileInfo[2],
-					"xml" => $this->_XMLParser->getXMLSource()
+					self::LABEL_FILE 		=> $catName.DIRECTORY_SEPARATOR.$fileName, 
+					self::LABEL_VERSIONE 	=> $fileInfo[2],
+					self::LABEL_VERSIONE 	=> $this->_XMLParser->getXMLSource()
 				); 
 		}
 		
