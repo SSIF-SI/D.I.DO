@@ -72,7 +72,7 @@ class XMLDataSource{
 				array(
 					self::LABEL_FILE 		=> $catName.DIRECTORY_SEPARATOR.$fileName, 
 					self::LABEL_VERSIONE 	=> $fileInfo[2],
-					self::LABEL_VERSIONE 	=> $this->_XMLParser->getXMLSource()
+					self::LABEL_XML		 	=> $this->_XMLParser->getXMLSource()
 				); 
 		}
 		

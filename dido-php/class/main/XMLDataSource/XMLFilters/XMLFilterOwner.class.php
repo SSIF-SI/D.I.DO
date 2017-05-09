@@ -6,7 +6,7 @@ class XMLFilterOwner extends AXMLFilter implements IXMLFilter{
 		foreach($list as $catName=>$data){
 			foreach($data as $tipoDocumento=>$versioni){
 				foreach($versioni as $nv=>$xmlData){
-					$this->_XMLParser->setXMLSource($xmlData['xml']);
+					$this->_XMLParser->setXMLSource($xmlData[XMLDataSource::LABEL_XML]);
 					if(!$this->_XMLParser->isOwner($this->_filters))
 						unset($list[$catName][$tipoDocumento][$nv]);
 				}

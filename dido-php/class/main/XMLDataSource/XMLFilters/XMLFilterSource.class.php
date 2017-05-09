@@ -6,7 +6,7 @@ class XMLFilterSource extends AXMLFilter implements IXMLFilter{
 		foreach($list as $catName=>$data){
 			foreach($data as $tipoDocumento=>$versioni){
 				foreach($versioni as $nv=>$xmlData){
-					$this->_XMLParser->setXMLSource($xmlData['xml']);
+					$this->_XMLParser->setXMLSource($xmlData[XMLDataSource::LABEL_XML]);
 					if(!in_array($this->_XMLParser->getSource(), $this->_filters))
 						unset($list[$catName][$tipoDocumento][$nv]);
 				}
