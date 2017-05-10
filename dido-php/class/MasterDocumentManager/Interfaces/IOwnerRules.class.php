@@ -1,9 +1,11 @@
 <?php
-interface IOwnerRules{
+
+interface IOwnerRules {
 
 	function getInputField();
-	function getXMLPath();
-	function setXMLPath($path);
 
+	function getXMLPath();
+
+	function setXMLPath($path);
 }
 ?>

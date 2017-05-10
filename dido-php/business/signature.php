@@ -3,25 +3,24 @@ require_once ("../config.php");
 
 if (Utils::checkAjax ()) {
 	$classname = $_GET ['list'];
-	if($classname!='ApplySign')
+	if ($classname != 'ApplySign')
 		$userRolesObj = new $classname ( DBConnector::getInstance () );
 	
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
-	if ($delete){
-		unset($_GET['list'],$_GET['delete']);
+	if ($delete) {
+		unset ( $_GET ['list'], $_GET ['delete'] );
 		die ( json_encode ( $userRolesObj->delete ( $_GET ) ) );
 	}
 	
 	if (count ( $_POST ) != 0) {
 		
 		die ( json_encode ( $userRolesObj->save ( $_POST ) ) );
-	
 	} else {
 		$list = isset ( $_GET ['list'] ) ? $_GET ['list'] : null;
-		unset($_GET['list']);
-		$id = reset($_GET);
-		if(!$id)
-			$id=null;
+		unset ( $_GET ['list'] );
+		$id = reset ( $_GET );
+		if (! $id)
+			$id = null;
 		switch ($list) {
 			case 'Signers' :
 				die ( SignatureHelper::createModalSigner ( $id ) );
@@ -32,7 +31,7 @@ if (Utils::checkAjax ()) {
 			case 'VariableSigners' :
 				die ( SignatureHelper::createModalVariableSigner ( $id ) );
 				break;
-			case 'ApplySign' :				
+			case 'ApplySign' :
 				die ( SignatureHelper::createModalApplySign () );
 				break;
 		}
@@ -42,6 +41,7 @@ if (Utils::checkAjax ()) {
 $signers = SignatureHelper::getSigners ();
 
 $pageScripts = array (
-		"MyModal.js","signatureModal.js"
+		"MyModal.js",
+		"signatureModal.js" 
 );
 include_once (TEMPLATES_PATH . "template.php");

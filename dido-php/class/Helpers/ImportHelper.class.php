@@ -1,18 +1,20 @@
-<?php 
-class ImportHelper{
-	static function idPersonaFromCf($cf){
-		return Personale::getInstance()->getPersonabyCf($cf)['idPersona'];
+<?php
+
+class ImportHelper {
+
+	static function idPersonaFromCf($cf) {
+		return Personale::getInstance ()->getPersonabyCf ( $cf )['idPersona'];
 	}
-	
-	static function gruppoFromCf($cf){
-		$gruppi = Personale::getInstance()->getGruppi();
-		$gruppo = Utils::filterList($gruppi, "cf_responsabile", $cf);
-		$gruppo = reset($gruppo);
-		return $gruppo['sigla'];
+
+	static function gruppoFromCf($cf) {
+		$gruppi = Personale::getInstance ()->getGruppi ();
+		$gruppo = Utils::filterList ( $gruppi, "cf_responsabile", $cf );
+		$gruppo = reset ( $gruppo );
+		return $gruppo ['sigla'];
 	}
-	
-	static function dateFromDB($data){
-		return Utils::convertDateFormat($data, DB_DATE_FORMAT, "d/m/Y");
+
+	static function dateFromDB($data) {
+		return Utils::convertDateFormat ( $data, DB_DATE_FORMAT, "d/m/Y" );
 	}
 }
 ?>

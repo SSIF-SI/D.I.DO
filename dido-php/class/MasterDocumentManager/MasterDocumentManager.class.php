@@ -1,41 +1,52 @@
 <?php
+
 class MasterDocumentManager extends ClassWithDependencies {
-	/*
-	 * Questa classe si occuperà di fornire all'applicazione l'elenco completo dei Master document e relativi dati allegati che l'utente potrà visualizzare in base ai permessi che ha. Il formato di uscita sarà un array associativo come segue: Array ( [md] 				=> [id_md => record masterdocument] [md_data]			=> [id_md => [md_inputs]] [documents] 		=> [id_md => [id_doc => record document]] [documents_data]	=> [id_doc => [document_inputs]] )
-	 */
 
 	/*
-	 * L'array dove verrà memorizzato il risultato 
-	 */	
-	private $_resultArray;
+	 * Questa classe si occuperà di fornire all'applicazione l'elenco completo
+	 * dei Master document e relativi dati allegati che l'utente potrà
+	 * visualizzare in base ai permessi che ha. Il formato di uscita sarà un
+	 * array associativo come segue: Array ( [md] => [id_md => record
+	 * masterdocument] [md_data] => [id_md => [md_inputs]] [documents] => [id_md
+	 * => [id_doc => record document]] [documents_data] => [id_doc =>
+	 * [document_inputs]] )
+	 */
 	
+	/*
+	 * L'array dove verrà memorizzato il risultato
+	 */
+	private $_resultArray;
+
 	/*
 	 * Il connettore
 	 */
 	private $_DBConnector;
-	
+
 	/*
 	 * Le variabili delle classi per recuperare dati dal DB
 	 */
 	private $_Masterdocument, $_MasterdocumentData, $_Document, $_DocumentData;
-	
+
 	/*
 	 * Devo accedere anche ai permessi dell'utente
 	 */
 	private $_PermissionHelper;
-	
+
 	/*
 	 * Mi serve il browser XML
 	 */
 	private $_XMLBrowser;
+
 	/*
 	 * Dovrò fare accessi anche in ftp
 	 */
 	private $_FTPConnector;
+
 	/*
 	 * odvrò controllare le firme ? non lo so ma lo metto
 	 */
 	private $_PDFParser;
+
 	public function __construct() {
 		$this->_DBConnector = DBConnector::getInstance ();
 		
@@ -50,11 +61,13 @@ class MasterDocumentManager extends ClassWithDependencies {
 		$this->_FTPConnector = FTPConnector::getInstance ();
 		$this->_PDFParser = new PDFParser ();
 	}
+
 	public function getAllMyMasterDocuments(Array $filters = [], $categorized = true) {
 		// Resettiamo l'array
 		$this->_emptyResult ();
 		
-		// Se non ci sono filtri la ricerca la faccio solo sui master document aperti
+		// Se non ci sono filtri la ricerca la faccio solo sui master document
+		// aperti
 		// impostando come chiave gli id dei MD
 		
 		if (empty ( $filters ))
@@ -68,12 +81,13 @@ class MasterDocumentManager extends ClassWithDependencies {
 		$docToSearch = array ();
 		
 		// Step 1. Tutti i documenti di cui l'utente è proprietario
-		// ossia quelli i cui campi di input relativi al MD, definiti nel file ownerRules.xml
+		// ossia quelli i cui campi di input relativi al MD, definiti nel file
+		// ownerRules.xml
 		// hanno come valore l'id dell'utente
 		$key_value = array ();
 		
-		$ownerRules = new OwnerRules();
-		$inputOwnerRules=$ownerRules->getInputField();
+		$ownerRules = new OwnerRules ();
+		$inputOwnerRules = $ownerRules->getInputField ();
 		foreach ( $inputOwnerRules as $inputField ) {
 			$key_value [$inputField] = ( string ) $this->_PermissionHelper->getUserId ();
 		}
@@ -89,18 +103,24 @@ class MasterDocumentManager extends ClassWithDependencies {
 		}
 		
 		// Step 2. Lista di MD visibili in base al tipo e ai permessi utente,
-		// ossia in base agli xml in cui sono proprietario o comunque ho visibilità
+		// ossia in base agli xml in cui sono proprietario o comunque ho
+		// visibilità
 		// TODO:Gestione XML
+		
 		$xmlList = array_keys ( $this->_XMLBrowser->getXmlList ( false, PermissionHelper::getInstance ()->getUserField ( 'gruppi' ) ) );
 		if (count ( $xmlList )) {
 			$mdToSearchXML = array_intersect ( Utils::getListfromField ( $mdToSearch, 'xml' ), $xmlList );
 			$otherMDS = array_intersect_key ( $mdToSearch, $mdToSearchXML );
-			// $this->_resultArray['md'] = array_merge($this->_resultArray['md'], $this->_Masterdocument->getBy("xml",join(",", array_map("Utils::apici",$xmlList))));
+			// $this->_resultArray['md'] =
+			// array_merge($this->_resultArray['md'],
+			// $this->_Masterdocument->getBy("xml",join(",",
+			// array_map("Utils::apici",$xmlList))));
 			if (count ( $otherMDS ))
 				$this->_resultArray ['md'] = array_merge ( $this->_resultArray ['md'], $otherMDS );
 		}
 		
-		// Step 3. Se l'utente è firmatario, lista di MD che hanno al loro interno
+		// Step 3. Se l'utente è firmatario, lista di MD che hanno al loro
+		// interno
 		// documenti firmati o da firmare
 		
 		if ($this->_PermissionHelper->isSigner () && count ( $mdToSearch )) {
@@ -128,31 +148,41 @@ class MasterDocumentManager extends ClassWithDependencies {
 						if (count ( $xmlDoc->signatures->signature )) {
 							$found = 0;
 							foreach ( $xmlDoc->signatures->signature as $signature ) {
-								// Utils::printr("This document must be signed by {$signature['role']}");
+								// Utils::printr("This document must be signed
+								// by {$signature['role']}");
 								if (isset ( $roles_signatures ['signRoles'] [( string ) $signature ['role']] )) {
 									if ($roles_signatures ['signRoles'] [( string ) $signature ['role']] ['fixed_role']) {
 										$docToSearch [$id_md] [$id_doc] ['mustBeSigned'] = 1;
-										// Utils::printr("I'm the {$signature['role']}");
-										// è un ruolo fisso, devo verificarlo sempre
+										// Utils::printr("I'm the
+										// {$signature['role']}");
+										// è un ruolo fisso, devo verificarlo
+										// sempre
 										if ($this->_checkSignature ( $filename, $roles_signatures ['mySignature'] ))
 											$found ++;
 									} else {
-										// è un ruolo variabile, devo firmare solo se definito negli inputs del master document
-										// Utils::printr("Ok, I'm a possible {$signature['role']}");
+										// è un ruolo variabile, devo firmare
+										// solo se definito negli inputs del
+										// master document
+										// Utils::printr("Ok, I'm a possible
+										// {$signature['role']}");
 										
 										$inputToFind = $roles_signatures ['signRoles'] [( string ) $signature ['role']] ['descrizione'];
-										// Utils::printr("Need to find $inputToFind in inputs");
+										// Utils::printr("Need to find
+										// $inputToFind in inputs");
 										$md_data = $this->_compact ( Utils::groupListBy ( $this->_MasterdocumentData->getBy ( "id_md", $id_md ), "id_md" ) );
 										;
 										if (isset ( $md_data [$id_md] [$inputToFind] )) {
-											// Utils::printr("found in the inputs");
+											// Utils::printr("found in the
+											// inputs");
 											if ($md_data [$id_md] [$inputToFind] == PermissionHelper::getInstance ()->getUserId ()) {
-												// Utils::printr("Ok, I'm the signer");
+												// Utils::printr("Ok, I'm the
+												// signer");
 												$docToSearch [$id_md] [$id_doc] ['mustBeSigned'] = 1;
 											}
 											// Utils::printr($this->_documents[$id_md]);
 											if ($this->_checkSignature ( $filename, $roles_signatures ['mySignature'] )) {
-												// Utils::printr("already signed");
+												// Utils::printr("already
+												// signed");
 												$found ++;
 											}
 										}
@@ -186,6 +216,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 		}
 		return $this->_resultArray;
 	}
+
 	public function _createResultTree($docListAlreadyExistent = null) {
 		// Creo l'albero di documenti
 		$this->_resultArray ['md'] = Utils::getListfromField ( $this->_resultArray ['md'], null, "id_md" );
@@ -200,7 +231,8 @@ class MasterDocumentManager extends ClassWithDependencies {
 					$documents [$k] ['mustBeSigned'] = 0;
 					$documents [$k] ['signed'] = 0;
 					
-					// Se ho le info aggiuntive sulla firma sovrascrivo il documento
+					// Se ho le info aggiuntive sulla firma sovrascrivo il
+					// documento
 					if (isset ( $docListAlreadyExistent [$documents [$k] ['id_md']] [$k] ))
 						$documents [$k] = $docListAlreadyExistent [$documents [$k] ['id_md']] [$k];
 					
@@ -211,6 +243,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 			}
 		}
 	}
+
 	public function getSingleMasterDocument($id_md) {
 		$this->_emptyResult ();
 		
@@ -239,6 +272,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 		
 		return $this->_resultArray;
 	}
+
 	public static function _purge(&$md, $id_md, $id_doc) {
 		unset ( $md ['md_data'] [$id_md], $md ['documents'] [$id_md], $md ['documents_data'] [$id_md] );
 		foreach ( $md ['md'] as $category => $subcategory ) {
@@ -251,6 +285,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 				unset ( $md ['md'] [$category] );
 		}
 	}
+
 	private function _emptyResult() {
 		$this->_resultArray = array (
 				'md' => [ ],
@@ -266,11 +301,11 @@ class MasterDocumentManager extends ClassWithDependencies {
 	// $rule['operator'] = Utils::OP_EQUAL;
 	// if(!isset($rule['field']) || !isset($rule['value']))
 	// continue;
-	// $list = Utils::filterList($list, $rule['field'], $rule['value'], $rule['operator']);
+	// $list = Utils::filterList($list, $rule['field'], $rule['value'],
+	// $rule['operator']);
 	// }
 	// return $list;
 	// }
-	
 	private function _checkSignature($filename, $signature) {
 		// Utils::printr("Checking signature $signature");
 		$tmpPDF = $this->_FTPConnector->getTempFile ( $filename );
@@ -279,7 +314,8 @@ class MasterDocumentManager extends ClassWithDependencies {
 		
 		unlink ( $tmpPDF );
 		
-		// Utils::printr("found ".count($signaturesOnDocument)." signature(s).");
+		// Utils::printr("found ".count($signaturesOnDocument)."
+		// signature(s).");
 		
 		if (count ( $signaturesOnDocument )) {
 			foreach ( $signaturesOnDocument as $sod ) {
@@ -290,6 +326,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 		} else
 			return false;
 	}
+
 	private function _compact($md_data) {
 		foreach ( $md_data as $id_md => $data ) {
 			$metadata = array ();

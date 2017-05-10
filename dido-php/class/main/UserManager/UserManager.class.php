@@ -1,17 +1,22 @@
 <?php
-class UserManager{
-	// Se aggiungiamo/Modifichiamo ruoli nella tabella roles, dobbiano aggiornare questa classe
-	
-	const RUOLO_AMMINISTRATORE 	= 'Amministratore';
-	const RUOLO_GESTORE 		= 'Gestore Dati';
-	const RUOLO_CONSULTATORE 	= 'Consultatore';
-	
+
+class UserManager {
+	// Se aggiungiamo/Modifichiamo ruoli nella tabella roles, dobbiano
+	// aggiornare questa classe
+	const RUOLO_AMMINISTRATORE = 'Amministratore';
+
+	const RUOLO_GESTORE = 'Gestore Dati';
+
+	const RUOLO_CONSULTATORE = 'Consultatore';
+
 	private $_fieldToWriteOnDb;
-	
+
 	private $_user;
+
 	private $_role;
+
 	private $_signature;
-	
+
 	public function __construct(IDBConnector $connector) {
 		// Ad oggi i dati dell'utente li peschiamo dal Web service del personale
 		$sourceUserData = new PersonaleSourceUserData ();
@@ -27,46 +32,41 @@ class UserManager{
 		
 		$this->_signature = new UserSignature ( $this->_fieldToWriteOnDb );
 	}
-	
-	public function getUser(){
+
+	public function getUser() {
 		return $this->_user;
 	}
-	
-	public function getFieldToWriteOnDb(){
+
+	public function getFieldToWriteOnDb() {
 		return $this->_fieldToWriteOnDb;
 	}
-	
-	public function isSigner(){
-		
-		return !is_null($this->_signature->getSignature());
+
+	public function isSigner() {
+		return ! is_null ( $this->_signature->getSignature () );
 	}
-	
-	public function hasSignRole($signRole){
-		return array_key_exists($signRole, $this->_signature->getSignatureRoles());
+
+	public function hasSignRole($signRole) {
+		return array_key_exists ( $signRole, $this->_signature->getSignatureRoles () );
 	}
-	
-	public function getUserRole(){
+
+	public function getUserRole() {
 		return $this->_role;
-	
 	}
-	public function getUserSign(){
+
+	public function getUserSign() {
 		return $this->_sign;
 	}
-	
-	public function isAdmin(){
+
+	public function isAdmin() {
 		return $this->_role == self::RUOLO_AMMINISTRATORE;
 	}
-	
-	public function isGestore($strict = false){
-		return $strict ? 
-			$this->_role == self::RUOLO_GESTORE : 
-			$this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE;
+
+	public function isGestore($strict = false) {
+		return $strict ? $this->_role == self::RUOLO_GESTORE : $this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE;
 	}
-	
-	public function isConsultatore($strict = false){
-		return $strict ?
-			$this->_role == self::RUOLO_CONSULTATORE :		
-			$this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE || $this->_role == self::RUOLO_CONSULTATORE;
+
+	public function isConsultatore($strict = false) {
+		return $strict ? $this->_role == self::RUOLO_CONSULTATORE : $this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE || $this->_role == self::RUOLO_CONSULTATORE;
 	}
 }
 ?>

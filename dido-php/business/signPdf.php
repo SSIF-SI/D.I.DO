@@ -24,16 +24,24 @@ if (count ( $_FILES )) {
 		$PDFSigner->setPassword ( $_POST ['pwd'] );
 	}
 } else
-	die ( json_encode ( array ("error" => "Nessun file." ) ) );
+	die ( json_encode ( array (
+			"error" => "Nessun file." 
+	) ) );
 
 $PDFSigner->signPDF ( $PDFSigner->getPdf (), $pdfname, $tmp_key, $_POST ['pwd'] );
 $fsize = filesize ( $pdfname );
 header ( 'Content-Length: ' . filesize ( $pdfname ) );
-header ( "Content-type: application/pdf" ); // add here more headers for diff. extensions
-header ( "Content-Disposition: attachment; filename=\"" . $pdfbasename . "\"" ); // use 'attachment' to force a download
+header ( "Content-type: application/pdf" ); // add here more headers for diff.
+                                            // extensions
+header ( "Content-Disposition: attachment; filename=\"" . $pdfbasename . "\"" ); // use
+                                                                                 // 'attachment'
+                                                                                 // to
+                                                                                 // force
+                                                                                 // a
+                                                                                 // download
 header ( "Content-length: $fsize" );
 header ( "Cache-control: private" ); // use this to open files directly
-header ("Expires: 0");
+header ( "Expires: 0" );
 
 readfile ( $pdfname );
 flush ();

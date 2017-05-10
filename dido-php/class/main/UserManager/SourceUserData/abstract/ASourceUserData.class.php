@@ -1,5 +1,5 @@
 <?php
-abstract class ASourceUserData implements IUserData{
-	
+
+abstract class ASourceUserData implements IUserData {
 }
 ?>

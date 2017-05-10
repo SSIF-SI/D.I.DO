@@ -30,7 +30,7 @@
 	                <button class="btn btn-primary" type="submit">Salva</button>
                 </form>
                  -->
-	<div class="row">
+<div class="row">
 		<?=$detail?>
 	</div>
 </div>
