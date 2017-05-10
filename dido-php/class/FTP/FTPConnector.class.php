@@ -1,23 +1,33 @@
 <?php 
 class FTPConnector implements IFTPConnector{
+	const LABEL_FILENAME 	= "filename";
+	const LABEL_SIZE 		= "size";
+	const LABEL_ISDIR 		= "isDir";
+	const LABEL_ISPDF 		= "isPDF";
+	const LABEL_PATH 		= "path";
+	const LABEL_CONTENTS 	= "contents";
+	
 	private static $_instance;
 	private $_conn_id;
 	private $_baseDir = null;
 	
 	private static $_pdfExtensions = array('pdf','p7m');
 	
-	public function __construct(){
-		
-		$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile();
-		$FTPConfigurator = new FTPConfigurator($FTPConfiguratorSource);
-		
-		$this->_conn_id = ftp_connect($FTPConfigurator->getHost());
-		if($this->_conn_id){
-			if(!ftp_login($this->_conn_id, $FTPConfigurator->getUsername(), $FTPConfigurator->getPassword())) return false;
-			$this->setBaseDir($FTPConfigurator->getBasedir());
+	private function __construct(){}
+	
+	private function _connect(){
+		if(is_null($_conn_id)){
+			$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile();
+			$FTPConfigurator = new FTPConfigurator($FTPConfiguratorSource);
+			
+			$this->_conn_id = @ftp_connect($FTPConfigurator->getHost());
+			if($this->_conn_id){
+				if(!@ftp_login($this->_conn_id, $FTPConfigurator->getUsername(), $FTPConfigurator->getPassword())) return false;
+				$this->setBaseDir($FTPConfigurator->getBasedir());
+			} else throw new FTPConnectorException ("Unable to connect to FTP");
 		}
 	}
-
+	
 	public function setBaseDir($baseDir){
 		$this->_baseDir = "/".trim($baseDir,"/")."/";
 	}
@@ -33,11 +43,15 @@ class FTPConnector implements IFTPConnector{
 	private function __wakeup(){}
 	
 	public function file_exists( $pathFile ){
-		return ftp_size($this->_conn_id, $this->_baseDir.$pathFile) > -1;
+		if(self::$_instance != null){
+			$this->_connect();
+			return ftp_size($this->_conn_id, $this->_baseDir.$pathFile) > -1;
+		}
 	}
 	
 	public function getContents($dir){
 		if(self::$_instance != null){
+			$this->_connect();
 			
 			$dir = self::trim($dir);
 			
@@ -59,10 +73,10 @@ class FTPConnector implements IFTPConnector{
 					$ext = isset($path_parts["extension"]) ? strtolower( $path_parts["extension"] ) : "";
 						
 					$contents[$k] = array(
-						'filename'	=> basename( $filename ),
-						'size'		=> $filesize,
-						'isDir'		=> $isDir,
-						'isPDF'		=> in_array($ext, $this->_pdfExtensions)
+						self::LABEL_FILENAME	=> basename( $filename ),
+						self::LABEL_SIZE		=> $filesize,
+						self::LABEL_ISDIR		=> $isDir,
+						self::LABEL_ISPDF		=> in_array($ext, $this->_pdfExtensions)
 					);
 				}
 			}
@@ -70,20 +84,27 @@ class FTPConnector implements IFTPConnector{
 			$this->_sort($contents);
 		
 			return array(
-				'path' => $dir,
-				'contents'	=> $contents
+				self::LABEL_PATH 		=> $dir,
+				self::LABEL_CONTENTS	=> $contents
 			);
 		}
+		
+		return false;
 	}
 	
 	private function _ftp_rawlist($dir){
-		$filelist = ftp_rawlist($this->_conn_id, $dir);
-		if($filelist !== false){ 
-			$rawlist = join("\n", $filelist);
-			preg_match_all('/^([drwx+-]{10})\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(.{12}) (.*)$/m', $rawlist, $matches, PREG_SET_ORDER);
+		if(self::$_instance != null){
+			$this->_connect();
+			$filelist = @ftp_rawlist($this->_conn_id, $dir);
+			if($filelist !== false){ 
+				$rawlist = join("\n", $filelist);
+				preg_match_all('/^([drwx+-]{10})\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(.{12}) (.*)$/m', $rawlist, $matches, PREG_SET_ORDER);
+			
+				return $this->_map($matches, 7);
+			} else throw new FTPConnectorException ("Directory $dir not found");
+		}
 		
-			return $this->_map($matches, 7);
-		} else throw new FTPConnectorException ("Directory $dir not found");
+		return false;
 	}
 	
 	private function _map( $contents, $field ){
@@ -101,7 +122,7 @@ class FTPConnector implements IFTPConnector{
 		$files = array();
 	
 		foreach( $array as $item ){
-			if ( $item['isDir'] ) $dirs[] = $item;
+			if ( $item[self::LABEL_ISDIR] ) $dirs[] = $item;
 			else $files[] = $item;
 		}
 	
@@ -130,6 +151,7 @@ class FTPConnector implements IFTPConnector{
 	
 	public function download($file = null){
 		if(self::$_instance != null){
+			$this->_connect();
 			
 			$tmpfile = $this->getTempFile($file);
 			if(!$tmpfile) return null;
@@ -158,33 +180,57 @@ class FTPConnector implements IFTPConnector{
 	}
 	
 	public function getTempFile($file, $tmpPath = FILES_PATH){
-		$tmpfile = $tmpPath . md5( date( "YmdHis".microtime() ));
-		$result = ftp_get( $this->_conn_id, $tmpfile, $this->_baseDir.$file, FTP_BINARY);
-		return $result ? $tmpfile : false;
+		if(self::$_instance != null){
+			$this->_connect();
+			$tmpfile = $tmpPath . md5( date( "YmdHis".microtime() ));
+			$result = @ftp_get( $this->_conn_id, $tmpfile, $this->_baseDir.$file, FTP_BINARY);
+			return $result ? $tmpfile : false;
+		}
+		
+		return false;
 	}
 	
 	public function mksubdirs($ftpath){
-		@ftp_chdir($this->_conn_id, $this->_baseDir); 
-		$parts = explode(DIRECTORY_SEPARATOR, $ftpath); 
-		foreach($parts as $part){
-			if(!@ftp_chdir($this->_conn_id, $part)){
-				$result = @ftp_mkdir($this->_conn_id, $part) && @ftp_chdir($this->_conn_id, $part);
-				if(!$result) return false;
+		if(self::$_instance != null){
+			$this->_connect();
+			@ftp_chdir($this->_conn_id, $this->_baseDir); 
+			$parts = explode(DIRECTORY_SEPARATOR, $ftpath); 
+			foreach($parts as $part){
+				if(!@ftp_chdir($this->_conn_id, $part)){
+					$result = @ftp_mkdir($this->_conn_id, $part) && @ftp_chdir($this->_conn_id, $part);
+					if(!$result) return false;
+				}
 			}
+			return true;
 		}
-		return true;
+
+		return false;
 	}
 	
 	public function deleteFolder($folder){
-		return ftp_rmdir($this->_conn_id, $this->_baseDir . $folder);
+		if(self::$_instance != null){
+			$this->_connect();
+			return @ftp_rmdir($this->_conn_id, $this->_baseDir . $folder);
+		}
+		return false;
 	}
 	
 	public function upload($source, $destination){
-		return ftp_put($this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY);
+		if(self::$_instance != null){
+			$this->_connect();
+			return @ftp_put($this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY);
+		}
+		
+		return false;
 	}
 	
 	public function delete($filePath){
-		return ftp_delete($this->_conn_id, $this->_baseDir . $filepath);
+		if(self::$_instance != null){
+			$this->_connect();
+			return @ftp_delete($this->_conn_id, $this->_baseDir . $filepath);
+		} 
+		
+		return false; 
 	}
 	
 }
