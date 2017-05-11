@@ -58,7 +58,7 @@ class GecoDataSource implements IExternalDataSource {
 		$data_to_import = $this->getDataToImport ();
 		foreach ( $this->_tablesToRead as $table => $data ) {
 			foreach ( $data_to_import [$data ['category']] as $record ) {
-				$result = $this->createFilesToImport ( $table, $data, $record );
+				$result = $this->createFileToImport ( $table, $data, $record );
 				if (! $result) {
 					return false;
 				}
@@ -71,44 +71,52 @@ class GecoDataSource implements IExternalDataSource {
 	}
 
 	public function getSavedDataToBeImported($owner, $catlist) {
-		$fti = array (
-				"nTot" => 0 
-		);
+		$fti = [];
 		
 		$types = glob ( self::IMPORT_PATH . "*" );
 		
+		$fti[self::FILE_EXTENSION_TO_BE_IMPORTED] = $this->_browse(self::FILE_EXTENSION_TO_BE_IMPORTED, $types, $catlist);
+		$fti[self::FILE_EXTENSION_TO_BE_UPDATED] = $this->_browse(self::FILE_EXTENSION_TO_BE_UPDATED, $types, $catlist);
+		
+		return $fti;
+	}
+
+	private function _browse($label, $types, $catlist){
+		$found = 0;
+		$return = [self::NTOT => 0];
 		foreach ( $types as $type ) {
 			$needle = basename ( $type );
 			if (in_array ( $needle, $catlist )) {
-				
-				$files = glob ( $type . "/*." . self::FILE_EXTENSION_TO_BE_IMPORTED );
+				$list = [self::NTOT => 0];	
+				$files = glob ( $type . "/*." . $label );
 				if (count ( $files )) {
 					foreach ( $files as $file ) {
 						$filename = basename ( $file );
 						preg_match_all ( self::FILE_REGEXP, $filename, $matches );
-						$fti [basename ( $type )] [$matches [1] [0]] [] = array (
-								'filename' => basename ( $file ),
-								'md_nome' => $matches [1] [0],
-								'type' => $matches [2] [0],
-								'id' => $matches [3] [0] 
+						$list [$matches [1] [0]] [] = array (
+								self::FILENAME => basename ( $file ),
+								self::MD_NOME => $matches [1] [0],
+								self::TYPE => $matches [2] [0],
+								self::ID => $matches [3] [0]
 						);
 					}
-					
+						
 					$nTot = 0;
-					
-					foreach ( $fti [basename ( $type )] as $subType => $item ) {
-						$nType = count ( $fti [basename ( $type )] [$subType] );
+						
+					foreach ( $list as $subType => $item ) {
+						$nType = count ( $list [$subType] );
 						$nTot += $nType;
 					}
-					
-					$fti [basename ( $type )] ['nTot'] = $nTot;
-					$fti ['nTot'] += $nTot;
+						
+					$list [self::NTOT] = $nTot;
+					$return[self::NTOT] += $nTot;
 				}
 			}
+			$return[$needle] = $list;
 		}
-		return $fti;
+		return $return;
+			
 	}
-
 	private function getDataToImport() {
 		$data_to_import = array ();
 		$this->_master_log = new master_log ();
@@ -123,7 +131,7 @@ class GecoDataSource implements IExternalDataSource {
 		return $data_to_import;
 	}
 
-	private function createFilesToImport($table, $data, $record) {
+	private function createFileToImport($table, $data, $record) {
 		// Creiamo la direcrory in base alla categoria
 		$dirname = self::IMPORT_PATH . $data ['category'];
 		if (! is_dir ( $dirname )) {
@@ -169,9 +177,16 @@ class GecoDataSource implements IExternalDataSource {
 			}
 		}
 		
-		$filename .= "_" . $record [$data ['id']] . "." . self::FILE_EXTENSION_TO_BE_IMPORTED;
+		$folder = $dirname . DIRECTORY_SEPARATOR;
+		$filename .= "_" . $record [$data [self::ID]];
 		
-		$importfile = fopen ( $dirname . DIRECTORY_SEPARATOR . $filename, "w" ) or die ( "unable to open file" );
+		$extension = 
+			file_exists($folder.$filename.".".self::FILE_EXTENSION_IMPORTED) ?
+			"." . self::FILE_EXTENSION_TO_BE_UPDATED :
+			"." . self::FILE_EXTENSION_TO_BE_IMPORTED;
+		
+		
+		$importfile = @fopen ( $folder . $filename . $extension, "w" );
 		
 		if ($importfile) {
 			fwrite ( $importfile, serialize ( $record ) );

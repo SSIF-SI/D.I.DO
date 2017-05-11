@@ -47,7 +47,7 @@ class ImportManager {
 			return new ErrorHandler ( "$from non registrato come valida sorgente di dati" );
 			
 			// Controllo parametri essenziali
-		if (! $this->_checkEssensials ( $data ))
+		if (! $this->_checkEssentials ( $data ))
 			return new ErrorHandler ( 'Mancano argomenti essenziali' );
 			
 			// Rinomino il file per mettergli un lock non fisico
