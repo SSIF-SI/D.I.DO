@@ -62,13 +62,13 @@ class Application {
 		$this->_ImportManager->saveDataToBeImported ();
 	}
 
-	public function getSavedDataToBeImported($from = null) {
+	public function getSavedDataToBeImported($from = null, $subCategory = null) {
 		$owners = $this->_UserManager->isAdmin () ? [ ] : $this->_UserManager->getUser ()->getGruppi ();
 		
 		$xmlList = $this->_XMLDataSource->filter ( new XMLFilterOwner ( $owners ) )->filter ( new XMLFilterValidity ( date ( "Y-m-d" ) ) )->getXmlTree ();
 		
 		$catlist = array_keys ( $xmlList );
-		return $this->_ImportManager->getSavedDataToBeImported ( $owners, $catlist, $from );
+		return $this->_ImportManager->getSavedDataToBeImported ( $owners, $catlist, $from, $subCategory );
 	}
 
 	public function import($from, $data) {

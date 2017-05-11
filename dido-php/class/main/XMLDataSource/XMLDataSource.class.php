@@ -56,6 +56,9 @@ class XMLDataSource {
 	}
 
 	public function filter(IXMLFilter $filter) {
+		if(!$this->_XMLTreeCreated)
+			$this->_createXMLTree();
+		
 		$filter->setXMLParser ( $this->_XMLParser );
 		$filter->apply ( $this->_filtered );
 		return $this;

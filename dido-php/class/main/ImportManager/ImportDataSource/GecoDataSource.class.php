@@ -1,7 +1,7 @@
 <?php
 
 class GecoDataSource implements IExternalDataSource {
-
+	const DATA_SOURCE_LABEL = "Geco";
 	const IMPORT_PATH = "geco-import/";
 
 	private $_master_log;
@@ -70,7 +70,7 @@ class GecoDataSource implements IExternalDataSource {
 		// array_keys($this->_tablesToRead));
 	}
 
-	public function getSavedDataToBeImported($owner, $catlist) {
+	public function getSavedDataToBeImported($owner, $catlist, $subcategory = null) {
 		$fti = [];
 		
 		$types = glob ( self::IMPORT_PATH . "*" );
@@ -78,7 +78,7 @@ class GecoDataSource implements IExternalDataSource {
 		$fti[self::FILE_EXTENSION_TO_BE_IMPORTED] = $this->_browse(self::FILE_EXTENSION_TO_BE_IMPORTED, $types, $catlist);
 		$fti[self::FILE_EXTENSION_TO_BE_UPDATED] = $this->_browse(self::FILE_EXTENSION_TO_BE_UPDATED, $types, $catlist);
 		
-		return $fti;
+		return is_null($subcategory) ? $fti : $fti[$subcategory];
 	}
 
 	private function _browse($label, $types, $catlist){

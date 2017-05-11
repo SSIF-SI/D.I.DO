@@ -119,7 +119,7 @@ class Geko extends ClassWithDependencies {
 			$needle = basename ( $type );
 			if (in_array ( $needle, $catlist )) {
 				
-				$files = glob ( $type . "/*.imp" );
+				$files = glob ( $type . "/*.tobeimported" );
 				if (count ( $files )) {
 					foreach ( $files as $file ) {
 						$filename = basename ( $file );

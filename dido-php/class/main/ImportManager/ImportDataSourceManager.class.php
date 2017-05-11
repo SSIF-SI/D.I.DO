@@ -5,7 +5,7 @@ class ImportDataSourceManager {
 	private $_externalDataSourceRepository = [ ];
 
 	public function __construct() {
-		$this->register ( 'geco', new GecoDataSource () );
+		$this->register ( GecoDataSource::DATA_SOURCE_LABEL, new GecoDataSource () );
 	}
 
 	public function register($labelDataSource, IExternalDataSource $externalDataSource) {

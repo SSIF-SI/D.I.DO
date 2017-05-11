@@ -18,6 +18,8 @@ class ImportManager {
 
 	private $_ProcedureManager;
 	
+	private $_XMLDataSource;
+	
 	public function __construct(IDBConnector $dbConnector, IFTPDataSource $ftpDataSource) {
 		$this->_dbConnector = $dbConnector;
 		$this->_importDataSourceManager = new ImportDataSourceManager ();
@@ -30,14 +32,14 @@ class ImportManager {
 		}
 	}
 
-	public function getSavedDataToBeImported($owner, $catList, $from = null) {
+	public function getSavedDataToBeImported($owner, $catList, $from = null, $subCategory = null) {
 		$toBeImported = [ ];
 		foreach ( $this->_importDataSourceManager->getSource () as $label => $externalDataSource ) {
 			if (! is_null ( $from ) && $label != $from)
 				continue;
-			$toBeImported [$label] = $externalDataSource->getSavedDataToBeImported ( $owner, $catList );
+			$toBeImported[$from] = $externalDataSource->getSavedDataToBeImported ( $owner, $catList, $subCategory );
 		}
-		return $toBeImported;
+		return is_null($from) ? $toBeImported : $toBeImported[$from];
 	}
 
 	public function import($from, $data) {
@@ -95,6 +97,18 @@ class ImportManager {
 		return new ErrorHandler ( false );
 	}
 
+	public function createDataFromSaved(array $record){
+		$XMLFilteredList = $this->_XMLDataSource
+						->filter(new XMLFilterDocumentType(array($record[self::LABEL_MD_NOME])))
+						->filter(new XMLFilterValidity(date("Y-m-d")))
+						->getXmlTree(true);
+		if(!isset($XMLFilteredList[0])) return false;
+		$lastXML = $this->_XMLDataSource->getSingleXmlByFilename($XMLFilteredList[0]);
+		
+		$XMLParser = new XMLParser($lastXML[XMLDataSource::LABEL_XML], $record[self::LABEL_MD_TYPE]);
+		
+	}
+	
 	public function clean() {
 		// Sblocco tutti gli import non andati a buon fine e che mi hanno
 		// lasciato
