@@ -89,11 +89,11 @@ class XMLParser implements IXMLParser {
 	}
 
 	public function getSource() {
-		return $this->_xml ['from'];
+		return $this->_xml [self::FROM];
 	}
 
 	public function getOwner() {
-		return $this->_xml ['owner'];
+		return $this->_xml [self::OWNER];
 	}
 
 	public function isOwner(array $services) {

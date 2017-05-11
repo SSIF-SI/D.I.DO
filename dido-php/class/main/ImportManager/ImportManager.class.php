@@ -26,7 +26,7 @@ class ImportManager {
 
 	public function saveDataToBeImported() {
 		foreach ( $this->_importDataSourceManager->getSource () as $label => $externalDataSource ) {
-			$dataToBeImported = array_merge ( $dataToBeImported, $externalDataSource->saveDataToBeImported () );
+			$externalDataSource->saveDataToBeImported ();
 		}
 	}
 

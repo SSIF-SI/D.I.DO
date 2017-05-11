@@ -54,6 +54,7 @@ class GecoDataSource implements IExternalDataSource {
 	);
 
 	public function saveDataToBeImported() {
+		
 		$data_to_import = $this->getDataToImport ();
 		foreach ( $this->_tablesToRead as $table => $data ) {
 			foreach ( $data_to_import [$data ['category']] as $record ) {
@@ -63,6 +64,7 @@ class GecoDataSource implements IExternalDataSource {
 				}
 			}
 		}
+		return true;
 		// Per adesso non scriviamo mai l'esito
 		// $this->_master_log->updateMasterLog("S",
 		// array_keys($this->_tablesToRead));

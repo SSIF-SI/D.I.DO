@@ -10,7 +10,7 @@ abstract class AProcedureManager {
 
 	private $_dbConnector = null;
 
-	public function __construct(IDBConnector $dbConnector, IFTPConnector $ftpConnector) {
+	public function __construct(IDBConnector $dbConnector) {
 		$this->_dbConnector = $dbConnector;
 	}
 

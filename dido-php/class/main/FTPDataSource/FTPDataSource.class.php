@@ -1,11 +1,11 @@
 <?php
 
-class FTPDataSource {
+class FTPDataSource implements IFTPDataSource{
 
 	private $_ftpConnector;
 
 	public function __construct(IFTPConnector $ftpConnector = null) {
-		$this->_ftpConnector = is_null ( $ftpConnector ) ? new FTPConnector () : $ftpConnector;
+		$this->_ftpConnector = is_null ( $ftpConnector ) ? FTPConnector::getInstance() : $ftpConnector;
 	}
 
 	public function createFolder($folder) {

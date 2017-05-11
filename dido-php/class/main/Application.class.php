@@ -29,10 +29,11 @@ class Application {
 	 */
 	private $_FTPDataSource;
 
-	private $_MasterdocumentManager;
-
+	/*
+	 * Sorgente XML
+	 */
 	private $_XMLDataSource;
-
+	
 	/*
 	 * Per gestire i dati importati/Da importare
 	 */
@@ -46,17 +47,11 @@ class Application {
 
 	public function __construct() {
 		$this->_dbConnector = DBConnector::getInstance ();
-		
 		$this->_FTPDataSource = new FTPDataSource ();
-		$this->_MasterdocumentManager = new MasterdocumentManager ( $this->_dbConnector );
-		$this->_XMLDataSource = new XMLDataSource ();
+		$this->_XMLDataSource = new XMLDataSource();
 		
-		$this->_ImportManager = new ImportManager ();
-		$this->_UserManager = new UserManager ( $this->_DBDataSource->getConnector () );
-	}
-
-	public function getAllMyMasterDocuments() {
-		$this->_MasterdocumentManager->getAllMyMasterDocuments ();
+		$this->_ImportManager = new ImportManager ($this->_dbConnector, $this->_FTPDataSource);
+		$this->_UserManager = new UserManager ( $this->_dbConnector );
 	}
 
 	/*

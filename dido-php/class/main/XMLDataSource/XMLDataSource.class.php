@@ -16,20 +16,28 @@ class XMLDataSource {
 
 	private $_XMLParser;
 
+	private $_XMLTreeCreated = false;
+	
 	public function __construct($XMLParser = null) {
 		$this->_XMLParser = is_null ( $XMLParser ) ? new XMLParser () : $XMLParser;
-		
+	}
+	
+	private function _createXMLTree(){
 		$catlist_full = glob ( XML_MD_PATH . "*", GLOB_ONLYDIR );
 		foreach ( $catlist_full as $cat ) {
 			$catName = basename ( $cat );
-			$xmlList = glob ( $cat . "/*.xml" );
+			$xmlList = array_map(function($el){ return str_replace(XML_MD_PATH,"",$el);}, glob ( $cat . "/*.xml" ));
 			$documenti = $this->_createDocTree ( $catName, $xmlList );
-			$this->_xmlTree [$catName] = /*['path' => $catName."/", 'documenti' => $documenti];*/ $documenti;
+			$this->_xmlTree [$catName] = $documenti;
 		}
 		$this->_filtered = $this->_xmlTree;
+		$this->_XMLTreeCreated = true;
 	}
 
 	public function getXmlTree($onlyFilelist = false) {
+		if(!$this->_XMLTreeCreated)
+			$this->_createXMLTree();
+		
 		if (! $onlyFilelist) {
 			$filtered = $this->_filtered;
 			$this->resetFilters ();
@@ -57,14 +65,23 @@ class XMLDataSource {
 		$this->_filtered = $this->_xmlTree;
 	}
 
-	public function getSingleXml($xmlFilename) {
+	public function getSingleXmlByFilename($xmlFilename) {
+		foreach($this->_xmlTree as $categorie => $categoria){
+			foreach($categoria as $nome => $versioni){
+				foreach($versioni as $versione=> $dato){
+					if($dato[self::LABEL_FILE] == $xmlFilename)
+						return $dato;
+				}
+			}
+		}
+		return null;
 	}
-
+	
 	private function _createDocTree($catName, $xmlList) {
 		$tree = array ();
 		$ownerTree = array ();
 		foreach ( $xmlList as $xmlFile ) {
-			$this->_XMLParser->load ( $xmlFile );
+			$this->_XMLParser->setXMLSource( $xmlFile );
 			
 			$fileName = basename ( $xmlFile );
 			preg_match ( "/" . self::FILE_REGEX . "/", $fileName, $fileInfo );
@@ -72,7 +89,7 @@ class XMLDataSource {
 			$fileInfo [2] = ! empty ( $fileInfo [2] ) ? ("versione " . ltrim ( $fileInfo [2], ".v" )) : null;
 			
 			$tree [$fileInfo [1]] [$fileInfo [2]] = array (
-					self::LABEL_FILE => $catName . DIRECTORY_SEPARATOR . $fileName,
+					self::LABEL_FILE => /*$catName . DIRECTORY_SEPARATOR . $fileName*/ $xmlFile,
 					self::LABEL_VERSIONE => $fileInfo [2],
 					self::LABEL_XML => $this->_XMLParser->getXMLSource () 
 			);
