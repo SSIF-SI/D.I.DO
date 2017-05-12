@@ -33,7 +33,7 @@ class Application {
 	 * Sorgente XML
 	 */
 	private $_XMLDataSource;
-	
+
 	/*
 	 * Per gestire i dati importati/Da importare
 	 */
@@ -48,9 +48,9 @@ class Application {
 	public function __construct() {
 		$this->_dbConnector = DBConnector::getInstance ();
 		$this->_FTPDataSource = new FTPDataSource ();
-		$this->_XMLDataSource = new XMLDataSource();
+		$this->_XMLDataSource = new XMLDataSource ();
 		
-		$this->_ImportManager = new ImportManager ($this->_dbConnector, $this->_FTPDataSource);
+		$this->_ImportManager = new ImportManager ( $this->_dbConnector, $this->_FTPDataSource );
 		$this->_UserManager = new UserManager ( $this->_dbConnector );
 	}
 
@@ -71,8 +71,24 @@ class Application {
 		return $this->_ImportManager->getSavedDataToBeImported ( $owners, $catlist, $from, $subCategory );
 	}
 
-	public function import($from, $data) {
-		return $this->_ImportManager->import ( $from, $data );
+	public function import($postData) {
+		if (! isset ( $postData [ImportManager::LABEL_IMPORT_FILENAME] ) || ! isset ( $postData [ImportManager::LABEL_MD_NOME] ) || ! isset ( $postData [ImportManager::LABEL_MD_TYPE] ))
+			return new ErrorHandler("Import fallito, mancano argomenti essenziali");
+		
+		$lastXML = $this->_XMLDataSource
+			->filter ( new XMLFilterDocumentType ( [ $postData [self::LABEL_MD_NOME] ] ) )
+			->filter ( new XMLFilterValidity ( date ( "Y-m-d" ) ) )
+			->getFirst ();
+		
+		if (! $lastXML)
+			return new ErrorHandler("Impossibile associare un XML al tipo di Master Document");
+		
+		$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
+		$from = $XmlParser->getSource ();
+		
+		$postData [ImportManager::LABEL_MD_XML] = $lastXML [XMLDataSource::LABEL_FILE];
+		
+		return $this->_ImportManager->import ( $from, $postData );
 	}
 }
 ?>

@@ -56,7 +56,7 @@ class ProcedureManager implements IProcedureManager {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
-		if (! $this->upload ( $new_doc, $filePath, $repositoryPath )) {
+		if (! $this->uploadFile( $new_doc, $filePath, $repositoryPath )) {
 			$this->_dbConnector->rollback ();
 			return false;
 		}

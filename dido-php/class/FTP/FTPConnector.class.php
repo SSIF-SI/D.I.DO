@@ -14,9 +14,9 @@ class FTPConnector implements IFTPConnector {
 
 	const LABEL_CONTENTS = "contents";
 
-	private static $_instance;
-
 	private $_conn_id = false;
+	
+	private $_FTPConfiguratorSource;
 
 	private $_baseDir = null;
 
@@ -25,35 +25,29 @@ class FTPConnector implements IFTPConnector {
 			'p7m' 
 	);
 
-	private function __construct() {
+	public function __construct(AFTPConfigurationSource $FTPConfiguratorSource = null) {
+		$this->_FTPConfiguratorSource =
+			is_null($FTPConfiguratorSource) ? 
+			new FTPConfiguratorSourceFromIniFile() :
+			$FTPConfiguratorSource;
 	}
 
 	private function _connect() {
-		if (! is_null ( self::$_instance )) {
-			if (! $this->_conn_id) {
-				$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile ();
-				$FTPConfigurator = new FTPConfigurator ( $FTPConfiguratorSource );
-				
-				$this->_conn_id = @ftp_connect ( $FTPConfigurator->getHost () );
-				if ($this->_conn_id) {
-					if (! @ftp_login ( $this->_conn_id, $FTPConfigurator->getUsername (), $FTPConfigurator->getPassword () ))
-						return false;
-					$this->setBaseDir ( $FTPConfigurator->getBasedir () );
-				} else
-					throw new FTPConnectorException ( "Unable to connect to FTP" );
-			}
+		if (! $this->_conn_id) {
+			$FTPConfigurator = new FTPConfigurator ( $this->_FTPConfiguratorSource );
+			
+			$this->_conn_id = @ftp_connect ( $FTPConfigurator->getHost () );
+			if ($this->_conn_id) {
+				if (! @ftp_login ( $this->_conn_id, $FTPConfigurator->getUsername (), $FTPConfigurator->getPassword () ))
+					return false;
+				$this->setBaseDir ( $FTPConfigurator->getBasedir () );
+			} else
+				throw new FTPConnectorException ( "Unable to connect to FTP" );
 		}
 	}
 
 	public function setBaseDir($baseDir) {
 		$this->_baseDir = "/" . trim ( $baseDir, "/" ) . "/";
-	}
-
-	public static function getInstance() {
-		if (is_null ( self::$_instance )) {
-			self::$_instance = new self ();
-		}
-		return self::$_instance;
 	}
 
 	private function __clone() {
@@ -63,68 +57,59 @@ class FTPConnector implements IFTPConnector {
 	}
 
 	public function file_exists($pathFile) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			return ftp_size ( $this->_conn_id, $this->_baseDir . $pathFile ) > - 1;
-		}
+		$this->_connect ();
+		return ftp_size ( $this->_conn_id, $this->_baseDir . $pathFile ) > - 1;
 	}
 
 	public function getContents($dir) {
-		if (self::$_instance != null) {
-			$this->_connect ();
+		$this->_connect ();
+		
+		$dir = self::trim ( $dir );
+		
+		$contents = array ();
+		$listOfFiles = $this->_ftp_rawlist ( $this->_baseDir . $dir );
+		
+		if (count ( $listOfFiles ) > 0) {
 			
-			$dir = self::trim ( $dir );
-			
-			$contents = array ();
-			$listOfFiles = $this->_ftp_rawlist ( $this->_baseDir . $dir );
-			
-			if (count ( $listOfFiles ) > 0) {
+			foreach ( $listOfFiles as $k => $file ) {
 				
-				foreach ( $listOfFiles as $k => $file ) {
-					
-					$filename = $file [7];
-					$filesize = $file [5];
-					$extension = pathinfo ( $filename, PATHINFO_EXTENSION );
-					
-					$isDir = substr ( $file [1], 0, 1 ) == "d";
-					
-					$path_parts = pathinfo ( $filename );
-					$ext = isset ( $path_parts ["extension"] ) ? strtolower ( $path_parts ["extension"] ) : "";
-					
-					$contents [$k] = array (
-							self::LABEL_FILENAME => basename ( $filename ),
-							self::LABEL_SIZE => $filesize,
-							self::LABEL_ISDIR => $isDir,
-							self::LABEL_ISPDF => in_array ( $ext, self::$_pdfExtensions ) 
-					);
-				}
+				$filename = $file [7];
+				$filesize = $file [5];
+				$extension = pathinfo ( $filename, PATHINFO_EXTENSION );
+				
+				$isDir = substr ( $file [1], 0, 1 ) == "d";
+				
+				$path_parts = pathinfo ( $filename );
+				$ext = isset ( $path_parts ["extension"] ) ? strtolower ( $path_parts ["extension"] ) : "";
+				
+				$contents [$k] = array (
+						self::LABEL_FILENAME => basename ( $filename ),
+						self::LABEL_SIZE => $filesize,
+						self::LABEL_ISDIR => $isDir,
+						self::LABEL_ISPDF => in_array ( $ext, self::$_pdfExtensions ) 
+				);
 			}
-			
-			$this->_sort ( $contents );
-			
-			return array (
-					self::LABEL_PATH => $dir,
-					self::LABEL_CONTENTS => $contents 
-			);
 		}
 		
-		return false;
+		$this->_sort ( $contents );
+		
+		return array (
+				self::LABEL_PATH => $dir,
+				self::LABEL_CONTENTS => $contents 
+		);
+		
 	}
 
 	private function _ftp_rawlist($dir) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			$filelist = @ftp_rawlist ( $this->_conn_id, $dir );
-			if ($filelist !== false) {
-				$rawlist = join ( "\n", $filelist );
-				preg_match_all ( '/^([drwx+-]{10})\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(.{12}) (.*)$/m', $rawlist, $matches, PREG_SET_ORDER );
-				
-				return $this->_map ( $matches, 7 );
-			} else
-				throw new FTPConnectorException ( "Directory $dir not found" );
-		}
-		
-		return false;
+		$this->_connect ();
+		$filelist = @ftp_rawlist ( $this->_conn_id, $dir );
+		if ($filelist !== false) {
+			$rawlist = join ( "\n", $filelist );
+			preg_match_all ( '/^([drwx+-]{10})\s+(\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(.{12}) (.*)$/m', $rawlist, $matches, PREG_SET_ORDER );
+			
+			return $this->_map ( $matches, 7 );
+		} else
+			throw new FTPConnectorException ( "Directory $dir not found" );
 	}
 
 	private function _map($contents, $field) {
@@ -172,97 +157,81 @@ class FTPConnector implements IFTPConnector {
 	}
 
 	public function download($file = null) {
-		if (self::$_instance != null) {
-			$this->_connect ();
+		$this->_connect ();
 			
-			$tmpfile = $this->getTempFile ( $file );
-			if (! $tmpfile)
-				return null;
-			
-			$filesize = filesize ( $tmpfile );
-			$path_parts = pathinfo ( $file );
-			
-			$ext = isset ( $path_parts ["extension"] ) ? strtolower ( $path_parts ["extension"] ) : "";
-			
-			if (in_array ( $ext, $this->_pdfExtensions )) {
-				header ( "Content-type: application/pdf" ); // add here more
-				                                            // headers for diff.
-				                                            // extensions
-				header ( "Content-Disposition: attachment; filename=\"" . $path_parts ["basename"] . "\"" ); // use
-					                                                                                             // 'attachment'
-					                                                                                             // to
-					                                                                                             // force
-					                                                                                             // a
-					                                                                                             // download
-			} else {
-				header ( "Content-type: application/octet-stream" );
-				header ( "Content-Disposition: filename=\"" . $path_parts ["basename"] . "\"" );
-			}
-			
-			if ($filesize < 2147483647)
-				header ( "Content-length: {$filesize}" );
-			header ( "Cache-control: private" ); // use this to open files directly
-			readfile ( $tmpfile );
-			unlink ( $tmpfile );
-			flush ();
-			exit ();
-		} else
+		$tmpfile = $this->getTempFile ( $file );
+		if (! $tmpfile)
 			return null;
+		
+		$filesize = filesize ( $tmpfile );
+		$path_parts = pathinfo ( $file );
+		
+		$ext = isset ( $path_parts ["extension"] ) ? strtolower ( $path_parts ["extension"] ) : "";
+		
+		if (in_array ( $ext, $this->_pdfExtensions )) {
+			header ( "Content-type: application/pdf" ); // add here more
+			                                            // headers for diff.
+			                                            // extensions
+			header ( "Content-Disposition: attachment; filename=\"" . $path_parts ["basename"] . "\"" ); // use
+				                                                                                             // 'attachment'
+				                                                                                             // to
+				                                                                                             // force
+				                                                                                             // a
+				                                                                                             // download
+		} else {
+			header ( "Content-type: application/octet-stream" );
+			header ( "Content-Disposition: filename=\"" . $path_parts ["basename"] . "\"" );
+		}
+		
+		if ($filesize < 2147483647)
+			header ( "Content-length: {$filesize}" );
+		header ( "Cache-control: private" ); // use this to open files directly
+		readfile ( $tmpfile );
+		unlink ( $tmpfile );
+		flush ();
+		exit ();
+		
 	}
 
 	public function getTempFile($file, $tmpPath = FILES_PATH) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			$tmpfile = $tmpPath . md5 ( date ( "YmdHis" . microtime () ) );
-			$result = @ftp_get ( $this->_conn_id, $tmpfile, $this->_baseDir . $file, FTP_BINARY );
-			return $result ? $tmpfile : false;
-		}
-		
-		return false;
+		$this->_connect ();
+		$tmpfile = $tmpPath . md5 ( date ( "YmdHis" . microtime () ) );
+		$result = @ftp_get ( $this->_conn_id, $tmpfile, $this->_baseDir . $file, FTP_BINARY );
+		return $result ? $tmpfile : false;
 	}
 
 	public function mksubdirs($ftpath) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			@ftp_chdir ( $this->_conn_id, $this->_baseDir );
-			$parts = explode ( DIRECTORY_SEPARATOR, $ftpath );
-			foreach ( $parts as $part ) {
-				if (! @ftp_chdir ( $this->_conn_id, $part )) {
-					$result = @ftp_mkdir ( $this->_conn_id, $part ) && @ftp_chdir ( $this->_conn_id, $part );
-					if (! $result)
-						return false;
-				}
+		$this->_connect ();
+		@ftp_chdir ( $this->_conn_id, $this->_baseDir );
+		$parts = explode ( DIRECTORY_SEPARATOR, $ftpath );
+		foreach ( $parts as $part ) {
+			if (! @ftp_chdir ( $this->_conn_id, $part )) {
+				$result = @ftp_mkdir ( $this->_conn_id, $part ) && @ftp_chdir ( $this->_conn_id, $part );
+				if (! $result)
+					return false;
 			}
-			return true;
 		}
+		return true;
 		
-		return false;
 	}
 
 	public function deleteFolder($folder) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			return @ftp_rmdir ( $this->_conn_id, $this->_baseDir . $folder );
-		}
-		return false;
+		$this->_connect ();
+		return @ftp_rmdir ( $this->_conn_id, $this->_baseDir . $folder );
+		
 	}
 
 	public function upload($source, $destination) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			return @ftp_put ( $this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY );
-		}
+		$this->_connect ();
+		$result = @ftp_put ( $this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY );
+		return $result;
 		
-		return false;
 	}
 
 	public function delete($filePath) {
-		if (self::$_instance != null) {
-			$this->_connect ();
-			return @ftp_delete ( $this->_conn_id, $this->_baseDir . $filepath );
-		}
-		
-		return false;
+		$this->_connect ();
+		return @ftp_delete ( $this->_conn_id, $this->_baseDir . $filepath );
+	
 	}
 }
 

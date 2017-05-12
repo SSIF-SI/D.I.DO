@@ -25,5 +25,7 @@ interface IExternalDataSource {
 	public function saveDataToBeImported();
 
 	public function getSavedDataToBeImported($owner, $catList, $subCategory = null);
+	
+	public function getExternalDocument($destinationPath, $record);
 }
 ?>

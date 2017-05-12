@@ -11,6 +11,10 @@ interface IFTPDataSource {
 	public function getFilenameFromDocument($document);
 
 	public function deleteFile($filePath);
+	
+	public function getTempFile($file, $tmpPath = FILES_PATH);
+	
+	public function upload($file, $tmpPath = FILES_PATH);
 }
 
 ?>

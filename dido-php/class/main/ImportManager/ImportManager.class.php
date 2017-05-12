@@ -14,14 +14,15 @@ class ImportManager {
 
 	private $_dbConnector;
 
+	private $_ftpDataSource;
+	
 	private $_importDataSourceManager;
 
 	private $_ProcedureManager;
-	
-	private $_XMLDataSource;
-	
+
 	public function __construct(IDBConnector $dbConnector, IFTPDataSource $ftpDataSource) {
 		$this->_dbConnector = $dbConnector;
+		$this->_ftpDataSource = $ftpDataSource;
 		$this->_importDataSourceManager = new ImportDataSourceManager ();
 		$this->_ProcedureManager = new ProcedureManager ( $dbConnector, $ftpDataSource );
 	}
@@ -37,9 +38,28 @@ class ImportManager {
 		foreach ( $this->_importDataSourceManager->getSource () as $label => $externalDataSource ) {
 			if (! is_null ( $from ) && $label != $from)
 				continue;
-			$toBeImported[$from] = $externalDataSource->getSavedDataToBeImported ( $owner, $catList, $subCategory );
+			$toBeImported [$from] = $externalDataSource->getSavedDataToBeImported ( $owner, $catList, $subCategory );
 		}
-		return is_null($from) ? $toBeImported : $toBeImported[$from];
+		return is_null ( $from ) ? $toBeImported : $toBeImported [$from];
+	}
+
+	// Da un file importato ricreo un array di coppie chiave-valore
+	// in base agli inputs del mio Master Document
+	public function fromFileToPostMetadata($filename, $inputs) {
+		$obj_data = unserialize ( file_get_contents ( $filename ) );
+		$md_data = [];
+		foreach ( $inputs as $input ) :
+			$key = ( string ) $input [XMLParser::KEY];
+			$value = isset ( $obj_data [$key] ) ? $obj_data [$key] : null;
+			
+			if (isset ( $input [XMLParser::TRANSFORM] )) {
+				$callback = ( string ) $input [XMLParser::TRANSFORM];
+				$value = ImportHelper::$callback ( $value );
+			}
+			
+			$md_data [FormHelper::fieldFromLabel(( string ) $input)] = $value;
+		endforeach;
+		return $md_data;
 	}
 
 	public function import($from, $data) {
@@ -48,17 +68,14 @@ class ImportManager {
 		if (! $externalDataSource)
 			return new ErrorHandler ( "$from non registrato come valida sorgente di dati" );
 			
-			// Controllo parametri essenziali
-		if (! $this->_checkEssentials ( $data ))
-			return new ErrorHandler ( 'Mancano argomenti essenziali' );
-			
 			// Rinomino il file per mettergli un lock non fisico
 		$import_filename = $externalDataSource::IMPORT_PATH . $data [self::LABEL_IMPORT_FILENAME];
+		
 		$import_filename_field = rtrim ( $import_filename, "." . $externalDataSource::FILE_EXTENSION_TO_BE_IMPORTED );
 		if (! $this->_lock ( $import_filename ))
 			return new ErrorHandler ( 'Permessi di scrittura negati sul server' );
 		
-		unset ( $data [self::LABEL_IMPORT_FILENAME] );
+		//unset ( $data [self::LABEL_IMPORT_FILENAME] );
 		
 		// Tramite un'unica transazione vado a scrivere i dati nelle tabelle
 		// master_document e master_document_data.
@@ -67,7 +84,15 @@ class ImportManager {
 		$XMLParser = new XMLParser ( $data [self::LABEL_MD_XML], $data [self::LABEL_MD_TYPE] );
 		
 		$md = $this->_generateMDRecord ( $data );
-		$md_data = $XMLParser->generateData ( $data, $XMLParser->getMasterDocumentInputs () );
+		$md_data = $XMLParser->generateData ( 
+				$this->fromFileToPostMetadata ( $import_filename, $XMLParser->getMasterDocumentInputs () ), 
+				$XMLParser->getMasterDocumentInputs () );
+		
+		// Se nel file importato mancano dei valori di inputs obbligatori mi fermo subito
+		if(!$md_data){
+			$this->_unlock ( $import_filename );
+			return new ErrorHandler ( "Importazione fallita, mancano informazioni obbligatore" );
+		}
 		
 		// Inizio la transazione
 		$this->_dbConnector->begin ();
@@ -83,8 +108,10 @@ class ImportManager {
 		$doc = $this->_generateDocRecord ( $firstDoc [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
 		
 		// Il pdf per ora lo prendo da un fakefile...
-		$filePath = REAL_ROOT . self::FAKEFILE;
+		$filePath = /*REAL_ROOT . self::FAKEFILE;*/
+			$externalDataSource->getExternalDocument(FILES_PATH, unserialize ( file_get_contents ( $import_filename ) ));
 		
+		// Creo il documento 
 		if (! $this->_ProcedureManager->createDocument ( $doc, null, $filePath, $md [Masterdocument::FTP_FOLDER] )) {
 			$this->_unlock ( $import_filename );
 			$this->_dbConnector->rollback ();
@@ -92,51 +119,46 @@ class ImportManager {
 			return new ErrorHandler ( "Creazione Document fallita, impossibile continuare" );
 		}
 		
+		// Se arrivo fin qui è andato tutto a buon fine
 		$this->_setImported ( $import_filename, $externalDataSource::FILE_EXTENSION_TO_BE_IMPORTED, $externalDataSource::FILE_EXTENSION_IMPORTED );
 		$this->_dbConnector->commit ();
 		return new ErrorHandler ( false );
 	}
 
-	public function createDataFromSaved(array $record){
-		$XMLFilteredList = $this->_XMLDataSource
-						->filter(new XMLFilterDocumentType(array($record[self::LABEL_MD_NOME])))
-						->filter(new XMLFilterValidity(date("Y-m-d")))
-						->getXmlTree(true);
-		if(!isset($XMLFilteredList[0])) return false;
-		$lastXML = $this->_XMLDataSource->getSingleXmlByFilename($XMLFilteredList[0]);
-		
-		$XMLParser = new XMLParser($lastXML[XMLDataSource::LABEL_XML], $record[self::LABEL_MD_TYPE]);
-		
+	public function createDataFromSaved(array $record) {
+		$XMLParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML], $record [self::LABEL_MD_TYPE] );
 	}
-	
+
 	public function clean() {
 		// Sblocco tutti gli import non andati a buon fine e che mi hanno
 		// lasciato
 		// I file rinominati con l'estensione del mio utente
-		$list = glob ( GECO_IMPORT_PATH . "*" );
-		if (! empty ( $list )) {
-			foreach ( $list as $folder ) {
-				$files = glob ( $folder . "/*". $this->_getLockPattern() );
-				foreach ( $files as $file ) {
-					$this->_unlock ( $file );
+		foreach ( $this->_importDataSourceManager->getSource () as $label => $externalDataSource ) {
+			$list = glob ( $externalDataSource::IMPORT_PATH . "*" );
+			if (! empty ( $list )) {
+				foreach ( $list as $folder ) {
+					$files = glob ( $folder . "/*" . $this->_getLockPattern () );
+					foreach ( $files as $file ) {
+						$this->_unlock ( $file );
+					}
 				}
 			}
 		}
 	}
 
-	private function _getLockPattern(){
-		return ".". Session::getInstance()->get(AUTH_USER);
+	private function _getLockPattern() {
+		return "." . Session::getInstance ()->get ( AUTH_USER );
 	}
-	
+
 	private function _lock(&$filename) {
 		$oldname = $filename;
-		$filename = $oldname . $this->_getLockPattern();
+		$filename = $oldname . $this->_getLockPattern ();
 		return @rename ( $oldname, $filename );
 	}
 
 	private function _unlock(&$filename) {
 		$oldname = $filename;
-		$filename = str_replace ( $this->_getLockPattern(), "", $oldname );
+		$filename = str_replace ( $this->_getLockPattern (), "", $oldname );
 		return @rename ( $filename, $newname );
 	}
 
@@ -145,10 +167,6 @@ class ImportManager {
 		$oldname = $filename;
 		$filename = str_replace ( "." . $toBeImportedExtension, "." . $importedExtension, $oldname );
 		return @rename ( $oldname, $filename );
-	}
-
-	private function _checkEssentials($data) {
-		return ! isset ( $data [self::LABEL_IMPORT_FILENAME] ) || ! isset ( $data [self::LABEL_MD_NOME] ) || ! isset ( $data [self::LABEL_MD_TYPE] ) || ! isset ( $data [self::LABEL_MD_XML] );
 	}
 
 	private function _generateMDRecord($data) {

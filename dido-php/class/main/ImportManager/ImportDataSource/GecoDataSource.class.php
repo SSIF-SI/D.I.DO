@@ -4,7 +4,11 @@ class GecoDataSource implements IExternalDataSource {
 	const DATA_SOURCE_LABEL = "Geco";
 	const IMPORT_PATH = "geco-import/";
 
+	const DOCUMENT_FIELD = "nome_documento";
+	
 	private $_master_log;
+	
+	private $_ftpConnector;
 
 	private $_tablesToRead = array (
 			
@@ -53,6 +57,17 @@ class GecoDataSource implements IExternalDataSource {
 			) 
 	);
 
+	public function getExternalDocument($destinationPath, $record){
+		return $this->_getExternalDocumentFromFTP($destinationPath, $record);
+	}
+	
+	private function _getExternalDocumentFromFTP($destinationPath, $record){
+		$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile("config.ini");
+		$this->_ftpConnector = new FTPConnector();
+		$nomeFile = self::IMPORT_PATH . $record[self::DOCUMENT_FIELD];
+		return $this->_ftpConnector->getTempFile($nomeFile, $destinationPath);
+	}
+	
 	public function saveDataToBeImported() {
 		
 		$data_to_import = $this->getDataToImport ();

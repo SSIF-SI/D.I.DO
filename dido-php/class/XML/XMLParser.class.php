@@ -21,13 +21,26 @@ class XMLParser implements IXMLParser {
 
 	const ONLYIFTYPE = "onlyIfType";
 
+	// Signature params 
 	const ROLE = "role";
 
 	const ALT = "alt";
 	
+	// Input Params
+	const TYPE = "type";
+	
+	const TRANSFORM = "transform";
+	
+	const KEY = "key";
+	
+	const VALUES = "values";
+	
+	const SHORTWIEW = "shortwiew";
+	
 	// Common Params
 	const MANDATORY = "mandatory";
 
+	
 	private $_xml = null;
 
 	public function __construct($xml = null, $md_type = null) {
@@ -166,22 +179,12 @@ class XMLParser implements IXMLParser {
 		foreach ( $inputs as $input ) {
 			$data_key = FormHelper::fieldFromLabel ( ( string ) $input );
 			$mandatory = isset ( $input [XMLParser::MANDATORY] ) ? ( bool ) ( string ) $input [XMLParser::MANDATORY] : true;
-			// var_dump($mandatory);
 			
-			if (empty ( $data [$data_key] )) {
-				if ($mandatory) {
-					// Utils::printr("Not found $data_key, but MANDATORY");
-					return false;
-					break;
-				} else {
-					// Utils::printr("Not found $data_key, SKIPPING");
-					continue;
-				}
-			}
-			
-			// Utils::printr("found $data_key, converting to $input");
-			
+			if (empty ( $data [$data_key] ) && $mandatory) 
+				return false;
+
 			$value = $data [$data_key];
+			
 			unset ( $data [$data_key], $input [XMLParser::MANDATORY] );
 			$data [( string ) $input] = $value;
 		}

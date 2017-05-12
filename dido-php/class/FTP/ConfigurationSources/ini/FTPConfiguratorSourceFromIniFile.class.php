@@ -1,9 +1,17 @@
 <?php
 
 class FTPConfiguratorSourceFromIniFile extends AFTPConfigurationSource {
-
-	const CONFIG_FILENAME = "config.ini";
-
+	const DEFAULT_INI_FILE = "config.ini";
+	
+	private $_iniFile = "";
+	
+	public function __construct($iniFile = null){
+		$this->setIniFile(is_null ($iniFile) ? self::DEFAULT_INI_FILE : $iniFile);
+	}
+	public function setIniFile($iniFile){
+		$this->_iniFile = $iniFile;
+	}
+	
 	public function loadConfiguration() {
 		$config = parse_ini_file ( self::CONFIG_FILENAME );
 		

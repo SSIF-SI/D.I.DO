@@ -68,6 +68,17 @@ class XMLDataSource {
 		$this->_filtered = $this->_xmlTree;
 	}
 
+	public function getFirst(){
+		if(!count($this->_filtered)) return false;
+		foreach($this->_filtered as $categorie => $categoria){
+			if(!count($categoria)) return false;
+			foreach($categoria as $nome => $versioni){
+				if(!count($versioni)) return false;
+				return reset($versioni);
+			}
+		}
+	}
+	
 	public function getSingleXmlByFilename($xmlFilename) {
 		foreach($this->_xmlTree as $categorie => $categoria){
 			foreach($categoria as $nome => $versioni){
@@ -79,6 +90,8 @@ class XMLDataSource {
 		}
 		return null;
 	}
+	
+	
 	
 	private function _createDocTree($catName, $xmlList) {
 		$tree = array ();
