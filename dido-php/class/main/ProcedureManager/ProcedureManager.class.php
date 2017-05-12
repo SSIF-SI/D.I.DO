@@ -18,14 +18,11 @@ class ProcedureManager implements IProcedureManager {
 	}
 
 	public function createMasterdocument($md, $md_data) {
-		// Creo cartella ftp
-		$md [Masterdocument::FTP_FOLDER] = $this->_FTPDataSource->getNewPathFromXml ( $md [Masterdocument::XML] );
-		if (! $this->_FTPDataSource->createFolder ( $md [Masterdocument::FTP_FOLDER] )) {
-			return false;
-		}
-		
+
 		// Creo il MD;
 		$this->_dbConnector->begin ();
+
+		$md [Masterdocument::FTP_FOLDER] = $this->_FTPDataSource->getNewPathFromXml ( $md [Masterdocument::XML] );
 		$new_md = $this->_MDPManager->create ( $md, $md_data );
 		if (! $new_md) {
 			
@@ -33,7 +30,13 @@ class ProcedureManager implements IProcedureManager {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
+		// Creo cartella ftp
 		
+		if (! $this->_FTPDataSource->createFolder ( $new_md [Masterdocument::FTP_FOLDER] 
+				. $this->_FTPDataSource-> getFolderNameFromMasterdocument($new_md))) {
+			return false;
+		}
+
 		$this->_dbConnector->commit ();
 		return $new_md;
 	}
@@ -57,6 +60,7 @@ class ProcedureManager implements IProcedureManager {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
+		
 		if (! $this->uploadFile( $new_doc, $filePath, $repositoryPath )) {
 			$this->_dbConnector->rollback ();
 			return false;
@@ -73,7 +77,6 @@ class ProcedureManager implements IProcedureManager {
 			return false;
 		}
 		
-		Utils::printr("Upload Doc $filePath to $repositoryPath");
 		if (! is_null ( $filePath ) && ! is_null ( $repositoryPath )) {
 			if (! $this->uploadFile ( $document, $filePath, $repositoryPath )) {
 				$this->_dbConnector->rollback ();
@@ -102,7 +105,7 @@ class ProcedureManager implements IProcedureManager {
 
 	private function uploadFile($doc, $filePath, $repositoryPath) {
 		$filename = $repositoryPath . $this->_FTPDataSource->getFilenameFromDocument ( $doc );
-		if (! $this->_FTPDataSource->upload ( $filePath, $filename )) {
+		if (! $this->_FTPDataSource->upload ( $filePath, $filename )) {		
 			return false;
 		}
 		return true;

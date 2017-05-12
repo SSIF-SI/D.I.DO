@@ -9,6 +9,7 @@ interface IFTPDataSource {
 	public function getNewPathFromXml($xml);
 
 	public function getFilenameFromDocument($document);
+	public function getFolderNameFromMasterdocument($md);
 
 	public function deleteFile($filePath);
 	

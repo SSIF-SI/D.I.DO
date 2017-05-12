@@ -8,7 +8,6 @@ class DocumentProcedureManager extends AProcedureManager {
 			
 			// Deve essere fatto tutto in una singola transazione
 		$this->getDBConnector()->begin ();
-		
 		// Step 1. Salvo il record nella tabella document
 		$Document = new Document ( $this->getDBConnector () );
 		$result = $Document->save ( $main );
@@ -16,7 +15,7 @@ class DocumentProcedureManager extends AProcedureManager {
 			$this->getDBConnector ()->rollback ();
 			return false;
 		}
-		
+
 		$id_doc = $result->getOtherData ( 'lastInsertId' );
 		$main [Document::ID_DOC] = $id_doc;
 		
@@ -28,7 +27,7 @@ class DocumentProcedureManager extends AProcedureManager {
 				return false;
 			}
 		}
-		
+
 		$this->getDBConnector ()->commit ();
 		return $main;
 	}

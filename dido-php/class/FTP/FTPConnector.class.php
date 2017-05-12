@@ -234,6 +234,8 @@ class FTPConnector implements IFTPConnector {
 
 	public function upload($source, $destination) {
 		$this->_connect ();
+		Utils::printr($destination);
+		
 		$result = @ftp_put ( $this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY );
 		return $result;
 		

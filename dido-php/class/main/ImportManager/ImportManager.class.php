@@ -103,7 +103,7 @@ class ImportManager {
 			$this->_dbConnector->rollback ();
 			return new ErrorHandler ( "Creazione Master Document fallita, impossibile continuare" );
 		}
-			
+
 		$firstDoc = $XMLParser->getDocList ()[0];
 		$XMLParser->checkIfMustBeLoaded($firstDoc);
 		
@@ -113,11 +113,19 @@ class ImportManager {
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/
 			$externalDataSource->getExternalDocument(FILES_PATH, unserialize ( file_get_contents ( $import_filename ) ));
 		
-		// Creo il documento 
-		if (! $this->_ProcedureManager->createDocument ( $doc, null, $filePath, $md [Masterdocument::FTP_FOLDER] )) {
+		
+		//Costurisco il path della folder, converrebbe mettere questo sul DB?
+		//$mdfolder=$md [Masterdocument::FTP_FOLDER];
+		$mdfolder=$md [Masterdocument::FTP_FOLDER] 
+		. $this->_ftpDataSource->getFolderNameFromMasterdocument($md) 
+		. DIRECTORY_SEPARATOR;
+		
+		// Creo il documento
+		
+		if (! $this->_ProcedureManager->createDocument ( $doc, null, $filePath, $mdfolder )) {
 			$this->_unlock ( $import_filename );
 			$this->_dbConnector->rollback ();
-			$this->_ProcedureManager->removeMasterdocumentFolder ( $md [Masterdocument::FTP_FOLDER] );
+			$this->_ProcedureManager->removeMasterdocumentFolder ( $mdfolder );
 			return new ErrorHandler ( "Creazione Document fallita, impossibile continuare" );
 		}
 		
