@@ -76,7 +76,7 @@ class Application {
 			return new ErrorHandler("Import fallito, mancano argomenti essenziali");
 		
 		$lastXML = $this->_XMLDataSource
-			->filter ( new XMLFilterDocumentType ( [ $postData [self::LABEL_MD_NOME] ] ) )
+			->filter ( new XMLFilterDocumentType ( [ $postData [ImportManager::LABEL_MD_NOME] ] ) )
 			->filter ( new XMLFilterValidity ( date ( "Y-m-d" ) ) )
 			->getFirst ();
 		
@@ -84,7 +84,7 @@ class Application {
 			return new ErrorHandler("Impossibile associare un XML al tipo di Master Document");
 		
 		$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
-		$from = $XmlParser->getSource ();
+		$from = (string) $XmlParser->getSource ();
 		
 		$postData [ImportManager::LABEL_MD_XML] = $lastXML [XMLDataSource::LABEL_FILE];
 		

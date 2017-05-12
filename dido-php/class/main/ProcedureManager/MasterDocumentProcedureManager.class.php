@@ -15,10 +15,12 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 	public function create($main, $data) {
 		if (empty ( $main ) || empty ( $data ))
 			return false;
+		
 		$this->getDbConnector ()->begin ();
 		
 		$Masterdocument = new Masterdocument ( $this->getDbConnector () );
 		$result = $Masterdocument->save ( $main );
+		
 		if ($result->getErrors () !== false) {
 			$this->getDbConnector ()->rollback ();
 			return false;

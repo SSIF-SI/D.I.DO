@@ -26,8 +26,9 @@ class ProcedureManager implements IProcedureManager {
 		
 		// Creo il MD;
 		$this->_dbConnector->begin ();
-		$new_md = $this->_MDPManager->create ( $md, $data );
+		$new_md = $this->_MDPManager->create ( $md, $md_data );
 		if (! $new_md) {
+			
 			$this->removeMasterdocumentFolder( $md [Masterdocument::FTP_FOLDER] );
 			$this->_dbConnector->rollback ();
 			return false;
@@ -71,6 +72,8 @@ class ProcedureManager implements IProcedureManager {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
+		
+		Utils::printr("Upload Doc $filePath to $repositoryPath");
 		if (! is_null ( $filePath ) && ! is_null ( $repositoryPath )) {
 			if (! $this->uploadFile ( $document, $filePath, $repositoryPath )) {
 				$this->_dbConnector->rollback ();

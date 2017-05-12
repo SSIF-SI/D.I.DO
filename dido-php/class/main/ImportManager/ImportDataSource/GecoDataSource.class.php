@@ -1,7 +1,7 @@
 <?php
 
 class GecoDataSource implements IExternalDataSource {
-	const DATA_SOURCE_LABEL = "Geco";
+	const DATA_SOURCE_LABEL = "geco";
 	const IMPORT_PATH = "geco-import/";
 
 	const DOCUMENT_FIELD = "nome_documento";
@@ -109,7 +109,7 @@ class GecoDataSource implements IExternalDataSource {
 						$filename = basename ( $file );
 						preg_match_all ( self::FILE_REGEXP, $filename, $matches );
 						$list [$matches [1] [0]] [] = array (
-								self::FILENAME => basename ( $file ),
+								self::FILENAME => $file ,
 								self::MD_NOME => $matches [1] [0],
 								self::TYPE => $matches [2] [0],
 								self::ID => $matches [3] [0]

@@ -7,7 +7,7 @@ class DocumentProcedureManager extends AProcedureManager {
 			return false;
 			
 			// Deve essere fatto tutto in una singola transazione
-		$this->getConnector ()->begin ();
+		$this->getDBConnector()->begin ();
 		
 		// Step 1. Salvo il record nella tabella document
 		$Document = new Document ( $this->getDBConnector () );

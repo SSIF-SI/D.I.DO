@@ -79,7 +79,7 @@ abstract class AnyDocument extends Crud {
 				}
 			}
 			
-			if ($result->getErrors () === false) {
+			if ($result->getErrors () !== false) {
 				$this->_connInstance->rollback ();
 				return $result;
 			}

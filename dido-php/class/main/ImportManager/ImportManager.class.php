@@ -63,14 +63,14 @@ class ImportManager {
 	}
 
 	public function import($from, $data) {
+		$this->clean();
 		$externalDataSource = $this->_importDataSourceManager->getSource ( $from );
 		
 		if (! $externalDataSource)
 			return new ErrorHandler ( "$from non registrato come valida sorgente di dati" );
 			
 			// Rinomino il file per mettergli un lock non fisico
-		$import_filename = $externalDataSource::IMPORT_PATH . $data [self::LABEL_IMPORT_FILENAME];
-		
+		$import_filename = $data [self::LABEL_IMPORT_FILENAME];
 		$import_filename_field = rtrim ( $import_filename, "." . $externalDataSource::FILE_EXTENSION_TO_BE_IMPORTED );
 		if (! $this->_lock ( $import_filename ))
 			return new ErrorHandler ( 'Permessi di scrittura negati sul server' );
@@ -96,16 +96,18 @@ class ImportManager {
 		
 		// Inizio la transazione
 		$this->_dbConnector->begin ();
-		
+		$md = $this->_ProcedureManager->createMasterdocument ( $md, $md_data );
 		// Creo il Master Document
-		if (! $this->_ProcedureManager->createMasterdocument ( $md, $md_data )) {
+		if (! $md ) {
 			$this->_unlock ( $import_filename );
 			$this->_dbConnector->rollback ();
 			return new ErrorHandler ( "Creazione Master Document fallita, impossibile continuare" );
 		}
-		
+			
 		$firstDoc = $XMLParser->getDocList ()[0];
-		$doc = $this->_generateDocRecord ( $firstDoc [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
+		$XMLParser->checkIfMustBeLoaded($firstDoc);
+		
+		$doc = $this->_generateDocRecord ( ( string )$firstDoc [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
 		
 		// Il pdf per ora lo prendo da un fakefile...
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/
@@ -159,7 +161,7 @@ class ImportManager {
 	private function _unlock(&$filename) {
 		$oldname = $filename;
 		$filename = str_replace ( $this->_getLockPattern (), "", $oldname );
-		return @rename ( $filename, $newname );
+		return @rename ( $oldname, $filename );
 	}
 
 	private function _setImported(&$filename, $toBeImportedExtension, $importedExtension) {

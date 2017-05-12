@@ -206,9 +206,12 @@ class FTPConnector implements IFTPConnector {
 		$parts = explode ( DIRECTORY_SEPARATOR, $ftpath );
 		foreach ( $parts as $part ) {
 			if (! @ftp_chdir ( $this->_conn_id, $part )) {
+				if (empty ( $part ))
+					continue; 
 				$result = @ftp_mkdir ( $this->_conn_id, $part ) && @ftp_chdir ( $this->_conn_id, $part );
-				if (! $result)
+				if (! $result) {
 					return false;
+				}
 			}
 		}
 		return true;

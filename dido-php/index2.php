@@ -1,19 +1,17 @@
 <?php
 require_once ("config.php");
 
-$IM = new ImportManager(DBConnector::getInstance(), new FTPDataSource());
+$a = new Application();
+$tbi = $a->getSavedDataToBeImported(GecoDataSource::DATA_SOURCE_LABEL, IExternalDataSource::FILE_EXTENSION_TO_BE_IMPORTED);
 
-$XDS = new XMLDataSource();
+$fakepost=[
+		ImportManager::LABEL_IMPORT_FILENAME=>'geco-import/acquisti/acquisto_fuori mepa_124.tobeimported',
+		ImportManager::LABEL_MD_NOME=>'acquisto',
+		ImportManager::LABEL_MD_TYPE=>'fuori mepa'
+		];
+var_dump($a->import($fakepost)->getErrors());
 
-$lastXML = $XDS
-	->filter ( new XMLFilterDocumentType ( [ "acquisto" ] ) )
-	->filter ( new XMLFilterValidity ( date ( "Y-m-d" ) ) )
-	->getFirst ();
 
-if (! $lastXML)
-	die("Nessun xml");
 
-$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
-
-Utils::printr($IM->fromFileToMetadata(GecoDataSource::IMPORT_PATH."acquisti/acquisto_fuori mepa_1.tobeimported", $XmlParser->getMasterDocumentInputs()));
 ?>
+??
