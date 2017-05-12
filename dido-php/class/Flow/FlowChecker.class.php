@@ -51,7 +51,7 @@ class FlowChecker extends ClassWithDependencies {
 			$return ['data'] ['xml_inputs'] = $this->_XMLParser->getMasterDocumentInputs ();
 			
 			// Connessione FTP (documenti esistenti)
-			$md ['path'] = $md ['ftp_folder'] . DIRECTORY_SEPARATOR . $md ['nome'] . "_" . $id [key ( $id )];
+			$md ['path'] = $md ['ftp_folder'] . $md ['nome'] . "_" . $id [key ( $id )];
 			
 			$fileList = Utils::filterList ( $this->_FTPConnector->getContents ( $md ['path'] )['contents'], 'isPDF', 1 );
 			$fileList = Utils::getListfromField ( $fileList, 'filename' );

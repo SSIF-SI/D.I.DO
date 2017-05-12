@@ -139,7 +139,7 @@ class MasterDocumentManager extends ClassWithDependencies {
 				if (count ( $docList )) {
 					foreach ( $docList as $id_doc => $document ) {
 						
-						$filename = $md ['ftp_folder'] . DIRECTORY_SEPARATOR . $md ['nome'] . "_" . $id_md . DIRECTORY_SEPARATOR . FormHelper::fieldFromLabel ( $document ['nome'] . " " . $document ['id_doc'] . "." . $document ['extension'] );
+						$filename = $md ['ftp_folder'] . $md ['nome'] . "_" . $id_md . DIRECTORY_SEPARATOR . FormHelper::fieldFromLabel ( $document ['nome'] . " " . $document ['id_doc'] . "." . $document ['extension'] );
 						
 						// Utils::printr($filename." to check");
 						
@@ -307,8 +307,8 @@ class MasterDocumentManager extends ClassWithDependencies {
 	// return $list;
 	// }
 	private function _checkSignature($filename, $signature) {
-		// Utils::printr("Checking signature $signature");
 		$tmpPDF = $this->_FTPConnector->getTempFile ( $filename );
+		
 		$this->_PDFParser->loadPDF ( $tmpPDF );
 		$signaturesOnDocument = $this->_PDFParser->getSignatures ();
 		

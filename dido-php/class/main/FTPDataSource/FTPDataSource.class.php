@@ -20,6 +20,10 @@ class FTPDataSource implements IFTPDataSource{
 		return dirname ( $xml ) . DIRECTORY_SEPARATOR . date ( "Y" ) . DIRECTORY_SEPARATOR . date ( "m" ) . DIRECTORY_SEPARATOR;
 	}
 
+	public function getFolderNameFromMasterdocument($md) {
+		return FormHelper::fieldFromLabel ( $md[Masterdocument::NOME] . " " . $md[Masterdocument::ID_MD]);
+	}
+
 	public function getFilenameFromDocument($document) {
 		return FormHelper::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $document [Document::EXTENSION] );
 	}

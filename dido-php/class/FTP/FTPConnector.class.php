@@ -25,6 +25,14 @@ class FTPConnector implements IFTPConnector {
 			'p7m' 
 	);
 
+	private static $instance = null;
+	
+	public static function getInstance(){
+		if(is_null(self::$instance))
+			self::$instance = new self();
+		return self::$instance;
+	}
+	
 	public function __construct(AFTPConfigurationSource $FTPConfiguratorSource = null) {
 		$this->_FTPConfiguratorSource =
 			is_null($FTPConfiguratorSource) ? 
