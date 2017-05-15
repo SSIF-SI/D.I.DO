@@ -38,7 +38,7 @@ class ImportManager {
 		foreach ( $this->_importDataSourceManager->getSource () as $label => $externalDataSource ) {
 			if (! is_null ( $from ) && $label != $from)
 				continue;
-			$toBeImported [$from] = $externalDataSource->getSavedDataToBeImported ( $owner, $catList, $subCategory );
+			$toBeImported [$label] = $externalDataSource->getSavedDataToBeImported ( $owner, $catList, $subCategory );
 		}
 		return is_null ( $from ) ? $toBeImported : $toBeImported [$from];
 	}
@@ -144,7 +144,7 @@ class ImportManager {
 		// lasciato
 		// I file rinominati con l'estensione del mio utente
 		foreach ( $this->_importDataSourceManager->getSource () as $label => $externalDataSource ) {
-			$list = glob ( $externalDataSource::IMPORT_PATH . "*" );
+			$list = glob ( REAL_ROOT . $externalDataSource::IMPORT_PATH . "*" );
 			if (! empty ( $list )) {
 				foreach ( $list as $folder ) {
 					$files = glob ( $folder . "/*" . $this->_getLockPattern () );

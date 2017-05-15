@@ -36,5 +36,10 @@ class Common{
 				"/"
 		), " ", ucfirst($field) ) );
 	}
+	
+	public static function redirectTo($url = HTTP_ROOT){
+		header("Location: " . $url);
+		die();
+	}
 }
 ?>

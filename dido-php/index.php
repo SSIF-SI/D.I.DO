@@ -2,6 +2,7 @@
 
 require_once ("config.php");
 
+//Common::redirectTo(HTTP_ROOT . "index2.php");
 /*
 $PDFParser = new PDFParser("/var/lib/tomcat7/webapps/dido-php-test/richiesta_delega_2016_DMT_signed.pdf");
 echo Utils::printr($PDFParser->getSignatures());

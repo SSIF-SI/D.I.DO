@@ -31,7 +31,7 @@ class Application_Navigator {
 		$tree = $this->getLeftMenu ();
 		?>
 <li><a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i>
-		Dashboard</a></li>
+		Scrivania</a></li>
 <?php if(!empty($tree)): ?>
 <li><a href="#"><i class="fa fa-files-o fa-fw"></i> Nuovo documento<span
 		class="fa arrow"></span></a>
@@ -41,7 +41,7 @@ class Application_Navigator {
 			<ul class="nav nav-third-level">
 					<?php foreach($dati as $tipoDocumento => $xmlList):?>
 						<li><a
-					href="<?=BUSINESS_HTTP_PATH."document.php?t=$tipoDocumento"?>"><?=ucwords($tipoDocumento)?></a>
+					href="<?=BUSINESS_HTTP_PATH."documento.php?type=$tipoDocumento"?>"><?=ucwords($tipoDocumento)?></a>
 				</li>
 					<?php endforeach;?>
 					</ul></li>

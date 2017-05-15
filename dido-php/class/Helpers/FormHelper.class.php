@@ -46,6 +46,21 @@ class FormHelper {
 		;
 		return ob_get_clean ();
 	}
+	
+	public static function fieldFromLabel($label) {
+		return strtolower ( str_replace ( array (
+				" ",
+				"'",
+				"/"
+		), "_", strtolower($label) ) );
+	}
+	public static function labelFromField($field) {
+		return strtolower ( str_replace ( array (
+				"_",
+				"'",
+				"/"
+		), " ", ucfirst($field) ) );
+	}
 	public static function createInputsFromXml($xmlInputs, $colDivision = 4, $_IMPORT = array()) {
 		$inputs = array ();
 		if (count ( $xmlInputs )) {

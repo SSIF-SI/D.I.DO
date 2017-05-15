@@ -40,6 +40,24 @@
 	href="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/css/fileinput.min.css"
 	rel="stylesheet" type="text/css">
 
+<style>
+.panel-heading .accordion-toggle {
+	text-decoration: none;
+}
+
+.panel-heading .accordion-toggle:after {
+	/* symbol for "opening" panels */
+	font-family: 'Glyphicons Halflings';
+	/* essential for enabling glyphicon */
+	content: "\e118"; /* adjust as needed, taken from bootstrap.css */
+	float: left; /* adjust as needed */
+}
+
+.panel-heading .accordion-toggle.collapsed:after {
+	/* symbol for "collapsed" panels */
+	content: "\e117"; /* adjust as needed, taken from bootstrap.css */
+}
+</style>
 </head>
 
 <body>
@@ -72,13 +90,13 @@
 				</a>
 					<ul class="dropdown-menu dropdown-user">
 						<li><a href="<?=HTTP_ROOT."?logout"?>"><i
-								class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+								class="fa fa-sign-out fa-fw"></i> Esci</a></li>
 					</ul> <!-- /.dropdown-user --></li>
 				<!-- /.dropdown -->
 			</ul>
 			<!-- /.navbar-top-links -->
 
-			<div class="navbar-default sidebar" role="navigation">
+			<div class="navbar-default sidebar" role="navigation" style="visibility: hidden">
 				<div class="sidebar-nav navbar-collapse">
 					<ul class="nav" id="side-menu">
 						<li class="sidebar-search">
@@ -151,7 +169,9 @@
 		eval ( "Utils::includeScript(SCRIPTS_PATH, $pageScripts);" );
 	}
 	?>
-		
+	<script>
+		$(document).ready(function(){$(".sidebar").css("visibility","visible");});
+	</script>	
 </body>
 
 </html>

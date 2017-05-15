@@ -64,7 +64,7 @@ class GecoDataSource implements IExternalDataSource {
 	private function _getExternalDocumentFromFTP($destinationPath, $record){
 		$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile("config.ini");
 		$this->_ftpConnector = new FTPConnector();
-		$nomeFile = self::IMPORT_PATH . $record[self::DOCUMENT_FIELD];
+		$nomeFile = REAL_ROOT . self::IMPORT_PATH . $record[self::DOCUMENT_FIELD];
 		return $this->_ftpConnector->getTempFile($nomeFile, $destinationPath);
 	}
 	
@@ -88,7 +88,7 @@ class GecoDataSource implements IExternalDataSource {
 	public function getSavedDataToBeImported($owner, $catlist, $subcategory = null) {
 		$fti = [];
 		
-		$types = glob ( self::IMPORT_PATH . "*" );
+		$types = glob ( REAL_ROOT . self::IMPORT_PATH . "*" );
 		
 		$fti[self::FILE_EXTENSION_TO_BE_IMPORTED] = $this->_browse(self::FILE_EXTENSION_TO_BE_IMPORTED, $types, $catlist);
 		$fti[self::FILE_EXTENSION_TO_BE_UPDATED] = $this->_browse(self::FILE_EXTENSION_TO_BE_UPDATED, $types, $catlist);
@@ -142,7 +142,7 @@ class GecoDataSource implements IExternalDataSource {
 
 	private function createFileToImport($table, $data, $record) {
 		// Creiamo la direcrory in base alla categoria
-		$dirname = self::IMPORT_PATH . $data ['category'];
+		$dirname = REAL_ROOT . self::IMPORT_PATH . $data ['category'];
 		if (! is_dir ( $dirname )) {
 			mkdir ( $dirname, 0777, true );
 		}
