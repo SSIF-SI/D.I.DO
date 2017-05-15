@@ -35,7 +35,7 @@ class XMLParser implements IXMLParser {
 	
 	const VALUES = "values";
 	
-	const SHORTWIEW = "shortwiew";
+	const SHORTWIEW = "shortView";
 	
 	// Common Params
 	const MANDATORY = "mandatory";

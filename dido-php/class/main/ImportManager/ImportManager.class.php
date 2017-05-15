@@ -7,8 +7,8 @@ class ImportManager {
 	const LABEL_MD_NOME = "md_nome";
 
 	const LABEL_MD_TYPE = "md_type";
-
-	const LABEL_MD_XML = "md_xml";
+	
+	const LABEL_MD_XML = "xml";
 
 	const FAKEFILE = "fakefile/sample06.pdf";
 

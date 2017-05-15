@@ -64,7 +64,7 @@ class XMLDataSource {
 		return $this;
 	}
 
-	private function resetFilters() {
+	public function resetFilters() {
 		$this->_filtered = $this->_xmlTree;
 	}
 

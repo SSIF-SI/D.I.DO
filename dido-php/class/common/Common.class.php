@@ -13,7 +13,7 @@ class Common{
 	}
 	
 	static function countMultipleMultiArrayItems($array, $labels){
-		if(!is_array($label)) return 0;
+		if(!is_array($labels)) return 0;
 		
 		$sum = 0;
 		foreach($labels as $label){
@@ -30,11 +30,11 @@ class Common{
 		), "_", strtolower($label) ) );
 	}
 	public static function labelFromField($field) {
-		return strtolower ( str_replace ( array (
+		return ucfirst(strtolower ( str_replace ( array (
 				"_",
 				"'",
 				"/"
-		), " ", ucfirst($field) ) );
+		), " ", $field ) ) );
 	}
 	
 	public static function redirectTo($url = HTTP_ROOT){
