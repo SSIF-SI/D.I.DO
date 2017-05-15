@@ -5,9 +5,5 @@
 	</div>
 </div>
 <div class="row">
-	<?php TemplateHelper::createDashboardPanels($data);?>
-</div>
-
-<div class="row">
-	<?=$detail?>
+	<?php TemplateHelperNew::createDashboardPanels($data);?>
 </div>

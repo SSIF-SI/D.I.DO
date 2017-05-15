@@ -31,6 +31,7 @@ class UserManager {
 		$this->_role = isset ( $user_role [$this->_fieldToWriteOnDb] ) ? $user_role [$this->_fieldToWriteOnDb] : null;
 		
 		$this->_signature = new UserSignature ( $this->_fieldToWriteOnDb );
+		
 	}
 
 	public function getUser() {

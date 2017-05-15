@@ -265,7 +265,7 @@ class TemplateHelper {
 	static function createListGroupToImport() {
 		ob_start ();
 		$list = Geko::getInstance ()->getFileToImport ();
-		unset ( $list ['nTot'] );
+		unset ( $list [Common::N_TOT] );
 		if (count ( $list )) :
 			?>
 <style>
@@ -421,6 +421,7 @@ class TemplateHelper {
 	}
 
 	static function createListGroupOpen($md_open, $onlyToSign = false) {
+		Utils::printr($md_open);
 		if ($onlyToSign) {
 			foreach ( $md_open ['documents'] as $id_md => $doc ) {
 				$mustBeSigned = Utils::filterList ( $doc, 'mustBeSigned', 1 );
@@ -469,7 +470,7 @@ class TemplateHelper {
 							href=<?php echo "#list".$category; ?>>&nbsp;Sezione&nbsp;<?php echo(ucfirst($category))?></a>
 					</div>
 					<div class="col-lg-6 text-right">
-						<span class="badge badge-info"><?php echo $subcategory['nTot']; unset($subcategory['nTot'])?></span>
+						<span class="badge badge-info"><?php echo Common::countMultipleMultiArrayItems($md_open['md'], array_keys($subcategory));?></span>
 					</div>
 				</div>
 			</div>

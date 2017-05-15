@@ -2,6 +2,8 @@
 
 class Application {
 
+	const IMPORT = "Import";
+	const NAVIGATOR = "Navigator";
 	/*
 	 * La classe principale di DIDO
 	 *
@@ -25,7 +27,7 @@ class Application {
 	private $_dbConnector;
 
 	/*
-	 * Sorgenti di dati
+	 * Sorgenti di dati FTP
 	 */
 	private $_FTPDataSource;
 
@@ -35,60 +37,42 @@ class Application {
 	private $_XMLDataSource;
 
 	/*
-	 * Per gestire i dati importati/Da importare
-	 */
-	private $_ImportManager;
-
-	/*
-	 *
 	 * Gestione dati dell'utente collegato
 	 */
-	private $_UserManager;
+	private $_userManager;
 
+	/*
+	 * Classe che gestisce l'import
+	 */
+	private $_Application_Import;
+	
+	/*
+	 * Classe che gestisce gli elementi HTML navigabili 
+	 */
+	private $_Application_Navigator;
+	
 	public function __construct() {
 		$this->_dbConnector = DBConnector::getInstance ();
+		$this->_userManager = new UserManager ( $this->_dbConnector );
 		$this->_FTPDataSource = new FTPDataSource ();
 		$this->_XMLDataSource = new XMLDataSource ();
 		
-		$this->_ImportManager = new ImportManager ( $this->_dbConnector, $this->_FTPDataSource );
-		$this->_UserManager = new UserManager ( $this->_dbConnector );
+		$this->_Application_Import = new Application_Import($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
+		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource);
+		
 	}
 
-	/*
-	 * Sezione di Import dei dati
-	 */
-	public function saveDataToBeImported() {
-		// Funzione eseguita in cron
-		$this->_ImportManager->saveDataToBeImported ();
+	public function getApplicationPart($part){
+		$instanceName = "_Application_$part";
+		if(isset($this->$instanceName)) 
+			return $this->$instanceName;
 	}
-
-	public function getSavedDataToBeImported($from = null, $subCategory = null) {
-		$owners = $this->_UserManager->isAdmin () ? [ ] : $this->_UserManager->getUser ()->getGruppi ();
-		
-		$xmlList = $this->_XMLDataSource->filter ( new XMLFilterOwner ( $owners ) )->filter ( new XMLFilterValidity ( date ( "Y-m-d" ) ) )->getXmlTree ();
-		
-		$catlist = array_keys ( $xmlList );
-		return $this->_ImportManager->getSavedDataToBeImported ( $owners, $catlist, $from, $subCategory );
+	
+	public function getUsername(){
+		return $this->_userManager->getUser()->getCognome(). " ". $this->_userManager->getUser()->getNome();
 	}
-
-	public function import($postData) {
-		if (! isset ( $postData [ImportManager::LABEL_IMPORT_FILENAME] ) || ! isset ( $postData [ImportManager::LABEL_MD_NOME] ) || ! isset ( $postData [ImportManager::LABEL_MD_TYPE] ))
-			return new ErrorHandler("Import fallito, mancano argomenti essenziali");
-		
-		$lastXML = $this->_XMLDataSource
-			->filter ( new XMLFilterDocumentType ( [ $postData [ImportManager::LABEL_MD_NOME] ] ) )
-			->filter ( new XMLFilterValidity ( date ( "Y-m-d" ) ) )
-			->getFirst ();
-		
-		if (! $lastXML)
-			return new ErrorHandler("Impossibile associare un XML al tipo di Master Document");
-		
-		$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
-		$from = (string) $XmlParser->getSource ();
-		
-		$postData [ImportManager::LABEL_MD_XML] = $lastXML [XMLDataSource::LABEL_FILE];
-		
-		return $this->_ImportManager->import ( $from, $postData );
-	}
+	
+	
+	
 }
 ?>

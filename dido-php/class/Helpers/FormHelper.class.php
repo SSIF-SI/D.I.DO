@@ -178,20 +178,7 @@ class FormHelper {
 </form>
 <?php
 	}
-	public static function fieldFromLabel($label) {
-		return strtolower ( str_replace ( array (
-				" ",
-				"'",
-				"/" 
-		), "_", $label ) );
-	}
-	public static function labelFromField($field) {
-		return strtolower ( str_replace ( array (
-				" ",
-				"'",
-				"/" 
-		), " ", $field ) );
-	}
+	
 	private static function checkField($type, $var, $field, $label) {
 		$var [$field] = trim ( $var [$field] );
 		

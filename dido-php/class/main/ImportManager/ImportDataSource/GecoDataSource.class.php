@@ -98,11 +98,11 @@ class GecoDataSource implements IExternalDataSource {
 
 	private function _browse($label, $types, $catlist){
 		$found = 0;
-		$return = [self::NTOT => 0];
+		$return = [Common::N_TOT => 0];
 		foreach ( $types as $type ) {
 			$needle = basename ( $type );
 			if (in_array ( $needle, $catlist )) {
-				$list = [self::NTOT => 0];	
+				$list = [Common::N_TOT => 0];	
 				$files = glob ( $type . "/*." . $label );
 				if (count ( $files )) {
 					foreach ( $files as $file ) {
@@ -114,17 +114,11 @@ class GecoDataSource implements IExternalDataSource {
 								self::TYPE => $matches [2] [0],
 								self::ID => $matches [3] [0]
 						);
+						$list [Common::N_TOT] ++;
+							
 					}
 						
-					$nTot = 0;
-						
-					foreach ( $list as $subType => $item ) {
-						$nType = count ( $list [$subType] );
-						$nTot += $nType;
-					}
-						
-					$list [self::NTOT] = $nTot;
-					$return[self::NTOT] += $nTot;
+					$return[Common::N_TOT] += $list [Common::N_TOT];
 				}
 			}
 			$return[$needle] = $list;

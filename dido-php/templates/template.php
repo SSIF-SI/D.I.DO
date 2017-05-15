@@ -67,7 +67,7 @@
 				<li class="dropdown">
 				
 				<li class="dropdown"><a class="dropdown-toggle"
-					data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i><?=PersonaleHelper::getNominativo(PermissionHelper::getInstance()->getUserId());?>&nbsp;<i
+					data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i><?=$Application->getUsername()?>&nbsp;<i
 						class="fa fa-caret-down"></i>
 				</a>
 					<ul class="dropdown-menu dropdown-user">
@@ -91,7 +91,7 @@
 								</span>
 							</div> <!-- /input-group -->
 						</li>
-                        <?php TemplateHelper::LeftMenu()?>
+                        <?=$Application->getApplicationPart(Application::NAVIGATOR)->getLeftMenu()?>
                     </ul>
 				</div>
 				<!-- /.sidebar-collapse -->

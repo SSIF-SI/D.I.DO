@@ -1,11 +1,15 @@
 <?php
 
 class PersonaleSourceUserData extends ASourceUserData {
-
+	const USER_DATA = "userdata";
 	private $_data;
 
 	public function __construct() {
-		$this->_data = Personale::getInstance ()->getPersonabyEmail ( Session::getInstance ()->get ( AUTH_USER ) );
+		if(!Session::getInstance ()->exists ( self::USER_DATA ))
+			Session::getInstance ()->set ( self::USER_DATA, Personale::getInstance ()->getPersonabyEmail ( Session::getInstance ()->get ( AUTH_USER ) ) );
+		
+		$this->_data =
+			Session::getInstance ()->get ( self::USER_DATA );
 		if (! $this->_data)
 			throw new Exception ( "User data not Found" );
 	}

@@ -57,7 +57,7 @@ class ImportManager {
 				$value = ImportHelper::$callback ( $value );
 			}
 			
-			$md_data [FormHelper::fieldFromLabel(( string ) $input)] = $value;
+			$md_data [Common::fieldFromLabel(( string ) $input)] = $value;
 		endforeach;
 		return $md_data;
 	}
