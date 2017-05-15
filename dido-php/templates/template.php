@@ -91,7 +91,7 @@
 								</span>
 							</div> <!-- /input-group -->
 						</li>
-                        <?=$Application->getApplicationPart(Application::NAVIGATOR)->getLeftMenu()?>
+                       	<?=$Application->getApplicationPart(Application::NAVIGATOR)->renderLeftMenu()?>
                     </ul>
 				</div>
 				<!-- /.sidebar-collapse -->

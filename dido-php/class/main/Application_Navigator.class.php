@@ -1,5 +1,5 @@
-<?php 
-class Application_Navigator{
+<?php
+class Application_Navigator {
 	/*
 	 * Connettore al DB, verrà utilizzato da svariate classi
 	 */
@@ -10,14 +10,25 @@ class Application_Navigator{
 	 */
 	private $_XMLDataSource;
 	
-	public function __construct(IDBConnector $dbConnector, $XMLDataSource){
+	/*
+	 * Gestione dati dell'utente collegato
+	 */
+	private $_userManager;
+	public function __construct(IDBConnector $dbConnector, XMLDataSource $XMLDataSource, UserManager $UserManager) {
 		$this->_dbConnector = $dbConnector;
 		$this->_XMLDataSource = $XMLDataSource;
+		$this->_userManager = $UserManager;
+	}
+	private function getLeftMenu() {
+		if (! $this->_userManager->isGestore ())
+			return null;
+		if ($this->_userManager->isAdmin ())
+			return $this->_XMLDataSource->getXmlTree ();
+		return $this->_XMLDataSource->filter ( new XMLFilterOwner ( $this->_userManager->getUser ()->getGruppi () ) )->filter ( new XMLFilterValidity ( date ( DB_DATE_FORMAT ) ) )->getXmlTree ();
 	}
 	
-	public function getLeftMenu(){
-		
-		$tree = PermissionHelper::getInstance ()->isGestore () ? XMLBrowser::getInstance ()->getXmlTree ( true ) : null;
+	public function renderLeftMenu() {
+		$tree = $this->getLeftMenu ();
 		?>
 <li><a href="<?=HTTP_ROOT?>"><i class="fa fa-dashboard fa-fw"></i>
 		Dashboard</a></li>
@@ -25,29 +36,26 @@ class Application_Navigator{
 <li><a href="#"><i class="fa fa-files-o fa-fw"></i> Nuovo documento<span
 		class="fa arrow"></span></a>
 	<ul class="nav nav-second-level">
-				<?php foreach($tree as $categoria => $dati):?>
-				<li><a href="#"><?=ucfirst($categoria)?><span class="fa arrow"></span></a>
+			<?php foreach($tree as $categoria => $dati):?>
+					<li><a href="#"><?=ucfirst($categoria)?><span class="fa arrow"></span></a>
 			<ul class="nav nav-third-level">
-					<?php foreach($dati['documenti'] as $tipoDocumento => $xmlList):?>
+					<?php foreach($dati as $tipoDocumento => $xmlList):?>
 						<li><a
 					href="<?=BUSINESS_HTTP_PATH."document.php?t=$tipoDocumento"?>"><?=ucwords($tipoDocumento)?></a>
 				</li>
 					<?php endforeach;?>
 					</ul></li>
-				<?php endforeach;?>
+			<?php endforeach;?>
 			</ul></li>
 <?php endif; ?>
-		<?php if(PermissionHelper::getInstance()->isAdmin()):?>
+	<?php if($this->_userManager->isAdmin()):?>
 <li><a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i
 		class="fa fa-pencil fa-fw"></i> Gestione firme</a></li>
 <li><a href="<?=BUSINESS_HTTP_PATH."permessi.php"?>"><i
 		class="fa fa-key fa-fw"></i> Gestione permessi</a></li>
-<?php endif;?>
-<?php
+
+		<?php endif;
 	}
-	
-	private function renderLeftMenu($tree){
-	}
-	
 }
 ?>
+

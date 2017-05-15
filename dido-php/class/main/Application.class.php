@@ -58,7 +58,7 @@ class Application {
 		$this->_XMLDataSource = new XMLDataSource ();
 		
 		$this->_Application_Import = new Application_Import($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
-		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource);
+		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource,$this->_userManager);
 		
 	}
 

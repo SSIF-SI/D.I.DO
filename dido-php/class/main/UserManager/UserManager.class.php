@@ -16,7 +16,7 @@ class UserManager {
 	private $_role;
 
 	private $_signature;
-
+	
 	public function __construct(IDBConnector $connector) {
 		// Ad oggi i dati dell'utente li peschiamo dal Web service del personale
 		$sourceUserData = new PersonaleSourceUserData ();
@@ -31,7 +31,7 @@ class UserManager {
 		$this->_role = isset ( $user_role [$this->_fieldToWriteOnDb] ) ? $user_role [$this->_fieldToWriteOnDb] : null;
 		
 		$this->_signature = new UserSignature ( $this->_fieldToWriteOnDb );
-		
+
 	}
 
 	public function getUser() {
@@ -69,5 +69,6 @@ class UserManager {
 	public function isConsultatore($strict = false) {
 		return $strict ? $this->_role == self::RUOLO_CONSULTATORE : $this->_role == self::RUOLO_AMMINISTRATORE || $this->_role == self::RUOLO_GESTORE || $this->_role == self::RUOLO_CONSULTATORE;
 	}
+
 }
 ?>
