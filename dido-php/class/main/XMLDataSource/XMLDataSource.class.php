@@ -1,6 +1,6 @@
 <?php
 
-class XMLDataSource {
+class XMLDataSource implements IXMLDataSource{
 
 	const FILE_REGEX = "^([A-Za-z_àèéìòù\s]{1,})(\.v[0-9]{1,}){0,1}(\.xml)$";
 

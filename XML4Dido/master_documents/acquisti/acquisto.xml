@@ -18,7 +18,7 @@
 		<input key="responsabile_lab_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
 		<input key="rup_cf" transform="idPersonaFromCf" values="persone" signRole="RUP">rup</input>
 		<input key="codice_cig" mandatory="0">cig</input>
-		<input key="codice_cup">cup</input>
+		<input key="codice_cup" mandatory="0">cup</input>
 		<input key="numero_mepa" mandatory="0">numero mepa</input>
 		<input key="titolare_fondi_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
 		<input key="responsabile_lab_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>

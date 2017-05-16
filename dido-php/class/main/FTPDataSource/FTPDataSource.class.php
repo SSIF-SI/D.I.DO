@@ -36,9 +36,9 @@ class FTPDataSource implements IFTPDataSource{
 		return $this->_ftpConnector->getTempFile($file, $tmpPath);
 	}
 	
-	public function upload($file, $tmpPath = FILES_PATH) {
-		$result = $this->_ftpConnector->upload($file, $tmpPath);
-		unlink($file);
+	public function upload($source, $destination) {
+		$result = $this->_ftpConnector->upload($source, $destination);
+		unlink($source);
 		return $result;
 	}
 	

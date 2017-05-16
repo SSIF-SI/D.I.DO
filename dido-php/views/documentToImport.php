@@ -55,7 +55,8 @@ $sezione_field = Common::fieldFromLabel($sezione);
 						<table class="table table-condensed table-striped <?=$tipoDocumento_field?>">
 							<tr>
 								<th>
-									<input type="checkbox" class="select-all" rel="<?=$tipoDocumento_field?>">&nbsp;Seleziona&nbsp;tutti
+									Seleziona&nbsp;tutti<br/>
+									<input type="checkbox" class="select-all" rel="<?=$tipoDocumento_field?>" />
 								</th>
 <?php 
 		foreach($inputs as $input){
@@ -73,25 +74,26 @@ $sezione_field = Common::fieldFromLabel($sezione);
 										class="btn btn-primary disabled action import-selected"
 										href="#<?=$catName?>"> 
 										<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> 
-										Importa	Selezionati
+										Importa&nbsp;Selezionati
 									</a>&nbsp;
 									<a
 										class="btn btn-primary disabled action link-selected"
 										href="#<?=$catName?>"> 
 										<span class="fa fa-link fa-1x fa-fw"></span>
-										Collega
+										Collega&nbsp;e&nbsp;importa
 									</a>
 								</th>
 							</tr>		
 <?php 
 		foreach($items as $k=>$item){
-			$obj = $Application_Import->getImportManager()->fromFileToPostMetadata($item[IExternalDataSource::FILENAME], $inputs);
+			$formId = $tipoDocumento_field.$k;
+			$obj = $Application_Import->getImportManager()->fromFileToPostMetadata(REAL_ROOT . $item[IExternalDataSource::IMPORT_FILENAME], $inputs);
 ?>
 							<tr>
 								<td>
 									<div class="checkbox">
 										<label> <input class="select-one" rel="<?=$tipoDocumento_field?>"
-											id="form-<?=$k?>" type="checkbox">
+											id="form-<?=$formId?>" type="checkbox">
 										</label>
 									</div>
 								</td>
@@ -118,11 +120,11 @@ $sezione_field = Common::fieldFromLabel($sezione);
 										style="display: none" 
 										role="form" 
 										method="POST"
-										id="importform-<?=$k?>">
+										id="importform-<?=$formId?>">
 										<input
 											type="hidden"
 											name="<?=ImportManager::LABEL_IMPORT_FILENAME?>"
-											value="<?=$item[IExternalDataSource::FILENAME]?>" />
+											value="<?=$item[IExternalDataSource::IMPORT_FILENAME]?>" />
 										<input
 											type="hidden"
 											name="<?=ImportManager::LABEL_MD_NOME?>"
@@ -130,7 +132,7 @@ $sezione_field = Common::fieldFromLabel($sezione);
 										<input
 											type="hidden"
 											name="<?=ImportManager::LABEL_MD_TYPE?>"
-											value="<?=$item[IExternalDataSource::TYPE]?>" />
+											value="<?=$item[IExternalDataSource::MD_TYPE]?>" />
 										<input
 											type="hidden"
 											name="<?=ImportManager::LABEL_MD_XML?>"
@@ -138,15 +140,53 @@ $sezione_field = Common::fieldFromLabel($sezione);
 									</form>
 									<a 
 										class="btn btn-primary import"
-										href="#importform-<?=$k?>"> 
+										href="#importform-<?=$formId?>"> 
 										<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> 
 										Importa
+									</a>&nbsp;
+									<a 
+										class="btn btn-danger delete"
+										href="#importform-<?=$formId?>"> 
+										<span class="fa fa-trash fa-1x fa-fw"></span> 
+										Elimina
 									</a>
+									
 								</td>
 							</tr>
 <?php		
 		}
-?>							
+?>					
+							<tr>
+								<th>
+									<input type="checkbox" class="select-all" rel="<?=$tipoDocumento_field?>" /><br/>
+									Seleziona&nbsp;tutti
+								</th>
+<?php 
+		foreach($inputs as $input){
+			if(isset($input[XMLParser::SHORTWIEW])):
+?>
+								<th><?=Common::labelFromField((string)$input);?></th>
+<?php 
+			endif;
+?>
+<?php 
+		}
+?>
+								<th>
+									<a 
+										class="btn btn-primary disabled action import-selected"
+										href="#<?=$catName?>"> 
+										<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> 
+										Importa&nbsp;Selezionati
+									</a>&nbsp;
+									<a
+										class="btn btn-primary disabled action link-selected"
+										href="#<?=$catName?>"> 
+										<span class="fa fa-link fa-1x fa-fw"></span>
+										Collega&nbsp;e&nbsp;importa
+									</a>
+								</th>
+							</tr>				
 						</table>
 					</div>
 <?php 

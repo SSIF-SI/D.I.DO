@@ -64,7 +64,7 @@ class GecoDataSource implements IExternalDataSource {
 	private function _getExternalDocumentFromFTP($destinationPath, $record){
 		$FTPConfiguratorSource = new FTPConfiguratorSourceFromIniFile("config.ini");
 		$this->_ftpConnector = new FTPConnector();
-		$nomeFile = REAL_ROOT . self::IMPORT_PATH . $record[self::DOCUMENT_FIELD];
+		$nomeFile = self::IMPORT_PATH . $record[self::DOCUMENT_FIELD];
 		return $this->_ftpConnector->getTempFile($nomeFile, $destinationPath);
 	}
 	
@@ -110,10 +110,10 @@ class GecoDataSource implements IExternalDataSource {
 						$filename = basename ( $file );
 						preg_match_all ( self::FILE_REGEXP, $filename, $matches );
 						$list [$matches [1] [0]] [] = array (
-								self::FILENAME => $file ,
-								self::MD_NOME => $matches [1] [0],
-								self::TYPE => $matches [2] [0],
-								self::ID => $matches [3] [0]
+								self::IMPORT_FILENAME 	=> str_replace(REAL_ROOT, "", $file) ,
+								self::MD_NOME 			=> $matches [1] [0],
+								self::MD_TYPE 			=> $matches [2] [0],
+								self::ID 				=> $matches [3] [0]
 						);
 						//$list [Common::N_TOT] ++;
 							

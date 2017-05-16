@@ -68,13 +68,15 @@ class ImportManager {
 		
 		if (! $externalDataSource)
 			return new ErrorHandler ( "$from non registrato come valida sorgente di dati" );
-			
+
+		
 			// Rinomino il file per mettergli un lock non fisico
-		$import_filename = $data [self::LABEL_IMPORT_FILENAME];
+		$import_filename = REAL_ROOT . $data [self::LABEL_IMPORT_FILENAME];
 		$import_filename_field = rtrim ( $import_filename, "." . $externalDataSource::FILE_EXTENSION_TO_BE_IMPORTED );
+		
 		if (! $this->_lock ( $import_filename ))
 			return new ErrorHandler ( 'Permessi di scrittura negati sul server' );
-		
+			
 		//unset ( $data [self::LABEL_IMPORT_FILENAME] );
 		
 		// Tramite un'unica transazione vado a scrivere i dati nelle tabelle
@@ -112,7 +114,6 @@ class ImportManager {
 		// Il pdf per ora lo prendo da un fakefile...
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/
 			$externalDataSource->getExternalDocument(FILES_PATH, unserialize ( file_get_contents ( $import_filename ) ));
-		
 		
 		//Costurisco il path della folder, converrebbe mettere questo sul DB?
 		//$mdfolder=$md [Masterdocument::FTP_FOLDER];

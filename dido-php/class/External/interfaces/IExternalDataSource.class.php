@@ -12,11 +12,11 @@ interface IExternalDataSource {
 
 	const FILE_EXTENSION_DELETED = "deleted";
 
-	const FILENAME = "filename";
+	const IMPORT_FILENAME = ImportManager::LABEL_IMPORT_FILENAME;
 	
-	const MD_NOME = "md_nome";
+	const MD_NOME = ImportManager::LABEL_MD_NOME;
 	
-	const TYPE = "type";
+	const MD_TYPE = ImportManager::LABEL_MD_TYPE;
 	
 	const ID = "id";
 	

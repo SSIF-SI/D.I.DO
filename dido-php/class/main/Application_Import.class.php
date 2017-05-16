@@ -25,7 +25,7 @@ class Application_Import{
 	 */
 	private $_importManager;
 	
-	public function __construct(IDBConnector $dbConnector, $userManager, $XMLDataSource, $FTPDataSource){
+	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IXMLDataSource $XMLDataSource, IFTPDataSource $FTPDataSource){
 		$this->_dbConnector = $dbConnector;
 		$this->_UserManager = $userManager;
 		$this->_XMLDataSource = $XMLDataSource;
@@ -58,10 +58,12 @@ class Application_Import{
 		return $this->_importManager->getSavedDataToBeImported ( $owners, $catlist, $from, $subCategory );
 	}
 	
-	public function import($postData) {
+	public function import( $from, $postData) {
+		
 		if (! isset ( $postData [ImportManager::LABEL_IMPORT_FILENAME] ) || ! isset ( $postData [ImportManager::LABEL_MD_NOME] ) || ! isset ( $postData [ImportManager::LABEL_MD_TYPE] ))
 			return new ErrorHandler("Import fallito, mancano argomenti essenziali");
 	
+		/*
 		$lastXML = $this->getLastXML($postData [ImportManager::LABEL_MD_NOME]);
 	
 		if (! $lastXML)
@@ -69,9 +71,10 @@ class Application_Import{
 	
 		$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
 		$from = (string) $XmlParser->getSource ();
-	
+		
 		$postData [ImportManager::LABEL_MD_XML] = $lastXML [XMLDataSource::LABEL_FILE];
-	
+		*/
+		
 		return $this->_importManager->import ( $from, $postData );
 	}
 	

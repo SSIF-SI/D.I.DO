@@ -1,6 +1,6 @@
 <?php
 
-class UserManager {
+class UserManager implements IUserManager{
 	// Se aggiungiamo/Modifichiamo ruoli nella tabella roles, dobbiano
 	// aggiornare questa classe
 	const RUOLO_AMMINISTRATORE = 'Amministratore';

@@ -80,7 +80,11 @@ var MyModal = {
 			MyModal.addButtons(
 					[
 					 {id:"salva", type: "submit", label: "Salva", cssClass: "btn-primary", spanClass: "fa-save", callback: function(){;
-					 MyModal.submit($(context),href,$('form').serializeArray());
+					 MyModal.submit({
+						  element:$(context),
+						  href:href,
+						  data:$('form').serializeArray()
+					 });
 					 }
 					 }
 					 ]
@@ -112,25 +116,32 @@ var MyModal = {
 						 formData.append('pdfDaFirmare', $('#pdfDaFirmare')[0].files[0]); 
 						 formData.append('keystore', $('#keystore')[0].files[0]);
 						 
-						 MyModal.submit($(context),href.replace('signature.php','signPdf.php'),formData,' .modal-result', false, false,false, true);
-						 
+						 MyModal.submit({
+							 element: $(context),
+							 href: href.replace('signature.php','signPdf.php'),
+							 data: formData,
+							 innerdiv: ' .modal-result', 
+							 download: true
+						 });
+						
 					 }
 					 }
 					 ]
 			);
 			MyModal.load($(context));
 		},
-		submit:function (element,href, data, innerdiv, contentType, processData,callback,download){
-			
+		submit:function (params){
+			// params:
+			// (element,href, data, innerdiv, contentType, processData,callback,download)
 			if(MyModal.busy == false){
 				MyModal.busy = true;
 
 				$('.modal-result').html("");
 				$('.modal .progress').css("visibility", 'visible');
-				if(callback === undefined)
+				if(params.callback == undefined)
 					MyModal.setProgress(1);
 				
-				if(MyModal.checkRequired(data, innerdiv)){
+				if(MyModal.checkRequired(params.data, params.innerdiv)){
 					/*
 					MyModal.span = element.children("span");
 					MyModal.oldClass = MyModal.span.prop('class');
@@ -138,70 +149,71 @@ var MyModal = {
 					MyModal.span.attr('class', MyModal.newClass);
 					*/
 					$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', true);
-					if(download){
+					if(params.download){
 						$('.modal-body #firmatario').submit();
 						$('#download_iframe').on('load', function(){
 					        // controlli
 					    });
 					}
 					else{
-						MyModal.ajax(href, data, innerdiv, contentType, processData,callback);
+						MyModal.ajax(params);
 					}
 				} else {
 					MyModal.busy = false;
 				}
 			}
 		}, 
-		ajax: function(href, data, innerdiv, contentType, processData,callback){
+		ajax: function(params){
 			$.ajax({
 				xhr: function() {
 					var xhr = new window.XMLHttpRequest();
 
 					xhr.addEventListener("progress", function(evt) {
-						if (evt.lengthComputable && callback === undefined || !callback) {
+						if (evt.lengthComputable && params.callback == undefined || !params.callback) {
 							var percentComplete = evt.loaded / evt.total * 100;
 							MyModal.setProgress(percentComplete);
 						}
 					}, false);
 					return xhr;
 				},
-				url: href,
+				url: params.href,
 				type: "POST", 
 				dataType: "json",
-				contentType: contentType,
+				contentType: params.contentType,
 				cache: false,
-				processData: processData,
-				data: data,
+				processData: params.processData,
+				data: params.data,
 				success: function( result ) {
 					MyModal.busy = false;
-					if(callback !== undefined && callback){
-						return callback(result);
+					if(params.callback != undefined && params.callback){
+						return params.callback(result);
 					} else {
 						MyModal.unlockButtons();
 						if(result.errors){
-							MyModal.error(result.errors, innerdiv);
+							MyModal.error(result.errors, params.innerdiv);
 							$('.modal .progress').css("visibility", 'hidden');
 						} else {
-							MyModal.success(innerdiv);
+							MyModal.success(params.innerdiv);
 							$('#'+MyModal.MyModalId+' button[type="submit"]').remove();
 							$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').click(function(){
+								
 								$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
-								$(this).remove();
-								location.reload();
+								$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').remove();
+								location.reload(true);
 							});
 						}
 					}
 				},
 				error: function( result ){
 					MyModal.busy = false;
-					if(callback !== undefined && callback){
-						return callback(false);
+					if(params.callback != undefined && params.callback){
+						return params.callback(false);
 					} else {
 						$('.modal .progress').css("visibility", 'hidden');
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
 						if(MyModal.span != null )
 							MyModal.span.attr('class', MyModal.oldClass);
-						MyModal.error("Errore imprevisto", innerdiv);
+						MyModal.error("Errore imprevisto", params.innerdiv);
 					}
 				}
 			});
@@ -220,7 +232,7 @@ var MyModal = {
 			for(var i = 0; i< data.length ; i++){
 				var el = $('#'+data[i].name);
 				var required = el.attr('required');
-				if(required !== undefined && data[i].value.trim().length == 0){
+				if(required != undefined && data[i].value.trim().length == 0){
 					requiredFields.push(data[i].name);
 					el.addClass("alert-danger");
 				} else {

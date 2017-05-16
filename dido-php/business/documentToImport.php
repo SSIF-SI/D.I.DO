@@ -9,8 +9,19 @@ if(!isset($_GET['from'])){
 	
 $from = $_GET['from'];
 
+if(Utils::checkAjax ()){
+	// Ho appena postato un import
+	$ARP = new AjaxResultParser();
+	$ARP->encode(
+		$Application_Import
+			->import( $from, $_POST)
+			->getErrors(true)
+	);
+}
+
 $list = $Application_Import
 			->getSavedDataToBeImported($from, IExternalDataSource::FILE_EXTENSION_TO_BE_IMPORTED);
 
+$pageScripts = array("MyModal.js");
 include_once (TEMPLATES_PATH."template.php");
 ?>
