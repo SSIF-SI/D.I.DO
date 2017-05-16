@@ -1,8 +1,11 @@
 <?php 
 class TemplateHelperNew {
 	static function createDashboardPanels($data) {
-		foreach ($data as $label => $detail){ 
-			self::_createDashboardPanel ( 4, "panel-".$detail['color'], $detail['icon-class'], $detail[Common::N_TOT], $label, $detail['href'] );
+		if(!empty($data)){
+			$width = round(12/count($data));
+			foreach ($data as $label => $detail){ 
+				self::_createDashboardPanel ( $width, "panel-".$detail['color'], $detail['icon-class'], $detail[Common::N_TOT], $label, $detail['href'] );
+			}
 		}
 	}
 	

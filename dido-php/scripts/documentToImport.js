@@ -44,14 +44,20 @@ $(document).ready(function(){
 	
 	
 	
-	/*
 	$('.link-selected').click(function(e){
 		e.preventDefault();
-		var selected = $('.select-one:checkbox:checked');
+		var sectionId = $(this).attr('href');
+		var selected = $(sectionId+' .select-one:checkbox:checked');
+		tr = [];
+		selected.each(function(el){
+			tr.push("<tr>"+$(this).closest("tr").html()+"</tr>");
+		});
+		var thead = $(sectionId+" thead").html();
+		var table = "<table class='table table-condensed table-striped'><thead>"+thead+"</thead><tbody>"+tr.join()+"</tbody></table>";
 		MyModal.setTitle("Collegamento e importazione documenti");
-		var tr = [];
+		MyModal.setContent(table);
+		MyModal.modal();
 	});
-	 */
 	
 	$('.import-selected').click(function(e){
 		e.preventDefault();

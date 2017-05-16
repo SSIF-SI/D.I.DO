@@ -72,6 +72,9 @@ class Application {
 		return $this->_userManager->getUser()->getCognome(). " ". $this->_userManager->getUser()->getNome();
 	}
 	
+	public function getUserManager(){
+		return $this->_userManager;
+	}
 	
 	
 }
