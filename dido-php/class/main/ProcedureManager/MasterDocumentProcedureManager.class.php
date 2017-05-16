@@ -65,13 +65,23 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 		return true;
 	}
 
+	public function close($main,$status) {
+		if (empty ( $main ))
+			return false;
+		
+		$main [Masterdocument::CLOSED] = $status;
+		$Masterdocument = new Masterdocument ( $this->getDbConnector () );
+		$result = $Masterdocument->save ( $main );
+		
+		return $result->getErrors () === false ? false : true;
+	}
+	
 	public function delete($main) {
 		if (empty ( $main ))
 			return false;
-		$main [Masterdocument::CLOSED] = self::INCOMPLETE;
-		
+		//Cancello dal DB il record del master document in Cascade anche MASTERDOCUMENT_DATA, DOCUMENT, DOCUMENT_DATA
 		$Masterdocument = new Masterdocument ( $this->getDbConnector () );
-		$result = $Masterdocument->save ( $main );
+		$result = $Masterdocument->delete($object);
 		
 		return $result->getErrors () === false ? true : false;
 	}

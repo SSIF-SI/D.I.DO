@@ -227,11 +227,34 @@ class FTPConnector implements IFTPConnector {
 	}
 
 	public function deleteFolder($folder) {
-		$this->_connect ();
+		$this->_connect ();	
 		return @ftp_rmdir ( $this->_conn_id, $this->_baseDir . $folder );
 		
 	}
-
+	//TODO:Sembra funzionare ma dA RiTESTARE
+	public function deleteFolderRecursively($folder){
+		$this->_connect ();
+		return $this->recursiveDelete($folder);
+		
+	}
+	//TODO:Sembra funzionare ma DA RiTESTARE
+	private function recursiveDelete($path){				    
+		$this->_connect();
+		// Se è un file lo elimino
+		if(!@ftp_delete ( $this->_conn_id, $this->_baseDir . $path)){
+			$filelist = @ftp_nlist($this->_conn_id,$this->_baseDir . $path);
+			if(!empty($filelist)){
+			// ciclo ricorsivo per cancellare ricorsivamente i file della lista
+				foreach($filelist as $file){
+					$file=str_replace($this->_baseDir, "", $file);
+				    $this->recursiveDelete($file);
+				}
+			}
+		}
+		return @ftp_rmdir ( $this->_conn_id, $this->_baseDir . $path );
+	}
+	
+	
 	public function upload($source, $destination) {
 		$this->_connect ();
 		$result = @ftp_put ( $this->_conn_id, $this->_baseDir . $destination, $source, FTP_BINARY );

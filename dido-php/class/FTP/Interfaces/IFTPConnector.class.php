@@ -15,6 +15,8 @@ interface IFTPConnector {
 	public function mksubdirs($ftpath);
 
 	public function deleteFolder($folder);
+	
+	public function deleteFolderRecursively($folder);
 
 	public function delete($filePath);
 

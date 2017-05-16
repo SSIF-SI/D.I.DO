@@ -9,6 +9,12 @@ class ProcedureManager implements IProcedureManager {
 	private $_DPManager;
 
 	private $_FTPDataSource;
+	
+	const OPEN = 0;
+	
+	const CLOSED = 1;
+	
+	const INCOMPLETE = - 1;
 
 	public function __construct(IDBConnector $dbConnector, IFTPDataSource $ftpDataSource) {
 		$this->_dbConnector = $dbConnector;
@@ -45,8 +51,27 @@ class ProcedureManager implements IProcedureManager {
 		return $this->_MDPManager->update ( $md_data );
 	}
 
+	public function closeIncompleteMasterdocument($md) {
+		return $this->_MDPManager->close($md, self::INCOMPLETE );
+	}
+	
 	public function deleteMasterdocument($md) {
-		return $this->_MDPManager->delete ( $md );
+		// Elimino il MD dal DB
+		
+		$this->_dbConnector->begin ();
+		
+		if(!$this->_MDPManager->delete ( $md)){
+			$this->_dbConnector->rollback ();
+			return false;
+		}
+		// Elimino la folder del MasterDocument dall'FTP
+		if (! $this->_FTPDataSource->deleteFolderRecursively($md [Masterdocument::FTP_FOLDER]
+				. $this->_FTPDataSource-> getFolderNameFromMasterdocument($md))) {
+			$this->_dbConnector->rollback ();
+			return false;
+		}
+		$this->_dbConnector->commit();
+		return true;
 	}
 
 	public function removeMasterdocumentFolder($repositoryPath) {

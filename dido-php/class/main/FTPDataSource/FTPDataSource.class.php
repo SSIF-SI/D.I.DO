@@ -32,6 +32,11 @@ class FTPDataSource implements IFTPDataSource{
 		return $this->_ftpConnector->delete ( $filePath );
 	}
 	
+	public function deleteFolderRecursively($folder){
+		return $this->_ftpConnector->deleteFolderRecursively($folder);
+		
+	}
+	
 	public function getTempFile($file, $tmpPath = FILES_PATH) {
 		return $this->_ftpConnector->getTempFile($file, $tmpPath);
 	}

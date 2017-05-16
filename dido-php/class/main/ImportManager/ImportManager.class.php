@@ -115,8 +115,6 @@ class ImportManager {
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/
 			$externalDataSource->getExternalDocument(FILES_PATH, unserialize ( file_get_contents ( $import_filename ) ));
 		
-		//Costurisco il path della folder, converrebbe mettere questo sul DB?
-		//$mdfolder=$md [Masterdocument::FTP_FOLDER];
 		$mdfolder=$md [Masterdocument::FTP_FOLDER] 
 		. $this->_ftpDataSource->getFolderNameFromMasterdocument($md) 
 		. DIRECTORY_SEPARATOR;
