@@ -48,15 +48,55 @@ $(document).ready(function(){
 		e.preventDefault();
 		var sectionId = $(this).attr('href');
 		var selected = $(sectionId+' .select-one:checkbox:checked');
+		
+		var table = $("<table></table>");
+		
+		var thead = $(sectionId+" thead").clone();
+		thead.find("th").last().html("");
+		thead.find("th").first().html("");
+		
+		thead.appendTo(table);
+		
 		tr = [];
 		selected.each(function(el){
-			tr.push("<tr>"+$(this).closest("tr").html()+"</tr>");
+			tr.push($("<tr>"+$(this).closest("tr").html()+"</tr>"));
 		});
-		var thead = $(sectionId+" thead").html();
-		var table = "<table class='table table-condensed table-striped'><thead>"+thead+"</thead><tbody>"+tr.join()+"</tbody></table>";
+		
+		var info = [];
+		for(var i in tr){
+			var form = $(tr[i]).find("td").last().find("form").first();
+			
+			var input = form.find("input");
+			input.each(function(el){
+				$(this).prop("name",$(this).prop("name")+"[]");
+			});
+			
+			info.push(input);
+			
+			$(tr[i]).find("td").last().remove();
+			$(tr[i]).find("td").first().html('');
+			var radio = $('<input>',{type:"radio", id:"principale"+i, name:"principale", value: i});
+			if(i==0) radio.attr("checked","checked");
+			radio.appendTo($(tr[i]).find("td").first());
+			$(tr[i]).appendTo(table);
+		}
+		
+		var tinfo = "<p>Seleziona il Documento principale dal quale verranno salvate le informazioni. I restanti documenti saranno caricati come allegati.</p>";
+		
+		var MI_form = $("<form></form>");
+		
+		for (var i in info){
+			info[i].each(function(el){
+				$(this).appendTo(MI_form);
+			});
+		}
+		
+		$("<input type='hidden' name='multiImport' value='1'/>").appendTo(MI_form);
+		
 		MyModal.setTitle("Collegamento e importazione documenti");
-		MyModal.setContent(table);
-		MyModal.modal();
+		MyModal.setContent("<form method='POST'><table class='table table-condensed table-striped'>"+table.html()+"</table>"+tinfo+MI_form.html()+"</form>");
+		MyModal.editModal(this, true);
+		
 	});
 	
 	$('.import-selected').click(function(e){

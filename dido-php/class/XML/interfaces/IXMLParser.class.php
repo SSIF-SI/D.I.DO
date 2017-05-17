@@ -3,6 +3,8 @@
 interface IXMLParser {
 
 	public function getXMLSource();
+	
+	public function load($filename);
 
 	public function setXMLSource($xml, $md_type = null);
 

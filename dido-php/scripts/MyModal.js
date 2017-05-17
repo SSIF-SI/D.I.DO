@@ -75,7 +75,7 @@ var MyModal = {
 				} 
 			}
 		},
-		editModal: function(context){
+		editModal: function(context, contentSet){
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[
@@ -83,13 +83,16 @@ var MyModal = {
 					 MyModal.submit({
 						  element:$(context),
 						  href:href,
-						  data:$('form').serializeArray()
+						  data:$('#'+MyModal.MyModalId+' form').serializeArray()
 					 });
 					 }
 					 }
 					 ]
 			);
-			MyModal.load($(context));
+			if(contentSet == undefined || !contentSet) 
+				MyModal.load($(context));
+			else 
+				MyModal.modal();
 		},
 		deleteModal: function(context){
 			var href=$(context).prop("href");
@@ -230,6 +233,8 @@ var MyModal = {
 		checkRequired: function (data, innerdiv){
 			var requiredFields = [];
 			for(var i = 0; i< data.length ; i++){
+				if(data[i].name.indexOf("[]") !== -1)
+					continue;
 				var el = $('#'+data[i].name);
 				var required = el.attr('required');
 				if(required != undefined && data[i].value.trim().length == 0){

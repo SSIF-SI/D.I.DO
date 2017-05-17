@@ -48,11 +48,15 @@ class XMLParser implements IXMLParser {
 			$this->setXMLSource ( $xml, $md_type );
 	}
 
+	public function load($filename){
+		$this->_xml = simplexml_load_file($filename);
+	}
+	
 	public function setXMLSource($xml, $md_type = null) {
 		if ($xml instanceof SimpleXMLElement)
 			$this->_xml = $xml;
 		else
-			$this->_xml = simplexml_load_file ( XML_MD_PATH . $xml );
+			$this->load ( XML_MD_PATH . $xml );
 		
 		if (! is_null ( $md_type )) { // Se il master document è di un certo tipo
 		                              // filtro i documenti associati

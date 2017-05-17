@@ -59,10 +59,59 @@ class Application_Import{
 	}
 	
 	public function import( $from, $postData) {
+		$this->_importManager->clean();
 		
-		if (! isset ( $postData [ImportManager::LABEL_IMPORT_FILENAME] ) || ! isset ( $postData [ImportManager::LABEL_MD_NOME] ) || ! isset ( $postData [ImportManager::LABEL_MD_TYPE] ))
-			return new ErrorHandler("Import fallito, mancano argomenti essenziali");
-	
+		if(isset($postData[ImportManager::MULTI_IMPORT])){
+			// Import multiplo
+			// Recupero i filenames di cui fare il rollback
+			$filenames = $postData[ImportManager::LABEL_IMPORT_FILENAME];
+			
+			// Trasformo i dati in POST per renderli fruibili alla funzione di import
+			$postData_docs  = [];
+			for($i=0; $i< count($postData[ImportManager::LABEL_IMPORT_FILENAME]); $i++){
+				array_push($postData_docs, [
+					ImportManager::LABEL_IMPORT_FILENAME => $postData[ImportManager::LABEL_IMPORT_FILENAME][$i],
+					ImportManager::LABEL_MD_NOME => $postData[ImportManager::LABEL_MD_NOME][$i],
+					ImportManager::LABEL_MD_TYPE => $postData[ImportManager::LABEL_MD_TYPE][$i],
+					ImportManager::LABEL_MD_XML => $postData[ImportManager::LABEL_MD_XML][$i]
+				]);
+			}
+			
+			// Inizio QUI la transazione
+			$this->_dbConnector->begin();
+			
+			// Recupero i dati del documento prinzipale
+			$mainData = $postData_docs[$postData[ImportManager::PRINCIPALE]];
+			unset($postData_docs[$postData[ImportManager::PRINCIPALE]]);
+			
+			// La funzione di import in questo caso mi deve restituire l'MD creato
+			$md = $this->_importManager->import($from, $mainData, true);
+			
+			// Se ho errori il risultato sarà un Errorhandler
+			if($md instanceof ErrorHandler){
+				$this->_rollbackFilenames($filenames);
+				$this->_dbConnector->rollback();
+				return $md;
+			}
+			
+			// Se la creazione del MD principale va a buon fine importo anche gli altri MD
+			// Ma li creo come fossero solo Allegati
+			foreach($postData_docs as $data){
+				$result = $this->_importManager->import($from, $data, $md);
+				
+				// Se qualcosa va male faccio rollback e restituisco l'errore.
+				if($result->getErrors() !== false){
+					$this->_rollbackFilenames($filenames);
+					$this->_dbConnector->rollback();
+					return $result;
+				}
+			}
+			
+			// Tutto ok
+			$this->_dbConnector->commit();
+			return new ErrorHandler(false);
+		} 
+		
 		/*
 		$lastXML = $this->getLastXML($postData [ImportManager::LABEL_MD_NOME]);
 	
@@ -85,6 +134,12 @@ class Application_Import{
 			->getFirst ();
 		$this->_XMLDataSource->resetFilters();
 		return $XML;
+	}
+	
+	private function _rollbackFilenames($filenames){
+		foreach($filenames as $filename){
+			$this->_importManager->setImported($filename, IExternalDataSource::FILE_EXTENSION_IMPORTED, IExternalDataSource::FILE_EXTENSION_TO_BE_IMPORTED);
+		}
 	}
 }
 ?>

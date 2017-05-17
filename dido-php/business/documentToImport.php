@@ -10,13 +10,16 @@ if(!isset($_GET['from'])){
 $from = $_GET['from'];
 
 if(Utils::checkAjax ()){
-	// Ho appena postato un import
+	
+	
+	// Ho appena postato un import singolo
 	$ARP = new AjaxResultParser();
 	$ARP->encode(
 		$Application_Import
 			->import( $from, $_POST)
 			->getErrors(true)
 	);
+
 }
 
 $list = $Application_Import

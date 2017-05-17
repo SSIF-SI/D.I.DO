@@ -1,7 +1,10 @@
 <?php
 
 class ImportManager {
-
+	const MULTI_IMPORT = "multiImport";
+	
+	const PRINCIPALE = "principale";
+	
 	const LABEL_IMPORT_FILENAME = "import_filename";
 
 	const LABEL_MD_NOME = "md_nome";
@@ -62,13 +65,14 @@ class ImportManager {
 		return $md_data;
 	}
 
-	public function import($from, $data) {
-		$this->clean();
+	public function import($from, $data, $main = null) {
 		$externalDataSource = $this->_importDataSourceManager->getSource ( $from );
 		
 		if (! $externalDataSource)
 			return new ErrorHandler ( "$from non registrato come valida sorgente di dati" );
 
+		if (! isset ( $data [self::LABEL_IMPORT_FILENAME] ) || ! isset ( $data [self::LABEL_MD_NOME] ) || ! isset ( $data [self::LABEL_MD_TYPE] ))
+			return new ErrorHandler("Import fallito, mancano argomenti essenziali");
 		
 			// Rinomino il file per mettergli un lock non fisico
 		$import_filename = REAL_ROOT . $data [self::LABEL_IMPORT_FILENAME];
@@ -76,40 +80,55 @@ class ImportManager {
 		
 		if (! $this->_lock ( $import_filename ))
 			return new ErrorHandler ( 'Permessi di scrittura negati sul server' );
-			
-		//unset ( $data [self::LABEL_IMPORT_FILENAME] );
-		
-		// Tramite un'unica transazione vado a scrivere i dati nelle tabelle
-		// master_document e master_document_data.
-		// Al primo errore riscontrato faccio ROLLBACK e segnalo l'errore
-		
+
 		$XMLParser = new XMLParser ( $data [self::LABEL_MD_XML], $data [self::LABEL_MD_TYPE] );
 		
-		$md = $this->_generateMDRecord ( $data );
-		$md_data = $XMLParser->generateData ( 
-				$this->fromFileToPostMetadata ( $import_filename, $XMLParser->getMasterDocumentInputs () ), 
-				$XMLParser->getMasterDocumentInputs () );
-		
-		// Se nel file importato mancano dei valori di inputs obbligatori mi fermo subito
-		if(!$md_data){
-			$this->_unlock ( $import_filename );
-			return new ErrorHandler ( "Importazione fallita, mancano informazioni obbligatore" );
+		if($main === null || $main === true){
+			// O import multiplo in cui sto processando il MD principale
+			// ovvero import singolo;
+					
+			$md = $this->_generateMDRecord ( $data );
+			$md_data = $XMLParser->generateData ( 
+					$this->fromFileToPostMetadata ( $import_filename, $XMLParser->getMasterDocumentInputs () ), 
+					$XMLParser->getMasterDocumentInputs () );
+			
+			// Se nel file importato mancano dei valori di inputs obbligatori mi fermo subito
+			if(!$md_data){
+				$this->_unlock ( $import_filename );
+				return new ErrorHandler ( "Importazione fallita, mancano informazioni obbligatore" );
+			}
+			
+			// Inizio la transazione
+			$this->_dbConnector->begin ();
+			$md = $this->_ProcedureManager->createMasterdocument ( $md, $md_data );
+			// Creo il Master Document
+			if (! $md ) {
+				$this->_unlock ( $import_filename );
+				$this->_dbConnector->rollback ();
+				return new ErrorHandler ( "Creazione Master Document fallita, impossibile continuare" );
+			}
+	
+			$docToBeGenerated = $XMLParser->getDocList ()[0];
+			$docData = null;
+		} else {
+			// Import multiplo in cui sto processando i MD non principali.
+			// Il padre viene passato come parametro "main"
+			$md = $main;
+			
+			// I doc da generare sono allegati generici
+			$XMLParser->load(XML_STD_PATH."allegato.xml");
+			$docToBeGenerated = $XMLParser->getXmlSource();
+				
+			if(is_null($docToBeGenerated)){
+				$this->_unlock ( $import_filename );
+				$this->_dbConnector->rollback ();
+				return new ErrorHandler("Il Master Document non prevede allegati, impossibile continuare");
+			}
+			$docData['nome'] = "Allegato generico";
 		}
+		$XMLParser->checkIfMustBeLoaded($docToBeGenerated);
 		
-		// Inizio la transazione
-		$this->_dbConnector->begin ();
-		$md = $this->_ProcedureManager->createMasterdocument ( $md, $md_data );
-		// Creo il Master Document
-		if (! $md ) {
-			$this->_unlock ( $import_filename );
-			$this->_dbConnector->rollback ();
-			return new ErrorHandler ( "Creazione Master Document fallita, impossibile continuare" );
-		}
-
-		$firstDoc = $XMLParser->getDocList ()[0];
-		$XMLParser->checkIfMustBeLoaded($firstDoc);
-		
-		$doc = $this->_generateDocRecord ( ( string )$firstDoc [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
+		$doc = $this->_generateDocRecord ( ( string )$docToBeGenerated [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
 		
 		// Il pdf per ora lo prendo da un fakefile...
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/
@@ -121,7 +140,7 @@ class ImportManager {
 		
 		// Creo il documento
 		
-		if (! $this->_ProcedureManager->createDocument ( $doc, null, $filePath, $mdfolder )) {
+		if (! $this->_ProcedureManager->createDocument ( $doc, $docData, $filePath, $mdfolder )) {
 			$this->_unlock ( $import_filename );
 			$this->_dbConnector->rollback ();
 			$this->_ProcedureManager->removeMasterdocumentFolder ( $mdfolder );
@@ -129,9 +148,9 @@ class ImportManager {
 		}
 		
 		// Se arrivo fin qui è andato tutto a buon fine
-		$this->_setImported ( $import_filename, $externalDataSource::FILE_EXTENSION_TO_BE_IMPORTED, $externalDataSource::FILE_EXTENSION_IMPORTED );
+		$this->setImported ( $import_filename, $externalDataSource::FILE_EXTENSION_TO_BE_IMPORTED, $externalDataSource::FILE_EXTENSION_IMPORTED );
 		$this->_dbConnector->commit ();
-		return new ErrorHandler ( false );
+		return $main === true ? $md : new ErrorHandler ( false );
 	}
 
 	public function createDataFromSaved(array $record) {
@@ -155,6 +174,14 @@ class ImportManager {
 		}
 	}
 
+
+	public function setImported(&$filename, $fromExtension, $toExtension) {
+		$this->_unlock ( $filename );
+		$oldname = $filename;
+		$filename = str_replace ( "." . $fromExtension, "." . $toExtension, $oldname );
+		return @rename ( $oldname, $filename );
+	}
+	
 	private function _getLockPattern() {
 		return "." . Session::getInstance ()->get ( AUTH_USER );
 	}
@@ -168,13 +195,6 @@ class ImportManager {
 	private function _unlock(&$filename) {
 		$oldname = $filename;
 		$filename = str_replace ( $this->_getLockPattern (), "", $oldname );
-		return @rename ( $oldname, $filename );
-	}
-
-	private function _setImported(&$filename, $toBeImportedExtension, $importedExtension) {
-		$this->_unlock ( $filename );
-		$oldname = $filename;
-		$filename = str_replace ( "." . $toBeImportedExtension, "." . $importedExtension, $oldname );
 		return @rename ( $oldname, $filename );
 	}
 
