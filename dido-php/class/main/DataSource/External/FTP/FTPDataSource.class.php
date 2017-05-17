@@ -21,11 +21,11 @@ class FTPDataSource implements IFTPDataSource{
 	}
 
 	public function getFolderNameFromMasterdocument($md) {
-		return FormHelper::fieldFromLabel ( $md[Masterdocument::NOME] . " " . $md[Masterdocument::ID_MD]);
+		return Common::fieldFromLabel ( $md[Masterdocument::NOME] . " " . $md[Masterdocument::ID_MD]);
 	}
 
 	public function getFilenameFromDocument($document) {
-		return FormHelper::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $document [Document::EXTENSION] );
+		return Common::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $document [Document::EXTENSION] );
 	}
 
 	public function deleteFile($filePath) {
