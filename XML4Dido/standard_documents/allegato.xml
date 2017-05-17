@@ -3,6 +3,5 @@
 <document name="allegato">
 	<inputs>
 		<input>nome</input>
-		<input type="textarea" mandatory="0">descrizione</input>
 	</inputs>
 </document>
