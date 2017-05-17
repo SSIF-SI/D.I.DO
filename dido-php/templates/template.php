@@ -119,7 +119,7 @@
 		<!-- Page Content -->
 		<div id="page-wrapper">
 			<div class="container-fluid">
-            	<?php include( VIEWS_PATH. (isset($view) ? $view : basename($_SERVER['PHP_SELF'])));?>
+            	<?php include( (strpos($_SERVER['PHP_SELF'],ADMIN_BUSINESS_PATH) !== false ? ADMIN_VIEWS_PATH : VIEWS_PATH ). (isset($view) ? $view : basename($_SERVER['PHP_SELF'])));?>
             </div>
 		</div>
 	</div>

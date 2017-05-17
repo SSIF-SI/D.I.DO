@@ -51,6 +51,7 @@ class Application {
 	 */
 	private $_Application_Navigator;
 	
+	
 	public function __construct() {
 		$this->_dbConnector = DBConnector::getInstance ();
 		$this->_userManager = new UserManager ( $this->_dbConnector );
@@ -76,6 +77,9 @@ class Application {
 		return $this->_userManager;
 	}
 	
+	public function getDBConnector(){
+		return $this->_dbConnector;
+	}
 	
 }
 ?>

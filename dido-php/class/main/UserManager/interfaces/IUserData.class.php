@@ -15,5 +15,7 @@ interface IUserData {
 	public function getGruppi();
 
 	public function getprogetti();
+	
+	public function reload();
 }
 ?>

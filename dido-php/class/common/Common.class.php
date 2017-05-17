@@ -37,7 +37,7 @@ class Common{
 		), " ", $field ) ) );
 	}
 	
-	public static function redirectTo($url = HTTP_ROOT){
+	public static function redirect($url = HTTP_ROOT){
 		header("Location: " . $url);
 		die();
 	}

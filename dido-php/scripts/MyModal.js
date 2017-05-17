@@ -99,7 +99,9 @@ var MyModal = {
 			MyModal.addButtons(
 					[
 					 {id:"Elimina", type: "submit", label: "Elimina", cssClass: "btn-danger", spanClass: "fa-trash-o", callback: function(){;
-					 MyModal.submit($(context),href,null);
+					 MyModal.submit({
+						 element: $(context),
+						 href: href});
 					 }
 					 }
 					 ]
@@ -231,6 +233,8 @@ var MyModal = {
 			$('.modal .progress-bar').css("width", percentage+'%');
 		},
 		checkRequired: function (data, innerdiv){
+			if(data == undefined || data == null)
+				return true;
 			var requiredFields = [];
 			for(var i = 0; i< data.length ; i++){
 				if(data[i].name.indexOf("[]") !== -1)

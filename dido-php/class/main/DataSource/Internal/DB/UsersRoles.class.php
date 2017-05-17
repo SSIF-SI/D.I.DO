@@ -4,9 +4,9 @@ class UsersRoles extends Crud {
 
 	const ID_PERSONA = "id_persona";
 
-	const RUOLO = Roles::RUOLO;
-
 	const ID_RUOLO = "id_ruolo";
+
+	const RUOLO = Roles::RUOLO;
 
 	protected $TABLE = "users_roles";
 

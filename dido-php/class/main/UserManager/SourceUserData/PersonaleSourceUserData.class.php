@@ -2,6 +2,7 @@
 
 class PersonaleSourceUserData extends ASourceUserData {
 	const USER_DATA = "userdata";
+	
 	private $_data;
 
 	public function __construct() {
@@ -15,31 +16,35 @@ class PersonaleSourceUserData extends ASourceUserData {
 	}
 
 	public function getUid() {
-		return $this->_data ['idPersona'];
+		return $this->_data [Personale::ID_PERSONA];
 	}
 
 	public function getNome() {
-		return $this->_data ['nome'];
+		return $this->_data [Personale::NOME];
 	}
 
 	public function getCognome() {
-		return $this->_data ['cognome'];
+		return $this->_data [Personale::COGNOME];
 	}
 
 	public function getEmail() {
-		return $this->_data ['email'];
+		return $this->_data [Personale::EMAIL];
 	}
 
 	public function getCodiceFiscale() {
-		return $this->_data ['codiceFiscale'];
+		return $this->_data [Personale::CODICE_FISCALE];
 	}
 
 	public function getGruppi() {
-		return $this->_data ['gruppi'];
+		return $this->_data [Personale::GRUPPI];
 	}
 
 	public function getprogetti() {
-		return $this->_data ['progetti'];
+		return $this->_data [Personale::PROGETTI];
+	}
+	
+	public function reload(){
+		Session::getInstance()->delete(self::USER_DATA);
 	}
 }
 ?>

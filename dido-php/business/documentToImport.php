@@ -4,7 +4,7 @@ require_once("../config.php");
 $Application_Import = $Application->getApplicationPart(Application::IMPORT);
 
 if(!isset($_GET['from'])){
-	Common::redirectTo();
+	Common::redirect();
 }
 	
 $from = $_GET['from'];

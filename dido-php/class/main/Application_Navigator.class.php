@@ -49,9 +49,9 @@ class Application_Navigator {
 			</ul></li>
 <?php endif; ?>
 	<?php if($this->_userManager->isAdmin()):?>
-<li><a href="<?=BUSINESS_HTTP_PATH."signature.php"?>"><i
+<li><a href="<?=ADMIN_BUSINESS_PATH."signature.php"?>"><i
 		class="fa fa-pencil fa-fw"></i> Gestione firme</a></li>
-<li><a href="<?=BUSINESS_HTTP_PATH."permessi.php"?>"><i
+<li><a href="<?=ADMIN_BUSINESS_PATH."permessi.php"?>"><i
 		class="fa fa-key fa-fw"></i> Gestione permessi</a></li>
 
 		<?php endif;

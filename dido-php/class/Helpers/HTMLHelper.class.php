@@ -126,7 +126,7 @@ class HTMLHelper {
 		<tbody>
 					<?php foreach($list as $key=>$row):?>
 					<tr
-				id="row-<?=$row['variable'] ? 'variable' : 'fixed'?>-<?=$row['id_persona']?>">
+				id="row-<?=/*$row['variable'] ? 'variable' : 'fixed'?>-<?=$row['id_persona']*/$key?>">
 						<?php foreach($row as $field=>$value):?>
 							<?php if(isset($hidden) && in_array($field,$hidden)) continue;?>
 						<td><?=isset($substitutes[$key][$field]) ? $substitutes[$key][$field] : $value?></td>
@@ -192,13 +192,13 @@ class HTMLHelper {
 			$buttons [$k] = array (
 					'Modifica' => array (
 							'type' => 'primary',
-							'href' => BUSINESS_HTTP_PATH . $href . $suffix,
+							'href' => $href . $suffix,
 							'icon' => 'pencil',
 							'class' => 'mymodal edit' 
 					),
 					'Elimina' => array (
 							'type' => 'danger',
-							'href' => BUSINESS_HTTP_PATH . $href . $suffix . "&delete",
+							'href' => $href . $suffix . "&delete",
 							'icon' => 'trash',
 							'class' => 'mymodal delete' 
 					) 
