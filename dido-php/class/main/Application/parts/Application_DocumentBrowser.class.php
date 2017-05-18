@@ -5,6 +5,10 @@ class Application_DocumentBrowser{
 	const LABEL_DOCUMENTS = "documents";
 	const LABEL_DOCUMENTS_DATA = "documents_data";
 	
+	const MUST_BE_SIGNED_BY_ME = "mustBeSignedByMe";
+	const IS_SIGNED_BY_ME = "isSigned";
+	const FTP_NAME = "ftp_name";
+	
 	/*
 	 * Connettore al DB, verrà utilizzato da svariate classi
 	 */
@@ -62,25 +66,147 @@ class Application_DocumentBrowser{
 		$this->_fillResultArray(self::LABEL_MD, $this->_openDocuments());
 		$this->_createResultTree();
 		
-		//if($this->_userManager->isSigner()){
-			$this->_searchDocWithMySignature();
-		//}
 		
+		// Se sono firmatario aggiorno le info sulla firma
+		if($this->_userManager->isSigner()){
+			$this->_signatureCheck();
+		}
+
+		// Aggiorno la visibilità in base alle regole XML
+		if($this->_userManager->isGestore(true) || $this->_userManager->isConsultatore(true)){
+			$this->_xmlRulesCheck();
+		}
+		
+		// TODO: Se solo consultatore filtrare per laboratorio come campo di input
+		if($this->_userManager->isConsultatore(true)){
+			
+		}
+		
+		// Se sono un utente normale restringo il risultato solo ai documenti di cui sono proprietario ossia
+		// - quelli che devo firmare 
+		// - quelli in cui sono "destinatario"
+		if(!$this->_userManager->getUserRole()){
+			$this->_propertyCheck();
+		}
 		return $this->getResult();
 	}
+	
 	
 	public function getResult(){
 		return $this->_resultArray;
 	}
 	
-	private function _searchDocWithMySignature(){
+	private function _xmlRulesCheck(){
 		
-		foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $documents){
-			foreach($documents as $id_md => $doc){
-				$filename = $MDdocToInspect[$id_md] . $doc['ftp_name'];
-				Utils::printr($filename);
+		$services = $this->_userManager->getUser()->getGruppi();
+		
+		$XMLParser = new XMLParser();
+		foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
+			
+			$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
+			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
+			if($XMLParser->isVisible($services)) continue;
+			
+			foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
+				
+				foreach($docList as $doc){
+					if($doc[self::MUST_BE_SIGNED_BY_ME])
+						continue 2;
+				}
+			}
+			
+			$this->_purge($id_md);
+		}
+	}
+	
+	private function _propertyCheck(){
+		$XMLParser = new XMLParser();
+		$XMLParser->load(FILES_PATH."ownerRules.xml");
+		$inputFields = (array)$XMLParser->getXmlSource()->input;
+		$uid = $this->_userManager->getFieldToWriteOnDb();
+		
+		foreach($this->_resultArray[self::LABEL_MD_DATA] as $id_md => $md_data){
+			foreach($inputFields as $key){
+				if(isset($md_data[$key]) && $md_data[$key] == $uid)
+					continue 2;
+			}
+			
+			// Ok non sono destinatario ma magari li devo girmare...
+			foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
+				foreach($docList as $doc){
+					if($doc[self::MUST_BE_SIGNED_BY_ME])
+						continue 3;
+				}
+			}
+						
+			// Niente da fare
+			$this->_purge($id_md);
+			
+		}
+	}
+	
+	private function _signatureCheck(){
+		$signRoles = $this->_userManager->getUserSign()->getSignatureRoles();
+		$mySignature = $this->_userManager->getUserSign()->getSignature();
+		
+		$XMLParser = new XMLParser();
+		foreach($this->_resultArray[self::LABEL_MD] as $md){
+			$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
+			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
+			// Se non ho il ruolo id uno dei firmatari del documento skippo
+			$isSigner = $XMLParser->isSigner(array_keys($signRoles));
+			if(!$isSigner)
+				continue;
+			
+			foreach($isSigner as $role=>$listOfDocTypes){
+				$id_md = $md[Masterdocument::ID_MD];
+				$listOfDocTypes = array_values($listOfDocTypes);
+				
+				$iddocToInspect = $this->_filterDocByDocType($listOfDocTypes,$id_md);
+				
+				foreach($iddocToInspect as $id_doc){
+					if($signRoles[$role][Signature::FIXED_ROLE]){
+						// E' un ruolo fisso, lo devo firmare sempre
+						$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+					} else {
+						// è variabile, devo vedere nel md data se io sono uno dei firmatari
+						$signatureInput = $signRoles[$role][Signature::DESCRIZIONE];
+						if($this->_resultArray[self::LABEL_MD_DATA][$id_md][$signatureInput] == $this->_userManager->getFieldToWriteOnDb()){
+							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+						}
+					}
+					if(	$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME]){
+						// Se lo devo firmare controllo che sia effettivamente firmato
+						// per ora alla vecchia maniera
+						$filename = 
+							$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
+							Common::getFolderNameFromMasterdocument(
+								$this->_resultArray[self::LABEL_MD][$id_md]
+							) .
+							DIRECTORY_SEPARATOR .
+							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
+						
+						if($this->_checkSignature($filename, $mySignature)){
+							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
+						}
+					}
+				}
 			}
 		}
+		return;
+	}
+	
+	private function _filterDocByDocType($listOfDocTypes, $id_md){
+		$filtered = [];
+		foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $idmd => $docList){
+			if($id_md != $idmd)
+				continue;
+			foreach($docList as $id_doc => $docData){
+				if(in_array($docData[Document::NOME],$listOfDocTypes))
+					array_push($filtered,$id_doc);
+			}
+		}
+		return $filtered;
 	}
 	
 	private function _openDocuments(){
@@ -98,7 +224,7 @@ class Application_DocumentBrowser{
 		$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
 	}
 
-	public function _createResultTree($docListAlreadyExistent = null) {
+	public function _createResultTree() {
 		// Creo l'albero di documenti
 		//$this->_resultArray [self::LABEL_MD] = Utils::getListfromField ( $this->_resultArray [self::LABEL_MD], null, "id_md" );
 	
@@ -113,17 +239,12 @@ class Application_DocumentBrowser{
 			$documents = Utils::getListfromField ( 
 				$this->_Document->getBy ( Document::ID_MD, join ( ",", $md_ids ) ), null, Document::ID_DOC 
 			);
+			
 			if (! empty ( $documents )) {
 				foreach ( $documents as $k => $document ) {
-					$documents [$k] ['mustBeSigned'] = 0;
-					$documents [$k] ['signed'] = 0;
-						
-					// Se ho le info aggiuntive sulla firma sovrascrivo il
-					// documento
-					if (isset ( $docListAlreadyExistent [$documents [$k] [Document::ID_MD]] [$k] ))
-						$documents [$k] = $docListAlreadyExistent [$documents [$k] [Document::ID_MD]] [$k];
-						
-					$documents [$k] ['ftp_name'] = Common::getFilenameFromDocument($documents [$k]);
+					$documents [$k] [self::MUST_BE_SIGNED_BY_ME] = 0;
+					$documents [$k] [self::IS_SIGNED_BY_ME] = 0;
+					$documents [$k] [self::FTP_NAME] = Common::getFilenameFromDocument($document);
 				}
 				$this->_resultArray [self::LABEL_DOCUMENTS] = Utils::groupListBy ( 
 					$documents, Document::ID_MD 
@@ -150,7 +271,7 @@ class Application_DocumentBrowser{
 	 * ma in un componente che "gestisce le firme"
 	 */
 	private function _checkSignature($filename, $signature) {
-		$tmpPDF = $this->_FTPConnector->getTempFile ( $filename );
+		$tmpPDF = $this->_FTPDataSource->getTempFile ( $filename );
 	
 		$this->_PDFParser->loadPDF ( $tmpPDF );
 		$signaturesOnDocument = $this->_PDFParser->getSignatures ();
@@ -179,6 +300,19 @@ class Application_DocumentBrowser{
 			$md_data [$id_md] = $metadata;
 		}
 		return $md_data;
+	}
+	
+	private function _purge($id_md){
+		$ddataKeys = array_keys($this->_resultArray[self::LABEL_DOCUMENTS][$id_md]);
+		unset(
+				$this->_resultArray[self::LABEL_MD][$id_md],
+				$this->_resultArray[self::LABEL_MD_DATA][$id_md],
+				$this->_resultArray[self::LABEL_DOCUMENTS][$id_md]
+		);
+	
+		foreach($ddataKeys as $id_ddata)
+			unset ($this->_resultArray[self::LABEL_DOCUMENTS_DATA][$id_ddata]);
+	
 	}
 }
 ?>

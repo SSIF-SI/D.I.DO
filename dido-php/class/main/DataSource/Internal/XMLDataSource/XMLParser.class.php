@@ -118,16 +118,29 @@ class XMLParser implements IXMLParser {
 	}
 
 	public function isSigner(array $sigRoles) {
+		$signatures = [];
+		
 		foreach ( $this->getDocList () as $document ) {
 			$this->checkIfMustBeLoaded ( $document );
+			$docName = (string)$document[self::DOC_NAME];
 			
 			if (! is_null ( $document->signatures->signature )) {
 				foreach ( $document->signatures->signature as $signature ) {
-					if (in_array ( $signature [self::ROLE], $sigRoles ) || in_array ( $signature [self::ALT], $sigRoles ))
-						return true;
+					if( in_array ( $signature [self::ROLE], $sigRoles )){
+						if(!isset($signatures[(string)$signature [self::ROLE]]))
+							$signatures[(string)$signature [self::ROLE]] = [];
+						array_push($signatures[(string)$signature [self::ROLE]], $docName);
+					}
+					if( in_array ( $signature [self::ALT], $sigRoles )){
+						if(!isset($signatures[(string)$signature [self::ALT]]))
+							$signatures[(string)$signature [self::ALT]] = [];
+						array_push($signatures[(string)$signature [self::ALT]], $docName);
+						
+					}
 				}
 			}
 		}
+		return (empty($signatures) ? false : $signatures);
 	}
 
 	public function isVisible(array $services) {

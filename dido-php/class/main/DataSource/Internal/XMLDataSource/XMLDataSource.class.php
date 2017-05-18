@@ -81,6 +81,9 @@ class XMLDataSource implements IXMLDataSource{
 	}
 	
 	public function getSingleXmlByFilename($xmlFilename) {
+		if(!$this->_XMLTreeCreated)
+			$this->_createXMLTree();
+		
 		foreach($this->_xmlTree as $categorie => $categoria){
 			foreach($categoria as $nome => $versioni){
 				foreach($versioni as $versione=> $dato){

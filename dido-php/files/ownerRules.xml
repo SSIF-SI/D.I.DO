@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<inputFields>
-	<inputField>dipendente</inputField>
-	<inputField>destinatario</inputField>
-</inputFields>
+<inputs>
+	<input>dipendente</input>
+	<input>destinatario</input>
+</inputs>
