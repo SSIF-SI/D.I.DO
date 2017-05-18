@@ -73,7 +73,7 @@ class SignatureHelper {
 	    					$("#pdfConFirma").fileinput('destroy')
 		    	    		.fileinput({
 				    	        language: "it",
-				    	        uploadUrl: 'importPdf.php',
+				    	        uploadUrl: '../importPdf.php',
 				    	        uploadAsync: false,
 				    	        showPreview: false,
 				    	        uploadExtraData: {getOnlySignatures:true},

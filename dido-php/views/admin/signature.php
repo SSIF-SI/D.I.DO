@@ -26,7 +26,7 @@
 						<h4>Elenco Firmatari</h4>
 						<div>
 							<a class="btn btn-primary mymodal edit"
-								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=Signers"?>"><span
+								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=Signers"?>"><span
 								class="fa fa-plus fa-1x fa-fw"></span> Nuovo Firmatario</a>
 						</div>
 				                    	<?=$signers['all']?>
@@ -35,7 +35,7 @@
 						<h4>Firmatari fissi</h4>
 						<div>
 							<a class="btn btn-primary mymodal edit "
-								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=FixedSigners"?>"><span
+								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=FixedSigners"?>"><span
 								class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario fisso</a>
 						</div>
 				                    	<?=$signers['fixed']?>
@@ -44,7 +44,7 @@
 						<h4>Firmatari variabili</h4>
 						<div>
 							<a class="btn btn-primary mymodal edit"
-								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=VariableSigners"?>"><span
+								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=VariableSigners"?>"><span
 								class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario
 								variabile</a>
 						</div>
@@ -54,7 +54,7 @@
 						<h4>Applica firma</h4>
 						<div>
 							<a class="btn btn-primary mymodal sign"
-								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span
+								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span
 								class="fa fa-plus fa-1x fa-fw"></span> Applica firma</a>
 						</div>
 					</div>
