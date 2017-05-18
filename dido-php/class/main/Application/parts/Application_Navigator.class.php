@@ -20,11 +20,19 @@ class Application_Navigator {
 		$this->_userManager = $UserManager;
 	}
 	private function getLeftMenu() {
+		
 		if (! $this->_userManager->isGestore ())
 			return null;
+		
+		$this->_XMLDataSource
+			->filter ( new XMLFilterSource ( [null] ) );
 		if ($this->_userManager->isAdmin ())
 			return $this->_XMLDataSource->getXmlTree ();
-		return $this->_XMLDataSource->filter ( new XMLFilterOwner ( $this->_userManager->getUser ()->getGruppi () ) )->filter ( new XMLFilterValidity ( date ( DB_DATE_FORMAT ) ) )->getXmlTree ();
+		return 
+			$this->_XMLDataSource
+				->filter ( new XMLFilterOwner ( $this->_userManager->getUser ()->getGruppi () ) )
+				->filter ( new XMLFilterValidity ( date ( DB_DATE_FORMAT ) ) )
+				->getXmlTree ();
 	}
 	
 	public function renderLeftMenu() {

@@ -15,7 +15,7 @@ abstract class AXMLFilter {
 	}
 
 	public function init() {
-		return ! (empty ( $this->_filters ) || empty ( $this->_XMLParser ));
+		return (count ( $this->_filters ) && isset ( $this->_XMLParser ));
 	}
 }
 ?>

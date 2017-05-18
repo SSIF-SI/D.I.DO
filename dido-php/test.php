@@ -1,8 +1,7 @@
 <?php
 require_once 'config.php';
 
-$Application
-	->getApplicationPart(Application::IMPORT)
-	->saveDataToBeImported();
-
-?>
+Utils::printr($Application
+	->getApplicationPart(Application::DOCUMENTBROWSER)
+	->getAllMyPendingsDocument()
+);

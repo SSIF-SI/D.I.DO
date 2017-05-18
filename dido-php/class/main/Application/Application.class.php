@@ -2,8 +2,6 @@
 
 class Application {
 
-	const IMPORT = "Import";
-	const NAVIGATOR = "Navigator";
 	/*
 	 * La classe principale di DIDO
 	 *
@@ -42,6 +40,13 @@ class Application {
 	private $_userManager;
 
 	/*
+	 * PARTI DELL'APPLICAZIONE
+	 */
+	const IMPORT = "Import";
+	const NAVIGATOR = "Navigator";
+	const DOCUMENTBROWSER = "DocumentBrowser";
+	
+	/*
 	 * Classe che gestisce l'import
 	 */
 	private $_Application_Import;
@@ -50,6 +55,12 @@ class Application {
 	 * Classe che gestisce gli elementi HTML navigabili 
 	 */
 	private $_Application_Navigator;
+	
+	/*
+	 * Classe che gestisce la ricerca dei MD
+	 */
+	private $_Application_DocumentBrowser;
+	
 	
 	
 	public function __construct() {
@@ -60,7 +71,7 @@ class Application {
 		
 		$this->_Application_Import = new Application_Import($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
 		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource,$this->_userManager);
-		
+		$this->_Application_DocumentBrowser = new Application_DocumentBrowser($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
 	}
 
 	public function getApplicationPart($part){
