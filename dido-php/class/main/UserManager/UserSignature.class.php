@@ -6,8 +6,8 @@ class UserSignature {
 
 	private $_signatureRoles;
 
-	public function __construct($user_id) {
-		$signersObj = new Signers ( DBConnector::getInstance () );
+	public function __construct(IDBConnector $dbConnector, $user_id) {
+		$signersObj = new Signers ( $dbConnector );
 		$mySignature = Utils::getListfromField ( $signersObj->getBy ( Signers::ID_PERSONA, $user_id ), Signers::PKEY, Signers::ID_PERSONA );
 		
 		$signatureObj = new Signature ( DBConnector::getInstance () );

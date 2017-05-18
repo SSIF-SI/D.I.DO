@@ -17,7 +17,7 @@ class UserManager implements IUserManager{
 
 	private $_signature;
 	
-	public function __construct(IDBConnector $connector) {
+	public function __construct(IDBConnector $dbConnector) {
 		// Ad oggi i dati dell'utente li peschiamo dal Web service del personale
 		$sourceUserData = new PersonaleSourceUserData ();
 		$this->_user = new User ( $sourceUserData );
@@ -26,11 +26,11 @@ class UserManager implements IUserManager{
 		$this->_fieldToWriteOnDb = $this->_user->getUid ();
 		
 		// Ora setto il ruolo
-		$user_roleObj = new UsersRoles ( $connector );
+		$user_roleObj = new UsersRoles ( $dbConnector );
 		$user_role = Utils::getListfromField ( $user_roleObj->getBy ( UsersRoles::ID_PERSONA, $this->_fieldToWriteOnDb ), UsersRoles::RUOLO, UsersRoles::ID_PERSONA );
 		$this->_role = isset ( $user_role [$this->_fieldToWriteOnDb] ) ? $user_role [$this->_fieldToWriteOnDb] : null;
 		
-		$this->_signature = new UserSignature ( $this->_fieldToWriteOnDb );
+		$this->_signature = new UserSignature ( $dbConnector, $this->_fieldToWriteOnDb );
 
 	}
 

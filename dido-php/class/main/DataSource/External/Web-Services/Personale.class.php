@@ -12,6 +12,8 @@ class Personale {
 	
 	const CODICE_FISCALE = "codiceFiscale";
 	
+	const PERSONALE = "personale";
+	
 	const GRUPPI = "gruppi";
 	
 	const PROGETTI = "progetti";
@@ -37,18 +39,21 @@ class Personale {
 			$personale = json_decode ( json_encode ( $client->personale () ), true );
 			$gruppi = json_decode ( json_encode ( $client->gruppi () ), true );
 			$progetti = json_decode ( json_encode ( $client->progetti () ), true );
-			Session::getInstance()->set(self::SESSIONKEY_PERSONALE,['personale' => $personale, 'gruppi' => $gruppi, 'progetti' => $progetti]);
+			Session::getInstance()->set(self::SESSIONKEY_PERSONALE,[self::PERSONALE => $personale, self::GRUPPI => $gruppi, self::PROGETTI => $progetti]);
+			Session::getInstance()->setKeyDuration(self::SESSIONKEY_PERSONALE, 3600);
 		}
+		
+		//Utils::printr(Session::getInstance()->getKeyDuration(self::SESSIONKEY_PERSONALE));
 		
 		$sessionPersonale = Session::getInstance()->get(self::SESSIONKEY_PERSONALE);
 		
-		$this->_persone = Utils::getListfromField ( $sessionPersonale['personale'], null, self::ID_PERSONA );
-		$this->_cfId = Utils::getListfromField ( $sessionPersonale['personale'], self::ID_PERSONA, self::CODICE_FISCALE );
-		$this->_email = Utils::getListfromField ( $sessionPersonale['personale'], self::ID_PERSONA, self::EMAIL );
+		$this->_persone = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], null, self::ID_PERSONA );
+		$this->_cfId = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], self::ID_PERSONA, self::CODICE_FISCALE );
+		$this->_email = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], self::ID_PERSONA, self::EMAIL );
 		
-		$this->_gruppi = Utils::getListfromField ( $sessionPersonale['gruppi'], null, "sigla" );
+		$this->_gruppi = Utils::getListfromField ( $sessionPersonale[self::GRUPPI], null, "sigla" );
 		
-		$this->_progetti = Utils::getListfromField ( $sessionPersonale['progetti'], null, "id" );
+		$this->_progetti = Utils::getListfromField ( $sessionPersonale[self::PROGETTI], null, "id" );
 		
 	}
 
