@@ -16,18 +16,6 @@ class FTPDataSource implements IFTPDataSource{
 		return $this->_ftpConnector->deleteFolder ( $folder );
 	}
 
-	public function getNewPathFromXml($xml) {
-		return dirname ( $xml ) . DIRECTORY_SEPARATOR . date ( "Y" ) . DIRECTORY_SEPARATOR . date ( "m" ) . DIRECTORY_SEPARATOR;
-	}
-
-	public function getFolderNameFromMasterdocument($md) {
-		return Common::fieldFromLabel ( $md[Masterdocument::NOME] . " " . $md[Masterdocument::ID_MD]);
-	}
-
-	public function getFilenameFromDocument($document) {
-		return Common::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $document [Document::EXTENSION] );
-	}
-
 	public function deleteFile($filePath) {
 		return $this->_ftpConnector->delete ( $filePath );
 	}

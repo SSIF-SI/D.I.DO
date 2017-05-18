@@ -37,6 +37,19 @@ class Common{
 		), " ", $field ) ) );
 	}
 	
+	public static function getNewPathFromXml($xml) {
+		return dirname ( $xml ) . DIRECTORY_SEPARATOR . date ( "Y" ) . DIRECTORY_SEPARATOR . date ( "m" ) . DIRECTORY_SEPARATOR;
+	}
+	
+	public static function getFolderNameFromMasterdocument($md) {
+		return self::fieldFromLabel ( $md[Masterdocument::NOME] . " " . $md[Masterdocument::ID_MD]);
+	}
+	
+	public static function getFilenameFromDocument($document) {
+		return self::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $document [Document::EXTENSION] );
+	}
+	
+	
 	public static function redirect($url = HTTP_ROOT){
 		header("Location: " . $url);
 		die();

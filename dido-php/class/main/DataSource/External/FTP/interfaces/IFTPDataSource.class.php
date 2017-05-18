@@ -8,12 +8,6 @@ interface IFTPDataSource {
 	
 	public function deleteFolderRecursively($folder);
 
-	public function getNewPathFromXml($xml);
-
-	public function getFilenameFromDocument($document);
-	
-	public function getFolderNameFromMasterdocument($md);
-
 	public function deleteFile($filePath);
 	
 	public function getTempFile($file, $tmpPath = FILES_PATH);

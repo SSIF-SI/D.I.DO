@@ -55,7 +55,7 @@ class UserManager implements IUserManager{
 	}
 
 	public function getUserSign() {
-		return $this->_sign;
+		return $this->_signature;
 	}
 
 	public function isAdmin() {

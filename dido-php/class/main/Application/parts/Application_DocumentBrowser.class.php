@@ -43,7 +43,7 @@ class Application_DocumentBrowser{
 	
 	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IXMLDataSource $XMLDataSource, IFTPDataSource $FTPDataSource){
 		$this->_dbConnector = $dbConnector;
-		$this->_UserManager = $userManager;
+		$this->_userManager = $userManager;
 		$this->_XMLDataSource = $XMLDataSource;
 		$this->_FTPDataSource = $FTPDataSource;
 		
@@ -58,24 +58,13 @@ class Application_DocumentBrowser{
 	public function getAllMyPendingsDocument(){
 		$this->_emptyResult();
 		
-		$this->_XMLDataSource->resetFilters();
-		
-		$myXml = join(",", array_map("Utils::apici",$this->_XMLDataSource->getXmlTree(true)));
-		
-		$list = $this->_Masterdocument->searchBy([
-			[
-				CRUD::SEARCHBY_FIELD => Masterdocument::CLOSED,
-				CRUD::SEARCHBY_VALUE => ProcedureManager::OPEN
-			],
-			[
-				CRUD::SEARCHBY_FIELD => Masterdocument::XML,
-				CRUD::SEARCHBY_VALUE => $myXml,
-				CRUD::SEARCHBY_OPERATOR => "IN"
-			]	
-		]);
-		
-		$this->_resultArray[self::LABEL_MD] = Utils::getListfromField($list,null,Masterdocument::ID_MD);
+		// Tutti i documenti aperti
+		$this->_fillResultArray(self::LABEL_MD, $this->_openDocuments());
 		$this->_createResultTree();
+		
+		//if($this->_userManager->isSigner()){
+			$this->_searchDocWithMySignature();
+		//}
 		
 		return $this->getResult();
 	}
@@ -84,6 +73,31 @@ class Application_DocumentBrowser{
 		return $this->_resultArray;
 	}
 	
+	private function _searchDocWithMySignature(){
+		
+		foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $documents){
+			foreach($documents as $id_md => $doc){
+				$filename = $MDdocToInspect[$id_md] . $doc['ftp_name'];
+				Utils::printr($filename);
+			}
+		}
+	}
+	
+	private function _openDocuments(){
+		$list = $this->_Masterdocument->searchBy([
+			[
+				CRUD::SEARCHBY_FIELD => Masterdocument::CLOSED,
+				CRUD::SEARCHBY_VALUE => ProcedureManager::OPEN
+			]
+		]);
+			
+		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
+	}
+	
+	private function _fillResultArray($key, $values){
+		$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
+	}
+
 	public function _createResultTree($docListAlreadyExistent = null) {
 		// Creo l'albero di documenti
 		//$this->_resultArray [self::LABEL_MD] = Utils::getListfromField ( $this->_resultArray [self::LABEL_MD], null, "id_md" );
@@ -109,9 +123,7 @@ class Application_DocumentBrowser{
 					if (isset ( $docListAlreadyExistent [$documents [$k] [Document::ID_MD]] [$k] ))
 						$documents [$k] = $docListAlreadyExistent [$documents [$k] [Document::ID_MD]] [$k];
 						
-					$documents [$k] ['ftp_name'] = FormHelper::fieldFromLabel ( 
-						$documents [$k] [Document::NOME] . " " . $documents [$k] [Document::ID_DOC] . "." . $documents [$k] [Document::EXTENSION] 
-					);
+					$documents [$k] ['ftp_name'] = Common::getFilenameFromDocument($documents [$k]);
 				}
 				$this->_resultArray [self::LABEL_DOCUMENTS] = Utils::groupListBy ( 
 					$documents, Document::ID_MD 

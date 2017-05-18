@@ -66,6 +66,7 @@ class XMLDataSource implements IXMLDataSource{
 
 	public function resetFilters() {
 		$this->_filtered = $this->_xmlTree;
+		return $this;
 	}
 
 	public function getFirst(){

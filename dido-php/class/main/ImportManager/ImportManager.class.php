@@ -135,7 +135,7 @@ class ImportManager {
 			$externalDataSource->getExternalDocument(FILES_PATH, unserialize ( file_get_contents ( $import_filename ) ));
 		
 		$mdfolder=$md [Masterdocument::FTP_FOLDER] 
-		. $this->_ftpDataSource->getFolderNameFromMasterdocument($md) 
+		. Common::getFolderNameFromMasterdocument($md) 
 		. DIRECTORY_SEPARATOR;
 		
 		// Creo il documento
