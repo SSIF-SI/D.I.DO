@@ -12,8 +12,8 @@
 		<input>Progetto</input>
 		<input>Nominativo</input>
 		<input>Numero contratto</input>
-		<input>Data inizio</input>
-		<input>Data fine</input>
+		<input type="data">Data inizio</input>
+		<input type="data">Data fine</input>
 		<input>titolare dei fondi</input>
 		<input>responsabile di laboratorio</input>
 	</inputs>

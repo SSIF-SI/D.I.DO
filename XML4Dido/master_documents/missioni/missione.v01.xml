@@ -10,8 +10,8 @@
 		<input key="richiedente_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
 		<input key="oggetto" shortView="true">oggetto</input>
 		<input key="localita" shortView="true">località</input>
-		<input key="data_inizio" transform="dateFromDB" type="data" shortView="true">data inizio missione</input>
-		<input key="data_fine" transform="dateFromDB" type="data">data fine missione</input>
+		<input key="data_inizio" type="data" shortView="true">data inizio missione</input>
+		<input key="data_fine" type="data">data fine missione</input>
 		<input key="importo">importo</input>
 		<input key="responsabile_lab_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
 		<input key="gae_nome">linea attività</input>

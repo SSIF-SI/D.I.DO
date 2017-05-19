@@ -6,7 +6,7 @@
 		<input>Laboratorio</input>
 		<input>Progetto</input>
 		<input>Nominativo</input>
-		<input>Data</input>
+		<input type="data">Data</input>
 		<input>titolare dei fondi</input>
 		<input>responsabile di laboratorio</input>
 	</inputs>
