@@ -69,12 +69,15 @@ class Application_DocumentBrowser{
 			->_createResultTree()
 			// Completo applicando i filtri in base ai "permessi utente"
 			->_complete()
-			// Quindi restituisco l'array 
+			// Raggruppo i dati per sezione=>nome
+			->_categorize()
+			// Quindi restituisco l'array
 			->getResult();
 	}
 	
 	
 	public function getResult(){
+		
 		return $this->_resultArray;
 	}
 	
@@ -146,38 +149,6 @@ class Application_DocumentBrowser{
 		return $this;
 	}
 	
-	private function _xmlRulesCheck(){
-		if($this->_userManager->isGestore(true) || $this->_userManager->isConsultatore(true)){
-			
-			$services = $this->_userManager->getUser()->getGruppi();
-			
-			$XMLParser = new XMLParser();
-			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
-				// Se è un mio documento salto il controllo
-				if($md[self::IS_MY_DOC])
-					continue;
-				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
-				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
-				if($XMLParser->isVisible($services)) continue;
-				
-				/*
-				foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
-					
-					foreach($docList as $doc){
-						if($doc[self::MUST_BE_SIGNED_BY_ME])
-							continue 2;
-					}
-				}
-				*/
-				$this->_purge($id_md);
-			}
-		}
-		
-		return $this;
-	}
-	
-	
-	
 	private function _propertyCheck(){
 		$XMLParser = new XMLParser();
 		$XMLParser->load(FILES_PATH."ownerRules.xml");
@@ -223,8 +194,48 @@ class Application_DocumentBrowser{
 		return $this;
 	}
 	
+
+	private function _xmlRulesCheck(){
+		if($this->_userManager->isGestore(true) || $this->_userManager->isConsultatore(true)){
+				
+			$services = $this->_userManager->getUser()->getGruppi();
+				
+			$XMLParser = new XMLParser();
+			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
+				// Se è un mio documento salto il controllo
+				if($md[self::IS_MY_DOC])
+					continue;
+				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
+				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
+				if($XMLParser->isVisible($services)) continue;
 	
+				/*
+					foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
+						
+					foreach($docList as $doc){
+					if($doc[self::MUST_BE_SIGNED_BY_ME])
+						continue 2;
+						}
+						}
+						*/
+					$this->_purge($id_md);
+			}
+		}
 	
+		return $this;
+	}
+	
+	private function _categorize(){
+		$new_md = [];
+		foreach($this->_resultArray[self::LABEL_MD] as $md){
+			$category = dirname($md[Masterdocument::XML]);
+			$subCategory = $md[Masterdocument::NOME];
+			$new_md	[$category] [$subCategory] [$md[Masterdocument::ID_MD]]	= $md;
+		}
+		
+		$this->_resultArray[self::LABEL_MD] = $new_md;
+		return $this;
+	}
 	private function _filterDocByDocType($listOfDocTypes, $id_md){
 		$filtered = [];
 		foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $idmd => $docList){
