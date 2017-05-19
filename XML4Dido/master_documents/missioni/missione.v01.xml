@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="missione" owner="SA" from="geco">
+<masterDocument name="missione" owner="SA" hiddenFor="SI" from="geco">
 	<types>
 		<type>con anticipo</type>
 		<type>senza anticipo</type>

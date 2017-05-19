@@ -6,9 +6,10 @@ class PersonaleSourceUserData extends ASourceUserData {
 	private $_data;
 
 	public function __construct() {
-		if(!Session::getInstance ()->exists ( self::USER_DATA ))
+		if(!Session::getInstance ()->exists ( self::USER_DATA )){
 			Session::getInstance ()->set ( self::USER_DATA, Personale::getInstance ()->getPersonabyEmail ( Session::getInstance ()->get ( AUTH_USER ) ) );
-		
+			Session::getInstance ()->setKeyDuration( self::USER_DATA, 1200 );
+		}
 		$this->_data =
 			Session::getInstance ()->get ( self::USER_DATA );
 		if (! $this->_data)

@@ -27,6 +27,8 @@ class Personale {
 	private $_cfId;
 
 	private $_gruppi;
+	
+	private $_progetti;
 
 	private $_email;
 
@@ -54,7 +56,6 @@ class Personale {
 		$this->_gruppi = Utils::getListfromField ( $sessionPersonale[self::GRUPPI], null, "sigla" );
 		
 		$this->_progetti = Utils::getListfromField ( $sessionPersonale[self::PROGETTI], null, "id" );
-		
 	}
 
 	private function __clone() {

@@ -8,7 +8,7 @@ class Application_DocumentBrowser{
 	const MUST_BE_SIGNED_BY_ME = "mustBeSignedByMe";
 	const IS_SIGNED_BY_ME = "isSigned";
 	const FTP_NAME = "ftp_name";
-	
+	const IS_MY_DOC = "isMyDoc";
 	/*
 	 * Connettore al DB, verrà utilizzato da svariate classi
 	 */
@@ -60,35 +60,17 @@ class Application_DocumentBrowser{
 	}
 	
 	public function getAllMyPendingsDocument(){
-		$this->_emptyResult();
-		
-		// Tutti i documenti aperti
-		$this->_fillResultArray(self::LABEL_MD, $this->_openDocuments());
-		$this->_createResultTree();
-		
-		
-		// Se sono firmatario aggiorno le info sulla firma
-		if($this->_userManager->isSigner()){
-			$this->_signatureCheck();
-		}
-
-		// Aggiorno la visibilità in base alle regole XML
-		if($this->_userManager->isGestore(true) || $this->_userManager->isConsultatore(true)){
-			$this->_xmlRulesCheck();
-		}
-		
-		// TODO: Se solo consultatore filtrare per laboratorio come campo di input
-		if($this->_userManager->isConsultatore(true)){
-			
-		}
-		
-		// Se sono un utente normale restringo il risultato solo ai documenti di cui sono proprietario ossia
-		// - quelli che devo firmare 
-		// - quelli in cui sono "destinatario"
-		if(!$this->_userManager->getUserRole()){
-			$this->_propertyCheck();
-		}
-		return $this->getResult();
+		return $this
+			// Svuoto l'array
+			->_emptyResult()
+			// Ci metto tutti i MD aperti
+			->_fillResultArray(self::LABEL_MD, $this->_openDocuments())
+			// Creo a cascata l'albero dei risultati
+			->_createResultTree()
+			// Completo applicando i filtri in base ai "permessi utente"
+			->_complete()
+			// Quindi restituisco l'array 
+			->getResult();
 	}
 	
 	
@@ -96,28 +78,105 @@ class Application_DocumentBrowser{
 		return $this->_resultArray;
 	}
 	
-	private function _xmlRulesCheck(){
-		
-		$services = $this->_userManager->getUser()->getGruppi();
-		
-		$XMLParser = new XMLParser();
-		foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
+	private function _complete(){
+		return $this
+			// Se sono firmatario aggiorno le info sulla firma e sulla proprietà
+			->_signatureCheck()
+			// Se sono proprietario aggiorno le info sulla proprietà
+			->_propertyCheck()
+			// Aggiorno la visibilità in base alle regole XML
+			->_xmlRulesCheck();
+	}
+	
+	private function _signatureCheck(){
+		if($this->_userManager->isSigner()){
 			
-			$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
-			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
-			if($XMLParser->isVisible($services)) continue;
+			$signRoles = $this->_userManager->getUserSign()->getSignatureRoles();
+			$mySignature = $this->_userManager->getUserSign()->getSignature();
 			
-			foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
+			$XMLParser = new XMLParser();
+			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
+				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 0;
 				
-				foreach($docList as $doc){
-					if($doc[self::MUST_BE_SIGNED_BY_ME])
-						continue 2;
+				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
+				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
+				// Se non ho il ruolo id uno dei firmatari del documento skippo
+				$isSigner = $XMLParser->isSigner(array_keys($signRoles));
+				if(!$isSigner)
+					continue;
+				
+				foreach($isSigner as $role=>$listOfDocTypes){
+					$id_md = $md[Masterdocument::ID_MD];
+					$listOfDocTypes = array_values($listOfDocTypes);
+					
+					$iddocToInspect = $this->_filterDocByDocType($listOfDocTypes,$id_md);
+					
+					foreach($iddocToInspect as $id_doc){
+						if($signRoles[$role][Signature::FIXED_ROLE]){
+							// E' un ruolo fisso, lo devo firmare sempre
+							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+						} else {
+							// è variabile, devo vedere nel md data se io sono uno dei firmatari
+							$signatureInput = $signRoles[$role][Signature::DESCRIZIONE];
+							if($this->_resultArray[self::LABEL_MD_DATA][$id_md][$signatureInput] == $this->_userManager->getFieldToWriteOnDb()){
+								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+							}
+						}
+						if(	$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME]){
+							$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+							// Se lo devo firmare controllo che sia effettivamente firmato
+							// per ora alla vecchia maniera
+							$filename = 
+								$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
+								Common::getFolderNameFromMasterdocument(
+									$this->_resultArray[self::LABEL_MD][$id_md]
+								) .
+								DIRECTORY_SEPARATOR .
+								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
+							
+							if($this->_checkSignature($filename, $mySignature)){
+								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
+							}
+						} 
+					}
 				}
 			}
-			
-			$this->_purge($id_md);
 		}
+		
+		return $this;
 	}
+	
+	private function _xmlRulesCheck(){
+		if($this->_userManager->isGestore(true) || $this->_userManager->isConsultatore(true)){
+			
+			$services = $this->_userManager->getUser()->getGruppi();
+			
+			$XMLParser = new XMLParser();
+			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
+				// Se è un mio documento salto il controllo
+				if($md[self::IS_MY_DOC])
+					continue;
+				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
+				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
+				if($XMLParser->isVisible($services)) continue;
+				
+				/*
+				foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
+					
+					foreach($docList as $doc){
+						if($doc[self::MUST_BE_SIGNED_BY_ME])
+							continue 2;
+					}
+				}
+				*/
+				$this->_purge($id_md);
+			}
+		}
+		
+		return $this;
+	}
+	
+	
 	
 	private function _propertyCheck(){
 		$XMLParser = new XMLParser();
@@ -125,76 +184,46 @@ class Application_DocumentBrowser{
 		$inputFields = (array)$XMLParser->getXmlSource()->input;
 		$uid = $this->_userManager->getFieldToWriteOnDb();
 		
-		foreach($this->_resultArray[self::LABEL_MD_DATA] as $id_md => $md_data){
-			foreach($inputFields as $key){
-				if(isset($md_data[$key]) && $md_data[$key] == $uid)
-					continue 2;
-			}
-			
-			// Ok non sono destinatario ma magari li devo girmare...
-			foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $docList){
-				foreach($docList as $doc){
-					if($doc[self::MUST_BE_SIGNED_BY_ME])
-						continue 3;
-				}
-			}
-						
-			// Niente da fare
-			$this->_purge($id_md);
-			
-		}
-	}
-	
-	private function _signatureCheck(){
-		$signRoles = $this->_userManager->getUserSign()->getSignatureRoles();
-		$mySignature = $this->_userManager->getUserSign()->getSignature();
+		$myServices = $this->_userManager->getUser()->getGruppi();
+		$myProjects = $this->_userManager->getUser()->getProgetti();
 		
-		$XMLParser = new XMLParser();
-		foreach($this->_resultArray[self::LABEL_MD] as $md){
-			$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
-			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
-			// Se non ho il ruolo id uno dei firmatari del documento skippo
-			$isSigner = $XMLParser->isSigner(array_keys($signRoles));
-			if(!$isSigner)
+		foreach($this->_resultArray[self::LABEL_MD_DATA] as $id_md => $md_data){
+			// se è già stata assegnata la proprietà ed è già mio saltro tutto 
+			if( isset($this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC]) && 
+				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC])
 				continue;
 			
-			foreach($isSigner as $role=>$listOfDocTypes){
-				$id_md = $md[Masterdocument::ID_MD];
-				$listOfDocTypes = array_values($listOfDocTypes);
-				
-				$iddocToInspect = $this->_filterDocByDocType($listOfDocTypes,$id_md);
-				
-				foreach($iddocToInspect as $id_doc){
-					if($signRoles[$role][Signature::FIXED_ROLE]){
-						// E' un ruolo fisso, lo devo firmare sempre
-						$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
-					} else {
-						// è variabile, devo vedere nel md data se io sono uno dei firmatari
-						$signatureInput = $signRoles[$role][Signature::DESCRIZIONE];
-						if($this->_resultArray[self::LABEL_MD_DATA][$id_md][$signatureInput] == $this->_userManager->getFieldToWriteOnDb()){
-							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
-						}
-					}
-					if(	$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME]){
-						// Se lo devo firmare controllo che sia effettivamente firmato
-						// per ora alla vecchia maniera
-						$filename = 
-							$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
-							Common::getFolderNameFromMasterdocument(
-								$this->_resultArray[self::LABEL_MD][$id_md]
-							) .
-							DIRECTORY_SEPARATOR .
-							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
-						
-						if($this->_checkSignature($filename, $mySignature)){
-							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
-						}
-					}
+			// Se sono proprietario segno la proprietà e salto il resto
+			foreach($inputFields as $key){
+				if(isset($md_data[$key]) && $md_data[$key] == $uid){
+					$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+					continue 2;
 				}
 			}
+			
+			// Se sono consultatore controllo che i MD siano legati a
+			// - i msiei gruppi
+			// - i miei progetti
+			// Se si, segno la proprietà e salto il resto
+			if($this->_userManager->isConsultatore()){
+				foreach($md_data as $k=>$v){
+					if(in_array($v,$myServices) || in_array($v, $myProjects)){
+						$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+						continue 2;
+					}
+				}
+			}	
+			
+			// Se non ho ruoli taglio
+			if(!$this->_userManager->getUserRole())
+				$this->_purge($id_md);
+			
 		}
-		return;
+		
+		return $this;
 	}
+	
+	
 	
 	private function _filterDocByDocType($listOfDocTypes, $id_md){
 		$filtered = [];
@@ -222,6 +251,7 @@ class Application_DocumentBrowser{
 	
 	private function _fillResultArray($key, $values){
 		$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
+		return $this;
 	}
 
 	public function _createResultTree() {
@@ -256,6 +286,7 @@ class Application_DocumentBrowser{
 				);
 			}
 		}
+		return $this;
 	}
 	private function _emptyResult() {
 		$this->_resultArray = array (
@@ -264,6 +295,7 @@ class Application_DocumentBrowser{
 				self::LABEL_DOCUMENTS => [ ],
 				self::LABEL_DOCUMENTS_DATA => [ ]
 		);
+		return $this;
 	}
 	
 	/*
