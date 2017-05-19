@@ -8,7 +8,7 @@ class HTMLHelper {
 <div class="form-group <?=$class?>">
 	<label class="control-label" for="<?=$name?>"><?=$label?>:<?php self::checkRequired($required)?></label>
 	<select class="form-control" <?php if(!$isImported):?> id="<?=$name?>"
-		name="<?=$name?>" <?php else:?> disabled="disabled" <?php endif;?>>
+		name="<?=$name?>" <?php else:?> disabled="disabled" <?php endif;?> <?=$required ? "required='required'" : ""?>>
 <?php if(!$isImported):?>
 		<option value="">---Scegli---</option>
 <?php endif;?>
@@ -167,7 +167,7 @@ class HTMLHelper {
 
 	private static function textareaInput($name, $label, $value = null, $required = false, $isImported = false) {
 		$more = $isImported ? " readonly=\"readonly\"" : null;
-		$required = $required ? "required" : null;
+		$required = $required ? "required='required'" : null;
 		return "<textarea class=\"form-control\" rows=\"5\" name=\"$name\" id=\"$name\" $required $more>$value</textarea>";
 	}
 
@@ -185,8 +185,13 @@ class HTMLHelper {
 			
 			$suffix = array ();
 			
-			foreach ( $pKeys as $key )
-				array_push ( $suffix, $key . "=" . $item [$key] );
+			foreach ( $pKeys as $key => $value){
+				if(is_string($key))
+					array_push ( $suffix, $value . "=" . $item [$key] );
+				else 
+					array_push ( $suffix, $key . "=" . $item [$key] );
+						
+			}
 			$suffix = "&" . join ( "&", $suffix );
 			
 			$buttons [$k] = array (

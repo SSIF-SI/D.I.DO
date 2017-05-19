@@ -2,7 +2,7 @@
 class Common{
 	const N_TOT = "nTot";
 	
-	static function countSingleMultiArrayItems($array, $label){
+	public static function countSingleMultiArrayItems($array, $label){
 		if(key_exists($label, $array) && is_array($array[$label])) 
 			return count($array[$label]);
 		foreach($array as $key=>$values){
@@ -12,7 +12,7 @@ class Common{
 		return 0;
 	}
 	
-	static function countMultipleMultiArrayItems($array, $labels){
+	public static function countMultipleMultiArrayItems($array, $labels){
 		if(!is_array($labels)) return 0;
 		
 		$sum = 0;
@@ -21,6 +21,18 @@ class Common{
 		}
 		return $sum;
 	}
+	
+	public static function categorize($mdToCategorize){
+		$new_md = [];
+		foreach($mdToCategorize as $md){
+			$category = dirname($md[Masterdocument::XML]);
+			$subCategory = $md[Masterdocument::NOME];
+			$new_md	[$category] [$subCategory] [$md[Masterdocument::ID_MD]]	= $md;
+		}
+	
+		return $new_md;
+	}
+	
 	
 	public static function fieldFromLabel($label) {
 		return strtolower ( str_replace ( array (

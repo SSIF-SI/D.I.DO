@@ -242,14 +242,14 @@ var MyModal = {
 				var el = $('#'+data[i].name);
 				var required = el.attr('required');
 				if(required != undefined && data[i].value.trim().length == 0){
-					requiredFields.push(data[i].name);
+					requiredFields.push($('label[for="'+data[i].name+'"]').html().replace(/\*/,"").replace(/\:/,""));
 					el.addClass("alert-danger");
 				} else {
 					el.removeClass("alert-danger");
 				}
 			}
 			if( requiredFields.length > 0){
-				MyModal.error("Compilare i seguenti campi obbligatori: "+requiredFields.join(), innerdiv);
+				MyModal.error("I seguenti campi sono obbligatori: "+requiredFields.join(), innerdiv);
 				return false;
 			} else {
 				return true;

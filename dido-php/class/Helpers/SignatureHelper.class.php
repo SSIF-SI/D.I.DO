@@ -31,7 +31,7 @@ class SignatureHelper {
 				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $idP ) . "</p>";
 				echo HTMLHelper::input ( 'hidden', "id_persona", null, $idP );
 			}
-			echo HTMLHelper::input ( 'textarea', "pkey", "Chiave Pubblica", isset ( $signer ['pkey'] ) ? $signer ['pkey'] : null, null, true );
+			echo HTMLHelper::input ( 'textarea', "pkey", "Chiave Pubblica", isset ( $signer ['pkey'] ) ? $signer ['pkey'] : null, true, true );
 			?>
 			            <div class="signatures list-group"></div>
 	<div class="errorbox"></div>
@@ -189,7 +189,7 @@ class SignatureHelper {
 		$signatures = $signatureObj->getAll ( 'sigla', 'id_item' );
 		
 		$fixed_signers = Utils::filterList ( $signatures, 'fixed_role', 1 );
-		$metadata = self::createMetadata ( $fixed_signers, "FixedSigners", 'id_item', array (
+		$metadata = self::createMetadata ( $fixed_signers, "FixedSigners", ['id_item' => 'id_fs'], array (
 				'id_persona' => 'PersonaleHelper::getNominativo',
 				'id_delegato' => 'PersonaleHelper::getNominativo' 
 		) );
@@ -204,7 +204,7 @@ class SignatureHelper {
 		) );
 		
 		$variable_signers = Utils::filterList ( $signatures, 'fixed_role', 0 );
-		$metadata = self::createMetadata ( $variable_signers, "VariableSigners", "id_item", array (
+		$metadata = self::createMetadata ( $variable_signers, "VariableSigners", ['id_item' => 'id_vs'], array (
 				'id_persona' => 'PersonaleHelper::getNominativo' 
 		) );
 		$variable_signers = HTMLHelper::editTable ( $variable_signers, $metadata ['buttons'], $metadata ['substitutes'], array (
@@ -226,9 +226,10 @@ class SignatureHelper {
 	}
 
 	static function createMetadata($list, $table_suffix, $idname, $substitutes_keys) {
-		return HTMLHelper::createMetadata ( $list, basename ( $_SERVER ['PHP_SELF'] ) . "?list=$table_suffix", array (
-				$idname 
-		), $substitutes_keys );
+		if(!is_array($idname))
+			$idname = [$idname];
+		return HTMLHelper::createMetadata ( $list, basename ( $_SERVER ['PHP_SELF'] ) . "?list=$table_suffix", $idname 
+		, $substitutes_keys );
 	}
 
 	static function createModalApplySign() {

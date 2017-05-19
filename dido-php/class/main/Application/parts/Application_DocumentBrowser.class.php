@@ -9,6 +9,8 @@ class Application_DocumentBrowser{
 	const IS_SIGNED_BY_ME = "isSigned";
 	const FTP_NAME = "ftp_name";
 	const IS_MY_DOC = "isMyDoc";
+	const DOC_TO_SIGN_INSIDE = "docToSignIside";
+	
 	/*
 	 * Connettore al DB, verrà utilizzato da svariate classi
 	 */
@@ -69,8 +71,6 @@ class Application_DocumentBrowser{
 			->_createResultTree()
 			// Completo applicando i filtri in base ai "permessi utente"
 			->_complete()
-			// Raggruppo i dati per sezione=>nome
-			->_categorize()
 			// Quindi restituisco l'array
 			->getResult();
 	}
@@ -99,7 +99,6 @@ class Application_DocumentBrowser{
 			
 			$XMLParser = new XMLParser();
 			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
-				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 0;
 				
 				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
 				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
@@ -139,6 +138,8 @@ class Application_DocumentBrowser{
 							
 							if($this->_checkSignature($filename, $mySignature)){
 								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
+							} else {
+								$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE]++;
 							}
 						} 
 					}
@@ -225,17 +226,6 @@ class Application_DocumentBrowser{
 		return $this;
 	}
 	
-	private function _categorize(){
-		$new_md = [];
-		foreach($this->_resultArray[self::LABEL_MD] as $md){
-			$category = dirname($md[Masterdocument::XML]);
-			$subCategory = $md[Masterdocument::NOME];
-			$new_md	[$category] [$subCategory] [$md[Masterdocument::ID_MD]]	= $md;
-		}
-		
-		$this->_resultArray[self::LABEL_MD] = $new_md;
-		return $this;
-	}
 	private function _filterDocByDocType($listOfDocTypes, $id_md){
 		$filtered = [];
 		foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $idmd => $docList){
@@ -267,8 +257,12 @@ class Application_DocumentBrowser{
 
 	public function _createResultTree() {
 		// Creo l'albero di documenti
-		//$this->_resultArray [self::LABEL_MD] = Utils::getListfromField ( $this->_resultArray [self::LABEL_MD], null, "id_md" );
-	
+		// Appendo info utili
+		foreach($this->_resultArray [self::LABEL_MD] as $id_md => $md){
+			$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 0;
+			$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = 0;
+		}
+		
 		$md_ids = array_keys ( $this->_resultArray [self::LABEL_MD] );
 		if (count ( $md_ids )) {
 			$this->_resultArray [self::LABEL_MD_DATA] = $this->_compact ( 

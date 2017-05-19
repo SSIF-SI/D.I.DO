@@ -9,6 +9,7 @@ if (Utils::checkAjax ()) {
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	if ($delete) {
 		unset ( $_GET ['list'], $_GET ['delete'] );
+		
 		die ( json_encode ( $userRolesObj->delete ( $_GET ) ) );
 	}
 	

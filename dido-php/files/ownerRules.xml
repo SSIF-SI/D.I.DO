@@ -2,4 +2,6 @@
 <inputs>
 	<input>dipendente</input>
 	<input>destinatario</input>
+	<input>titolare dei fondi</input>
+	<input>responsabile di laboratorio</input>
 </inputs>
