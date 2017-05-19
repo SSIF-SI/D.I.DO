@@ -9,54 +9,60 @@
 		<h1 class="page-header">Proposte da <?=$from?></h1>
 	</div>
 </div>
+<?php 
+if(!count(!$list)){
+?>
+<div class="alert alert-danger">Nessun documento da importare.</div>
+<?php 
+die();
+}
+?>
 <div class="panel-body">
 	<ul class="nav nav-tabs">
 <?php 
-if(count($list)){
-	foreach($list as $sezione => $nomeDocumento):
-		$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array_keys($nomeDocumento));
-		$sezione_field = Common::fieldFromLabel($sezione);
+foreach($list as $sezione => $nomeDocumento):
+	$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array_keys($nomeDocumento));
+	$sezione_field = Common::fieldFromLabel($sezione);
 ?>
 	<!-- Nav tabs -->
 		<li class="">
 			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=$sezione." ($badgeValue)"?></a>
 		</li>
 <?php 
-	endforeach; 
+endforeach; 
 ?>
 	</ul>
 	<!-- Tab panes -->
 	<div class="tab-content">
 <?php 
-	foreach($list as $sezione => $nomeDocumento): 
-		$sezione_field = Common::fieldFromLabel($sezione);
+foreach($list as $sezione => $nomeDocumento): 
+	$sezione_field = Common::fieldFromLabel($sezione);
 ?>
 		<div class="tab-pane" id="<?=$sezione_field?>">
 			<div class="panel-body">
 				<ul class="nav nav-tabs">
 <?php 
-		foreach($nomeDocumento as $tipoDocumento=>$items):
-			$tipoDocumento_field = Common::fieldFromLabel($tipoDocumento);
-			$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array($tipoDocumento));
-	
+	foreach($nomeDocumento as $tipoDocumento=>$items):
+		$tipoDocumento_field = Common::fieldFromLabel($tipoDocumento);
+		$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array($tipoDocumento));
 ?>
 				<!-- Nav tabs -->
 					<li class="">
 						<a href="<?="#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
 					</li>
 <?php 
-		endforeach;
+	endforeach;
 ?>
 				</ul>
 				<!-- Tab panes -->
 				<div class="tab-content">
 <?php 
-		foreach($nomeDocumento as $tipoDocumento=>$items):
-			$tipoDocumento_field = Common::fieldFromLabel($tipoDocumento);
-			$lastXML = $Application_Import->getLastXML($tipoDocumento);
-			if(!$lastXML) continue;
-			$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
-			$inputs = $XmlParser->getMasterDocumentInputs();
+	foreach($nomeDocumento as $tipoDocumento=>$items):
+		$tipoDocumento_field = Common::fieldFromLabel($tipoDocumento);
+		$lastXML = $Application_Import->getLastXML($tipoDocumento);
+		if(!$lastXML) continue;
+		$XmlParser = new XMLParser ( $lastXML [XMLDataSource::LABEL_XML] );
+		$inputs = $XmlParser->getMasterDocumentInputs();
 ?>
 					<div class="tab-pane" id="<?=$tipoDocumento_field?>">
 						<table class="table table-condensed table-striped <?=$tipoDocumento_field?>">
@@ -67,15 +73,15 @@ if(count($list)){
 									<input type="checkbox" class="select-all" rel="<?=$tipoDocumento_field?>" />
 								</th>
 <?php 
-			foreach($inputs as $input):
-				if(isset($input[XMLParser::SHORTWIEW])):
+		foreach($inputs as $input):
+			if(isset($input[XMLParser::SHORTWIEW])):
 ?>
 								<th><?=Common::labelFromField((string)$input);?></th>
 <?php 
-				endif;
+			endif;
 ?>
 <?php 
-			endforeach;
+		endforeach;
 ?>
 								<th>
 									<a 
@@ -94,9 +100,9 @@ if(count($list)){
 							</tr>
 							</thead>		
 <?php 
-			foreach($items as $k=>$item):
-				$formId = $tipoDocumento_field.$k;
-				$obj = $Application_Import->getImportManager()->fromFileToPostMetadata(REAL_ROOT . $item[IExternalDataSource::IMPORT_FILENAME], $inputs);
+		foreach($items as $k=>$item):
+			$formId = $tipoDocumento_field.$k;
+			$obj = $Application_Import->getImportManager()->fromFileToPostMetadata(REAL_ROOT . $item[IExternalDataSource::IMPORT_FILENAME], $inputs);
 ?>
 							<tr>
 								<td>
@@ -107,22 +113,22 @@ if(count($list)){
 									</div>
 								</td>
 <?php 
-				foreach($inputs as $input):
-					if(isset($input[XMLParser::SHORTWIEW])):
-						$value = $obj[Common::fieldFromLabel((string)$input)];
-						if(isset($input[XMLParser::VALUES])){
-							$callback = ( string ) $input[XMLParser::VALUES];
-							$values = ListHelper::$callback();
-							$value = $values[$value];
-						}
+			foreach($inputs as $input):
+				if(isset($input[XMLParser::SHORTWIEW])):
+					$value = $obj[Common::fieldFromLabel((string)$input)];
+					if(isset($input[XMLParser::VALUES])){
+						$callback = ( string ) $input[XMLParser::VALUES];
+						$values = ListHelper::$callback();
+						$value = $values[$value];
+					}
 					
 ?>
 								<td>
 									<?=$value?>
 								</td>
 <?php 
-					endif;
-				endforeach;			
+				endif;
+			endforeach;			
 ?>
 								<td>
 									<form 
@@ -163,24 +169,18 @@ if(count($list)){
 								</td>
 							</tr>
 <?php		
-			endforeach;
+		endforeach;
 ?>					
 						</table>
 					</div>
 <?php 
-		endforeach;
+	endforeach;
 ?>
 				</div>		
 			</div>
 		</div>
 <?php 
-	endforeach;
-} else {
-?>
-		<div class="alert alert-danger">Nessun documento da importare.</div>
-<?php 
-}
+endforeach;
 ?>
 	</div>
 </div>
-

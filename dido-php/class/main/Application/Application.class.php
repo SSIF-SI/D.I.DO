@@ -92,5 +92,9 @@ class Application {
 		return $this->_dbConnector;
 	}
 	
+	public function getXMLDataSource(){
+		return $this->_XMLDataSource;
+	}
+	
 }
 ?>

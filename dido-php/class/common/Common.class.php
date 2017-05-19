@@ -27,7 +27,9 @@ class Common{
 		foreach($mdToCategorize as $md){
 			$category = dirname($md[Masterdocument::XML]);
 			$subCategory = $md[Masterdocument::NOME];
-			$new_md	[$category] [$subCategory] [$md[Masterdocument::ID_MD]]	= $md;
+			$XMLCategory = $md[Masterdocument::XML];
+				
+			$new_md	[$category] [$subCategory] [$XMLCategory] [$md[Masterdocument::ID_MD]]	= $md;
 		}
 	
 		return $new_md;
@@ -65,6 +67,14 @@ class Common{
 	public static function redirect($url = HTTP_ROOT){
 		header("Location: " . $url);
 		die();
+	}
+	
+	public static function convertDateFormat($data,$from_format,$to_format){
+		if(empty($data)) return null;
+		
+		extract(date_parse_from_format($from_format,$data)); # PHP >= 5.3.x
+		$newDate = date($to_format,mktime(0,0,0,$month,$day,$year));
+		return $newDate;
 	}
 }
 ?>
