@@ -39,10 +39,17 @@ abstract class ATimelineElement{
 }
 
 class TimelineElementMissing extends ATimelineElement{
-	public function __construct($title){
+
+	public function __construct($title, $download){
+		
+		$buttons = [];
+		
+		if($download){
+			array_push($buttons,new FlowTimelineButtonUpload());
+		}
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			new FlowTimelineBadgeMissingDocuments(), 
-			new FlowTimelinePanel($title, null)
+			new FlowTimelinePanel($title, $buttons, new FlowTimelinePanelBody())
 		);
 	}
 }
@@ -63,6 +70,8 @@ class FlowTimelineElement{
 	public function getPanel(){
 		return $this->_panel;
 	}
+	
+	
 }
 
 class FlowTimelinePanel{
@@ -71,15 +80,14 @@ class FlowTimelinePanel{
 	private $_panel = 
 <<<TLP
 	<div class="timeline-panel">
-		<div class="timeline-heading">
-			<h4 class="timeline-title">%s</h4>
-		</div>
 		<div class="timeline-body">
-			<div class="col-lg-4">
-				<h4 class="timeline-title">%s</h4>
-			</div>
-			<div class="col-lg-8">
-				%s
+			<div class='row'>					
+				<div class="col-lg-4">
+					<h4 class="timeline-title">%s</h4>
+				</div>
+				<div class="col-lg-8 text-right">
+					%s
+				</div>
 			</div>
 		</div>
 	</div>
@@ -91,12 +99,12 @@ TLP;
 	}
 	
 	public function render(){
-		$butto9nsHTML = "";
-		if(count($buttons)){
-			foreach ($buttons as $button)
-				$buttonsHTML = $button->render();
+		$buttonsHTML = "";
+		if(count($this->_buttons)){
+			foreach ($this->_buttons as $button)
+				$buttonsHTML .= $button->get();
 		}
-		printf($this->_panel, $this->_title, $buttonsHTML, $this->_body->render());
+		printf($this->_panel, $this->_title, $buttonsHTML);
 	}
 	
 }
@@ -115,7 +123,7 @@ class FlowTimelinePanelBody{
 	}
 }
 
-abstract class AFlowTimelinePaneldButton{
+abstract class AFlowTimelinePanelButton{
 	const HTML =
 <<<HTML
 	<a class="btn btn-info %s" type="button">
@@ -124,18 +132,18 @@ HTML;
 	
 	protected $_button;
 
-	public function render(){
-		echo $this->_button;
+	public function get(){
+		return $this->_button;
 	}
 }
 
-class FlowTimelineButtonUpload extends AFlowTimelinePaneldButton{
+class FlowTimelineButtonUpload extends AFlowTimelinePanelButton{
 	public function __construct(){
 		$this->_button = sprintf(self::HTML, "upload-doc","fa-upload", "Carica il pdf");
 	}
 }
 
-class FlowTimelineButtonDownload extends AFlowTimelinePaneldButton{
+class FlowTimelineButtonDownload extends AFlowTimelinePanelButton{
 	public function __construct(){
 		$this->_button = sprintf(self::HTML, "download-doc","fa-download", "Scarica il pdf");
 	}

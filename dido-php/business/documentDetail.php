@@ -8,7 +8,7 @@ $md = $Application_DocumentBrowser->get($id_md);
 if(!$md)
 	Common::redirect();
 
-Utils::printr($md);
+//Utils::printr($md);
 
 $Application_Detail->createDetail($md);
 extract($md);

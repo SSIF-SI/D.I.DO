@@ -13,6 +13,7 @@ class Application_Detail{
 	}
 	
 	public function createDetail($md){
+		
 		extract($md);
 		
 		$XMLParser = new XMLParser(
@@ -21,12 +22,13 @@ class Application_Detail{
 		);
 		
 		$this->_redirectUrl = TurnBack::getLastHttpReferer()."#".dirname($md[Masterdocument::XML])."/#".Common::fieldFromLabel($md[Masterdocument::NOME]);
-		
 		$this->_createInfo($XMLParser, $md_data);
-		
 		$this->_flowResults = new FlowTimeline();
 		
-		$ICanManageIt = $XMLParser->isOwner($this->_userManager->getUser()->getGruppi());
+		$ICanManageIt =
+			$this->_userManager->isAdmin() ||
+			($this->_userManager->isGestore(true) && $XMLParser->isOwner($this->_userManager->getUser()->getGruppi()));
+
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			
@@ -68,7 +70,8 @@ class Application_Detail{
 		!is_null($XMLParser->getSource()) ?
 		true : (
 				// - L'utente non è proprietario del documento oppure lo è ma non ha i permessi per editarli
-				in_array($XMLParser->getOwner(),$this->_userManager->getUser()->getGruppi()) && $this->_userManager->isGestore() ?
+				$this->_userManager->isAdmin() ||
+				($XMLParser->isOwner($this->_userManager->getUser()->getGruppi()) && $this->_userManager->isGestore()) ?
 				false :
 				true
 		);
