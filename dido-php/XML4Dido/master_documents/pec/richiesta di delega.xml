@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="richiesta di delega" owner="SAS - PC">
+	<inputs>
+		<input>titolo</input>
+		<input values="persone">responsabile scientifico</input>
+		<input values="areeProgettuali">area progettuale</input>
+		<input>tipo atto</input>
+		<input>bando</input>
+		<input values="esitiRichiesteDiDelega">esito</input>
+		<input type="textarea">note</input>
+	</inputs>
+	<list>
+		<document name="richiesta di delega" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="allegato" minOccur="0">
+			<inputs>
+				<input>titolo</input>
+			</inputs>
+		</document>
+		<document name="risposta dipartimento" minOccur="1">
+			<inputs>
+				<input>numero protocollo esterno</input>
+				<input type="data">data protocollo esterno</input>
+			</inputs>
+		</document>
+	</list>
+</masterDocument>

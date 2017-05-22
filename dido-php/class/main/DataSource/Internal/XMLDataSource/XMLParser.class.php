@@ -21,6 +21,10 @@ class XMLParser implements IXMLParser {
 
 	const ONLYIFTYPE = "onlyIfType";
 
+	const MIN_OCCUR = "minOccur";
+	
+	const MAX_OCCUR = "maxOccur";
+	
 	// Signature params 
 	const ROLE = "role";
 
@@ -36,6 +40,8 @@ class XMLParser implements IXMLParser {
 	const VALUES = "values";
 	
 	const SHORTWIEW = "shortView";
+	
+	const EDITABLE = "editable";
 	
 	// Common Params
 	const MANDATORY = "mandatory";

@@ -61,7 +61,10 @@ class Application {
 	 */
 	private $_Application_DocumentBrowser;
 	
-	
+	/*
+	 * Classe che genera il dettaglio di un documento
+	 */	
+	private $_Application_Detail;
 	
 	public function __construct() {
 		$this->_dbConnector = DBConnector::getInstance ();
@@ -72,6 +75,7 @@ class Application {
 		$this->_Application_Import = new Application_Import($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
 		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource,$this->_userManager);
 		$this->_Application_DocumentBrowser = new Application_DocumentBrowser($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
+		$this->_Application_Detail = new Application_Detail($this->_userManager, $this->_FTPDataSource);
 	}
 
 	public function getApplicationPart($part){
@@ -95,6 +99,5 @@ class Application {
 	public function getXMLDataSource(){
 		return $this->_XMLDataSource;
 	}
-	
 }
 ?>

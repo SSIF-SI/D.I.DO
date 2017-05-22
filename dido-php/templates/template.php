@@ -164,14 +164,15 @@
 	
 	<!-- Custom Scripts -->
 	<?php
-	if(file_exists(SCRIPTS_RPATH.str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])))){
-		Utils::includeScript(SCRIPTS_PATH, str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])));
-	}
-	
 	if (isset ( $pageScripts )) {
 		$pageScripts = implode ( ",", array_map ( 'Utils::apici', $pageScripts ) );
 		eval ( "Utils::includeScript(SCRIPTS_PATH, $pageScripts);" );
 	}
+	
+	if(file_exists(SCRIPTS_RPATH.str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])))){
+		Utils::includeScript(SCRIPTS_PATH, str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])));
+	}
+	
 	?>
 	<script>
 		$(document).ready(function(){$(".sidebar").css("visibility","visible");});

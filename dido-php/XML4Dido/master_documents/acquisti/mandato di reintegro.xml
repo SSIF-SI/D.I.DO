@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="mandato di reintegro" owner="SA">
+	<list>
+		<document md="ordine cassa" key="id_md" minOccur="1" />
+		<document name="mandato di reintegro" minOccur="1" maxOccur="1">
+			<inputs>
+				<input>numero mandato</input>
+				<input type="data">data mandato</input>
+			</inputs>
+			<signatures>
+				<signature role="SAMM" />
+			</signatures>
+		</document>
+	</list>
+</masterDocument>

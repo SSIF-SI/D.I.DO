@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="richiesta di costi" owner="SAS - PC">
+	<inputs>
+		<input values="progetti">acronimo progetto</input>
+		<input>periodo</input>
+		<input values="tipiElaborazione">tipo elaborazione</input>
+		<input values="gruppi">gruppo</input>
+	</inputs>
+	<list>
+		<document name="richiesta di costi" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="allegato" minOccur="0">
+			<inputs>
+				<input>titolo</input>
+			</inputs>
+		</document>
+		<document name="risposta PMS" minOccur="1" />
+	</list>
+</masterDocument>

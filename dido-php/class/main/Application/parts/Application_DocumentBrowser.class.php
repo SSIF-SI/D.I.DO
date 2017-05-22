@@ -61,6 +61,27 @@ class Application_DocumentBrowser{
 		$this->_PDFParser = new PDFParser();
 	}
 	
+	public function get($id_md){
+		return $this
+			->_emptyResult()
+			->_fillResultArray(self::LABEL_MD, $this->_single($id_md))
+			->_createResultTree()
+			->_complete()
+			->_only($id_md)
+			->getResult();
+	}
+	
+	private function _single($id_md){
+		$list = $this->_Masterdocument->searchBy([
+				[
+						CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
+						CRUD::SEARCHBY_VALUE => $id_md
+				]
+		]);
+			
+		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
+	}
+	
 	public function getAllMyPendingsDocument(){
 		return $this
 			// Svuoto l'array
@@ -293,6 +314,16 @@ class Application_DocumentBrowser{
 		}
 		return $this;
 	}
+	
+	private function _only($id_md){
+		if(isset($this->_resultArray [self::LABEL_MD][$id_md])){
+			$this->_resultArray [self::LABEL_MD] = $this->_resultArray [self::LABEL_MD][$id_md];
+			$this->_resultArray [self::LABEL_MD_DATA] = $this->_resultArray [self::LABEL_MD_DATA][$id_md];
+			$this->_resultArray [self::LABEL_DOCUMENTS] = $this->_resultArray [self::LABEL_DOCUMENTS][$id_md];
+		}
+		return $this;
+	}
+	
 	private function _emptyResult() {
 		$this->_resultArray = array (
 				self::LABEL_MD => [ ],

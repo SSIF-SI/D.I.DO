@@ -22,7 +22,7 @@ die();
 <?php 
 $XmlParser = new XMLParser();
 foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumento):
-	$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array_keys($nomeDocumento));
+	$badgeValue = ArrayHelper::countItems($list[Application_DocumentBrowser::LABEL_MD], $sezione);
 	$sezione_field = Common::fieldFromLabel($sezione);
 ?>
 	<!-- Nav tabs -->
@@ -45,12 +45,12 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 <?php 
 	foreach($nomeDocumento as $tipoDocumento=>$items):
 		$tipoDocumento_field = Common::fieldFromLabel($tipoDocumento);
-		$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array($tipoDocumento));
+		$badgeValue = ArrayHelper::countItems($nomeDocumento, $tipoDocumento);
 	
 ?>
 				<!-- Nav tabs -->
 					<li class="">
-						<a href="<?="#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
+						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
 					</li>
 <?php 
 	endforeach;
@@ -104,7 +104,7 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 							$value = $values[$value];
 						}
 						if($input[XMLParser::TYPE] == "data")
-							$value = Common::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
+							$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
 				
 ?>
 								<td>
@@ -115,7 +115,9 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 				endforeach;			
 ?>
 								<td>
-									
+									<a class="btn btn-primary detail"
+							href="?md=<?=$k?>"><span class="fa fa-search fa-1x fa-fw"></span>
+								Dettaglio</a>
 									
 								</td>
 							</tr>

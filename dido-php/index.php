@@ -11,7 +11,7 @@ if($Application->getUserManager()->isGestore()){
 	$count_tbi = 0;
 	
 	if(count($tbi)) foreach($tbi as $cat=>$subCat){
-		$count_tbi += Common::countMultipleMultiArrayItems($subCat, array_keys($subCat));
+		$count_tbi += ArrayHelper::countItems($tbi, $cat);
 	}
 	
 	$data['Proposte da Geco'] = [

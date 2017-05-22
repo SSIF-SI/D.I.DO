@@ -2,20 +2,31 @@
 class FormHelper {
 	private static $warnmessages = array ();
 	private static $warnBox = "";
-	public static function createInputsFromDB($inputs, $data, $readonly = false, $forceEditable = false) {
+	public static function createInputsFromDB($inputs, $data, $readonly = false) {
 		ob_start ();
-		
+		$col = 0;
+?>
+<div class="row">
+<?php
 		foreach ( $inputs as $input ) :
-			$editable = $forceEditable || (isset ( $input ['editable'] ) && $input ['editable']);
-			$type = is_null ( $input ['type'] ) ? 'text' : ( string ) $input ['type'];
+			$col++;
+			if($col > 3){
+				$col = 1;
+?>
+</div>
+<div class="row">
+<?php
+			}
+			$editable = !$readonly || ($readonly && isset ( $input [XMLParser::EDITABLE] ) && $input [XMLParser::EDITABLE]);
+			$type = is_null ( $input [XMLParser::TYPE] ) ? 'text' : ( string ) $input [XMLParser::TYPE];
 			
-			$required = is_null ( $input ['mandatory'] ) ? true : ( bool ) ( string ) $input ['mandatory'];
+			$required = is_null ( $input [XMLParser::MANDATORY] ) ? true : ( bool ) ( string ) $input [XMLParser::MANDATORY];
 			// $required = is_null($input['mandatory']) ? true : false;
 			
 			$key = ( string ) $input;
 			$value = $data [$key];
-			if (isset ( $input ['values'] )) {
-				$callBack = ( string ) $input ['values'];
+			if (isset ( $input [XMLParser::VALUES] )) {
+				$callBack = ( string ) $input [XMLParser::VALUES];
 				$values = ListHelper::$callBack ();
 				$rValue = $value;
 				$value = $values [$value];
@@ -30,8 +41,8 @@ class FormHelper {
 	<em><?=empty($value) ? "&nbsp;" : $value?></em>
 		
              
-			 <?phpelse :
-				if (is_null ( $input ['values'] ))
+			 <?php else :
+				if (is_null ( $input [XMLParser::VALUES] ))
 					$input_html = HTMLHelper::input ( $type, $key, ucfirst ( $key ), $value, null, $required );
 				else {
 					$input_html = HTMLHelper::select ( $key, ucFirst ( $key ), $values, $rValue );
@@ -42,8 +53,10 @@ class FormHelper {
 				<hr />
 </div>
 <?php
-		endforeach
-		;
+		endforeach;
+?>
+</div>
+<?php 
 		return ob_get_clean ();
 	}
 	

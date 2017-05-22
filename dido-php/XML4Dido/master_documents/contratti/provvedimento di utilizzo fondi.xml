@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="provvedimento di utilizzo fondi" owner="SA">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Laboratorio</input>
+		<input>Progetto</input>
+		<input>Descrittivo</input>
+		<input>Riferimento contratto</input>
+	</inputs>
+	<list>
+		<document name="provvedimento utilizzo fondi" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document md="variazione di bilancio" linkTo="id_md" minOccur="1" maxOccur="1" />
+	</list>
+</masterDocument>

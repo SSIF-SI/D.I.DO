@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+		
 	$('.select-all').click(function(e){
 		var checked = $(this).prop('checked');
 		var panel = $(this).attr('rel');

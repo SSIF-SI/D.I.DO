@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="variazione di bilancio" owner="SA">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Laboratorio</input>
+		<input>Progetto</input>
+	</inputs>
+	<list>
+		<document name="variazione di bilancio" minOccur="1"
+			maxOccur="1">
+			<inputs>
+				<input>numero variazione</input>
+			</inputs>
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+	</list>
+</masterDocument>

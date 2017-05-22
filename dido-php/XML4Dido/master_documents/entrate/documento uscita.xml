@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="documento uscita" owner="SA">
+	<inputs>
+		<input>Descrittivo GAE</input>
+		<input>Laboratorio</input>
+		<input>Progetto</input>
+	</inputs>
+	<list>
+		<document name="lettera" minOccur="1" maxOccur="1" />
+		<document name="nota di credito" minOccur="1" maxOccur="1" />
+		<inputs>
+			<input>numero nota di credito</input>
+			<input type="data">data nota di credito</input>
+		</inputs>
+	</list>
+</masterDocument>

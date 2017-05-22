@@ -21,7 +21,7 @@ die();
 	<ul class="nav nav-tabs">
 <?php 
 foreach($list as $sezione => $nomeDocumento):
-	$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array_keys($nomeDocumento));
+	$badgeValue = ArrayHelper::countItems($list, $sezione);
 	$sezione_field = Common::fieldFromLabel($sezione);
 ?>
 	<!-- Nav tabs -->
@@ -44,11 +44,11 @@ foreach($list as $sezione => $nomeDocumento):
 <?php 
 	foreach($nomeDocumento as $tipoDocumento=>$items):
 		$tipoDocumento_field = Common::fieldFromLabel($tipoDocumento);
-		$badgeValue = Common::countMultipleMultiArrayItems($nomeDocumento, array($tipoDocumento));
+		$badgeValue = ArrayHelper::countItems($nomeDocumento, $tipoDocumento);
 ?>
 				<!-- Nav tabs -->
 					<li class="">
-						<a href="<?="#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
+						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
 					</li>
 <?php 
 	endforeach;

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<document name="proposta ordine" minOccur="1" maxOccur="1">
+	<signatures>
+		<signature role="REQ" />
+		<signature role="TF"/>
+		<signature role="RL" alt="DIR" />
+		<signature role="DIR" afterValidation="AMM" />
+	</signatures>
+	<inputs>
+		<input>test</input>
+	</inputs>
+</document>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="missione" owner="SA" from="geco">
+	<types>
+		<type>con anticipo</type>
+		<type>senza anticipo</type>
+	</types>
+	<inputs>
+		<input key="id_missione">id missione</input>
+		<input key="richiedente_cf" transform="idPersonaFromCf" values="persone" alt="cognome|nome" shortView="true">dipendente</input>
+		<input key="oggetto" shortView="true">oggetto</input>
+		<input key="localita" shortView="true">località</input>
+		<input key="data_inizio" type="data" shortView="true">data inizio missione</input>
+		<input key="data_fine" type="data">data fine missione</input>
+		<input key="importo">importo</input>
+		<input key="responsabile_lab_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
+		<input key="gae_nome">linea attività</input>
+		<input key="natura_finanziamento">natura finanziamento</input>
+		<input key="cup">cup</input>
+		<input key="titolare_fondi_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input key="responsabile_lab_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
+	</inputs>
+	<list>
+		<document load="proposta ordine.xml" />
+		<document name="richiesta di anticipo" minOccur="1" maxOccur="1"
+			onlyIfType="con anticipo">
+			<attachments minOccur="0" />
+			<signatures>
+				<signature role="REQ" />
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="richiesta noleggio mezzo" minOccur="0"
+			maxOccur="1">
+			<attachments minOccur="0" />
+			<signatures>
+				<signature role="REQ" />
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="autodichiarazione" minOccur="0"
+			mandatoryIf="trattamento alternativo">
+			<signatures>
+				<signature role="REQ" />
+			</signatures>
+		</document>
+		<document name="nota di liquidazione anticipo" minOccur="1"
+			maxOccur="1" onlyIfType="con anticipo">
+			<inputs>
+				<input>numero nota</input>
+				<input type="data">data nota</input>
+			</inputs>
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="mandato di anticipo" minOccur="1" maxOccur="1"
+			onlyIfType="con anticipo">
+			<inputs>
+				<input>numero mandato</input>
+				<input type="data">data mandato</input>
+			</inputs>
+			<signatures>
+				<signature role="SAMM" />
+			</signatures>
+		</document>
+		<document name="richiesta rimborso" minOccur="1" maxOccur="1">
+			<attachments minOccur="1" />
+			<signatures>
+				<signature role="REQ" />
+				<signature role="DIR" afterValidation="DIR,SAMM" />
+			</signatures>
+		</document>
+		<document name="nota di liquidazione" minOccur="1" maxOccur="1">
+			<inputs>
+				<input>numero nota</input>
+				<input type="data">data nota</input>
+			</inputs>
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		<document name="mandato di missione" minOccur="1" maxOccur="1">
+			<inputs>
+				<input>numero mandato</input>
+				<input type="data">data mandato</input>
+			</inputs>
+			<signatures>
+				<signature role="SAMM" />
+			</signatures>
+		</document>
+	</list>
+</masterDocument>

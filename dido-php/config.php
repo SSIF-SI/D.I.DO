@@ -41,8 +41,8 @@ if (isset ( $_GET ['logout'] )) {
 }
 
 //Session::getInstance()->destroy();
-//Session::getInstance ()->set ( AUTH_USER, $auth->getUser ( 'email' ) );
-Session::getInstance ()->set ( AUTH_USER, "ovidio.salvetti@isti.cnr.it" );
+Session::getInstance ()->set ( AUTH_USER, $auth->getUser ( 'email' ) );
+//Session::getInstance ()->set ( AUTH_USER, "ovidio.salvetti@isti.cnr.it" );
 
 // URI caching
 TurnBack::setLastHttpReferer ();

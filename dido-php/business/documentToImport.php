@@ -25,6 +25,6 @@ if(Utils::checkAjax ()){
 $list = $Application_Import
 			->getSavedDataToBeImported($from, IExternalDataSource::FILE_EXTENSION_TO_BE_IMPORTED);
 
-$pageScripts = array("MyModal.js");
+$pageScripts = array("MyModal.js","locationHash.js");
 include_once (TEMPLATES_PATH."template.php");
 ?>
