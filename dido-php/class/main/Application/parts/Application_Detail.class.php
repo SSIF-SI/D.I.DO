@@ -25,6 +25,8 @@ class Application_Detail{
 		$this->_createInfo($XMLParser, $md_data);
 		
 		$this->_flowResults = new FlowTimeline();
+		
+		$ICanManageIt = $XMLParser->isOwner($this->_userManager->getUser()->getGruppi());
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			
@@ -36,7 +38,7 @@ class Application_Detail{
 			if(count($listOnDb) == 0){
 				if($doc[XMLParser::MIN_OCCUR]){
 					$this->_flowResults->addTimelineElement(
-						new TimelineElementMissing($docName)
+						new TimelineElementMissing(ucfirst($docName), $ICanManageIt)
 					);
 					break;				
 				}
