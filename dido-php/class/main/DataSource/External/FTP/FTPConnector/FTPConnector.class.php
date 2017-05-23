@@ -176,7 +176,7 @@ class FTPConnector implements IFTPConnector {
 		
 		$ext = isset ( $path_parts ["extension"] ) ? strtolower ( $path_parts ["extension"] ) : "";
 		
-		if (in_array ( $ext, $this->_pdfExtensions )) {
+		if (in_array ( $ext, self::$_pdfExtensions )) {
 			header ( "Content-type: application/pdf" ); // add here more
 			                                            // headers for diff.
 			                                            // extensions

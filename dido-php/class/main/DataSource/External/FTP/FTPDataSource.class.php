@@ -35,6 +35,10 @@ class FTPDataSource implements IFTPDataSource{
 		return $result;
 	}
 	
+	public function download($filename){
+		$this->_ftpConnector->download($filename);
+	}
+	
 }
 
 ?>

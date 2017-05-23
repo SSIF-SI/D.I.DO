@@ -10,6 +10,8 @@ interface IXMLParser {
 
 	public function getMasterDocumentInputs();
 
+	public function getDocumentSignatures($docname);
+	
 	public function getDocList();
 
 	public function getDocTypes();

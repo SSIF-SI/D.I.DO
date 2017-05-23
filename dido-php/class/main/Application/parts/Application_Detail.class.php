@@ -1,6 +1,5 @@
 <?php 
 class Application_Detail{
-	private $_FTPDataSource;
 	private $_userManager;
 	
 	private $_redirectUrl;
@@ -8,20 +7,28 @@ class Application_Detail{
 	private $_flowResults;
 	
 	private $_defaultDocumentInputs;
+	private $_Signature;
+	private $_sigRoles;
+	private $_SignatureChecker;
 	
-	public function __construct(IUserManager $userManager, IFTPDataSource $ftpDataSource){
+	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IFTPDataSource $ftpDataSource){
 		$this->_userManager = $userManager;
-		$this->_FTPDataSource = $ftpDataSource;
+		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
 		
 		$XMLParser = new XMLParser();
 		$XMLParser->load(FILES_PATH."defaultDocumentsInputs.xml");
 		$this->_defaultDocumentInputs = $XMLParser->getXmlSource()->input;
 		
+		$this->_Signature = new Signature($dbConnector);
+		$sigRoles = new SignersRoles($dbConnector);
+		$this->_sigRoles = Utils::getListfromField($sigRoles->getAll(),SignersRoles::DESCRIZIONE, SignersRoles::SIGLA);
 	}
 	
 	public function createDetail($md){
-		
 		extract($md);
+		
+		$id_md = $md[Masterdocument::ID_MD];
+		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
 		
 		$XMLParser = new XMLParser(
 			$md[Masterdocument::XML],
@@ -43,6 +50,8 @@ class Application_Detail{
 			$docName = (string)$doc[XMLParser::DOC_NAME];
 			
 			$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
+			
+				
 				
 			if(count($listOnDb) == 0){
 				$this->_flowResults->addTimelineElement(
@@ -54,15 +63,93 @@ class Application_Detail{
 			} else {
 				//Utils::Printr($listOnDb);
 				foreach($listOnDb as $id_doc => $docData){
-					$docInfo = FormHelper::createInputsFromDB($XMLParser->getDocumentInputs($docName), $docData, true);
-					$docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, true);
 					
+					$docPath = 
+						$md[Masterdocument::FTP_FOLDER] .
+						Common::getFolderNameFromMasterdocument($md) . 
+						DIRECTORY_SEPARATOR . 
+						Common::getFilenameFromDocument($documents[$id_doc]);
+					
+					$docInfo = $this->_createDocumentInfo($XMLParser->getDocumentInputs($docName), $docData);
+					
+					$editInfoBTN = 
+						$ICanManageIt ?
+						new FlowTimelineButtonEditInfo("?md={$id_md}&d={$id_doc}") :
+						null;
+		
+					$docSignatures = $this->_createDocumentSignatures($docPath, $XMLParser->getDocumentSignatures($docName), $MDSigners);
+					
+					$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
+					$panelButtons = [];
+					
+					if($ICanManageIt || $documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME])
+						array_push($panelButtons, NEW FlowTimelineButtonUpload("?upload&md={$id_md}&d=".$id_doc));
+					
+					array_push($panelButtons, NEW FlowTimelineButtonDownload("?download&md={$id_md}&d=".$id_doc));
+					$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
+					
+					$badge = 
+						$docSignatures['errors'] ?
+						new FlowTimelineBadgeMissingSignatures() :
+						new FlowTimelineBadgeSuccess();
+					
+					$this->_flowResults->addTimelineElement(
+							new TimelineElementFull($badge, $panel)
+					);
+					
+					if($docSignatures['errors'])
+						break 2;
 				}
 			}
 			
 		}
 	}
 	
+	private function _createDocumentInfo($inputs, $docData){
+		$docInfo = FormHelper::createInputsFromDB($inputs, $docData, true);
+		$docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, true);
+		return $docInfo;
+	}
+	
+	private function _createDocumentSignatures($docPath, $docSignatures, $MDSigners){
+		if(!$docSignatures) 
+			return null;
+		
+		$signResult = [
+			'errors' => false,
+			'html'		=> []	
+		];
+		
+		$this->_SignatureChecker->load($docPath);
+		
+		foreach($docSignatures as $signature){
+			$role = (string)$signature[XMLParser::ROLE];
+			if($role == "REQ") continue;
+			if(!isset($MDSigners[$role])){
+				$signResult['errors'] = true;
+				$signResult['html'][] = "<div class=\"alert alert-danger\"><span class=\"fa fa-times\"></span> Manca la firma del {$this->_sigRoles [$role]} nel sistema DIDO!!!</div>";
+				continue;
+			}
+			
+			$who = $MDSigners[$role];
+			
+			$whoIs = Personale::getInstance()->getNominativo($who[Signers::ID_PERSONA]);
+		
+			if($this->_SignatureChecker->checkSignature($who[Signature::PKEY])){
+				$signResult['html'][] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
+				break;
+			}
+			
+			if($this->_SignatureChecker->checkSignature($who[Signature::PKEY_DELEGATO])){
+				$whoIs_Delegato = Personale::getInstance()->getNominativo($who[Signature::ID_DELEGATO]);
+				$signResult['html'][] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs_Delegato} - delegato da {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
+				break;
+			}
+			$signResult['html'][] = "<div class=\"alert alert-warning\"><span class=\"fa fa-warning\"></span> Manca la firma di {$whoIs} ({$who[SignersRoles::DESCRIZIONE]})</div>";
+		}
+		$signResult['html'] = join(PHP_EOL,$signResult['html']);
+		return $signResult;
+	}
 	
 	public function getRedirectUrl(){
 		return $this->_redirectUrl;

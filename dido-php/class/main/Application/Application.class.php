@@ -75,7 +75,7 @@ class Application {
 		$this->_Application_Import = new Application_Import($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
 		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource,$this->_userManager);
 		$this->_Application_DocumentBrowser = new Application_DocumentBrowser($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
-		$this->_Application_Detail = new Application_Detail($this->_userManager, $this->_FTPDataSource);
+		$this->_Application_Detail = new Application_Detail($this->_dbConnector, $this->_userManager, $this->_FTPDataSource);
 	}
 
 	public function getApplicationPart($part){
@@ -99,5 +99,10 @@ class Application {
 	public function getXMLDataSource(){
 		return $this->_XMLDataSource;
 	}
+	
+	public function getFTPDataSource(){
+		return $this->_FTPDataSource;
+	}
+	
 }
 ?>

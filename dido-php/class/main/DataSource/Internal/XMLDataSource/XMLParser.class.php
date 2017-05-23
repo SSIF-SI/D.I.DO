@@ -93,6 +93,13 @@ class XMLParser implements IXMLParser {
 		return $this->_xml->inputs->input;
 	}
 
+	public function getDocumentSignatures($docname){
+		$document = $this->getDocByName($docname);
+		if(!$document) return false;
+		
+		return $document->signatures->signature;
+	}
+	
 	public function getDocumentInputs($docname) {
 		foreach ( $this->getDocList () as $document ) {
 			$this->checkIfMustBeLoaded ( $document );
@@ -101,6 +108,7 @@ class XMLParser implements IXMLParser {
 				return $document->inputs->input;
 			}
 		}
+		return false;
 	}
 
 	public function getDocList() {
@@ -130,22 +138,32 @@ class XMLParser implements IXMLParser {
 			$this->checkIfMustBeLoaded ( $document );
 			$docName = (string)$document[self::DOC_NAME];
 			
-			if (! is_null ( $document->signatures->signature )) {
-				foreach ( $document->signatures->signature as $signature ) {
-					if( in_array ( $signature [self::ROLE], $sigRoles )){
-						if(!isset($signatures[(string)$signature [self::ROLE]]))
-							$signatures[(string)$signature [self::ROLE]] = [];
-						array_push($signatures[(string)$signature [self::ROLE]], $docName);
-					}
-					if( in_array ( $signature [self::ALT], $sigRoles )){
-						if(!isset($signatures[(string)$signature [self::ALT]]))
-							$signatures[(string)$signature [self::ALT]] = [];
-						array_push($signatures[(string)$signature [self::ALT]], $docName);
-						
-					}
+			$docSignatures = $this->getDocumentSignatures($docName);
+			
+			if (!$docSignatures) 
+				continue;
+
+			foreach ( $docSignatures as $signature ) {
+				if( in_array ( $signature [self::ROLE], $sigRoles )){
+					
+					if(!isset($signatures[(string)$signature [self::ROLE]]))
+						$signatures[(string)$signature [self::ROLE]] = [];
+					
+					array_push($signatures[(string)$signature [self::ROLE]], $docName);
+				}
+				if( in_array ( $signature [self::ALT], $sigRoles )){
+					
+					if(!isset($signatures[(string)$signature [self::ALT]]))
+						$signatures[(string)$signature [self::ALT]] = [];
+					
+					array_push($signatures[(string)$signature [self::ALT]], $docName);
+					
 				}
 			}
+			
 		}
+		
+		
 		return (empty($signatures) ? false : $signatures);
 	}
 

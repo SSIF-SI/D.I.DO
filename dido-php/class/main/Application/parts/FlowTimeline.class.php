@@ -1,10 +1,12 @@
-<?php class FlowTimeline{
+<?php 
+class FlowTimeline{
 	private $_timeline = [];
 	
 	public function __construct(){}
 	
 	public function addTimelineElement(ATimelineElement $timelineElement){
 		array_push($this->_timeline, $timelineElement);
+		return $this;
 	}
 	
 	public function render(){
@@ -40,16 +42,25 @@ abstract class ATimelineElement{
 
 class TimelineElementMissing extends ATimelineElement{
 
-	public function __construct($title, $mandatory, $download){
+	public function __construct($title, $mandatory, $upload){
 		
 		$buttons = [];
 		
-		if($download){
+		if($upload){
 			array_push($buttons,new FlowTimelineButtonUpload());
 		}
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			new FlowTimelineBadgeMissingDocuments(), 
 			new FlowTimelinePanel($title, $buttons, new FlowTimelinePanelBody())
+		);
+	}
+}
+
+class TimelineElementFull extends ATimelineElement{
+	public function __construct($badge, $panel){
+		$this->_FlowTimelineElement = new FlowTimelineElement(
+			$badge, 
+			$panel
 		);
 	}
 }
@@ -89,8 +100,8 @@ class FlowTimelinePanel{
 					%s
 				</div>
 			</div>
-		
 		</div>
+		<br/>
 		<div class="timeline-body">
 			%s
 		</div>
@@ -108,6 +119,7 @@ TLP;
 			foreach ($this->_buttons as $button)
 				$buttonsHTML .= $button->get();
 		}
+		
 		printf($this->_panel, $this->_title, $buttonsHTML, $this->_body->render());
 	}
 	
@@ -125,6 +137,7 @@ class FlowTimelinePanelBody{
 				<div class="row text-center">
 					%s
 				</div>
+				<br/>
 			</div>
 		</div>
 INFO;
@@ -144,13 +157,14 @@ SIGINFO;
 	private $_infoTable = null;
 	private $_signatures = null;
 		
-	public function construct($infoTable = null, $signatures = null, $editInfo = null){
+	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null){
 		$col = is_null($signatures) ? 12 : 6;
 		
 		if(!is_null($infoTable))
-			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfo);
+			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfoBTN);
 		if(!is_null($signatures))
 			$this->_signatures = sprintf(self::SIGNATURES_INFO, $signatures);
+		
 	}
 	
 	public function render(){
@@ -188,6 +202,7 @@ class FlowTimelineButtonEditInfo extends AFlowTimelinePanelButton{
 	public function __construct($href){
 		$this->_button = sprintf(self::HTML, "edit-info",$href, "fa-pencil", "Modifica informazioni documento");
 	}
+	
 }
 
 abstract class FlowTimelineBadge{

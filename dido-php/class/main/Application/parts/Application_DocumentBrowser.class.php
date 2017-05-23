@@ -17,11 +17,6 @@ class Application_DocumentBrowser{
 	private $_dbConnector;
 	
 	/*
-	 * Sorgenti di dati
-	 */
-	private $_FTPDataSource;
-	
-	/*
 	 * Gestione dati dell'utente collegato
 	 */
 	private $_userManager;
@@ -41,24 +36,22 @@ class Application_DocumentBrowser{
 	 */
 	private $_resultArray;
 	
-	
 	/*
 	 * Per il controllo dei documenti da firmare;
 	 */
-	private $_PDFParser;
+	private $_SignatureChecker;
 	
-	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IXMLDataSource $XMLDataSource, IFTPDataSource $FTPDataSource){
+	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IXMLDataSource $XMLDataSource, IFTPDataSource $ftpDataSource){
 		$this->_dbConnector = $dbConnector;
 		$this->_userManager = $userManager;
 		$this->_XMLDataSource = $XMLDataSource;
-		$this->_FTPDataSource = $FTPDataSource;
 		
 		$this->_Masterdocument = new Masterdocument ( $this->_dbConnector );
 		$this->_MasterdocumentData = new MasterdocumentData ( $this->_dbConnector );
 		$this->_Document = new Document ( $this->_dbConnector );
 		$this->_DocumentData = new DocumentData ( $this->_dbConnector );
 		
-		$this->_PDFParser = new PDFParser();
+		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
 	}
 	
 	public function get($id_md){
@@ -120,7 +113,6 @@ class Application_DocumentBrowser{
 			
 			$XMLParser = new XMLParser();
 			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
-				
 				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
 				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
 				// Se non ho il ruolo id uno dei firmatari del documento skippo
@@ -129,9 +121,7 @@ class Application_DocumentBrowser{
 					continue;
 				
 				foreach($isSigner as $role=>$listOfDocTypes){
-					$id_md = $md[Masterdocument::ID_MD];
-					$listOfDocTypes = array_values($listOfDocTypes);
-					
+					$listOfDocTypes = array_unique(array_values($listOfDocTypes));
 					$iddocToInspect = $this->_filterDocByDocType($listOfDocTypes,$id_md);
 					
 					foreach($iddocToInspect as $id_doc){
@@ -157,7 +147,7 @@ class Application_DocumentBrowser{
 								DIRECTORY_SEPARATOR .
 								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
 							
-							if($this->_checkSignature($filename, $mySignature)){
+							if($this->_SignatureChecker->load($filename)->checkSignature($mySignature)){
 								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
 							} else {
 								$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE]++;
@@ -167,7 +157,6 @@ class Application_DocumentBrowser{
 				}
 			}
 		}
-		
 		return $this;
 	}
 	
@@ -183,8 +172,10 @@ class Application_DocumentBrowser{
 		foreach($this->_resultArray[self::LABEL_MD_DATA] as $id_md => $md_data){
 			// se è già stata assegnata la proprietà ed è già mio saltro tutto 
 			if( isset($this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC]) && 
-				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC])
+				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC]){
 				continue;
+			}
+			
 			
 			// Se sono proprietario segno la proprietà e salto il resto
 			foreach($inputFields as $key){
@@ -212,6 +203,7 @@ class Application_DocumentBrowser{
 				$this->_purge($id_md);
 			
 		}
+		
 		
 		return $this;
 	}
@@ -332,31 +324,6 @@ class Application_DocumentBrowser{
 				self::LABEL_DOCUMENTS_DATA => [ ]
 		);
 		return $this;
-	}
-	
-	/*
-	 * Questa non dovrebbe essere qui
-	 * ma in un componente che "gestisce le firme"
-	 */
-	private function _checkSignature($filename, $signature) {
-		$tmpPDF = $this->_FTPDataSource->getTempFile ( $filename );
-	
-		$this->_PDFParser->loadPDF ( $tmpPDF );
-		$signaturesOnDocument = $this->_PDFParser->getSignatures ();
-	
-		unlink ( $tmpPDF );
-	
-		// Utils::printr("found ".count($signaturesOnDocument)."
-		// signature(s).");
-	
-		if (count ( $signaturesOnDocument )) {
-		foreach ( $signaturesOnDocument as $sod ) {
-		// Utils::printr($sod);
-			if ($sod->publicKey == $signature)
-			return true;
-		}
-		} else
-			return false;
 	}
 	
 	private function _compact($md_data) {

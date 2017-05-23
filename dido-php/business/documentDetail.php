@@ -10,6 +10,18 @@ if(!$md)
 
 //Utils::printr($md);
 
+if(isset($_GET['download'])){
+	extract($md);
+	
+	$filename =
+		$md[Masterdocument::FTP_FOLDER] .
+		Common::getFolderNameFromMasterdocument($md) .
+		DIRECTORY_SEPARATOR .
+		Common::getFilenameFromDocument($documents[$_GET['d']]);
+
+	$Application->getFTPDataSource()->download($filename);
+}
+
 $Application_Detail->createDetail($md);
 extract($md);
 
