@@ -40,7 +40,7 @@ abstract class ATimelineElement{
 
 class TimelineElementMissing extends ATimelineElement{
 
-	public function __construct($title, $download){
+	public function __construct($title, $mandatory, $download){
 		
 		$buttons = [];
 		
@@ -80,7 +80,7 @@ class FlowTimelinePanel{
 	private $_panel = 
 <<<TLP
 	<div class="timeline-panel">
-		<div class="timeline-body">
+		<div class="timeline-heading">
 			<div class='row'>					
 				<div class="col-lg-4">
 					<h4 class="timeline-title">%s</h4>
@@ -89,6 +89,10 @@ class FlowTimelinePanel{
 					%s
 				</div>
 			</div>
+		
+		</div>
+		<div class="timeline-body">
+			%s
 		</div>
 	</div>
 TLP;
@@ -104,29 +108,60 @@ TLP;
 			foreach ($this->_buttons as $button)
 				$buttonsHTML .= $button->get();
 		}
-		printf($this->_panel, $this->_title, $buttonsHTML);
+		printf($this->_panel, $this->_title, $buttonsHTML, $this->_body->render());
 	}
 	
 }
 
 class FlowTimelinePanelBody{
-	private $_infoTable;
-	private $_signatures;
+	const INFO_HTML = 
+<<<INFO
+		<div class="col-lg-%s">
+			<div class="panel panel-default">
+				<div class="panel-heading">Informazioni:</div>
+				<div class="panel-body">
+					%s
+				</div>
+				<div class="row text-center">
+					%s
+				</div>
+			</div>
+		</div>
+INFO;
+
+	const SIGNATURES_INFO = 
+<<<SIGINFO
+	<div class="col-lg-6">
+		<div class="panel panel-info">
+			<div class="panel-heading">Firme Digitali:</div>
+			<div class="panel-body">
+				%s
+			</div>
+		</div>
+	</div>
+SIGINFO;
+
+	private $_infoTable = null;
+	private $_signatures = null;
 		
-	public function construct($infoTable, $signatures){
-		$this->_infoTable = $infoTable;
-		$this->_signatures = $signatures;
+	public function construct($infoTable = null, $signatures = null, $editInfo = null){
+		$col = is_null($signatures) ? 12 : 6;
+		
+		if(!is_null($infoTable))
+			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfo);
+		if(!is_null($signatures))
+			$this->_signatures = sprintf(self::SIGNATURES_INFO, $signatures);
 	}
 	
 	public function render(){
-			
+		return $this->_infoTable."\n".$this->_signatures;	
 	}
 }
 
 abstract class AFlowTimelinePanelButton{
 	const HTML =
 <<<HTML
-	<a class="btn btn-info %s" type="button">
+	<a class="btn btn-info %s" href="%s" type="button">
 		<span class="fa %s fa-1x fa-fw"></span> %s</a>
 HTML;
 	
@@ -138,14 +173,20 @@ HTML;
 }
 
 class FlowTimelineButtonUpload extends AFlowTimelinePanelButton{
-	public function __construct(){
-		$this->_button = sprintf(self::HTML, "upload-doc","fa-upload", "Carica il pdf");
+	public function __construct($href="#"){
+		$this->_button = sprintf(self::HTML, "upload-doc", $href, "fa-upload", "Carica il pdf");
 	}
 }
 
 class FlowTimelineButtonDownload extends AFlowTimelinePanelButton{
-	public function __construct(){
-		$this->_button = sprintf(self::HTML, "download-doc","fa-download", "Scarica il pdf");
+	public function __construct($href="#"){
+		$this->_button = sprintf(self::HTML, "download-doc",$href, "fa-download", "Scarica il pdf");
+	}
+}
+
+class FlowTimelineButtonEditInfo extends AFlowTimelinePanelButton{
+	public function __construct($href){
+		$this->_button = sprintf(self::HTML, "edit-info",$href, "fa-pencil", "Modifica informazioni documento");
 	}
 }
 
