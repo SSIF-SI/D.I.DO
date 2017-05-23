@@ -49,10 +49,14 @@ class Signature extends AnyDocument {
 		 */
 		
 		$id_vs = array ();
+		if(empty($md_inputs))
+			return array();
+		
 		foreach ( $md_inputs as $key => $value ) {
 			if (in_array ( $key, $sigle ))
 				array_push ( $id_vs, $value );
 		}
+
 		
 		// $signatures = $this->getBy ( 'id_persona',
 		// array_merge($id_fs,$id_vs), 'sigla' );

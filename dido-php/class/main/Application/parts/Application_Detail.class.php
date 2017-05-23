@@ -26,7 +26,7 @@ class Application_Detail{
 	
 	public function createDetail($md){
 		extract($md);
-		
+	
 		$id_md = $md[Masterdocument::ID_MD];
 		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
 		

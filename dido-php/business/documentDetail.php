@@ -5,10 +5,8 @@ $Application_Detail = $Application->getApplicationPart("Detail");
 
 $md = $Application_DocumentBrowser->get($id_md);
 
-if(!$md)
+if(!$md || empty($md[Application_DocumentBrowser::LABEL_MD]))
 	Common::redirect();
-
-//Utils::printr($md);
 
 if(isset($_GET['download'])){
 	extract($md);
