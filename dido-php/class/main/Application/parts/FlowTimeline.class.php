@@ -225,7 +225,7 @@ class FlowTimelineBadgeMissingDocuments extends FlowTimelineBadge{
 	}
 }
 
-class FlowTimelineBadgeMissingSignatures extends FlowTimelineBadge{
+class FlowTimelineBadgeWarning extends FlowTimelineBadge{
 	public function __construct(){
 		$this->_badge = '<div class="timeline-badge warning"><i class="fa fa-warning"></i></div>';
 	}

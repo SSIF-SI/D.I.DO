@@ -64,7 +64,7 @@ class Application_Detail{
 				//Utils::Printr($listOnDb);
 				foreach($listOnDb as $id_doc => $docData){
 					
-					// TODO: controllare se ci sono input incompleti
+					$documentClosed = $documents[$id_doc][Document::CLOSED] != ProcedureManager::CLOSED;
 					
 					$docPath = 
 						$md[Masterdocument::FTP_FOLDER] .
@@ -91,8 +91,8 @@ class Application_Detail{
 					$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
 					
 					$badge = 
-						$docSignatures['errors'] ?
-						new FlowTimelineBadgeMissingSignatures() :
+						$docSignatures['errors'] || !$documentClosed ?
+						new FlowTimelineBadgeWarning() :
 						new FlowTimelineBadgeSuccess();
 					
 					$this->_flowResults->addTimelineElement(
@@ -100,7 +100,7 @@ class Application_Detail{
 					);
 					
 					// Se ci sono errori oppure il documento risulta ancora aperto si salta tutto il resto.
-					if($docSignatures['errors'] || $documents[$id_doc][Document::CLOSED] != ProcedureManager::CLOSED)
+					if($docSignatures['errors'] || !$documentClosed);
 						break 2;
 				}
 			}
