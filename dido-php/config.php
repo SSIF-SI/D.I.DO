@@ -36,7 +36,7 @@ spl_autoload_register ( array (
 require_once ("Auth.php");
 $auth = new Auth ( HTTP_ROOT );
 if (isset ( $_GET ['logout'] )) {
-	Session::getInstance ()->delete ( AUTH_USER );
+	Session::getInstance ()->destroy ();
 	$auth->logout ();
 }
 
