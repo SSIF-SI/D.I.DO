@@ -64,6 +64,8 @@ class Application_Detail{
 				//Utils::Printr($listOnDb);
 				foreach($listOnDb as $id_doc => $docData){
 					
+					// TODO: controllare se ci sono input incompleti
+					
 					$docPath = 
 						$md[Masterdocument::FTP_FOLDER] .
 						Common::getFolderNameFromMasterdocument($md) . 
@@ -97,7 +99,8 @@ class Application_Detail{
 							new TimelineElementFull($badge, $panel)
 					);
 					
-					if($docSignatures['errors'])
+					// Se ci sono errori oppure il documento risulta ancora aperto si salta tutto il resto.
+					if($docSignatures['errors'] || $documents[$id_doc][Document::CLOSED] != ProcedureManager::CLOSED)
 						break 2;
 				}
 			}
