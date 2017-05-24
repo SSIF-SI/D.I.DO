@@ -119,7 +119,7 @@
 		<!-- Page Content -->
 		<div id="page-wrapper">
 			<div class="container-fluid">
-            	<?php include( (strpos($_SERVER['PHP_SELF'],ADMIN_BUSINESS_PATH) !== false ? ADMIN_VIEWS_PATH : VIEWS_PATH ). (isset($view) ? $view : basename($_SERVER['PHP_SELF'])));?>
+            	<?php include( VIEWS_PATH. (isset($view) ? $view : basename($_SERVER['PHP_SELF'])));?>
             </div>
 		</div>
 	</div>
@@ -164,15 +164,14 @@
 	
 	<!-- Custom Scripts -->
 	<?php
-	if (isset ( $pageScripts )) {
-		$pageScripts = implode ( ",", array_map ( 'Utils::apici', $pageScripts ) );
-		eval ( "Utils::includeScript(SCRIPTS_PATH, $pageScripts);" );
-	}
-	
 	if(file_exists(SCRIPTS_RPATH.str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])))){
 		Utils::includeScript(SCRIPTS_PATH, str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])));
 	}
 	
+	if (isset ( $pageScripts )) {
+		$pageScripts = implode ( ",", array_map ( 'Utils::apici', $pageScripts ) );
+		eval ( "Utils::includeScript(SCRIPTS_PATH, $pageScripts);" );
+	}
 	?>
 	<script>
 		$(document).ready(function(){$(".sidebar").css("visibility","visible");});
