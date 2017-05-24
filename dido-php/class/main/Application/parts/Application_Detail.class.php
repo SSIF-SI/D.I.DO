@@ -72,14 +72,14 @@ class Application_Detail{
 						DIRECTORY_SEPARATOR . 
 						Common::getFilenameFromDocument($documents[$id_doc]);
 					
-					$docInfo = $this->_createDocumentInfo($XMLParser->getDocumentInputs($docName), $docData);
+					$docInfo = $this->createDocumentInfoPanel($XMLParser->getDocumentInputs($docName), $docData);
 					
 					$editInfoBTN = 
 						$ICanManageIt ?
 						new FlowTimelineButtonEditInfo("?md={$id_md}&d={$id_doc}") :
 						null;
 		
-					$docSignatures = $this->_createDocumentSignatures($docPath, $XMLParser->getDocumentSignatures($docName), $MDSigners);
+					$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $XMLParser->getDocumentSignatures($docName), $MDSigners);
 					
 					$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
 					$panelButtons = [];
@@ -108,13 +108,13 @@ class Application_Detail{
 		}
 	}
 	
-	private function _createDocumentInfo($inputs, $docData){
-		$docInfo = FormHelper::createInputsFromDB($inputs, $docData, true);
-		$docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, true);
+	public function createDocumentInfoPanel($inputs, $docData, $readonly = true){
+		$docInfo = FormHelper::createInputsFromDB($inputs, $docData, $readonly);
+		$docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, $readonly);
 		return $docInfo;
 	}
 	
-	private function _createDocumentSignatures($docPath, $docSignatures, $MDSigners){
+	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $MDSigners){
 		if(!$docSignatures) 
 			return null;
 		

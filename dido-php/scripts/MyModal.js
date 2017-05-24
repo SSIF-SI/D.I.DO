@@ -165,6 +165,7 @@ var MyModal = {
 					}
 				} else {
 					MyModal.busy = false;
+					$('.modal .progress').css("visibility", 'hidden');
 				}
 			}
 		}, 
@@ -267,7 +268,7 @@ var MyModal = {
 			$('#'+MyModal.MyModalId+(innerdiv == undefined ? ' .modal-result' : ' '+innerdiv))
 			.html(error ? 
 					"<div style='word-wrap: break-word; text-align:left !important' class=\"alert alert-danger \"><p><span class=\"fa fa-warning\">&nbsp;</span> Attenzione, operazione non riuscita<br/><br/>"+message+"</p></div>" : 
-			"<div class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Operazione andata a buon fine</p></div>");
+			"<div style='word-wrap: break-word; text-align:left !important' class=\"alert alert-success\"><p><span class=\"glyphicon glyphicon-ok\">&nbsp;</span> Operazione andata a buon fine</p></div>");
 		},
 		modal: function(){
 			MyModal.init();

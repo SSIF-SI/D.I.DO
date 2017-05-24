@@ -7,12 +7,6 @@ if(isset($_GET['md'])){
 	include("documentDetail.php");
 } else {
 
-	if(Utils::checkAjax ()){
-		// Ho appena postato un qualcosa
-		$ARP = new AjaxResultParser();
-	
-	}
-	
 	$list = $Application_DocumentBrowser->getAllMyPendingsDocument();
 	
 	$list[Application_DocumentBrowser::LABEL_MD] = Common::categorize($list[Application_DocumentBrowser::LABEL_MD]);

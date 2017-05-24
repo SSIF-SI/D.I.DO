@@ -189,7 +189,7 @@ class HTMLHelper {
 				if(is_string($key))
 					array_push ( $suffix, $value . "=" . $item [$key] );
 				else 
-					array_push ( $suffix, $key . "=" . $item [$key] );
+					array_push ( $suffix, $value . "=" . $item [$value] );
 						
 			}
 			$suffix = "&" . join ( "&", $suffix );
