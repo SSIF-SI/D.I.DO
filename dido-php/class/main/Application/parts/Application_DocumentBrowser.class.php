@@ -75,7 +75,26 @@ class Application_DocumentBrowser{
 		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
 	}
 	
-	public function getAllMyPendingsDocument(){
+	public function getAllMyPendingDocuments(){
+		return $this
+			->_allMyPendingDocuments()
+			// Quindi restituisco l'array
+			->getResult();
+	}
+	
+	public function getAllMyPendingDocumentsToSign(){
+		return $this->
+			_allMyPendingDocuments()
+			->_docFilter(self::MUST_BE_SIGNED_BY_ME, 1)
+			->getResult();
+	}
+	
+	public function getResult(){
+		
+		return $this->_resultArray;
+	}
+	
+	private function _allMyPendingDocuments(){
 		return $this
 			// Svuoto l'array
 			->_emptyResult()
@@ -84,15 +103,23 @@ class Application_DocumentBrowser{
 			// Creo a cascata l'albero dei risultati
 			->_createResultTree()
 			// Completo applicando i filtri in base ai "permessi utente"
-			->_complete()
-			// Quindi restituisco l'array
-			->getResult();
+			->_complete();
 	}
 	
-	
-	public function getResult(){
-		
-		return $this->_resultArray;
+	private function _docFilter($field, $value){
+		foreach($this->_resultArray[self::LABEL_DOCUMENTS] as $id_md => $docList){
+			$filtered = Utils::filterList($docList, $field, $value);
+			if(count($filtered)){
+				$this->_resultArray[self::LABEL_DOCUMENTS][$id_md] = $filtered;
+				
+				$dDatatoBeRemoved = array_diff($docList,$filtered);
+				foreach($dDatatoBeRemoved as $id_doc =>$docData){
+					unset ($this->_resultArray[self::LABEL_DOCUMENTS_DATA][$id_doc]);
+				}
+			} else 
+				$this->_purge($id_md);
+		}
+		return $this;
 	}
 	
 	private function _complete(){
@@ -113,6 +140,7 @@ class Application_DocumentBrowser{
 			
 			$XMLParser = new XMLParser();
 			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
+				$docsToBeSigned = [];
 				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
 				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
 				// Se non ho il ruolo id uno dei firmatari del documento skippo
@@ -150,11 +178,13 @@ class Application_DocumentBrowser{
 							if($this->_SignatureChecker->load($filename)->checkSignature($mySignature)){
 								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
 							} else {
-								$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE]++;
+								if(!in_array($id_doc, $docsToBeSigned))
+									array_push($docsToBeSigned, $id_doc);
 							}
 						} 
 					}
 				}
+				$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = count($docsToBeSigned);
 			}
 		}
 		return $this;

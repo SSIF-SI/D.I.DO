@@ -22,6 +22,8 @@ abstract class AProcedureManager {
 
 	abstract public function update($data);
 
+	abstract public function close($main, $status);
+
 	abstract public function delete($main);
 }
 ?>

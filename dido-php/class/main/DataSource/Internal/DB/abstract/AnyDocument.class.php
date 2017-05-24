@@ -56,12 +56,12 @@ abstract class AnyDocument extends Crud {
 		return $this->_connInstance->allResults ();
 	}
 
-	public function saveInfo($inputs, $id_parent/*,$docInputs*/){
-		$existents_input = Utils::getListfromField ( $this->searchByKeys ( array_keys ( $inputs ), $id_parent ), null, self::$KEY );
+	public function saveInfo($data, $id_parent/*,$docInputs*/){
+		$existents_input = Utils::getListfromField ( $this->searchByKeys ( array_keys ( $data ), $id_parent ), null, self::$KEY );
 		
 		$this->_connInstance->begin ();
 		
-		foreach ( $inputs as $key => $value ) {
+		foreach ( $data as $key => $value ) {
 			$result = new ErrorHandler ( false );
 			
 			if (isset ( $existents_input [$key] ) && empty ( $value )) {

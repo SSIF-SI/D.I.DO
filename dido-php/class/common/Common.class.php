@@ -23,12 +23,13 @@ class Common{
 				"/"
 		), "_", strtolower($label) ) );
 	}
-	public static function labelFromField($field) {
-		return ucfirst(strtolower ( str_replace ( array (
+	public static function labelFromField($field, $upperFirst = true) {
+		$field = strtolower ( str_replace ( array (
 				"_",
 				"'",
 				"/"
-		), " ", $field ) ) );
+		), " ", $field ) );
+		return $upperFirst ? ucfirst($field) : $field;
 	}
 	
 	public static function getNewPathFromXml($xml) {
@@ -47,6 +48,19 @@ class Common{
 	public static function redirect($url = HTTP_ROOT){
 		header("Location: " . $url);
 		die();
+	}
+	
+	public static function createPostMetadata($id_parent, $postArray){
+		$retArray = [ $id_parent => [] ];
+		foreach ( $postArray as $key=>$post ) :
+			if(preg_match("/(\d{2})\/(\d{2})\/(\d{4})$/", $post)){
+				$post = Utils::convertDateFormat($post, "d/m/Y", DB_DATE_FORMAT);
+			}
+				
+			$key = self::labelFromField($key, false);
+			$retArray [$id_parent][$key] = $post;
+		endforeach;
+		return $retArray;
 	}
 	
 }

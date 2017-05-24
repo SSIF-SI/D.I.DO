@@ -124,11 +124,16 @@ class ImportManager {
 				$this->_dbConnector->rollback ();
 				return new ErrorHandler("Il Master Document non prevede allegati, impossibile continuare");
 			}
-			$docData['nome'] = "Allegato generico";
+			$docData[Document::NOME] = "Allegato generico";
 		}
-		$XMLParser->checkIfMustBeLoaded($docToBeGenerated);
 		
+		$XMLParser->checkIfMustBeLoaded($docToBeGenerated);
 		$doc = $this->_generateDocRecord ( ( string )$docToBeGenerated [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
+		
+		// Se è un documento allegato deve essere chiuso di default
+		if(!is_null($docData)){
+			$doc[Document::CLOSED] == ProcedureManager::CLOSED;
+		}
 		
 		// Il pdf per ora lo prendo da un fakefile...
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/

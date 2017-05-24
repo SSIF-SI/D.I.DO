@@ -3,6 +3,7 @@ class FormHelper {
 	private static $warnmessages = array ();
 	private static $warnBox = "";
 	public static function createInputsFromDB($inputs, $data, $readonly = false) {
+		if(!$inputs) return;
 		ob_start ();
 		$col = 0;
 ?>

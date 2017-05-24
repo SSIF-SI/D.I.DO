@@ -4,7 +4,7 @@ class Document extends Crud {
 
 	const ID_DOC = "id_doc";
 
-	const ID_MD = "id_md";
+	const ID_MD = Masterdocument::ID_MD;
 
 	const NOME = "nome";
 

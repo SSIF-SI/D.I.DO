@@ -1,9 +1,3 @@
-<style>
-.modal-dialog{
-	width:80% !important
-}
-</style>
-
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Procedimenti in sospeso</h1>
@@ -116,7 +110,7 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 ?>
 								<td>
 									<a class="btn btn-primary detail"
-							href="?md=<?=$k?>"><span class="fa fa-search fa-1x fa-fw"></span>
+							href="?<?=Masterdocument::ID_MD?>=<?=$k?>"><span class="fa fa-search fa-1x fa-fw"></span>
 								Dettaglio</a>
 									
 								</td>

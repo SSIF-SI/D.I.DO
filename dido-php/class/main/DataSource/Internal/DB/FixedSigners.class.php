@@ -4,7 +4,7 @@ class FixedSigners extends Crud {
 
 	const ID_FS = "id_fs";
 
-	const ID_PERSONA = "id_persona";
+	const ID_PERSONA = Signers::ID_PERSONA;
 
 	const ID_DELEGATO = "id_delegato";
 

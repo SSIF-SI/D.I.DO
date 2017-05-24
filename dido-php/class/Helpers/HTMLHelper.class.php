@@ -2,7 +2,7 @@
 
 class HTMLHelper {
 
-	static function select($name, $label, $options, $selected = null, $class = null, $isImported = false, $required = true) {
+	static function select($name, $label, $options, $selected = null, $class = null, $isImported = false, $required = false) {
 		ob_start ();
 		?>
 <div class="form-group <?=$class?>">

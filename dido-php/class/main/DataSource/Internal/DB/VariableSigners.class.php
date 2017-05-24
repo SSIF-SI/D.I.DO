@@ -6,7 +6,7 @@ class VariableSigners extends Crud {
 
 	const ID_SR = "id_sr";
 
-	const ID_PERSONA = "id_persona";
+	const ID_PERSONA = Signers::ID_PERSONA;
 
 	protected $TABLE = "variable_signers";
 

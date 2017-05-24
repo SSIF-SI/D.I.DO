@@ -4,22 +4,27 @@ class FlowTimeline{
 	
 	public function __construct(){}
 	
-	public function addTimelineElement(ATimelineElement $timelineElement){
-		array_push($this->_timeline, $timelineElement);
+	public function addTimelineElement(ATimelineElement $timelineElement, $key=null){
+		if(is_null($key))
+			array_push($this->_timeline, $timelineElement);
+		else 
+			$this->_timeline[$key] = $timelineElement;
 		return $this;
 	}
 	
-	public function render(){
+	public function render($key = null){
 ?>
 		<ul class="timeline">
 <?php
-	foreach($this->_timeline as $item): 
+	foreach($this->_timeline as $k=>$item):
+		if(!is_null($key) && $k == $key): 
 ?>
 			<li>
 				<?=$item->getBadge()->render()?>
 				<?=$item->getPanel()->render()?>
 			</li>
 <?php 
+		endif;
 	endforeach;
 ?>
 		</ul>
@@ -42,12 +47,12 @@ abstract class ATimelineElement{
 
 class TimelineElementMissing extends ATimelineElement{
 
-	public function __construct($title, $mandatory, $upload){
+	public function __construct($title, $mandatory, $upload, $href){
 		
 		$buttons = [];
 		
 		if($upload){
-			array_push($buttons,new FlowTimelineButtonUpload());
+			array_push($buttons,new FlowTimelineButtonAdd($href));
 		}
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			new FlowTimelineBadgeMissingDocuments(), 
@@ -188,13 +193,13 @@ HTML;
 
 class FlowTimelineButtonUpload extends AFlowTimelinePanelButton{
 	public function __construct($href="#"){
-		$this->_button = sprintf(self::HTML, "upload-doc", $href, "fa-upload", "Carica il pdf");
+		$this->_button = sprintf(self::HTML, "upload-doc", $href, "fa-upload", "Carica");
 	}
 }
 
 class FlowTimelineButtonDownload extends AFlowTimelinePanelButton{
 	public function __construct($href="#"){
-		$this->_button = sprintf(self::HTML, "download-doc",$href, "fa-download", "Scarica il pdf");
+		$this->_button = sprintf(self::HTML, "download-doc",$href, "fa-download", "Scarica");
 	}
 }
 
@@ -202,7 +207,12 @@ class FlowTimelineButtonEditInfo extends AFlowTimelinePanelButton{
 	public function __construct($href){
 		$this->_button = sprintf(self::HTML, "edit-info",$href, "fa-pencil", "Modifica informazioni documento");
 	}
-	
+}
+
+class FlowTimelineButtonAdd extends AFlowTimelinePanelButton{
+	public function __construct($href){
+		$this->_button = sprintf(self::HTML, "add-doc",$href, "fa-plus", "Nuovo");
+	}
 }
 
 abstract class FlowTimelineBadge{

@@ -26,7 +26,7 @@ class SignatureHelper {
 <form id="firmatario" name="firmatario" method="POST">
 <?php
 			if (is_null ( $idP )) {
-				echo HTMLHelper::select ( 'id_persona', "Persona", $listPersone, isset ( $signer ['id_persona'] ) ? $signer ['id_persona'] : null );
+				echo HTMLHelper::select ( 'id_persona', "Persona", $listPersone, isset ( $signer ['id_persona'] ) ? $signer ['id_persona'] : null, null,false, true );
 			} else {
 				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $idP ) . "</p>";
 				echo HTMLHelper::input ( 'hidden', "id_persona", null, $idP );
@@ -121,7 +121,7 @@ class SignatureHelper {
 			} else {
 				echo HTMLHelper::select ( "id_sr", "Ruolo", $assignable_roles );
 			}
-			echo HTMLHelper::select ( "id_persona", "Persona", $listSigners, $fixed_signer ['id_persona'] );
+			echo HTMLHelper::select ( "id_persona", "Persona", $listSigners, $fixed_signer ['id_persona'], null, false, true );
 			echo HTMLHelper::select ( "id_delegato", "Delegato", $listDelegati, $fixed_signer ['id_delegato'] );
 			?>
 				          </form>

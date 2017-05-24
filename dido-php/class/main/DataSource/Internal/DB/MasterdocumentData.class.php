@@ -4,7 +4,7 @@ class MasterdocumentData extends AnyDocument {
 
 	const ID_MASTERDATA = "id_masterdata";
 
-	const ID_MD = "id_md";
+	const ID_MD = Masterdocument::ID_MD;
 
 	const KEY = "key";
 
@@ -12,7 +12,7 @@ class MasterdocumentData extends AnyDocument {
 
 	protected $TABLE = "master_documents_data";
 
-	protected $id_document_label = "id_md";
+	protected $id_document_label = self::ID_MD;
 
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );

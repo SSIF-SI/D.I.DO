@@ -159,13 +159,18 @@ foreach($list as $sezione => $nomeDocumento):
 										<span class="fa fa-sign-in fa-rotate-90 fa-1x fa-fw"></span> 
 										Importa
 									</a>&nbsp;
+<?php 
+if($Application->getUserManager()->isAdmin()):
+?>
 									<a 
 										class="btn btn-danger delete"
 										href="#importform-<?=$formId?>"> 
 										<span class="fa fa-trash fa-1x fa-fw"></span> 
 										Elimina
 									</a>
-									
+<?php 
+endif;
+?>
 								</td>
 							</tr>
 <?php		

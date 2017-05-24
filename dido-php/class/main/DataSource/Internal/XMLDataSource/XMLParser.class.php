@@ -101,6 +101,8 @@ class XMLParser implements IXMLParser {
 	}
 	
 	public function getDocumentInputs($docname) {
+		if(!count($this->getDocList ()))
+			return false;
 		foreach ( $this->getDocList () as $document ) {
 			$this->checkIfMustBeLoaded ( $document );
 			
@@ -201,7 +203,9 @@ class XMLParser implements IXMLParser {
 	}
 
 	public function getDocByName($docname) {
-		foreach ( $this->_xml->list->document as $document ) {
+		if(!count($this->getDocList ()))
+			return null;
+		foreach ( $this->getDocList() as $document ) {
 			$this->checkIfMustBeLoaded ( $document );
 			if (( string ) $document [self::DOC_NAME] == $docname)
 				return $document;

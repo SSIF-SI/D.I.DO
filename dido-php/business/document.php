@@ -3,11 +3,11 @@ require_once("../config.php");
 
 $Application_DocumentBrowser = $Application->getApplicationPart(Application::DOCUMENTBROWSER);
 
-if(isset($_GET['md'])){
+if(isset($_GET[Masterdocument::ID_MD])){
 	include("documentDetail.php");
 } else {
 
-	$list = $Application_DocumentBrowser->getAllMyPendingsDocument();
+	$list = $Application_DocumentBrowser->getAllMyPendingDocuments();
 	
 	$list[Application_DocumentBrowser::LABEL_MD] = Common::categorize($list[Application_DocumentBrowser::LABEL_MD]);
 	

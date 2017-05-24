@@ -51,6 +51,10 @@ class ProcedureManager implements IProcedureManager {
 		return $this->_MDPManager->update ( $md_data );
 	}
 
+	public function updateDocumentData($data) {
+		return $this->_DPManager->update( $data );
+	}
+
 	public function closeIncompleteMasterdocument($md) {
 		return $this->_MDPManager->close($md, self::INCOMPLETE );
 	}
@@ -97,7 +101,7 @@ class ProcedureManager implements IProcedureManager {
 
 	public function updateDocument($document, $data, $filePath = null, $repositoryPath = null) {
 		$this->_dbConnector->begin ();
-		if (! $this->_DPManager->update ( $data )) {
+		if (! $this->updateDocumentData( $data )) {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
@@ -126,6 +130,14 @@ class ProcedureManager implements IProcedureManager {
 		}
 		$this->_dbConnector->commit ();
 		return true;
+	}
+
+	public function checkIfMDMustBeClosed($md){
+		
+	}
+	
+	public function checkIfDocMustBeClosed($doc){
+		
 	}
 
 	private function uploadFile($doc, $filePath, $repositoryPath) {

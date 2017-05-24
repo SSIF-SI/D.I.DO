@@ -4,7 +4,7 @@ class UsersRoles extends Crud {
 
 	const ID_PERSONA = "id_persona";
 
-	const ID_RUOLO = "id_ruolo";
+	const ID_RUOLO = Roles::ID_RUOLO;
 
 	const RUOLO = Roles::RUOLO;
 

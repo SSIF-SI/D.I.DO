@@ -44,6 +44,17 @@ class DocumentProcedureManager extends AProcedureManager {
 		return true;
 	}
 
+	public function close($main,$status) {
+		if (empty ( $main ))
+			return false;
+	
+		$main [Document::CLOSED] = $status;
+		$Document = new Document( $this->getDbConnector () );
+		$result = $Document->save ( $main );
+	
+		return $result->getErrors () === false ? false : true;
+	}
+	
 	public function delete($main) {
 		if (empty ( $main ))
 			return false;
