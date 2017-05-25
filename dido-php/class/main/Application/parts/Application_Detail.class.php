@@ -54,7 +54,7 @@ class Application_Detail{
 			$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
 			if(count($listOnDb) == 0){
 				$this->_flowResults->addTimelineElement(
-					new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?upload&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+					new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 				);
 			
 				if($doc[XMLParser::MIN_OCCUR])
@@ -70,21 +70,23 @@ class Application_Detail{
 		// Ora si aggiunge eventuali allegati
 		$XMLParser->load(XML_STD_PATH."allegato.xml");
 		$docToSearch = $XMLParser->getXmlSource();
+		$docInputs = $docToSearch->inputs->input;
 		$docName = $docToSearch[XMLParser::DOC_NAME];
 		$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
 		
 		if(count($listOnDb)){
-			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docToSearch->inputs->input);
+			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docInputs);
 		} else {
-			$this->_flowResults->addTimelineElement(
-					new TimelineElementMissing(ucfirst($docName), false, $ICanManageIt, "?upload&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
-			);
+			if($this->_userManager->isGestore()){
+				$this->_flowResults->addTimelineElement(
+						new TimelineElementMissing(ucfirst($docName), false, $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+				);
+			}
 		} 
 	}
 	
-	private function _parse($listOnDb, $limit, $md, $documents, $documents_data, $ICanManageIt, $docInfo, $signatures = false, $MDSigners = null){
+	private function _parse($listOnDb, $limit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
-		
 		foreach($listOnDb as $id_doc => $docData){
 				
 			$docName = $documents[$id_doc][Document::NOME];
@@ -92,20 +94,20 @@ class Application_Detail{
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
 				
 			$IMustSignIt =
-			$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
-			$documents[$id_doc][Application_DocumentBrowser::IS_SIGNED_BY_ME];
-		
+				$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
+				!$documents[$id_doc][Application_DocumentBrowser::IS_SIGNED_BY_ME];
+			
 			$docPath =
 				$md[Masterdocument::FTP_FOLDER] .
 				Common::getFolderNameFromMasterdocument($md) .
 				DIRECTORY_SEPARATOR .
 				Common::getFilenameFromDocument($documents[$id_doc]);
 				
-			$docInfo = $this->createDocumentInfoPanel($docInfo, $documents_data[$id_doc]);
+			$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc]);
 				
 			$editInfoBTN =
 			$ICanManageIt ?
-			new FlowTimelineButtonEditInfo("?".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
+			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
 				
@@ -118,30 +120,30 @@ class Application_Detail{
 			// - il documento non è chiuso e
 			// - posso gestirlo o devo firmarlo
 			if( !$documentClosed && ( $ICanManageIt || $IMustSignIt ) )
-				array_push($panelButtons, new FlowTimelineButtonUpload("?upload&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+				array_push($panelButtons, new FlowTimelineButtonUpload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
 			// Di default lo posso scaricare sempre
-			array_push($panelButtons, new FlowTimelineButtonDownload("?download&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 
 			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
 			if(!$limit || count($listOnDb) < $limit)
-				array_push($panelButtons, new FlowTimelineButtonAdd("?upload&".Masterdocument::ID_MD."={$id_md}"));
+				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
 				
 			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
 				
 			$badge =
-			$docSignatures['errors'] || !$documentClosed ?
-			new FlowTimelineBadgeWarning() :
-			new FlowTimelineBadgeSuccess();
-				
+				($signatures && $docSignatures['errors']) || !$documentClosed ?
+				new FlowTimelineBadgeWarning() :
+				new FlowTimelineBadgeSuccess();
+					
 			$this->_flowResults->addTimelineElement(
 					new TimelineElementFull($badge, $panel),
 					$id_doc
 			);
 				
 			// Se ci sono errori oppure il documento risulta ancora aperto si salta tutto il resto.
-			if($docSignatures['errors'] || !$documentClosed);
-			return false;
+			if(($signatures && $docSignatures['errors']) || !$documentClosed )
+				return false;
 		}
 		return true;
 	}
@@ -153,18 +155,11 @@ class Application_Detail{
 	}
 	
 	public function updateDocumentData($id_doc, $docInputs, $documents_data){
-		$documents_data = Common::createPostMetadata($id_doc, $documents_data);
+		$documents_data = Common::createPostMetadata($documents_data,$id_doc);
 		$result = $this->_ProcedureManager->updateDocumentData($documents_data);
 		return new ErrorHandler($result ? false : "Impossibile aggiornare i dati");
 	}
-	
-	public function editInfo($docInputs, $documents_data){
-		$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data, false);
-		echo("<form method='POST'>$docInfo</form>");
-		Utils::includeScript(SCRIPTS_PATH, "datepicker.js");
-		die();
-	}
-	
+
 	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $MDSigners){
 		if(!$docSignatures) 
 			return null;

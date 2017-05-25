@@ -1,7 +1,11 @@
 <?php 
 require_once("../config.php");
-
 $Application_DocumentBrowser = $Application->getApplicationPart(Application::DOCUMENTBROWSER);
+
+if(isset($_GET['action'])){
+	$Application->manageAction($_GET['action']);
+	die();
+}
 
 if(isset($_GET[Masterdocument::ID_MD])){
 	include("documentDetail.php");

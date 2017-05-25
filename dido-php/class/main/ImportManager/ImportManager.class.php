@@ -132,8 +132,9 @@ class ImportManager {
 		
 		// Se è un documento allegato deve essere chiuso di default
 		if(!is_null($docData)){
-			$doc[Document::CLOSED] == ProcedureManager::CLOSED;
+			$doc[Document::CLOSED] = ProcedureManager::CLOSED;
 		}
+		
 		
 		// Il pdf per ora lo prendo da un fakefile...
 		$filePath = /*REAL_ROOT . self::FAKEFILE;*/

@@ -17,14 +17,14 @@ class FlowTimeline{
 		<ul class="timeline">
 <?php
 	foreach($this->_timeline as $k=>$item):
-		if(!is_null($key) && $k == $key): 
+		if(!is_null($key) && $k != $key)
+			continue;
 ?>
 			<li>
 				<?=$item->getBadge()->render()?>
 				<?=$item->getPanel()->render()?>
 			</li>
 <?php 
-		endif;
 	endforeach;
 ?>
 		</ul>

@@ -50,18 +50,28 @@ class Common{
 		die();
 	}
 	
-	public static function createPostMetadata($id_parent, $postArray){
-		$retArray = [ $id_parent => [] ];
+	public static function createPostMetadata($postArray, $id_parent=null){
+		$retArray = [ ];
+		
 		foreach ( $postArray as $key=>$post ) :
 			if(preg_match("/(\d{2})\/(\d{2})\/(\d{4})$/", $post)){
 				$post = Utils::convertDateFormat($post, "d/m/Y", DB_DATE_FORMAT);
 			}
 				
 			$key = self::labelFromField($key, false);
-			$retArray [$id_parent][$key] = $post;
+			$retArray [$key] = $post;
 		endforeach;
+		
+		if(!is_null($id_parent))
+			$retArray = [$id_parent => $retArray];
+		
 		return $retArray;
-	}
+	}	
 	
+	public static function getFileExtension($file){
+		$path_parts = pathinfo($file);
+		return $path_parts['extension'];
+		
+	}
 }
 ?>

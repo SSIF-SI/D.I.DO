@@ -21,6 +21,7 @@ class DocumentProcedureManager extends AProcedureManager {
 		
 		// Step 2. salvo i dati associati nella tabella document_data se
 		// presenti
+		
 		if (! empty ( $data )) {
 			if (! $this->_saveDocData ( $data, $id_doc )) {
 				$this->getDBConnector ()->rollback ();

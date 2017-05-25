@@ -5,4 +5,11 @@ $(document).ready(function(){
 		MyModal.setTitle($(this).html());
 		MyModal.editModal(this);
 	});
+	
+	$('a.add-doc, a.upload-doc').click(function (e) {
+		e.preventDefault();
+		MyModal.setTitle("Carica documento");
+		MyModal.editModal(this);
+	});
+	
 });
