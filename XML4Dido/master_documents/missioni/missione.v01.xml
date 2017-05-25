@@ -16,7 +16,7 @@
 		<input key="responsabile_lab_cf" transform="gruppoFromCf" values="gruppi">laboratorio</input>
 		<input key="gae_nome">linea attività</input>
 		<input key="natura_finanziamento">natura finanziamento</input>
-		<input key="cup">cup</input>
+		<input key="cup" mandatory="0">cup</input>
 		<input key="titolare_fondi_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
 		<input key="responsabile_lab_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
