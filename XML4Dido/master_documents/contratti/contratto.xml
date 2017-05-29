@@ -7,15 +7,15 @@
 		<type>prestazione professionale</type>
 	</types>
 	<inputs>
-		<input>Descrittivo GAE</input>
-		<input>Laboratorio</input>
-		<input>Progetto</input>
-		<input>Nominativo</input>
-		<input>Numero contratto</input>
-		<input type="data">Data inizio</input>
-		<input type="data">Data fine</input>
-		<input>titolare dei fondi</input>
-		<input>responsabile di laboratorio</input>
+		<input>descrittivo GAE</input>
+		<input values="gruppi">laboratorio</input>
+		<input values="progetti">progetto</input>
+		<input values="persone">nominativo</input>
+		<input>numero contratto</input>
+		<input type="data">data inizio</input>
+		<input type="data">data fine</input>
+		<input values="titolariFondi" signRole="TF">titolare dei fondi</input>
+		<input values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />

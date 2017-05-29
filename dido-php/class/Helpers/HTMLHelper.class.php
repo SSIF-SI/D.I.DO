@@ -155,7 +155,7 @@ class HTMLHelper {
 	private static function lineInput($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false) {
 		$more = $type == 'file' ? 'data-show-upload="false" data-allowed-file-extensions=\'["pdf", "p7m"]\'' : null;
 		$more .= $isImported ? " readonly=\"readonly\"" : null;
-		$required = $required ? "required" : null;
+		$required = $required ? "required=\"required\"" : null;
 		$class = $type == "hidden" ? null : "class=\"form-control $class\"";
 		
 		if ($imported === true && $type == "data") {

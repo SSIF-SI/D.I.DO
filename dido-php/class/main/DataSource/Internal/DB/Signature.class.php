@@ -27,18 +27,19 @@ class Signature extends AnyDocument {
 	}
 
 	public function getSigners($id_md, $md_inputs) {
-		$signesr = array ();
+		$signers = array ();
 		$sigle = array ();
 		$result = array ();
-		
 		$fixedSigners = new FixedSigners ( DBConnector::getInstance () );
 		$id_fs = array_unique ( Utils::getListfromField ( $fixedSigners->getAll (), FixedSigners::ID_PERSONA ) );
+		
 		$id_fs = join ( ", ", array_map ( "Utils::apici", $id_fs ) );
 		$fixed = Utils::filterList ( $this->getBy ( FixedSigners::ID_PERSONA, $id_fs ), self::FIXED_ROLE, 1 );
 		$signers = Utils::getListfromField ( $fixed, null, self::SIGLA );
 		
 		$SignersRoles = new SignersRoles ( DBConnector::getInstance () );
 		$sigle = $SignersRoles->getRoleDescription ();
+		
 		
 		/*
 		 * $masterDocumentData = new MasterdocumentData (
@@ -61,10 +62,13 @@ class Signature extends AnyDocument {
 		// $signatures = $this->getBy ( 'id_persona',
 		// array_merge($id_fs,$id_vs), 'sigla' );
 		// $id_s = array_unique(array_merge($id_fs,$id_vs));
-		$id_vs = join ( ", ", array_map ( "Utils::apici", $id_vs ) );
-		
-		$signers = array_merge ( $signers, Utils::getListfromField ( $this->getBy ( self::ID_PERSONA, $id_vs ), null, self::SIGLA ) );
+		if(count($id_vs))
+		{	
+			$id_vs = join ( ", ", array_map ( "Utils::apici", $id_vs ) );
+			$signers = array_merge ( $signers, Utils::getListfromField ( $this->getBy ( self::ID_PERSONA, $id_vs ), null, self::SIGLA ) );
+		}
 		return $signers;
+		//return $signers;
 	}
 }
 

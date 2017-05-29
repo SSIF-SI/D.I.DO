@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <masterDocument name="incasso" owner="SA">
-	<inputs>
-		<input>Descrittivo GAE</input>
-		<input>Laboratorio</input>
-		<input>Progetto</input>
-		<input>Natura</input>
-		<input>Voce del piano dei conti</input>
-		<input>CUP</input>
-	</inputs>
 	<types>
 		<type>con accertamento</type>
 		<type>con procedimento unico di accertamento</type>
 	</types>
+	<inputs>
+		<input>descrittivo GAE</input>
+		<input values="gruppi">laboratorio</input>
+		<input values="progetti">progetto</input>
+		<input>natura</input>
+		<input>voce del piano dei conti</input>
+		<input>cup</input>
+	</inputs>
 	<list>
 		<document name="accertamento" minOccur="1" maxOccur="1"
 			onlyIfType="con accertamento">

@@ -118,7 +118,7 @@ class XMLParser implements IXMLParser {
 	}
 
 	public function getDocTypes() {
-		return ( array ) $this->_xml->types;
+		return ( array ) $this->_xml->types->type;
 	}
 
 	public function getSource() {

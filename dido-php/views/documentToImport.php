@@ -10,11 +10,11 @@
 	</div>
 </div>
 <?php 
-if(!count(!$list)){
+if(!count($list)){
 ?>
-<div class="alert alert-danger">Nessun documento da importare.</div>
+<div class="alert alert-danger">Nessuno.</div>
 <?php 
-die();
+return;
 }
 ?>
 <div class="panel-body">

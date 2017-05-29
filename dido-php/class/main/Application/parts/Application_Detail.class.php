@@ -38,8 +38,9 @@ class Application_Detail{
 		);
 		
 		$this->_redirectUrl = TurnBack::getLastHttpReferer()."#".dirname($md[Masterdocument::XML])."/#".Common::fieldFromLabel($md[Masterdocument::NOME]);
-		$this->_createAdditionalInfo($XMLParser, $md_data);
+		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data);
 		$this->_flowResults = new FlowTimeline();
+		
 		
 		$ICanManageIt =
 			$this->_userManager->isAdmin() ||
@@ -67,6 +68,8 @@ class Application_Detail{
 			
 		}
 		
+		if(!count($listOnDb))
+			return;
 		// Ora si aggiunge eventuali allegati
 		$XMLParser->load(XML_STD_PATH."allegato.xml");
 		$docToSearch = $XMLParser->getXmlSource();
@@ -148,9 +151,11 @@ class Application_Detail{
 		return true;
 	}
 	
-	public function createDocumentInfoPanel($inputs, $docData, $readonly = true){
+	public function createDocumentInfoPanel($inputs, $docData, $readonly = true, $mdInfo = false){
+		
 		$docInfo = FormHelper::createInputsFromDB($inputs, $docData, $readonly);
-		$docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, $readonly);
+		if(!$mdInfo) $docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, $readonly);
+		
 		return $docInfo;
 	}
 	
@@ -216,7 +221,7 @@ class Application_Detail{
 		return $this->_flowResults;
 	}
 	
-	private function _createAdditionalInfo($XMLParser, $md_data){
+	private function _createAdditionalInfo($XMLParser, $id_md, $md_data){
 		$readOnly =
 		!is_null($XMLParser->getSource()) ?
 		true : (
@@ -227,7 +232,11 @@ class Application_Detail{
 				true
 		);
 		
-		$this->_info = FormHelper::createInputsFromDB($XMLParser->getMasterDocumentInputs(), $md_data, $readOnly);
+		$infoPanel = FormHelper::createInputsFromDB($XMLParser->getMasterDocumentInputs(), $md_data, true);
+		if(!$readOnly)
+			$infoPanel .= "<div class=\"text-center\"><a href=\"?action=".Application_ActionManager::ACTION_EDIT_MD_INFO."&".Masterdocument::ID_MD."=".$id_md."\" class=\"btn btn-primary ".Application_ActionManager::ACTION_EDIT_MD_INFO."\">Modifica informazioni</a></div>";
+		
+		$this->_info = $infoPanel;
 	}	
 	
 }

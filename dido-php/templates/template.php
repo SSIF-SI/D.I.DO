@@ -111,6 +111,7 @@
 						</li>
                        	<?=$Application->getApplicationPart(Application::NAVIGATOR)->renderLeftMenu()?>
                     </ul>
+                    
 				</div>
 				<!-- /.sidebar-collapse -->
 			</div>
@@ -174,7 +175,16 @@
 	}
 	?>
 	<script>
-		$(document).ready(function(){$(".sidebar").css("visibility","visible");});
+		$(document).ready(function(){
+			$(".sidebar").css("visibility","visible");
+			
+			$('a.editMdInfo').click(function (e) {
+				e.preventDefault();
+				MyModal.setTitle($(this).html());
+				MyModal.editModal(this);
+			});
+		});
+		
 	</script>	
 </body>
 

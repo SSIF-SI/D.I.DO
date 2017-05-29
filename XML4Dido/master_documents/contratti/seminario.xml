@@ -2,13 +2,13 @@
 
 <masterDocument name="seminario" owner="SA">
 	<inputs>
-		<input>Descrittivo GAE</input>
-		<input>Laboratorio</input>
-		<input>Progetto</input>
-		<input>Nominativo</input>
-		<input type="data">Data</input>
+		<input>descrittivo GAE</input>
+		<input values="gruppi">laboratorio</input>
+		<input values="progetti">progetto</input>
+		<input values="persone">nominativo</input>
+		<input type="data">data</input>
 		<input>titolare dei fondi</input>
-		<input>responsabile di laboratorio</input>
+		<input values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
 		<document load="proposta ordine.xml" />

@@ -7,3 +7,4 @@
 <div class="row">
 	<?php TemplateHelperNew::createDashboardPanels($data);?>
 </div>
+<script type="text/javascript" src="<?=SCRIPTS_PATH?>MyModal.js"></script>

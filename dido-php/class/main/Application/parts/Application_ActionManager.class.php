@@ -2,6 +2,7 @@
 class Application_ActionManager {
 	private $_ftpDataSource;
 	private $_dbConnector;
+	private $_XMLDataSource;
 	
 	private $_Application_DocumentBrowser;
 	private $_Application_Detail;
@@ -14,16 +15,22 @@ class Application_ActionManager {
 	const ACTION_EDIT_INFO = "editInfo";
 	const ACTION_EDIT_MD_INFO = "editMdInfo";
 	
-	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource){
+	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource, IXMLDataSource $XMLDataSource){
 		$this->_Application_Detail = $App_Detail;
 		$this->_Application_DocumentBrowser = $App_DB;
 		$this->_dbConnector = $dbConnector;
 		$this->_ftpDataSource = $ftpDataSource;	
+		$this->_XMLDataSource = $XMLDataSource;
 		
 		$this->_ProcedureManager = new ProcedureManager($dbConnector, $ftpDataSource);	
 	}
 	
-	public function download($md){
+	public function download(){
+		$md = $this->_getMd($_GET);
+		
+		if($md instanceof ErrorHandler)
+			return $md;
+		
 		extract($md);
 		
 		$filename =
@@ -35,9 +42,14 @@ class Application_ActionManager {
 		$this->_ftpDataSource->download($filename);
 	}
 	
-	public function editInfo($md){
+	public function editInfo(){
 		if (!isset($_GET[Document::ID_DOC]))
-			return false;	
+			return new ErrorHandler("Paramewtri mancanti");	
+		
+		$md = $this->_getMd($_GET);
+		
+		if($md instanceof ErrorHandler)
+			return $md;
 		
 		extract($md);
 		
@@ -67,12 +79,17 @@ class Application_ActionManager {
 		}
 		
 		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], false);
-		echo("<form method='POST'>$docInfo</form>");
+		echo("<form>$docInfo</form>");
 		Utils::includeScript(SCRIPTS_PATH, "datepicker.js");
 		die();
 	}
 	
-	public function upload($md){
+	public function upload(){
+		$md = $this->_getMd($_GET);
+		
+		if($md instanceof ErrorHandler)
+			return $md;
+		
 		$ARP = new AjaxResultParser();
 		$eh = new ErrorHandler(false);
 			
@@ -140,5 +157,103 @@ class Application_ActionManager {
 		}
 		include(VIEWS_PATH."docUpload.php");
 	}
+	
+	public function editMdInfo(){
+		if(count($_POST)){
+			$ARP = new AjaxResultParser();
+			$eh = new ErrorHandler(false);
+
+			if(isset($_GET[Masterdocument::ID_MD])){
+				$md_data = Common::createPostMetadata($_POST);
+				$result = $this->_ProcedureManager->updateMasterdocument($md_data);
+				
+				if(!$result)
+					$eh->setErrors("Impossibile aggiornare i dati");
+			} else {
+			
+				$md_name = $_GET[XMLParser::MD_NAME];
+					
+				$filters = [$md_name];
+				
+				$xml = $this->_XMLDataSource
+					->filter(new XMLFilterDocumentType($filters))
+					->filter(new XMLFilterValidity(date("Y-m-d")))
+					->getFirst();
+				
+				$type = isset($_POST[XMLParser::TYPE]) ? $_POST[XMLParser::TYPE] : null;
+				unset($_POST[XMLParser::TYPE]);
+				
+				$md = [
+					Masterdocument::NOME 	=> $md_name,
+					Masterdocument::TYPE 	=> $type,
+					Masterdocument::XML 	=> $xml[XMLDataSource::LABEL_FILE]
+				];
+				
+				$md_data = Common::createPostMetadata($_POST);
+				
+				$md = $this->_ProcedureManager->createMasterdocument($md, $md_data);
+					
+				if(!$md)
+					$eh->setErrors("Impossibile salvare i dati");
+				else {
+					$eh->setOtherData("href", BUSINESS_HTTP_PATH."document.php?".Masterdocument::ID_MD."=".$md[Masterdocument::ID_MD]);
+				}
+			}
+			
+			$ARP->encode($eh->getErrors(true));
+		}
+		
+		$XMLParser = new XMLParser();
+		$md_data = [];
+		
+		if(isset($_GET[Masterdocument::ID_MD])){
+			$md = $this->_getMd($_GET);
+			
+			if($md instanceof ErrorHandler)
+				return $md;
+			
+			extract($md);
+			$XMLParser->setXMLSource($md[Masterdocument::XML], $md[Masterdocument::TYPE]);
+		} else {
+			// New
+			$md_name = $_GET[XMLParser::MD_NAME];
+				
+			$filters = [$md_name];
+				
+			$xml = $this->_XMLDataSource
+			->filter(new XMLFilterDocumentType($filters))
+			->filter(new XMLFilterValidity(date("Y-m-d")))
+			->getFirst();
+
+			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML]);
+			
+			$types = $XMLParser->getDocTypes();
+			
+		}
+		
+		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($XMLParser->getMasterDocumentInputs(), $md_data, false, true);
+		if(!empty($types)){
+			$types = array_combine($types, array_map(function($el){return ucfirst($el);}, $types));
+			$docInfo = HTMLHelper::select(XMLParser::TYPE, "Tipo", $types, null, null, false, true).$docInfo;
+		}
+		
+		echo("<form>$docInfo</form>");
+		Utils::includeScript(SCRIPTS_PATH, "datepicker.js");
+		die();		
+	}
+	
+	private function _getMD(){
+		if(!isset($_GET[Masterdocument::ID_MD]))
+			return new ErrorHandler("Parametri mancanti");
+		
+		$id_md = $_GET[Masterdocument::ID_MD];
+		$md = $this->_Application_DocumentBrowser->get($id_md);
+		
+		if(!$md)
+			return new ErrorHandler("Master Document non trovato");
+			
+		return $md;
+	}
+	
 }
 ?>

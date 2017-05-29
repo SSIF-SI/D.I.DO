@@ -4,11 +4,11 @@
 	</div>
 </div>
 <?php 
-if(!count(!$list[Application_DocumentBrowser::LABEL_MD])){
+if(!count($list[Application_DocumentBrowser::LABEL_MD])){
 ?>
 <div class="alert alert-danger">Nessuno.</div>
 <?php
-die();
+return;
 } 
 ?>
 <div class="panel-body">

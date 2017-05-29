@@ -2,9 +2,9 @@
 
 <masterDocument name="trasferimento a partner" owner="SA">
 	<inputs>
-		<input>Descrittivo GAE</input>
-		<input>Laboratorio</input>
-		<input>Progetto</input>
+		<input>descrittivo GAE</input>
+		<input values="gruppi">laboratorio</input>
+		<input values="progetti">progetto</input>
 	</inputs>
 	<list>
 		<document name="lettera di trasmissione" minOccur="1"

@@ -48,8 +48,8 @@ class Application_Navigator {
 					<li><a href="#"><?=ucfirst($categoria)?><span class="fa arrow"></span></a>
 			<ul class="nav nav-third-level">
 					<?php foreach($dati as $tipoDocumento => $xmlList):?>
-						<li><a
-					href="<?=BUSINESS_HTTP_PATH."documento.php?type=$tipoDocumento"?>"><?=ucwords($tipoDocumento)?></a>
+						<li><a class="<?=Application_ActionManager::ACTION_EDIT_MD_INFO?>"
+					href="<?=BUSINESS_HTTP_PATH."document.php?action=".Application_ActionManager::ACTION_EDIT_MD_INFO."&".XMLParser::MD_NAME."=$tipoDocumento"?>"><?=ucwords($tipoDocumento)?></a>
 				</li>
 					<?php endforeach;?>
 					</ul></li>
@@ -66,4 +66,3 @@ class Application_Navigator {
 	}
 }
 ?>
-

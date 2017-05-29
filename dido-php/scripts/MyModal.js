@@ -136,6 +136,7 @@ var MyModal = {
 			MyModal.load($(context));
 		},
 		submit:function (params){
+			
 			// params:
 			// (element,href, data, innerdiv, contentType, processData,callback,download)
 			if(MyModal.busy == false){
@@ -205,7 +206,10 @@ var MyModal = {
 								
 								$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
 								$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').remove();
-								location.reload(true);
+								if(result.otherData.href != undefined)
+									location.href = result.otherData.href;
+								else
+									location.reload(true);
 							});
 						}
 					}
@@ -219,7 +223,7 @@ var MyModal = {
 						$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').prop('disabled', false);
 						if(MyModal.span != null )
 							MyModal.span.attr('class', MyModal.oldClass);
-						MyModal.error("Errore imprevisto", params.innerdiv);
+						MyModal.error("Errore imprevisto durante la richiesta", params.innerdiv);
 					}
 				}
 			});

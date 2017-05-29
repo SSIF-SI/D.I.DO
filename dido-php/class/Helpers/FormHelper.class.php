@@ -24,8 +24,13 @@ class FormHelper {
 			$required = is_null ( $input [XMLParser::MANDATORY] ) ? true : ( bool ) ( string ) $input [XMLParser::MANDATORY];
 			// $required = is_null($input['mandatory']) ? true : false;
 			
-			$key = ( string ) $input;
+			$key = strtolower(( string ) $input);
+			
+			$field = Common::fieldFromLabel($key);
+			$label = Common::labelFromField($key);
+			
 			$value = $data [$key];
+			
 			if (isset ( $input [XMLParser::VALUES] )) {
 				$callBack = ( string ) $input [XMLParser::VALUES];
 				$values = ListHelper::$callBack ();
@@ -37,16 +42,16 @@ class FormHelper {
 			
 			?>
 <div class="col-lg-4">
-        <?php if($readonly || !$editable):?>
+        <?php ;if($readonly || !$editable):?>
 		        <strong><?=ucfirst($key)?> <?php HTMLHelper::checkRequired($required);?></strong><br />
 	<em><?=empty($value) ? "&nbsp;" : $value?></em>
 		
              
 			 <?php else :
 				if (is_null ( $input [XMLParser::VALUES] ))
-					$input_html = HTMLHelper::input ( $type, $key, ucfirst ( $key ), $value, null, $required );
+					$input_html = HTMLHelper::input ( $type, $field, $label, $value, null, $required );
 				else {
-					$input_html = HTMLHelper::select ( $key, ucFirst ( $key ), $values, $rValue );
+					$input_html = HTMLHelper::select ($field, $label, $values, $rValue, null, false, $required );
 				}
 				echo $input_html;
 			endif;

@@ -132,6 +132,7 @@ class ImportManager {
 		
 		// Se è un documento allegato deve essere chiuso di default
 		if(!is_null($docData)){
+			$doc[Document::IMPORTED_FILE_NAME] = $import_filename_field;
 			$doc[Document::CLOSED] = ProcedureManager::CLOSED;
 		}
 		

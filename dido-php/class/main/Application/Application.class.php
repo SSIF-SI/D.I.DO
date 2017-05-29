@@ -79,7 +79,7 @@ class Application {
 		$this->_Application_Navigator = new Application_Navigator($this->_dbConnector, $this->_XMLDataSource,$this->_userManager);
 		$this->_Application_DocumentBrowser = new Application_DocumentBrowser($this->_dbConnector, $this->_userManager, $this->_XMLDataSource, $this->_FTPDataSource);
 		$this->_Application_Detail = new Application_Detail($this->_dbConnector, $this->_userManager, $this->_FTPDataSource);
-		$this->_Application_ActionManager = new Application_ActionManager($this->_Application_DocumentBrowser, $this->_Application_Detail, $this->_dbConnector, $this->_FTPDataSource);
+		$this->_Application_ActionManager = new Application_ActionManager($this->_Application_DocumentBrowser, $this->_Application_Detail, $this->_dbConnector, $this->_FTPDataSource, $this->_XMLDataSource);
 	}
 
 	public function getApplicationPart($part){
@@ -112,13 +112,7 @@ class Application {
 		if(!method_exists($this->_Application_ActionManager, $action))
 			return new ErrorHandler("Azione non prevista");
 	
-		if(!isset($_GET[Masterdocument::ID_MD]))
-			return new ErrorHandler("Parametri mancanti");
-	
-		$id_md = $_GET[Masterdocument::ID_MD];
-		$md = $this->_Application_DocumentBrowser->get($id_md);
-	
-		$result = $this->_Application_ActionManager->$action($md);
+		return $this->_Application_ActionManager->$action();
 	}
 }
 ?>

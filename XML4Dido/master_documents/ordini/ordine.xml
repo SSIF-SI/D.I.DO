@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="acquisto" owner="SA" from="geco">
+<masterDocument name="ordine" owner="SA" from="geco">
 	<types>
 		<type>mepa</type>
 		<type>fuori mepa</type>
@@ -20,7 +20,7 @@
 		<input key="codice_cig" mandatory="0">cig</input>
 		<input key="codice_cup" mandatory="0">cup</input>
 		<input key="numero_mepa" mandatory="0">numero mepa</input>
-		<input key="titolare_fondi_cf" transform="idPersonaFromCf" values="responsabili" signRole="TF">titolare dei fondi</input>
+		<input key="titolare_fondi_cf" transform="idPersonaFromCf" values="titolariFondi" signRole="TF">titolare dei fondi</input>
 		<input key="responsabile_lab_cf" transform="idPersonaFromCf" values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>
 	<list>
