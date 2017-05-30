@@ -43,6 +43,8 @@ class XMLParser implements IXMLParser {
 	
 	const EDITABLE = "editable";
 	
+	const SIGN_ROLE = "signRole";
+	
 	// Common Params
 	const MANDATORY = "mandatory";
 

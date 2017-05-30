@@ -96,7 +96,10 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 						if(isset($input[XMLParser::VALUES])){
 							$callback = ( string ) $input[XMLParser::VALUES];
 							$values = ListHelper::$callback();
-							$value = $values[$value];
+							if(isset($input[XMLParser::SIGN_ROLE])){
+								$values_alt = ListHelper::persone();
+							}
+							$value = isset($values[$value]) ? $values[$value] : $values_alt[$value];
 						}
 						if($input[XMLParser::TYPE] == "data")
 							$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");

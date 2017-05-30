@@ -31,7 +31,7 @@ class ListHelper {
 	static function persone() {
 		return array_map ( function ($id) {
 			return Personale::getInstance()->getNominativo ( $id );
-		}, Utils::getListfromField ( Personale::getInstance ()->getPersone (), Personale::ID_PERSONA ) );
+		}, Utils::getListfromField ( Personale::getInstance ()->getPersonale (), Personale::ID_PERSONA ) );
 	}
 
 	static function signers() {

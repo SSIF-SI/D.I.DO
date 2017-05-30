@@ -12,6 +12,8 @@ class Personale {
 	
 	const CODICE_FISCALE = "codiceFiscale";
 	
+	const PERSONE = "persone";
+	
 	const PERSONALE = "personale";
 	
 	const GRUPPI = "gruppi";
@@ -38,10 +40,11 @@ class Personale {
 			ini_set ( "soap.wsdl_cache_enabled", "0" );
 			$wsdl_url = "http://pimpa.isti.cnr.it/PERSONALE/web-services/dido/dido.wsdl";
 			$client = new SoapClient ( $wsdl_url );
+			$persone = json_decode ( json_encode ( $client->persone () ), true );
 			$personale = json_decode ( json_encode ( $client->personale () ), true );
 			$gruppi = json_decode ( json_encode ( $client->gruppi () ), true );
 			$progetti = json_decode ( json_encode ( $client->progetti () ), true );
-			Session::getInstance()->set(self::SESSIONKEY_PERSONALE,[self::PERSONALE => $personale, self::GRUPPI => $gruppi, self::PROGETTI => $progetti]);
+			Session::getInstance()->set(self::SESSIONKEY_PERSONALE,[self::PERSONE => $persone, self::PERSONALE => $personale, self::GRUPPI => $gruppi, self::PROGETTI => $progetti]);
 			Session::getInstance()->setKeyDuration(self::SESSIONKEY_PERSONALE, 3600);
 		}
 		
@@ -49,7 +52,9 @@ class Personale {
 		
 		$sessionPersonale = Session::getInstance()->get(self::SESSIONKEY_PERSONALE);
 		
-		$this->_persone = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], null, self::ID_PERSONA );
+		$this->_persone = Utils::getListfromField ( $sessionPersonale[self::PERSONE], null, self::ID_PERSONA );
+		
+		$this->_personale = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], null, self::ID_PERSONA );
 		$this->_cfId = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], self::ID_PERSONA, self::CODICE_FISCALE );
 		$this->_email = Utils::getListfromField ( $sessionPersonale[self::PERSONALE], self::ID_PERSONA, self::EMAIL );
 		
@@ -75,6 +80,10 @@ class Personale {
 		return $this->_persone;
 	}
 
+	public function getPersonale() {
+		return $this->_personale;
+	}
+
 	public function getGruppi() {
 		return $this->_gruppi;
 	}
@@ -96,11 +105,11 @@ class Personale {
 	}
 	
 	public function getPersonabyCf($cf) {
-		return isset ( $this->_cfId [$cf] ) ? $this->_persone [$this->_cfId [$cf]] : false;
+		return isset ( $this->_cfId [$cf] ) ? $this->_personale [$this->_cfId [$cf]] : false;
 	}
 
 	public function getPersonabyEmail($email) {
-		return isset ( $this->_email [$email] ) ? $this->_persone [$this->_email [$email]] : false;
+		return isset ( $this->_email [$email] ) ? $this->_personale [$this->_email [$email]] : false;
 	}
 
 	public function getGruppo($sigla) {

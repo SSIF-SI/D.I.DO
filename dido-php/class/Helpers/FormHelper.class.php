@@ -31,11 +31,19 @@ class FormHelper {
 			
 			$value = $data [$key];
 			
-			if (isset ( $input [XMLParser::VALUES] )) {
-				$callBack = ( string ) $input [XMLParser::VALUES];
-				$values = ListHelper::$callBack ();
+			
+			if(isset($input[XMLParser::VALUES])){
 				$rValue = $value;
-				$value = $values [$value];
+				$callback = ( string ) $input[XMLParser::VALUES];
+				$values = ListHelper::$callback();
+				if(isset($input[XMLParser::SIGN_ROLE])){
+					$values_alt = ListHelper::persone();
+				}
+				
+				$old = !isset($values[$value]);
+				
+				$value = isset($values[$value]) ? $values[$value] : $values_alt[$value];
+				
 			}
 			if ($type == "data")
 				$value = Utils::convertDateFormat ( $value, DB_DATE_FORMAT, "d/m/Y" );
@@ -48,10 +56,13 @@ class FormHelper {
 		
              
 			 <?php else :
-				if (is_null ( $input [XMLParser::VALUES] ))
+				if (!isset ( $input [XMLParser::VALUES] ))
 					$input_html = HTMLHelper::input ( $type, $field, $label, $value, null, $required );
 				else {
-					$input_html = HTMLHelper::select ($field, $label, $values, $rValue, null, false, $required );
+					if($old == false)
+						$input_html = HTMLHelper::select ($field, $label, $values, $rValue, null, false, $required );
+					else 
+						$input_html = HTMLHelper::fakeInput ( $field, $label, $value, $rValue, $required);
 				}
 				echo $input_html;
 			endif;

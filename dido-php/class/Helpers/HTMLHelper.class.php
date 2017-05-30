@@ -23,7 +23,7 @@ class HTMLHelper {
 		return ob_get_clean ();
 	}
 
-	static function input($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false) {
+static function input($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false) {
 		ob_start ();
 		if ($type == 'hidden' || $type == 'file') :
 			if ($type != 'hidden' && ! is_null ( $label )) :
@@ -51,6 +51,15 @@ class HTMLHelper {
 		endif;
 		return ob_get_clean ();
 	}
+	
+	static function fakeInput($name, $label, $value = null, $rValue, $required = false) {
+		ob_start ();
+?>
+	<label class="control-label" for="<?=$name?>"><?=$label?>:<?php self::checkRequired($required)?></label>
+	<div><?=$value?><input type="hidden" id="<?=$name?>" name="<?=$name?>" value="<?=$rValue?>" /></div>
+<?php 	
+		return ob_get_clean ();
+		}
 
 	static function multipleInput($type, $name, $label, $options, $selected = array(), $class = null, $inline = false, $required = false) {
 		ob_start ();
