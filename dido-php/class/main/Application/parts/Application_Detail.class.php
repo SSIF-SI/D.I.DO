@@ -153,8 +153,8 @@ class Application_Detail{
 	
 	public function createDocumentInfoPanel($inputs, $docData, $readonly = true, $mdInfo = false){
 		
-		$docInfo = FormHelper::createInputsFromDB($inputs, $docData, $readonly);
-		if(!$mdInfo) $docInfo .= FormHelper::createInputsFromDB($this->_defaultDocumentInputs, $docData, $readonly);
+		$docInfo = FormHelper::createInputs($inputs, $docData, $readonly);
+		if(!$mdInfo) $docInfo .= FormHelper::createInputs($this->_defaultDocumentInputs, $docData, $readonly);
 		
 		return $docInfo;
 	}
@@ -232,7 +232,7 @@ class Application_Detail{
 				true
 		);
 		
-		$infoPanel = FormHelper::createInputsFromDB($XMLParser->getMasterDocumentInputs(), $md_data, true);
+		$infoPanel = FormHelper::createInputs($XMLParser->getMasterDocumentInputs(), $md_data, true);
 		if(!$readOnly)
 			$infoPanel .= "<div class=\"text-center\"><a href=\"?action=".Application_ActionManager::ACTION_EDIT_MD_INFO."&".Masterdocument::ID_MD."=".$id_md."\" class=\"btn btn-primary ".Application_ActionManager::ACTION_EDIT_MD_INFO."\">Modifica informazioni</a></div>";
 		

@@ -2,7 +2,7 @@
 class FormHelper {
 	private static $warnmessages = array ();
 	private static $warnBox = "";
-	public static function createInputsFromDB($inputs, $data, $readonly = false) {
+	public static function createInputs($inputs, $data, $readonly = false) {
 		if(!$inputs) return;
 		ob_start ();
 		$col = 0;
@@ -65,68 +65,7 @@ class FormHelper {
 <?php 
 		return ob_get_clean ();
 	}
-	
-	public static function fieldFromLabel($label) {
-		return strtolower ( str_replace ( array (
-				" ",
-				"'",
-				"/"
-		), "_", strtolower($label) ) );
-	}
-	public static function labelFromField($field) {
-		return strtolower ( str_replace ( array (
-				"_",
-				"'",
-				"/"
-		), " ", ucfirst($field) ) );
-	}
-	public static function createInputsFromXml($xmlInputs, $colDivision = 4, $_IMPORT = array()) {
-		$inputs = array ();
-		if (count ( $xmlInputs )) {
-			foreach ( $xmlInputs as $input ) {
-				$type = is_null ( $input ['type'] ) ? 'text' : ( string ) $input ['type'];
-				$required = is_null ( $input ['mandatory'] ) ? true : boolvar ( $input ['mandatory'] );
-				$label = ( string ) $input;
-				$field = /*isset($_POST[$field]) ?*/ self::fieldFromLabel ( $label ) /*: (string)$input['key']*/;
-				$value = isset ( $_POST [$field] ) ? $_POST [$field] : (isset ( $_IMPORT [( string ) $input ['key']] ) ? $_IMPORT [( string ) $input ['key']] : null);
-				
-				/* IN REALTA NN VA FATTO QUI... DA VEDERE... */
-				if (! is_null ( $input ['transform'] ) && empty ( $_POST )) {
-					$callback = ( string ) $input ['transform'];
-					$value = ImportHelper::$callback ( $value );
-				}
-				
-				$warning = FormHelper::getWarnMessages ( $field );
-				$class = isset ( $warning ['class'] ) ? $warning ['class'] : null;
-				
-				if (is_null ( $input ['values'] ))
-					$input_html = HTMLHelper::input ( $type, $field, $label, $value, $class, $required, ! is_null ( $input ['from'] ) );
-				else {
-					$callback = ( string ) $input ['values'];
-					$options = ListHelper::$callback ();
-					$input_html = HTMLHelper::select ( $field, $label, $options, $value, $class, ! is_null ( $input ['from'] ) );
-					if (! is_null ( ($input ['alt']) ) && ! isset ( $options [$value] )) {
-						$alt = ( string ) $input ['alt'];
-						$alt = explode ( "|", $alt );
-						$alt = array_map ( function ($el) use($_IMPORT) {
-							$el = trim ( $el );
-							if (! empty ( $_IMPORT [$el] ))
-								return $_IMPORT [$el];
-						}, $alt );
-						$join = isset ( $input ['join'] ) ? ( string ) $input ['join'] : " ";
-						$value = join ( $join, $alt );
-						$input_html = HTMLHelper::input ( $type, $field, $label, $value, $class, $required, ! is_null ( $input ['from'] ) );
-					}
-				}
-				
-				if ($type != 'hidden')
-					$input_html = "<div class=\"col-lg-$colDivision\">$input_html</div>";
-				array_push ( $inputs, $input_html );
-			}
-		}
 		
-		return $inputs;
-	}
 	public static function check($REQUEST, $inputs) {
 		self::$warnmessages = array ();
 		self::$warnBox = "";
@@ -135,8 +74,8 @@ class FormHelper {
 			
 			$label = ( string ) $input;
 			$field = self::fieldFromLabel ( $label );
-			$type = is_null ( $input ['type'] ) ? 'text' : ( string ) $input ['type'];
-			$mandatory = is_null ( $input ['mandatory'] ) ? true : $input ['mandatory'];
+			$type = is_null ( $input [XMLParser::TYPE] ) ? 'text' : ( string ) $input [XMLParser::TYPE];
+			$mandatory = is_null ( $input [XMLParser::MANDATORY] ) ? true : $input [XMLParser::MANDATORY];
 			
 			if ($mandatory) {
 				if ($type != 'hidden') { // I tipi nascosti a regola sono sempre
@@ -159,60 +98,20 @@ class FormHelper {
 			self::$warnBox = HTMLHelper::saveErrorBox ( $errors );
 		}
 	}
+	
 	public static function isValid() {
 		$errors = Utils::filterList ( self::$warnmessages, 'error', true );
 		return count ( $errors ) == 0;
 	}
+	
 	public static function getWarnMessages($item = null) {
 		return is_null ( $item ) ? self::$warnmessages : (isset ( self::$warnmessages [$item] ) ? self::$warnmessages [$item] : null);
 	}
+	
 	public static function getWarnBox() {
 		return self::$warnBox;
 	}
-	public static function editInfo($id_parent, $postData, $inputs, $infoData, $dataObj) {
-		$docInfo = is_array ( $inputs );
-		if (! $docInfo)
-			$inputs = array (
-					$inputs 
-			);
-		
-		if (count ( $postData ) > 0) {
-			
-			foreach ( $postData as $k => $input ) {
-				unset ( $postData [$k] );
-				$postData [self::labelFromField ( $k )] = $input;
-			}
-			
-			foreach ( $inputs as $list ) {
-				foreach ( $list as $input ) {
-					$key = ( string ) $input;
-					if (isset ( $postData [$key] ) && $input ['type'] == 'data') {
-						$postData [$key] = Utils::convertDateFormat ( $postData [$key], "d/m/Y", DB_DATE_FORMAT );
-					}
-				}
-			}
-			
-			$result = $dataObj->saveInfo ( $postData, $id_parent/*,$inputs*/,true );
-			die ( $result );
-		}
-		?>
-<form role="form" method="POST" name="edit-inputs-<?=$_GET['md']?>"
-	enctype="multipart/form-data">
-	<div class="row">
-		<?php
-		$htmlInputs = "";
-		foreach ( $inputs as $k => $input ) {
-			$htmlInputs .= self::createInputsFromDB ( $input, $infoData, false, $docInfo );
-		}
-		
-		echo ($htmlInputs);
-		echo '<script type="text/javascript" src="' . SCRIPTS_PATH . 'datepicker.js" />';
-		?>
-				</div>
-</form>
-<?php
-	}
-	
+
 	private static function checkField($type, $var, $field, $label) {
 		$var [$field] = trim ( $var [$field] );
 		

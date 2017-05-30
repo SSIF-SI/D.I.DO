@@ -126,7 +126,7 @@ class HTMLHelper {
 		<tbody>
 					<?php foreach($list as $key=>$row):?>
 					<tr
-				id="row-<?=/*$row['variable'] ? 'variable' : 'fixed'?>-<?=$row['id_persona']*/$key?>">
+				id="row-<?=$key?>">
 						<?php foreach($row as $field=>$value):?>
 							<?php if(isset($hidden) && in_array($field,$hidden)) continue;?>
 						<td><?=isset($substitutes[$key][$field]) ? $substitutes[$key][$field] : $value?></td>
@@ -214,13 +214,6 @@ class HTMLHelper {
 				'substitutes' => $substitutes,
 				'buttons' => $buttons 
 		);
-	}
-
-	static function createDetailFromObj($obj, $xml, $type) {
-		$XMLParser = new XMLParser ( $xml, $type );
-		$inputs = $XMLParser->getMasterDocumentInputs ();
-		
-		return FormHelper::createInputsFromXml ( $inputs, 4, $obj );
 	}
 
 	public static function checkRequired($required) {

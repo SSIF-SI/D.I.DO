@@ -4,6 +4,6 @@
 	</div>
 </div>
 <div class="row">
-	<?php TemplateHelperNew::createDashboardPanels($data);?>
+	<?php TemplateHelper::createDashboardPanels($data);?>
 </div>
 <script type="text/javascript" src="<?=SCRIPTS_PATH?>MyModal.js"></script>

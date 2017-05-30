@@ -8,7 +8,7 @@ class FixedSigners extends Crud {
 
 	const ID_DELEGATO = "id_delegato";
 
-	const ID_SR = "id_sr";
+	const ID_SR = SignersRoles::ID_SR;
 
 	protected $TABLE = "fixed_signers";
 

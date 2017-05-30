@@ -222,7 +222,7 @@ class XMLParser implements IXMLParser {
 
 	public function generateData($data, $inputs) {
 		foreach ( $inputs as $input ) {
-			$data_key = FormHelper::fieldFromLabel ( ( string ) $input );
+			$data_key = Common::fieldFromLabel( ( string ) $input );
 			$mandatory = isset ( $input [XMLParser::MANDATORY] ) ? ( bool ) ( string ) $input [XMLParser::MANDATORY] : true;
 			
 			if (empty ( $data [$data_key] ) && $mandatory) 

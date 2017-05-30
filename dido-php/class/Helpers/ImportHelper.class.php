@@ -12,9 +12,5 @@ class ImportHelper {
 		$gruppo = reset ( $gruppo );
 		return $gruppo ['sigla'];
 	}
-
-	static function dateFromDB($data) {
-		return Utils::convertDateFormat ( $data, DB_DATE_FORMAT, "d/m/Y" );
-	}
 }
 ?>
