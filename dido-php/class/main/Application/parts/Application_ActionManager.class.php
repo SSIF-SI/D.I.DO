@@ -37,7 +37,6 @@ class Application_ActionManager {
 
 	}
 	
-	
 	public function download(){
 		$md = $this->_getMd($_GET);
 		
