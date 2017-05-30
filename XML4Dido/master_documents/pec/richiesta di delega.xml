@@ -2,12 +2,12 @@
 
 <masterDocument name="richiesta di delega" owner="SAS - PC">
 	<inputs>
-		<input>titolo</input>
-		<input values="persone">responsabile scientifico</input>
-		<input values="areeProgettuali">area progettuale</input>
-		<input>tipo atto</input>
+		<input shortView="true">titolo</input>
+		<input values="persone" shortView="true">responsabile scientifico</input>
+		<input values="areeProgettuali" shortView="true">area progettuale</input>
+		<input shortView="true">tipo atto</input>
 		<input>bando</input>
-		<input values="esitiRichiesteDiDelega">esito</input>
+		<input values="esitiRichiesteDiDelega" shortView="true">esito</input>
 		<input type="textarea">note</input>
 	</inputs>
 	<list>

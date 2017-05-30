@@ -12,14 +12,14 @@
 	</types>
 	<inputs>
 		<input values="progetti" mandatory="0">acronimo progetto</input>
-		<input>titolo</input>
-		<input values="persone">responsabile scientifico</input>
-		<input values="gruppi">gruppo</input>
-		<input values="areeProgettuali">area progettuale</input>
+		<input shortView="true">titolo</input>
+		<input values="persone" shortView="true">responsabile scientifico</input>
+		<input values="gruppi" shortView="true">gruppo</input>
+		<input values="areeProgettuali" shortView="true">area progettuale</input>
 		<input mandatory="0">ambito</input>
 		<input>controparti</input>
 		<input values="ruoliAttivitaPec">ruolo</input>
-		<input values="esitiAttivitaPec">esito</input>
+		<input values="esitiAttivitaPec" shortView="true">esito</input>
 	</inputs>
 	<list>
 		<document name="atto" minOccur="1">

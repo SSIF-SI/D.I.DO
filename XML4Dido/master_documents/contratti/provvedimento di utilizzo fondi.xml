@@ -2,11 +2,11 @@
 
 <masterDocument name="provvedimento di utilizzo fondi" owner="SA">
 	<inputs>
-		<input>descrittivo GAE</input>
-		<input values="gruppi">laboratorio</input>
-		<input values="progetti">progetto</input>
+		<input shortView="true">descrittivo gae</input>
+		<input values="gruppi" shortView="true">laboratorio</input>
+		<input values="progetti" shortView="true">progetto</input>
 		<input>descrittivo</input>
-		<input>riferimento contratto</input>
+		<input shortView="true">riferimento contratto</input>
 	</inputs>
 	<list>
 		<document name="provvedimento utilizzo fondi" minOccur="1" maxOccur="1">

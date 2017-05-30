@@ -77,7 +77,7 @@ foreach($list as $sezione => $nomeDocumento):
 <?php 
 		endforeach;
 ?>
-								<th>
+								<th class="text-right">
 									<a 
 										class="btn btn-primary disabled action import-selected"
 										href="#<?=$tipoDocumento_field?>"> 
@@ -124,7 +124,7 @@ foreach($list as $sezione => $nomeDocumento):
 				endif;
 			endforeach;			
 ?>
-								<td>
+								<td class="text-right">
 									<form 
 										style="display: none" 
 										role="form" 

@@ -24,7 +24,7 @@ class FormHelper {
 			$required = is_null ( $input [XMLParser::MANDATORY] ) ? true : ( bool ) ( string ) $input [XMLParser::MANDATORY];
 			// $required = is_null($input['mandatory']) ? true : false;
 			
-			$key = strtolower(( string ) $input);
+			$key = Common::labelFromField((string)$input, false);
 			
 			$field = Common::fieldFromLabel($key);
 			$label = Common::labelFromField($key);

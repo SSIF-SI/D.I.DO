@@ -2,9 +2,9 @@
 
 <masterDocument name="variazione di bilancio" owner="SA">
 	<inputs>
-		<input>descrittivo GAE</input>
-		<input values="gruppi">laboratorio</input>
-		<input values="progetti">progetto</input>
+		<input shortView="true">descrittivo gae</input>
+		<input values="gruppi" shortView="true">laboratorio</input>
+		<input values="progetti" shortView="true">progetto</input>
 	</inputs>
 	<list>
 		<document name="variazione di bilancio" minOccur="1"

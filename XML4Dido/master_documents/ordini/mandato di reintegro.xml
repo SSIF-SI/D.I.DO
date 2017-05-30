@@ -2,8 +2,8 @@
 
 <masterDocument name="mandato di reintegro" owner="SA">
 	<inputs>
-		<input>numero mandato</input>
-		<input type="data">data mandato</input>
+		<input shortView="true">numero mandato</input>
+		<input type="data" shortView="true">data mandato</input>
 	</inputs>
 	<list>
 		<document md="ordine cassa" key="id_md" minOccur="1" />

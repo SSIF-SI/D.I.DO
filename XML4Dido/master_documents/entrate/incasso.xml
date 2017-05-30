@@ -6,12 +6,12 @@
 		<type>con procedimento unico di accertamento</type>
 	</types>
 	<inputs>
-		<input>descrittivo GAE</input>
-		<input values="gruppi">laboratorio</input>
-		<input values="progetti">progetto</input>
-		<input>natura</input>
-		<input>voce del piano dei conti</input>
-		<input>cup</input>
+		<input shortView="true">descrittivo gae</input>
+		<input values="gruppi" shortView="true">laboratorio</input>
+		<input values="progetti" shortView="true">progetto</input>
+		<input shortView="true">natura</input>
+		<input shortView="true">voce del piano dei conti</input>
+		<input shortView="true">cup</input>
 	</inputs>
 	<list>
 		<document name="accertamento" minOccur="1" maxOccur="1"

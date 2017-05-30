@@ -7,13 +7,13 @@
 		<type>prestazione professionale</type>
 	</types>
 	<inputs>
-		<input>descrittivo GAE</input>
-		<input values="gruppi">laboratorio</input>
-		<input values="progetti">progetto</input>
-		<input values="persone">nominativo</input>
+		<input shortView="true">descrittivo gae</input>
+		<input values="gruppi" shortView="true">laboratorio</input>
+		<input values="progetti" shortView="true">progetto</input>
+		<input values="persone" shortView="true">nominativo</input>
 		<input>numero contratto</input>
-		<input type="data">data inizio</input>
-		<input type="data">data fine</input>
+		<input type="data" shortView="true">data inizio</input>
+		<input type="data" shortView="true">data fine</input>
 		<input values="titolariFondi" signRole="TF">titolare dei fondi</input>
 		<input values="responsabili" signRole="RL">responsabile di laboratorio</input>
 	</inputs>

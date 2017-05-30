@@ -2,10 +2,10 @@
 
 <masterDocument name="richiesta di costi" owner="SAS - PC">
 	<inputs>
-		<input values="progetti">acronimo progetto</input>
-		<input>periodo</input>
-		<input values="tipiElaborazione">tipo elaborazione</input>
-		<input values="gruppi">gruppo</input>
+		<input values="progetti" shortView="true">acronimo progetto</input>
+		<input shortView="true">periodo</input>
+		<input values="tipiElaborazione" shortView="true">tipo elaborazione</input>
+		<input values="gruppi" shortView="true">gruppo</input>
 	</inputs>
 	<list>
 		<document name="richiesta di costi" minOccur="1" maxOccur="1">

@@ -2,11 +2,11 @@
 
 <masterDocument name="compenso" owner="SA">
 	<inputs>
-		<input>descrittivo GAE</input>
-		<input values="gruppi">laboratorio</input>
-		<input values="progetti">progetto</input>
-		<input values="persone">destinatario</input>
-		<input>riferimento contratto</input>
+		<input shortView="true">descrittivo gae</input>
+		<input values="gruppi" shortView="true">laboratorio</input>
+		<input values="progetti" shortView="true">progetto</input>
+		<input values="persone" shortView="true">destinatario</input>
+		<input shortView="true">riferimento contratto</input>
 	</inputs>
 	<list>
 		<document name="compenso" minOccur="1" maxOccur="1">
