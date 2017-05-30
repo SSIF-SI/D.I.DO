@@ -21,7 +21,7 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 ?>
 	<!-- Nav tabs -->
 		<li class="">
-			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=$sezione." ($badgeValue)"?></a>
+			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($sezione)." ($badgeValue)"?></a>
 		</li>
 <?php 
 endforeach; 
@@ -44,7 +44,7 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 ?>
 				<!-- Nav tabs -->
 					<li class="">
-						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
+						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=ucFirst($tipoDocumento)." ($badgeValue)"?></a>
 					</li>
 <?php 
 	endforeach;

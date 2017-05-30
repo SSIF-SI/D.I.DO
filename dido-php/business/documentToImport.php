@@ -9,6 +9,8 @@ if(!isset($_GET['from'])){
 	
 $from = $_GET['from'];
 
+define (PAGE_TITLE, "Proposte da ".$from);
+
 if(Utils::checkAjax ()){
 	
 	

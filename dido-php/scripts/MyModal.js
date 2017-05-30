@@ -206,7 +206,7 @@ var MyModal = {
 								
 								$("<h4>Attendere... <i class=\"fa fa-refresh fa-spin fa-1x fa-fw\"></i></h4>").appendTo(".modal-footer");
 								$('#'+MyModal.MyModalId+' button[data-dismiss="modal"]').remove();
-								if(result.otherData.href != undefined)
+								if(result.otherData != null && result.otherData.href != null)
 									location.href = result.otherData.href;
 								else
 									location.reload(true);

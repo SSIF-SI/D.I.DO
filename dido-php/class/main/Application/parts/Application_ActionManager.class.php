@@ -164,7 +164,8 @@ class Application_ActionManager {
 			$eh = new ErrorHandler(false);
 
 			if(isset($_GET[Masterdocument::ID_MD])){
-				$md_data = Common::createPostMetadata($_POST);
+				$id_md = $_GET[Masterdocument::ID_MD];
+				$md_data[$id_md] = Common::createPostMetadata($_POST);
 				$result = $this->_ProcedureManager->updateMasterdocument($md_data);
 				
 				if(!$result)

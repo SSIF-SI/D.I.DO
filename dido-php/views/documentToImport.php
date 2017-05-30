@@ -1,9 +1,3 @@
-<style>
-.modal-dialog{
-	width:80% !important
-}
-</style>
-
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Proposte da <?=$from?></h1>
@@ -26,7 +20,7 @@ foreach($list as $sezione => $nomeDocumento):
 ?>
 	<!-- Nav tabs -->
 		<li class="">
-			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=$sezione." ($badgeValue)"?></a>
+			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($sezione)." ($badgeValue)"?></a>
 		</li>
 <?php 
 endforeach; 
@@ -48,7 +42,7 @@ foreach($list as $sezione => $nomeDocumento):
 ?>
 				<!-- Nav tabs -->
 					<li class="">
-						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=$tipoDocumento." ($badgeValue)"?></a>
+						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($tipoDocumento)." ($badgeValue)"?></a>
 					</li>
 <?php 
 	endforeach;

@@ -1,6 +1,7 @@
 <div class="row">
 	<div class="col-lg-12">
-		<h1><?=ucfirst($md[Masterdocument::NOME]." ".$md[Masterdocument::TYPE])?></h1>
+		<h1><?=ucfirst($md[Masterdocument::NOME])?></h1>
+		<h3><?=ucfirst($md[Masterdocument::TYPE])?></h3>
 	</div>
 </div>
 <a href="<?=$Application_Detail->getRedirectUrl()?>">Torna all'elenco</a>

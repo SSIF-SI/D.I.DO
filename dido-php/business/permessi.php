@@ -32,6 +32,8 @@ if (Utils::checkAjax ()) {
 	}
 }
 
+define (PAGE_TITLE, "Gestione Permessi");
+
 $list = $userRolesObj->getAll ( "id_persona, ruolo,id_ruolo" );
 $metadata = HTMLHelper::createMetadata ( $list, basename ( $_SERVER ['PHP_SELF'] ), array (
 		"id_persona",

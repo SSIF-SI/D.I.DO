@@ -38,6 +38,8 @@ if (Utils::checkAjax ()) {
 	}
 }
 
+define (PAGE_TITLE, "Gestione Firme");
+
 $signers = SignatureHelper::getSigners ();
 
 $pageScripts = array (

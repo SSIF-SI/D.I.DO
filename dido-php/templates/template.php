@@ -9,7 +9,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title><?=PAGE_TITLE_PREFIX?></title>
+<title><?=PAGE_TITLE_PREFIX.(defined("PAGE_TITLE") ? " - ".PAGE_TITLE : "");?></title>
 
 <!-- Bootstrap Core CSS -->
 <link href="<?=SB_ADMIN_2?>vendor/bootstrap/css/bootstrap.css"
@@ -57,7 +57,14 @@
 	/* symbol for "collapsed" panels */
 	content: "\e117"; /* adjust as needed, taken from bootstrap.css */
 }
+
+@media only screen and (min-width: 780px){
+.modal-dialog{
+	width:80% !important
+}
+
 </style>
+
 </head>
 
 <body>
