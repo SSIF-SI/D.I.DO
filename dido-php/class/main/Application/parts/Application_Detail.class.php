@@ -131,6 +131,8 @@ class Application_Detail{
 			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
 			if(!$limit || count($listOnDb) < $limit)
 				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
+			if(!($signatures && $docSignatures['errors']))
+				array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
 			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
 				
@@ -148,6 +150,7 @@ class Application_Detail{
 			if(($signatures && $docSignatures['errors']) || !$documentClosed )
 				return false;
 		}
+		
 		return true;
 	}
 	

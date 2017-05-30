@@ -13,6 +13,7 @@ class Application_ActionManager {
 	const ACTION_UPLOAD = "upload";
 	const ACTION_DOWNLOAD = "download";
 	const ACTION_EDIT_INFO = "editInfo";
+	const ACTION_CLOSE_DOC = "closedocument";
 	const ACTION_EDIT_MD_INFO = "editMdInfo";
 	
 	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource, IXMLDataSource $XMLDataSource){
@@ -24,6 +25,18 @@ class Application_ActionManager {
 		
 		$this->_ProcedureManager = new ProcedureManager($dbConnector, $ftpDataSource);	
 	}
+	
+	public function closedocument(){
+		if (!isset($_GET[Document::ID_DOC]))
+			return new ErrorHandler("Parametri mancanti");	
+		extract($this->_getMd($_GET));
+		
+		$doc = new Document($this->_dbConnector);
+		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
+		$this->_ProcedureManager->closeDocument($doc);
+
+	}
+	
 	
 	public function download(){
 		$md = $this->_getMd($_GET);
@@ -44,7 +57,7 @@ class Application_ActionManager {
 	
 	public function editInfo(){
 		if (!isset($_GET[Document::ID_DOC]))
-			return new ErrorHandler("Paramewtri mancanti");	
+			return new ErrorHandler("Parametri mancanti");	
 		
 		$md = $this->_getMd($_GET);
 		
