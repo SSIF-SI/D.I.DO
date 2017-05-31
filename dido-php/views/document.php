@@ -92,18 +92,7 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 				foreach($inputs as $input):
 					if(isset($input[XMLParser::SHORTWIEW])):
 						$key = Common::labelFromField((string)$input, false);
-						$value = $obj[$key];
-						if(isset($input[XMLParser::VALUES])){
-							$callback = ( string ) $input[XMLParser::VALUES];
-							$values = ListHelper::$callback();
-							if(isset($input[XMLParser::SIGN_ROLE])){
-								$values_alt = ListHelper::persone();
-							}
-							$value = isset($values[$value]) ? $values[$value] : $values_alt[$value];
-						}
-						if($input[XMLParser::TYPE] == "data")
-							$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
-				
+						$value= Common::renderValue($obj[$key],$input);
 ?>
 								<td>
 									<?=$value?>

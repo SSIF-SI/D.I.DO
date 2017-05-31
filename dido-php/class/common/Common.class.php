@@ -73,5 +73,20 @@ class Common{
 		return $path_parts['extension'];
 		
 	}
+	
+	public static function renderValue($value, $input){
+		if(isset($input[XMLParser::VALUES])){
+			$callback = ( string ) $input[XMLParser::VALUES];
+			$values = ListHelper::$callback();
+			if(isset($input[XMLParser::SIGN_ROLE])){
+				$values_alt = ListHelper::persone();
+			}
+			$value = isset($values[$value]) ? $values[$value] : $values_alt[$value];
+		}
+		if($input[XMLParser::TYPE] == "data")
+			$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
+		
+		return $value;
+	}
 }
 ?>

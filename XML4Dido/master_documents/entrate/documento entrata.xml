@@ -12,9 +12,6 @@
 	</types>
 	<list>
 		<document name="lettera" minOccur="1" maxOccur="1">
-			<signatures>
-				<signature role="REQ" />
-			</signatures>
 		</document>
 		<document name="fattura di entrata" minOccur="1" maxOccur="1"
 			onlyIfType="fattura di entrata">

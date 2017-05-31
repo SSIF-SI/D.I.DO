@@ -109,12 +109,16 @@ foreach($list as $sezione => $nomeDocumento):
 <?php 
 			foreach($inputs as $input):
 				if(isset($input[XMLParser::SHORTWIEW])):
+					$key = Common::fieldFromLabel((string)$input);
+					$value = Common::renderValue($obj[$key], $input);
+					/*
 					$value = $obj[Common::fieldFromLabel((string)$input)];
 					if(isset($input[XMLParser::VALUES])){
 						$callback = ( string ) $input[XMLParser::VALUES];
 						$values = ListHelper::$callback();
 						$value = $values[$value];
 					}
+					*/
 					
 ?>
 								<td>

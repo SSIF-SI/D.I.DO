@@ -26,7 +26,6 @@
 			onlyIfType="con anticipo">
 			<attachments minOccur="0" />
 			<signatures>
-				<signature role="REQ" />
 				<signature role="DIR" />
 			</signatures>
 		</document>
@@ -34,15 +33,11 @@
 			maxOccur="1">
 			<attachments minOccur="0" />
 			<signatures>
-				<signature role="REQ" />
 				<signature role="DIR" />
 			</signatures>
 		</document>
 		<document name="autodichiarazione" minOccur="0"
 			mandatoryIf="trattamento alternativo">
-			<signatures>
-				<signature role="REQ" />
-			</signatures>
 		</document>
 		<document name="nota di liquidazione anticipo" minOccur="1"
 			maxOccur="1" onlyIfType="con anticipo">
@@ -67,7 +62,6 @@
 		<document name="richiesta rimborso" minOccur="1" maxOccur="1">
 			<attachments minOccur="1" />
 			<signatures>
-				<signature role="REQ" />
 				<signature role="DIR" afterValidation="DIR,SAMM" />
 			</signatures>
 		</document>
@@ -76,9 +70,6 @@
 				<input>numero nota</input>
 				<input type="data">data nota</input>
 			</inputs>
-			<signatures>
-				<signature role="DIR" />
-			</signatures>
 		</document>
 		<document name="mandato di missione" minOccur="1" maxOccur="1">
 			<inputs>

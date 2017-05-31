@@ -32,13 +32,13 @@ class GecoDataSource implements IExternalDataSource {
 			),
 			
 			"geco_ordini_dido" => array (
-					"category" => "acquisti",
+					"category" => "ordini",
 					"id" => "id_ordine",
 					"xmlKeyPattern" => array (
 							// xml pattern => coppia (chiave,valore) che lo
 							// identifica
 							// xml pattern => true = sempre
-							"acquisto" => array (
+							"ordine" => array (
 									"ordine_cassa" => 0 
 							),
 							"ordine cassa" => array (

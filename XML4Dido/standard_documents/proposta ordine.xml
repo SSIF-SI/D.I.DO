@@ -2,7 +2,6 @@
 
 <document name="proposta ordine" minOccur="1" maxOccur="1">
 	<signatures>
-		<signature role="REQ" />
 		<signature role="TF"/>
 		<signature role="RL" alt="DIR" />
 		<signature role="DIR" afterValidation="AMM" />

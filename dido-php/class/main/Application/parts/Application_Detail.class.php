@@ -181,7 +181,7 @@ class Application_Detail{
 		
 		foreach($docSignatures as $signature){
 			$role = (string)$signature[XMLParser::ROLE];
-			if($role == "REQ") continue;
+			/*if($role == "REQ") continue;*/
 			if(!isset($MDSigners[$role])){
 				$signResult['errors'] = true;
 				$signResult['html'][] = "<div class=\"alert alert-danger\"><span class=\"fa fa-times\"></span> Manca la firma del {$this->_sigRoles [$role]} nel sistema DIDO!!!</div>";
