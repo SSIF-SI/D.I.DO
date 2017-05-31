@@ -119,6 +119,15 @@ class Application_DocumentBrowser{
 			} else 
 				$this->_purge($id_md);
 		}
+		
+		// Alla fine devo riallineare tutto;
+		$mdToBeRemoved = array_diff(array_keys($this->_resultArray[self::LABEL_MD]),array_keys($this->_resultArray[self::LABEL_DOCUMENTS]));
+		if(count($mdToBeRemoved)){
+			foreach($mdToBeRemoved as $id_md){
+				//Utils::printr($id_md);
+				$this->_purge($id_md);
+			}
+		}
 		return $this;
 	}
 	
@@ -368,16 +377,22 @@ class Application_DocumentBrowser{
 	}
 	
 	private function _purge($id_md){
-		$ddataKeys = array_keys($this->_resultArray[self::LABEL_DOCUMENTS][$id_md]);
+		if(isset($this->_resultArray[self::LABEL_DOCUMENTS][$id_md])){
+			$ddataKeys = array_keys($this->_resultArray[self::LABEL_DOCUMENTS][$id_md]);
+			foreach($ddataKeys as $id_ddata){
+				unset ($this->_resultArray[self::LABEL_DOCUMENTS_DATA][$id_ddata]);
+			}
+		}
+		
 		unset(
 				$this->_resultArray[self::LABEL_MD][$id_md],
 				$this->_resultArray[self::LABEL_MD_DATA][$id_md],
 				$this->_resultArray[self::LABEL_DOCUMENTS][$id_md]
 		);
 	
-		foreach($ddataKeys as $id_ddata)
-			unset ($this->_resultArray[self::LABEL_DOCUMENTS_DATA][$id_ddata]);
-	
+		
+		
+		
 	}
 }
 ?>

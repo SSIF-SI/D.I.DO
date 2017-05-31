@@ -96,15 +96,8 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 					$obj = $list[Application_DocumentBrowser::LABEL_MD_DATA][$k];
 					foreach($inputs as $input):
 						if(isset($input[XMLParser::SHORTWIEW])):
-							$value = $obj[(string)$input];
-							if(isset($input[XMLParser::VALUES])){
-								$callback = ( string ) $input[XMLParser::VALUES];
-								$values = ListHelper::$callback();
-								$value = $values[$value];
-							}
-							if($input[XMLParser::TYPE] == "data")
-								$value = Utils::convertDateFormat($value, DB_DATE_FORMAT, "d/m/Y");
-					
+							$key = Common::labelFromField((string)$input, false);
+							$value = Common::renderValue($obj[$key],$input);
 ?>
 									<td>
 										<?=$value?>

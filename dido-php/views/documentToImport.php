@@ -111,15 +111,6 @@ foreach($list as $sezione => $nomeDocumento):
 				if(isset($input[XMLParser::SHORTWIEW])):
 					$key = Common::fieldFromLabel((string)$input);
 					$value = Common::renderValue($obj[$key], $input);
-					/*
-					$value = $obj[Common::fieldFromLabel((string)$input)];
-					if(isset($input[XMLParser::VALUES])){
-						$callback = ( string ) $input[XMLParser::VALUES];
-						$values = ListHelper::$callback();
-						$value = $values[$value];
-					}
-					*/
-					
 ?>
 								<td>
 									<?=$value?>
@@ -158,7 +149,7 @@ foreach($list as $sezione => $nomeDocumento):
 										Importa
 									</a>&nbsp;
 <?php 
-if($Application->getUserManager()->isAdmin()):
+			if($Application->getUserManager()->isAdmin()):
 ?>
 									<a 
 										class="btn btn-danger delete"
@@ -167,7 +158,7 @@ if($Application->getUserManager()->isAdmin()):
 										Elimina
 									</a>
 <?php 
-endif;
+			endif;
 ?>
 								</td>
 							</tr>
