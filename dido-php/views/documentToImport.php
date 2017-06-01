@@ -20,7 +20,7 @@ foreach($list as $sezione => $nomeDocumento):
 ?>
 	<!-- Nav tabs -->
 		<li class="">
-			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($sezione)." <span class=\"badge\">$badgeValue</span>"?></a>
+			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($sezione)."&nbsp;&nbsp;&nbsp;<span class=\"badge\">$badgeValue</span>"?></a>
 		</li>
 <?php 
 endforeach; 
@@ -42,7 +42,7 @@ foreach($list as $sezione => $nomeDocumento):
 ?>
 				<!-- Nav tabs -->
 					<li class="">
-						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($tipoDocumento)." <span class=\"badge\">$badgeValue</span>"?></a>
+						<a href="<?="#".$sezione_field."/#".$tipoDocumento_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($tipoDocumento)."&nbsp;&nbsp;&nbsp;<span class=\"badge\">$badgeValue</span>"?></a>
 					</li>
 <?php 
 	endforeach;
