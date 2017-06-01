@@ -31,7 +31,6 @@ class FormHelper {
 			
 			$value = $data [$key];
 			
-			
 			if(isset($input[XMLParser::VALUES])){
 				$rValue = $value;
 				$callback = ( string ) $input[XMLParser::VALUES];
@@ -59,7 +58,7 @@ class FormHelper {
 				if (!isset ( $input [XMLParser::VALUES] ))
 					$input_html = HTMLHelper::input ( $type, $field, $label, $value, null, $required );
 				else {
-					if($old == false)
+					if($old == false || is_null($data[$key]))
 						$input_html = HTMLHelper::select ($field, $label, $values, $rValue, null, false, $required );
 					else 
 						$input_html = HTMLHelper::fakeInput ( $field, $label, $value, $rValue, $required);
