@@ -53,7 +53,7 @@ class DocumentProcedureManager extends AProcedureManager {
 		$Document = new Document( $this->getDbConnector () );
 		$result = $Document->save ( $main );
 	
-		return $result->getErrors () === false ? false : true;
+		return $result->getErrors () === false;
 	}
 	
 	public function delete($main) {

@@ -11,5 +11,20 @@ $(document).ready(function(){
 		MyModal.setTitle("Carica documento");
 		MyModal.editModal(this);
 	});
-	
+	$('a.close-doc').click(function (e) {
+		e.preventDefault();
+		var href = $(this).attr("href");
+		$.ajax({
+			url: href, 
+			type: "GET", 
+			dataType: "json",
+			success: function( result ) {
+				location.reload();
+			},
+		error: function(){
+			alert("Errore imprevisto");
+		}
+	});
+	});
+
 });

@@ -33,8 +33,9 @@ class Application_ActionManager {
 		
 		$doc = new Document($this->_dbConnector);
 		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
-		$this->_ProcedureManager->closeDocument($doc);
-
+		$ARP=new AjaxResultParser();
+		$ARP->encode($this->_ProcedureManager->closeDocument($doc));
+		
 	}
 	
 	public function download(){
