@@ -12,6 +12,7 @@ class Application_ActionManager {
 	
 	const ACTION_UPLOAD = "upload";
 	const ACTION_DOWNLOAD = "download";
+	const ACTION_DELETE = "delete";
 	const ACTION_EDIT_INFO = "editInfo";
 	const ACTION_CLOSE_DOC = "closedocument";
 	const ACTION_EDIT_MD_INFO = "editMdInfo";

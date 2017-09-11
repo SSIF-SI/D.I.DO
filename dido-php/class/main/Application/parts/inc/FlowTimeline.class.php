@@ -180,7 +180,7 @@ SIGINFO;
 abstract class AFlowTimelinePanelButton{
 	const HTML =
 <<<HTML
-	<a class="btn btn-info %s" href="%s" type="button">
+	<a class="btn btn-%s %s" href="%s" type="button">
 		<span class="fa %s fa-1x fa-fw"></span> %s</a>
 HTML;
 	
@@ -191,33 +191,39 @@ HTML;
 	}
 }
 
+class FlowTimelineButtonDelete extends AFlowTimelinePanelButton{
+	public function __construct($href="#"){
+		$this->_button = sprintf(self::HTML, "danger", "delete-doc", $href, "fa-trash", "Elimina");
+	}
+}
+
 class FlowTimelineButtonUpload extends AFlowTimelinePanelButton{
 	public function __construct($href="#"){
-		$this->_button = sprintf(self::HTML, "upload-doc", $href, "fa-upload", "Carica");
+		$this->_button = sprintf(self::HTML, "info","upload-doc", $href, "fa-upload", "Carica");
 	}
 }
 
 class FlowTimelineButtonDownload extends AFlowTimelinePanelButton{
 	public function __construct($href="#"){
-		$this->_button = sprintf(self::HTML, "download-doc",$href, "fa-download", "Scarica");
+		$this->_button = sprintf(self::HTML, "info","download-doc",$href, "fa-download", "Scarica");
 	}
 }
 
 class FlowTimelineButtonEditInfo extends AFlowTimelinePanelButton{
 	public function __construct($href){
-		$this->_button = sprintf(self::HTML, "edit-info",$href, "fa-pencil", "Modifica informazioni documento");
+		$this->_button = sprintf(self::HTML, "info", "edit-info",$href, "fa-pencil", "Modifica informazioni documento");
 	}
 }
 
 class FlowTimelineButtonCloseDocument extends AFlowTimelinePanelButton{
 	public function __construct($href){
-		$this->_button = sprintf(self::HTML, "close-doc", $href, "fa-lock", "Chiudi il documento");
+		$this->_button = sprintf(self::HTML, "info", "close-doc", $href, "fa-lock", "Chiudi il documento");
 	}
 }
 
 class FlowTimelineButtonAdd extends AFlowTimelinePanelButton{
 	public function __construct($href){
-		$this->_button = sprintf(self::HTML, "add-doc",$href, "fa-plus", "Nuovo");
+		$this->_button = sprintf(self::HTML, "success", "add-doc",$href, "fa-plus", "Nuovo");
 	}
 }
 

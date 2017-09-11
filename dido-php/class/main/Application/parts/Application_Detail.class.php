@@ -64,7 +64,7 @@ class Application_Detail{
 			} else {
 				$almostOne = true;
 				//Utils::Printr($listOnDb);
-				if(!$this->_parse($listOnDb, $doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+				if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 					break;
 			}
 			
@@ -80,7 +80,7 @@ class Application_Detail{
 		$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
 		
 		if(count($listOnDb)){
-			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docInputs);
+			$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docInputs);
 		} else {
 			if($this->_userManager->isGestore()){
 				$this->_flowResults->addTimelineElement(
@@ -90,7 +90,7 @@ class Application_Detail{
 		} 
 	}
 	
-	private function _parse($listOnDb, $limit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
+	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
 		foreach($listOnDb as $id_doc => $docData){
 				
@@ -131,9 +131,15 @@ class Application_Detail{
 			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 
 			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
-			if(!$limit || count($listOnDb) < $limit)
+			if(!$upperLimit || count($listOnDb) < $upperLimit)
 				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
-			if(!($signatures && $docSignatures['errors']))
+			
+			// Se non c'è il minoccur o comunque minOccur = 0
+			if(!$lowerLimit || count($listOnDb) > $lowerLimit)
+				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
+			
+			// Il documento se non ci sono errori e non è già chiuso lo posso chiudere
+			if(!($signatures && $docSignatures['errors']) && !$documentClosed)
 				array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
 			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
