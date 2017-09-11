@@ -46,6 +46,7 @@ class Application_Detail{
 			$this->_userManager->isAdmin() ||
 			($this->_userManager->isGestore(true) && $XMLParser->isOwner($this->_userManager->getUser()->getGruppi()));
 
+		$almostOne = false;
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			
@@ -61,6 +62,7 @@ class Application_Detail{
 				if($doc[XMLParser::MIN_OCCUR])
 					break;				
 			} else {
+				$almostOne = true;
 				//Utils::Printr($listOnDb);
 				if(!$this->_parse($listOnDb, $doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 					break;
@@ -68,9 +70,9 @@ class Application_Detail{
 			
 		}
 		
-		if(!count($listOnDb))
+		if(!$almostOne)
 			return;
-		// Ora si aggiunge eventuali allegati
+		// Ora si aggiunge eventuali allegati se c'è almeno il primo documento caricato
 		$XMLParser->load(XML_STD_PATH."allegato.xml");
 		$docToSearch = $XMLParser->getXmlSource();
 		$docInputs = $docToSearch->inputs->input;
@@ -109,7 +111,7 @@ class Application_Detail{
 			$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc]);
 				
 			$editInfoBTN =
-			$ICanManageIt ?
+			($ICanManageIt && !$documentClosed) ?
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
@@ -139,7 +141,7 @@ class Application_Detail{
 			$badge =
 				($signatures && $docSignatures['errors']) || !$documentClosed ?
 				new FlowTimelineBadgeWarning() :
-				new FlowTimelineBadgeSuccess();
+				new FlowTimelineBadgeSuccess($documentClosed);
 					
 			$this->_flowResults->addTimelineElement(
 					new TimelineElementFull($badge, $panel),

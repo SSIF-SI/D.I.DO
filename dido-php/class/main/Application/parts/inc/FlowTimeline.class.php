@@ -230,8 +230,8 @@ abstract class FlowTimelineBadge{
 }
 
 class FlowTimelineBadgeSuccess extends FlowTimelineBadge{
-	public function __construct(){
-		$this->_badge = '<div class="timeline-badge success"><i class="fa fa-check"></i></div>';
+	public function __construct($closed = false){
+		$this->_badge = '<div class="timeline-badge success"><i class="fa fa-'.($closed ? 'lock' : 'check').'"></i></div>';
 	}
 }
 
