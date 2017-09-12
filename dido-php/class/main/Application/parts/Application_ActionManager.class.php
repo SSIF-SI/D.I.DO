@@ -27,6 +27,22 @@ class Application_ActionManager {
 		$this->_ProcedureManager = new ProcedureManager($dbConnector, $ftpDataSource);	
 	}
 	
+	public function delete(){
+		if (!isset($_GET[Document::ID_DOC]))
+			return new ErrorHandler("Parametri mancanti");
+		extract($this->_getMd($_GET));
+		
+		$doc = new Document($this->_dbConnector);
+		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
+		$ftpFolder=Common::getFolderNameFromMasterdocument($md);
+		Utils::printr($ftpFolder);
+		die();
+		$ARP=new AjaxResultParser();
+		$ARP->encode($this->_ProcedureManager->deleteDocument($doc, $ftpFolder));
+		
+	
+	}
+	
 	public function closedocument(){
 		if (!isset($_GET[Document::ID_DOC]))
 			return new ErrorHandler("Parametri mancanti");	
@@ -269,6 +285,6 @@ class Application_ActionManager {
 			
 		return $md;
 	}
-	
+
 }
 ?>

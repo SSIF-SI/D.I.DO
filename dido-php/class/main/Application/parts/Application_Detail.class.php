@@ -136,7 +136,7 @@ class Application_Detail{
 			
 			// Se non c'è il minoccur o comunque minOccur = 0
 			if(!$lowerLimit || count($listOnDb) > $lowerLimit)
-				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
+				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 			
 			// Il documento se non ci sono errori e non è già chiuso lo posso chiudere
 			if(!($signatures && $docSignatures['errors']) && !$documentClosed)
