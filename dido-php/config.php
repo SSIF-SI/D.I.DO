@@ -54,9 +54,3 @@ $self = explode ( "/", $_SERVER ['PHP_SELF'] );
 $_SERVER ['SCRIPT_NAME'] = $self [count ( $self ) - 1];
 
 $Application = new Application();
-
-flog("info" , $_SERVER);
-flog("Hello from PHP twice");
-
-
-
