@@ -1,4 +1,11 @@
 <?php
+// COSTANTI
+require_once ('define.php');
+
+// Firelog
+require_once (FRAMEWORK_CLASS_PATH . "Firelogger.class.php");
+
+// Java
 require_once ("java/Java.inc");
 $Util = java ( "php.java.bridge.Util" );
 $ctx = java_context ();
@@ -8,6 +15,7 @@ $config = $ctx->getAttribute ( "php.java.servlet.ServletConfig", 100 );
 $context = $ctx->getAttribute ( "php.java.servlet.ServletContext", 100 );
 $servlet = $ctx->getAttribute ( "php.java.servlet.Servlet", 100 );
 
+// Settings
 ini_set ( 'magic_quotes_gpc', 0 );
 date_default_timezone_set ( 'Europe/Rome' );
 
@@ -18,14 +26,10 @@ session_start ();
 ini_set ( 'display_errors', 1 );
 error_reporting ( E_ALL ^ E_DEPRECATED ^ E_NOTICE );
 
-// COSTANTI
-require_once ('define.php');
-
 ini_set ( 'session.gc_probability', 0 );
 ini_set ( "soap.wsdl_cache_enabled", "0" );
 
 // AUTOLOADER
-require_once (FRAMEWORK_CLASS_PATH . "Firelogger.class.php");
 require_once (FRAMEWORK_CLASS_PATH . "Utils.class.php");
 spl_autoload_register ( array (
 		'Utils',
