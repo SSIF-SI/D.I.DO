@@ -34,13 +34,9 @@ class Application_ActionManager {
 		
 		$doc = new Document($this->_dbConnector);
 		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
-		$ftpFolder=Common::getFolderNameFromMasterdocument($md);
-		Utils::printr($ftpFolder);
-		die();
+		$ftpFolder=$md[Masterdocument::FTP_FOLDER].Common::getFolderNameFromMasterdocument($md).DIRECTORY_SEPARATOR;
 		$ARP=new AjaxResultParser();
 		$ARP->encode($this->_ProcedureManager->deleteDocument($doc, $ftpFolder));
-		
-	
 	}
 	
 	public function closedocument(){

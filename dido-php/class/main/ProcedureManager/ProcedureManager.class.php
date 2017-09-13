@@ -123,7 +123,7 @@ class ProcedureManager implements IProcedureManager {
 
 	public function deleteDocument($doc, $ftpFolder) {
 		$this->_dbConnector->begin ();
-		if (! $this->_DPManager->delete ( $doc, $ftpFolder )) {
+		if (! $this->_DPManager->delete ( $doc )) {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
