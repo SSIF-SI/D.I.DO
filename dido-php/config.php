@@ -25,6 +25,7 @@ ini_set ( 'session.gc_probability', 0 );
 ini_set ( "soap.wsdl_cache_enabled", "0" );
 
 // AUTOLOADER
+require_once (FRAMEWORK_CLASS_PATH . "Firelogger.class.php");
 require_once (FRAMEWORK_CLASS_PATH . "Utils.class.php");
 spl_autoload_register ( array (
 		'Utils',
@@ -54,6 +55,8 @@ $_SERVER ['SCRIPT_NAME'] = $self [count ( $self ) - 1];
 
 $Application = new Application();
 
+flog("info" , $_SERVER);
+flog("Hello from PHP twice");
 
 
 
