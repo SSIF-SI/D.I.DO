@@ -16,11 +16,6 @@
 				<signature role="DIR" />
 			</signatures>
 		</document>
-		<document name="allegato" minOccur="0">
-			<inputs>
-				<input>titolo</input>
-			</inputs>
-		</document>
 		<document name="risposta dipartimento" minOccur="1">
 			<inputs>
 				<input>numero protocollo esterno</input>
