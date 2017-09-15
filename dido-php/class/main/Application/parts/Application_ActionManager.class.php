@@ -30,7 +30,9 @@ class Application_ActionManager {
 	public function delete(){
 		if (!isset($_GET[Document::ID_DOC]))
 			return new ErrorHandler("Parametri mancanti");
-		extract($this->_getMd($_GET));
+		$result = $this->_getMd($_GET);
+		flog($result);
+		extract ($result);
 		
 		$doc = new Document($this->_dbConnector);
 		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
@@ -42,7 +44,8 @@ class Application_ActionManager {
 	public function closedocument(){
 		if (!isset($_GET[Document::ID_DOC]))
 			return new ErrorHandler("Parametri mancanti");	
-		extract($this->_getMd($_GET));
+		$result = $this->_getMd($_GET);
+		extract ($result);
 		
 		$doc = new Document($this->_dbConnector);
 		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
@@ -269,11 +272,11 @@ class Application_ActionManager {
 		die();		
 	}
 	
-	private function _getMD(){
-		if(!isset($_GET[Masterdocument::ID_MD]))
+	private function _getMD($GET){
+		if(!isset($GET[Masterdocument::ID_MD]))
 			return new ErrorHandler("Parametri mancanti");
 		
-		$id_md = $_GET[Masterdocument::ID_MD];
+		$id_md = $GET[Masterdocument::ID_MD];
 		$md = $this->_Application_DocumentBrowser->get($id_md);
 		
 		if(!$md)

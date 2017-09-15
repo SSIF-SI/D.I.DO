@@ -79,8 +79,9 @@ class Application_Detail{
 		$docName = $docToSearch[XMLParser::DOC_NAME];
 		$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
 		
+		
 		if(count($listOnDb)){
-			$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docInputs);
+			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docInputs);
 		} else {
 			if($this->_userManager->isGestore()){
 				$this->_flowResults->addTimelineElement(
@@ -135,7 +136,7 @@ class Application_Detail{
 				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
 			
 			// Se non c'è il minoccur o comunque minOccur = 0
-			if(!$lowerLimit || count($listOnDb) > $lowerLimit)
+			if(!$lowerLimit || ($lowerLimit >= 1 && count($listOnDb) > $lowerLimit))
 				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 			
 			// Il documento se non ci sono errori e non è già chiuso lo posso chiudere

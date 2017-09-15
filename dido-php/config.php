@@ -58,3 +58,5 @@ $self = explode ( "/", $_SERVER ['PHP_SELF'] );
 $_SERVER ['SCRIPT_NAME'] = $self [count ( $self ) - 1];
 
 $Application = new Application();
+
+finfo("TurnBack Tree: %o",Session::getInstance()->get('turnbacktree'));
