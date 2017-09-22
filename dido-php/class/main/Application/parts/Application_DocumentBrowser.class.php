@@ -66,15 +66,25 @@ class Application_DocumentBrowser{
 	}
 	
 	public function getLinkedMd($id_md){
-		$id_mds = Utils::getListfromField(Utils::getListfromField($this->_MasterdocumentsLinks->getBy(MasterDocumentsLinks::ID_FATHER, $id_md)), MasterdocumentsLinks::ID_CHILD);
-		flog("id_mds: %o",$id_mds);
+		$id_mds = array_keys(Utils::getListfromField($this->_MasterdocumentsLinks->getBy(MasterDocumentsLinks::ID_FATHER, $id_md), null, MasterdocumentsLinks::ID_CHILD));
 		if(empty($id_mds)) return null;
-		
 		return $this
 			->_emptyResult()
 			->_fillResultArray(self::LABEL_MD, $this->_just($id_mds))
 			->_createResultTree()
 			->_complete()
+			->getResult();
+	}
+	
+	public function getLinkableMd($md_name){
+		$mds = Utils::getListfromField($this->_Masterdocument->getBy(Masterdocument::NOME, Utils::apici($md_name)),null,Masterdocument::ID_MD);
+		//$id_mds = Utils::getListfromField(Utils::filterList($id_mds, Masterdocument::CLOSED, ProcedureManager::CLOSED), Masterdocument::ID_MD);
+		if(empty($mds)) return null;
+		flog("md: %o",$mds);
+		return $this
+			->_emptyResult()
+			->_fillResultArray(self::LABEL_MD, $mds)
+			->_createResultTree()
 			->getResult();
 	}
 	
@@ -328,6 +338,7 @@ class Application_DocumentBrowser{
 			$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 0;
 			$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = 0;
 		}
+		flog("resultree before createtree: %o",$this->_resultArray);
 		
 		$md_ids = array_keys ( $this->_resultArray [self::LABEL_MD] );
 		if (count ( $md_ids )) {

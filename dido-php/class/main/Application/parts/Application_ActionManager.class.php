@@ -12,6 +12,7 @@ class Application_ActionManager {
 	
 	const ACTION_UPLOAD = "upload";
 	const ACTION_DOWNLOAD = "download";
+	const ACTION_ADD_MD_LINK = "addMdLink";
 	const ACTION_DELETE = "delete";
 	const ACTION_EDIT_INFO = "editInfo";
 	const ACTION_CLOSE_DOC = "closedocument";
@@ -270,6 +271,49 @@ class Application_ActionManager {
 		echo("<form>$docInfo</form>");
 		Utils::includeScript(SCRIPTS_PATH, "datepicker.js");
 		die();		
+	}
+	
+	public function addMdLink(){
+		if(isset($_POST['mdLink'])){
+			$ARP = new AjaxResultParser();
+			$eh = new ErrorHandler(false);
+			
+			if(empty($_POST['mdLink'])){
+				$eh->setErrors("Nessuna scelta effettuata");
+			} else {
+				$MDLink = new MasterdocumentsLinks($this->_dbConnector);
+				$result = $MDLink->save([
+					MasterdocumentsLinks::ID_FATHER => $_GET[Masterdocument::ID_MD], 
+					MasterdocumentsLinks::ID_CHILD => $_POST['mdLink']
+				]);
+				flog("result: %o",$result);
+				if(!$result)
+					$eh->setErrors("Impossibile salvare i dati");
+			}
+			$ARP->encode($eh->getErrors(true));
+			die();
+		} else {
+			$list = $this->_Application_DocumentBrowser->getLinkableMd($_GET[XMLParser::MD_NAME]);
+			$options = array();
+			if(count($list[Application_DocumentBrowser::LABEL_MD])){
+				$XMLParser = new XMLParser();
+				foreach($list[Application_DocumentBrowser::LABEL_MD] as $id_md=>$md){
+					$XMLParser->setXMLSource($md[Masterdocument::XML], $md[Masterdocument::TYPE]);
+					$inputs = $XMLParser->getMasterDocumentInputs();
+					$optLabel = [];
+					foreach($inputs as $input){
+						if(isset($input[XMLParser::SHORTWIEW])){
+							$key = Common::labelFromField((string)$input, false);
+							$value= Common::renderValue($list[Application_DocumentBrowser::LABEL_MD_DATA][$id_md][$key],$input);
+							array_push($optLabel, "$key: $value");
+						}
+					}
+					$options[$id_md] = join($optLabel,", ");
+				}
+			}
+			flog("options: %o",$options);
+			die("<form>".HTMLHelper::select("mdLink", $_GET[XMLParser::MD_NAME], $options)."</form>");
+		}
 	}
 	
 	private function _getMD($GET){

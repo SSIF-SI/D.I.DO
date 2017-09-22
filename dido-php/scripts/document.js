@@ -8,7 +8,7 @@ $(document).ready(function(){
 	
 	$('a.add-doc, a.upload-doc').click(function (e) {
 		e.preventDefault();
-		MyModal.setTitle("Carica documento");
+		MyModal.setTitle("Nuovo documento");
 		MyModal.editModal(this);
 	});
 	$('a.close-doc').click(function (e) {

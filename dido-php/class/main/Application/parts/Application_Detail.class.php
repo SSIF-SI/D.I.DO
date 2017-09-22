@@ -26,7 +26,8 @@ class Application_Detail{
 		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
 	}
 	
-	public function createDetail($md){
+	public function createDetail($md, $mdLinks){
+		flog("resultTree: %o",$md);
 		extract($md);
 	
 		$id_md = $md[Masterdocument::ID_MD];
@@ -50,22 +51,44 @@ class Application_Detail{
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			
-			$XMLParser->checkIfMustBeLoaded ( $doc );
-			$docName = (string)$doc[XMLParser::DOC_NAME];
-			
-			$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
-			if(count($listOnDb) == 0){
-				$this->_flowResults->addTimelineElement(
-					new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
-				);
-			
-				if($doc[XMLParser::MIN_OCCUR])
-					break;				
-			} else {
-				$almostOne = true;
-				//Utils::Printr($listOnDb);
-				if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+			if(isset($doc[XMLParser::MD])){
+				// il documento in realtà è un Master Document esterno
+				$docName = (string)$doc[XMLParser::MD];
+				$listOnDb = Utils::filterList($mdLinks[Application_DocumentBrowser::LABEL_MD], Masterdocument::NOME, $docName);
+				flog("listOnDb: %o",$listOnDb);
+				if(count($listOnDb) == 0){
+					$this->_flowResults->addTimelineElement(
+						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_ADD_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+					);
+				
+					if($doc[XMLParser::MIN_OCCUR])
+						break;				
+				} else {
+					$almostOne = true;
+					flog("almostOne");
+					Utils::printr($listOnDb);
+					/*if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+						break;*/
 					break;
+				}
+			} else {
+				$XMLParser->checkIfMustBeLoaded ( $doc );
+				$docName = (string)$doc[XMLParser::DOC_NAME];
+				
+				$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
+				if(count($listOnDb) == 0){
+					$this->_flowResults->addTimelineElement(
+						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+					);
+				
+					if($doc[XMLParser::MIN_OCCUR])
+						break;				
+				} else {
+					$almostOne = true;
+					//Utils::Printr($listOnDb);
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+						break;
+				}
 			}
 			
 		}

@@ -5,7 +5,7 @@ $Application_DocumentBrowser = $Application->getApplicationPart(Application::DOC
 define (PAGE_TITLE, "Procedimenti in sospeso");
 
 if(isset($_GET['action'])){
-	$Application->manageAction($_GET['action']);
+	var_dump($Application->manageAction($_GET['action']));
 	die();
 }
 

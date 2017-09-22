@@ -13,9 +13,12 @@ class HTMLHelper {
 		<option value="">---Scegli---</option>
 <?php endif;?>
 
-<?php	foreach ($options as $value=>$optlabel): ?>
+<?php	if(count($options)) {
+			foreach ($options as $value=>$optlabel): ?>
 		<option value="<?=$value?>" <?=$value == $selected ? "selected" : ""?>><?=$optlabel?></option>
-<?php 	endforeach;?>
+<?php 		endforeach;
+		}
+?>
 	</select>
 <?php if($isImported) echo self::lineInput("hidden", $name, $label, $selected, $class, false);?>
 </div>
