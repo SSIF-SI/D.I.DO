@@ -1,5 +1,5 @@
 <?php
-class MasterDocumentsLinks extends Crud {
+class MasterdocumentsLinks extends Crud {
 
 	const ID_LINK = "id_link";
 

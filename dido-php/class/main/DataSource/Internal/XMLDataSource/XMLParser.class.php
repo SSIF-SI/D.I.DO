@@ -14,6 +14,8 @@ class XMLParser implements IXMLParser {
 
 	const VALIDEND = "validEnd";
 	
+	const MD = "md";
+	 
 	// DOC Params
 	const DOC_NAME = "name";
 

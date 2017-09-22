@@ -29,7 +29,7 @@ class Application_DocumentBrowser{
 	/*
 	 * Le classi per recuperare dati dal DB
 	 */
-	private $_Masterdocument, $_MasterdocumentData, $_Document, $_DocumentData;
+	private $_Masterdocument, $_MasterdocumentData, $_Document, $_DocumentData, $_MasterdocumentsLinks;
 	
 	/*
 	 * L'array dove verrà memorizzato il risultato
@@ -50,6 +50,7 @@ class Application_DocumentBrowser{
 		$this->_MasterdocumentData = new MasterdocumentData ( $this->_dbConnector );
 		$this->_Document = new Document ( $this->_dbConnector );
 		$this->_DocumentData = new DocumentData ( $this->_dbConnector );
+		$this->_MasterdocumentsLinks = new MasterdocumentsLinks( $this->_dbConnector );
 		
 		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
 	}
@@ -57,18 +58,31 @@ class Application_DocumentBrowser{
 	public function get($id_md){
 		return $this
 			->_emptyResult()
-			->_fillResultArray(self::LABEL_MD, $this->_single($id_md))
+			->_fillResultArray(self::LABEL_MD, $this->_just($id_md))
 			->_createResultTree()
 			->_complete()
 			->_only($id_md)
 			->getResult();
 	}
 	
-	private function _single($id_md){
+	public function getLinkedMd($id_md){
+		$id_mds = Utils::getListfromField(Utils::getListfromField($this->_MasterdocumentsLinks->getBy(MasterDocumentsLinks::ID_FATHER, $id_md)), MasterdocumentsLinks::ID_CHILD);
+		flog("id_mds: %o",$id_mds);
+		if(empty($id_mds)) return null;
+		
+		return $this
+			->_emptyResult()
+			->_fillResultArray(self::LABEL_MD, $this->_just($id_mds))
+			->_createResultTree()
+			->_complete()
+			->getResult();
+	}
+	
+	private function _just($value){
 		$list = $this->_Masterdocument->searchBy([
 				[
 						CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
-						CRUD::SEARCHBY_VALUE => $id_md
+						CRUD::SEARCHBY_VALUE => $value
 				]
 		]);
 			
