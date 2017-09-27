@@ -1,0 +1,7 @@
+.timeline li .timeline-panel.mdLink{
+	background-color:#ffa !important;
+}
+
+.timeline > li > .timeline-panel.mdLink::after{
+	border-color: transparent #ffa;
+}

@@ -47,16 +47,17 @@ abstract class ATimelineElement{
 
 class TimelineElementMissing extends ATimelineElement{
 
-	public function __construct($title, $mandatory, $upload, $href){
+	public function __construct($title, $mandatory, $upload, $href, $isLink = false){
 		
 		$buttons = [];
 		
 		if($upload){
 			array_push($buttons,new FlowTimelineButtonAdd($href));
 		}
+		
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			new FlowTimelineBadgeMissingDocuments(), 
-			new FlowTimelinePanel($title, $buttons, new FlowTimelinePanelBody())
+			new FlowTimelinePanel($title, $buttons, new FlowTimelinePanelBody(), $isLink ? "mdLink" : "")
 		);
 	}
 }
@@ -93,9 +94,10 @@ class FlowTimelineElement{
 class FlowTimelinePanel{
 	private $_title;
 	private $_buttons;
+	private $_class;
 	private $_panel = 
 <<<TLP
-	<div class="timeline-panel">
+	<div class="timeline-panel %s">
 		<div class="timeline-heading">
 			<div class='row'>					
 				<div class="col-lg-4">
@@ -112,10 +114,11 @@ class FlowTimelinePanel{
 		</div>
 	</div>
 TLP;
-	public function __construct($title, $buttons, FlowTimelinePanelBody $body){
+	public function __construct($title, $buttons, FlowTimelinePanelBody $body, $class = null){
 		$this->_buttons = $buttons;
 		$this->_title = $title;
 		$this->_body = $body;
+		$this->_class = $class;
 	}
 	
 	public function render(){
@@ -125,7 +128,7 @@ TLP;
 				$buttonsHTML .= $button->get();
 		}
 		
-		printf($this->_panel, $this->_title, $buttonsHTML, $this->_body->render());
+		printf($this->_panel, $this->_class, $this->_title, $buttonsHTML, $this->_body->render());
 	}
 	
 }

@@ -58,18 +58,17 @@ class Application_Detail{
 				flog("listOnDb: %o",$listOnDb);
 				if(count($listOnDb) == 0){
 					$this->_flowResults->addTimelineElement(
-						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_ADD_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_ADD_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
 					);
 				
+					# Se ne serve almeno uno si blocca il rendering
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
+					if(!$this->_parseMdLink($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $ICanManageIt))
+						break;
 					$almostOne = true;
 					flog("almostOne");
-					Utils::printr($listOnDb);
-					/*if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
-						break;*/
-					break;
 				}
 			} else {
 				$XMLParser->checkIfMustBeLoaded ( $doc );
@@ -84,10 +83,10 @@ class Application_Detail{
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
-					$almostOne = true;
 					//Utils::Printr($listOnDb);
 					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 						break;
+					$almostOne = true;
 				}
 			}
 			
@@ -112,6 +111,16 @@ class Application_Detail{
 				);
 			}
 		} 
+	}
+	
+	private function _parseMdLink($listOnDb, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt){
+		flog("listOnDB: %o",$listOnDb);
+		flog("data: %o",$documents_data);
+		foreach($listOnDb as $id_doc => $docData){
+			
+		}
+		return true;
+		
 	}
 	
 	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){

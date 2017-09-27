@@ -39,6 +39,10 @@
 <link
 	href="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/css/fileinput.min.css"
 	rel="stylesheet" type="text/css">
+	
+<link
+	href="<?=HTTP_ROOT?>css/dido.css"
+	rel="stylesheet" type="text/css">
 
 <style>
 .panel-heading .accordion-toggle {
