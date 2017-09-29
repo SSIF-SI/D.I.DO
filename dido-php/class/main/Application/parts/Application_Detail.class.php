@@ -27,11 +27,13 @@ class Application_Detail{
 	}
 	
 	public function createDetail($md, $mdLinks){
-		flog("resultTree: %o",$md);
+		flog("mdLinks: %o",$mdLinks);
 		extract($md);
 	
 		$id_md = $md[Masterdocument::ID_MD];
 		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
+		
+		$mdClosed = $md[Masterdocument::CLOSED];
 		
 		$XMLParser = new XMLParser(
 			$md[Masterdocument::XML],
@@ -54,18 +56,18 @@ class Application_Detail{
 			if(isset($doc[XMLParser::MD])){
 				// il documento in realtà è un Master Document esterno
 				$docName = (string)$doc[XMLParser::MD];
+				
 				$listOnDb = Utils::filterList($mdLinks[Application_DocumentBrowser::LABEL_MD], Masterdocument::NOME, $docName);
-				flog("listOnDb: %o",$listOnDb);
 				if(count($listOnDb) == 0){
 					$this->_flowResults->addTimelineElement(
-						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_ADD_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
+						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
 					);
 				
 					# Se ne serve almeno uno si blocca il rendering
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
-					if(!$this->_parseMdLink($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $ICanManageIt))
+					if(!$this->_parseMdLink($listOnDb, $mdLinks[Application_DocumentBrowser::LABEL_MD_LINKS],(int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $ICanManageIt, $mdClosed))
 						break;
 					$almostOne = true;
 					flog("almostOne");
@@ -113,14 +115,49 @@ class Application_Detail{
 		} 
 	}
 	
-	private function _parseMdLink($listOnDb, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt){
+	private function _parseMdLink($listOnDb, $mdLinks, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt, $mdClosed){
 		flog("listOnDB: %o",$listOnDb);
+		flog("mdLinks: %o",$mdLinks);
 		flog("data: %o",$documents_data);
-		foreach($listOnDb as $id_doc => $docData){
+		$XMLParser = new XMLParser();
+		foreach($listOnDb as $id_md => $docData){
+			$link = Utils::filterList($mdLinks, MasterdocumentsLinks::ID_CHILD, $id_md);
+			$id_link = key($link);
+			$id_father = $link[$id_link][MasterdocumentsLinks::ID_FATHER];
+			$XMLParser->setXMLSource($docData[Masterdocument::XML],$docData[Masterdocument::TYPE]);
+			$docName = $listOnDb[$id_md][Masterdocument::NOME];
+				
+			$docInfo = $this->createMdTableInfo($id_md, $XMLParser->getMasterDocumentInputs(), $documents_data[$id_md]);
 			
+			
+			$panelBody = new FlowTimelinePanelBody($docInfo, null, null);
+			$panelButtons = [];
+			
+			if(($ICanManageIt && !$mdClosed))
+				array_push($panelButtons, new FlowTimelineButtonEdit("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}&".MasterdocumentsLinks::ID_LINK."={$id_link}"));				
+
+			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
+			if(!$upperLimit || count($listOnDb) < $upperLimit)
+				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}"));
+			
+			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
+			if(!$lowerLimit || count($listOnDb) > $lowerLimit)
+				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
+			
+			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody, "mdLink");
+			
+			$badge =
+				new FlowTimelineBadgeSuccess();
+				
+			$this->_flowResults->addTimelineElement(
+					new TimelineElementFull($badge, $panel),
+					$id_md,
+					true
+			);
+				
+				
 		}
 		return true;
-		
 	}
 	
 	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
@@ -201,6 +238,53 @@ class Application_Detail{
 		if(!$mdInfo) $docInfo .= FormHelper::createInputs($this->_defaultDocumentInputs, $docData, $readonly);
 		
 		return $docInfo;
+	}
+	
+	public function createMdTableInfo($id_md, $inputs, $docData){
+		ob_start();
+?>		
+<table class="table table-condensed table-striped">
+	<thead>
+		<tr>
+<?php
+		foreach($inputs as $input):
+			if(isset($input[XMLParser::SHORTWIEW])):
+?>
+						<th><?=Common::labelFromField((string)$input);?></th>
+<?php 
+			endif;
+?>
+<?php 
+		endforeach;
+?>
+			<th>
+			</th>
+		</tr>
+	</thead>
+	<tr>
+<?php 
+		foreach($inputs as $input):
+			if(isset($input[XMLParser::SHORTWIEW])):
+				$key = Common::labelFromField((string)$input, false);
+				$value= Common::renderValue($docData[$key],$input);
+?>
+			<td>
+				<?=$value?>
+			</td>
+<?php 
+			endif;
+		endforeach;			
+?>
+			<td class="text-right">
+				<a target="_blank" class="btn btn-primary detail"
+		href="?<?=Masterdocument::ID_MD?>=<?=$id_md?>"><span class="fa fa-search fa-1x fa-fw"></span>
+			Dettaglio</a>
+				
+			</td>
+		</tr>
+	</table>
+<?php 
+		return ob_get_clean();
 	}
 	
 	public function updateDocumentData($id_doc, $docInputs, $documents_data){

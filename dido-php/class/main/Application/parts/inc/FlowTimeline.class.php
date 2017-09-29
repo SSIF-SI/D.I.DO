@@ -63,7 +63,7 @@ class TimelineElementMissing extends ATimelineElement{
 }
 
 class TimelineElementFull extends ATimelineElement{
-	public function __construct($badge, $panel){
+	public function __construct($badge, $panel, $isLink = false){
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			$badge, 
 			$panel
@@ -212,6 +212,12 @@ class FlowTimelineButtonDownload extends AFlowTimelinePanelButton{
 	}
 }
 
+class FlowTimelineButtonEdit extends AFlowTimelinePanelButton{
+	public function __construct($href){
+		$this->_button = sprintf(self::HTML, "info", "edit-doc",$href, "fa-pencil", "Modifica");
+	}
+}
+
 class FlowTimelineButtonEditInfo extends AFlowTimelinePanelButton{
 	public function __construct($href){
 		$this->_button = sprintf(self::HTML, "info", "edit-info",$href, "fa-pencil", "Modifica informazioni documento");
@@ -240,7 +246,7 @@ abstract class FlowTimelineBadge{
 
 class FlowTimelineBadgeSuccess extends FlowTimelineBadge{
 	public function __construct($closed = false){
-		$this->_badge = '<div class="timeline-badge success"><i class="fa fa-'.($closed ? 'lock' : 'check').'"></i></div>';
+		$this->_badge = '<div class="timeline-badge success'.($closed ? ' disabled' : '').'"><i class="fa fa-'.($closed ? 'lock' : 'check').'"></i></div>';
 	}
 }
 

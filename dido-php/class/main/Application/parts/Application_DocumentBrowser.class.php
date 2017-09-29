@@ -4,6 +4,7 @@ class Application_DocumentBrowser{
 	const LABEL_MD_DATA  = "md_data";
 	const LABEL_DOCUMENTS = "documents";
 	const LABEL_DOCUMENTS_DATA = "documents_data";
+	const LABEL_MD_LINKS = "md_links";
 	
 	const MUST_BE_SIGNED_BY_ME = "mustBeSignedByMe";
 	const IS_SIGNED_BY_ME = "isSigned";
@@ -66,14 +67,18 @@ class Application_DocumentBrowser{
 	}
 	
 	public function getLinkedMd($id_md){
-		$id_mds = array_keys(Utils::getListfromField($this->_MasterdocumentsLinks->getBy(MasterDocumentsLinks::ID_FATHER, $id_md), null, MasterdocumentsLinks::ID_CHILD));
+		$mds = $this->_MasterdocumentsLinks->getBy(MasterDocumentsLinks::ID_FATHER, $id_md);
+		$id_mds = array_keys(Utils::getListfromField($mds, null, MasterdocumentsLinks::ID_CHILD));
 		if(empty($id_mds)) return null;
-		return $this
-			->_emptyResult()
+		
+		$this->_emptyResult()
 			->_fillResultArray(self::LABEL_MD, $this->_just($id_mds))
 			->_createResultTree()
-			->_complete()
-			->getResult();
+			->_complete();
+		
+		$this->_resultArray [self::LABEL_MD_LINKS] = Utils::getListfromField($mds, null, MasterdocumentsLinks::ID_LINK);
+		
+		return $this->getResult();
 	}
 	
 	public function getLinkableMd($md_name){
@@ -338,7 +343,6 @@ class Application_DocumentBrowser{
 			$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 0;
 			$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = 0;
 		}
-		flog("resultree before createtree: %o",$this->_resultArray);
 		
 		$md_ids = array_keys ( $this->_resultArray [self::LABEL_MD] );
 		if (count ( $md_ids )) {

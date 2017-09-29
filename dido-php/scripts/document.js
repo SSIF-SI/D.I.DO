@@ -6,7 +6,7 @@ $(document).ready(function(){
 		MyModal.editModal(this);
 	});
 	
-	$('a.add-doc, a.upload-doc').click(function (e) {
+	$('a.add-doc, a.edit-doc, a.upload-doc').click(function (e) {
 		e.preventDefault();
 		MyModal.setTitle("Nuovo documento");
 		MyModal.editModal(this);
