@@ -12,9 +12,10 @@ class Application_ActionManager {
 	
 	const ACTION_UPLOAD = "upload";
 	const ACTION_DOWNLOAD = "download";
-	const ACTION_ADD_MD_LINK = "addMdLink";
 	const ACTION_DELETE = "delete";
+	const ACTION_DELETE_MD_LINK = "deleteMdLink";
 	const ACTION_EDIT_INFO = "editInfo";
+	const ACTION_EDIT_MD_LINK = "editMdLink";
 	const ACTION_CLOSE_DOC = "closedocument";
 	const ACTION_EDIT_MD_INFO = "editMdInfo";
 	
@@ -273,31 +274,46 @@ class Application_ActionManager {
 		die();		
 	}
 	
-	public function addMdLink(){
+	public function editMdLink(){
+		$MasterdocumentsLinks = new MasterdocumentsLinks($this->_dbConnector);
+		
 		if(isset($_POST['mdLink'])){
 			$ARP = new AjaxResultParser();
-			$eh = new ErrorHandler(false);
 			
 			if(empty($_POST['mdLink'])){
+				$eh = new ErrorHandler(false);
 				$eh->setErrors("Nessuna scelta effettuata");
 			} else {
-				$MDLink = new MasterdocumentsLinks($this->_dbConnector);
-				$result = $MDLink->save([
-					MasterdocumentsLinks::ID_FATHER => $_GET[Masterdocument::ID_MD], 
-					MasterdocumentsLinks::ID_CHILD => $_POST['mdLink']
-				]);
-				flog("result: %o",$result);
-				if(!$result)
-					$eh->setErrors("Impossibile salvare i dati");
+				$stub = [
+						MasterdocumentsLinks::ID_FATHER => $_GET[Masterdocument::ID_MD], 
+						MasterdocumentsLinks::ID_CHILD => $_POST['mdLink']
+					];
+				if(isset($_GET[MasterdocumentsLinks::ID_LINK])){
+					$stub[MasterdocumentsLinks::ID_LINK] = $_GET[MasterdocumentsLinks::ID_LINK];
+				}
+				$eh = $MasterdocumentsLinks->save($stub);
+				/*if(!$result)
+					$eh->setErrors("Impossibile salvare i dati");*/
 			}
 			$ARP->encode($eh->getErrors(true));
 			die();
 		} else {
+			$mdLinks = Utils::getListfromField($MasterdocumentsLinks->getBy(MasterdocumentsLinks::ID_FATHER, $_GET[Masterdocument::ID_MD]), MasterdocumentsLinks::ID_CHILD, MasterdocumentsLinks::ID_LINK);
+			flog("mdLinks Action: %o",$mdLinks);
 			$list = $this->_Application_DocumentBrowser->getLinkableMd($_GET[XMLParser::MD_NAME]);
+			
 			$options = array();
 			if(count($list[Application_DocumentBrowser::LABEL_MD])){
 				$XMLParser = new XMLParser();
 				foreach($list[Application_DocumentBrowser::LABEL_MD] as $id_md=>$md){
+					$key = array_search($id_md, $mdLinks);
+					
+					if(in_array($id_md, $mdLinks) && $key !== false && $key != $_GET[MasterdocumentsLinks::ID_LINK]) continue;
+					
+					// Teoricamente dovrebbero essere MD chiusi, 
+					// In fase di test skippiamo questo controllo 
+					// if($md[Masterdocument::CLOSED] != ProcedureManager::CLOSED) continue;
+					
 					$XMLParser->setXMLSource($md[Masterdocument::XML], $md[Masterdocument::TYPE]);
 					$inputs = $XMLParser->getMasterDocumentInputs();
 					$optLabel = [];
@@ -312,8 +328,26 @@ class Application_ActionManager {
 				}
 			}
 			flog("options: %o",$options);
-			die("<form>".HTMLHelper::select("mdLink", $_GET[XMLParser::MD_NAME], $options)."</form>");
+			
+			$selectedLink = isset($mdLinks[$_GET[MasterdocumentsLinks::ID_LINK]]) ? $mdLinks[$_GET[MasterdocumentsLinks::ID_LINK]] : null;
+			flog("Selected: %d",$selectedLink);
+			die("<form>".HTMLHelper::select("mdLink", $_GET[XMLParser::MD_NAME], $options, $selectedLink)."</form>");
 		}
+	}
+	
+	public function deleteMdLink(){
+		$MasterdocumentsLinks = new MasterdocumentsLinks($this->_dbConnector);
+		$ARP = new AjaxResultParser();
+			
+		if(empty($_GET['id_link'])){
+			$eh = new ErrorHandler(false);
+			$eh->setErrors("Nessun documento da cancellare");
+		} else {
+			$stub = $MasterdocumentsLinks->get([MasterdocumentsLinks::ID_LINK => $_GET['id_link']]);
+			$eh = $MasterdocumentsLinks->delete($stub);
+		}
+		$ARP->encode($eh->getErrors(true));
+		die();
 	}
 	
 	private function _getMD($GET){
