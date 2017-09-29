@@ -42,7 +42,7 @@
 		<list>
 			<document name="curriculum" minOccur="0" />
 		</list>
-		<document name="proveddimento individuazione contraente" onlyIfExist="curriculum" minOccur="0" maxOccur="1">
+		<document name="provvedimento individuazione contraente" onlyIfExist="curriculum" minOccur="0" maxOccur="1">
 			<signatures>
 				<signature role="DIR" />
 			</signatures>

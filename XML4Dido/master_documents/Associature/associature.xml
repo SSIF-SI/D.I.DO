@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<masterDocument name="associatura" owner="SAG">
+	<types>
+		<type>tipo1</type>
+		<type>tipo2</type>
+		<type>tipo3</type>
+	</types>
+	<inputs>
+		<input values="persone" shortView="true">nominativo associato</input>
+		<input values="tipo_associatura" shortView="true">tipo associatura</input>
+		<input values="gruppi" shortView="true">laboratorio</input>
+		<input type="data" shortView="true">data inizio</input>
+		<input type="data" shortView="true">data fine</input>
+	</inputs>
+	<list>
+		<document name="domanda associatura" minOccur="1" maxOccur="1"/>
+		<document name="scheda" minOccur="1" maxOccur="1"/>
+		<document name="curriculum" minOccur="1" maxOccur="1"/>
+		<document name="programma ricerca" minOccur="1" maxOccur="1"/>
+		
+		<document name="relazione attività primaria" minOccur="0" maxOccur="1"/>
+		<document name="relazione acquisizione Risorse" minOccur="0" maxOccur="1"/>
+		<document name="nulla osta"  minOccur="0" maxOccur="1"/>
+		
+		<document name="validazione"  validation="associature" minOccur="0" maxOccur="0"/>
+		<document name="nota" minOccur="0" maxOccur="1"/>
+		
+		<document name="documento associatura" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR" />
+			</signatures>
+		</document>
+		
+		<document name="accettazione associato" minOccur="1" maxOccur="1">
+			<signatures>
+				<signature role="DIR-C" />
+			</signatures>
+		</document>
+		
+	</list>
+</masterDocument>
