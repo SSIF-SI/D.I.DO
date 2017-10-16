@@ -185,8 +185,8 @@ class Application_Detail{
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
-				
-			$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $MDSigners);
+			if(!$documentClosed)	
+				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $MDSigners);
 				
 			$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
 			$panelButtons = [];

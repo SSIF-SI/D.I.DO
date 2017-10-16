@@ -339,12 +339,12 @@ class Application_ActionManager {
 		$MasterdocumentsLinks = new MasterdocumentsLinks($this->_dbConnector);
 		$ARP = new AjaxResultParser();
 			
-		if(empty($_GET['id_link'])){
+		if(empty($_GET[MasterdocumentsLinks::ID_LINK])){
 			$eh = new ErrorHandler(false);
 			$eh->setErrors("Nessun documento da cancellare");
 		} else {
-			$stub = $MasterdocumentsLinks->get([MasterdocumentsLinks::ID_LINK => $_GET['id_link']]);
-			$eh = $MasterdocumentsLinks->delete($stub);
+			$record = $MasterdocumentsLinks->get([MasterdocumentsLinks::ID_LINK => $_GET[MasterdocumentsLinks::ID_LINK]]);
+			$eh = $MasterdocumentsLinks->delete($record);
 		}
 		$ARP->encode($eh->getErrors(true));
 		die();

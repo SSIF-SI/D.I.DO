@@ -181,9 +181,9 @@ class SignatureHelper {
 		
 		$metadata = self::createMetadata ( $signers, "Signers", Signers::ID_PERSONA, array (
 				Signers::ID_PERSONA => 'PersonaleHelper::getNominativo',
-				Signers::PKEY		=> 'Utils::shorten' 
-		) );
-		$signers = HTMLHelper::editTable ( $signers, $metadata ['buttons'], $metadata ['substitutes'] );
+				Signers::PKEY		=> 'Utils::shorten'
+		));
+		$signers = HTMLHelper::editTable ( $signers, $metadata ['buttons'], $metadata ['substitutes']);
 		
 		$signatureObj = new Signature ( DBConnector::getInstance () );
 		$signatures = $signatureObj->getAll ( Signature::SIGLA, Signature::ID_ITEM );

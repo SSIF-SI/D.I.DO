@@ -191,8 +191,11 @@ static function input($type, $name, $label, $value = null, $class = null, $requi
 			$href .= "?";
 		
 		foreach ( $list as $k => $item ) {
-			foreach ( $substitutes_keys as $key => $callback ) {
-				$substitutes [$k] [$key] = call_user_func ( $callback, $item [$key] );
+			foreach ( $substitutes_keys as $key => $sub ) {
+				if(is_callable($sub))
+					$substitutes [$k] [$key] = call_user_func ( $sub, $item [$key] );
+				else 
+					$substitutes [$k] [$key] = $sub[$item [$key]];
 			}
 			
 			$suffix = array ();
