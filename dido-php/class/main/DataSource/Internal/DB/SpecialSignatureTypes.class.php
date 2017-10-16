@@ -13,6 +13,7 @@ class SpecialSignatureTypes extends Crud {
 	public function __construct($connInstance) {
 		parent::__construct ( $connInstance );
 	}
+	
 }
 
 ?>
