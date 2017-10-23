@@ -45,9 +45,9 @@ import com.itextpdf.text.pdf.security.PrivateKeySignature;
 import com.itextpdf.text.pdf.security.SignaturePermissions;
 import com.itextpdf.text.pdf.security.SignaturePermissions.FieldLock;
 
-import dido.pdfmanager.interfaces.InterfacePdfManager;
+import dido.pdfmanager.interfaces.InterfaceSignatureManager;
 
-public class PdfManager implements InterfacePdfManager {
+public class PdfManager implements InterfaceSignatureManager {
 	final static Logger logger = Logger.getLogger(PdfManager.class.getName());
 	private List<Signature> signatures = null;
 	private List<Annotation> annotations=null;
