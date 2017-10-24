@@ -63,8 +63,9 @@ class ListHelper {
 
 	static function areeProgettuali() {
 		$areeObj= new aree_progettuali();
-		$aree=$areeObj->getStub();
-		finfo("Aree: %o",$aree);
+		$aree = $areeObj->getAll(aree_progettuali::DESCRIZIONE);
+		$aree = Utils::getListfromField($aree,array(aree_progettuali::DESCRIZIONE,aree_progettuali::CODICE), aree_progettuali::CODICE);
+		return $aree;
 	}
 
 	static function esitiRichiesteDiDelega() {

@@ -235,6 +235,7 @@ class Application_ActionManager {
 			$ARP->encode($eh->getErrors(true));
 		}
 		
+		
 		$XMLParser = new XMLParser();
 		$md_data = [];
 		
@@ -268,10 +269,9 @@ class Application_ActionManager {
 			$types = array_combine($types, array_map(function($el){return ucfirst($el);}, $types));
 			$docInfo = HTMLHelper::select(XMLParser::TYPE, "Tipo", $types, null, null, false, true).$docInfo;
 		}
-		
 		echo("<form>$docInfo</form>");
 		Utils::includeScript(SCRIPTS_PATH, "datepicker.js");
-		die();		
+				
 	}
 	
 	public function editMdLink(){

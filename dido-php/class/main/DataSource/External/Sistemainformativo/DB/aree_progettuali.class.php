@@ -2,7 +2,7 @@
 
 class aree_progettuali extends Crud {
 	
-	const ID= "id";
+	const ID = "id";
 	
 	const CODICE = "codice";
 	
@@ -13,7 +13,7 @@ class aree_progettuali extends Crud {
 	const FLAG_DEL = "flag_del";
 	
 	protected $TABLE = "aree_progettuali";
-
+	
 	public function __construct() {
 		parent::__construct ( Sistemainformativo::getInstance ()->getConnection () );
 	}
