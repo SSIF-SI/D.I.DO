@@ -61,12 +61,10 @@ class ListHelper {
 		);
 	}
 
-	static function areeProgettuali() { // TODO
-		return array (
-				"area1" => "area1",
-				"area2" => "area2",
-				"area3" => "area3" 
-		);
+	static function areeProgettuali() {
+		$areeObj= new aree_progettuali();
+		$aree=$areeObj->getStub();
+		finfo("Aree: %o",$aree);
 	}
 
 	static function esitiRichiesteDiDelega() {
