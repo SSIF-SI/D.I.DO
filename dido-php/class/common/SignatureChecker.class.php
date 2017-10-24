@@ -1,12 +1,12 @@
 <?php 
 class SignatureChecker{
 	private $_ftpDataSource;
-	private $_PDFParser;
+	private $_SignatureInspector;
 	private $_signaturesOnDocument = null;
 	
 	public function __construct(IFTPDataSource $ftpDataSource){
 		$this->_ftpDataSource = $ftpDataSource;
-		$this->_PDFParser = new PDFParser();
+		$this->_SignatureInspector = new SignatureInspector();
 	}
 	
 	/*
@@ -15,11 +15,11 @@ class SignatureChecker{
 	 */
 	
 	public function load($filename){
-		$tmpPDF = $this->_ftpDataSource->getTempFile ( $filename );
+		$tmpFile = $this->_ftpDataSource->getTempFile ( $filename );
 		
-		$this->_PDFParser->loadPDF ( $tmpPDF );
-		$this->_signaturesOnDocument = $this->_PDFParser->getSignatures ();
-		unlink ( $tmpPDF );
+		$this->_SignatureInspector->load ( $tmpFile );
+		$this->_signaturesOnDocument = $this->_SignatureInspector->getSignatures ();
+		unlink ( $tmpFile );
 		
 		return $this;
 	}

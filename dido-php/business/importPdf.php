@@ -10,16 +10,18 @@ if (count ( $_FILES )) {
 			die ( json_encode ( array (
 					"error" => "Errore nel caricamento del file {$file['name']}" 
 			) ) );
-		$PDFParser = new PDFParser ();
-		$PDFParser->loadPDF ( $file ['tmp_name'] );
+		$path_parts = pathinfo($file ['name']);
+		$ext = strtoupper($path_parts['extension']);
+		$SignatureInspector = new SignatureInspector ();
+		$SignatureInspector->load ( $file ['tmp_name'], $ext );
 		/*
-		 * if(!$PDFParser->isPDFA()){
+		 * if(!$SignatureInspector->isPDFA()){
 		 * die(json_encode(array("error" => "Il file {$file['name']} non è un
 		 * pdf di tipo A")));
 		 * }
 		 */
 		if (isset ( $_POST ['getOnlySignatures'] )) {
-			$signatures = $PDFParser->getSignatures ();
+			$signatures = $SignatureInspector->getSignatures ();
 			if (count ( $signatures ) == 0)
 				die ( json_encode ( array (
 						"error" => "Nel file {$file['name']} non sono presenti firme digitali" 
