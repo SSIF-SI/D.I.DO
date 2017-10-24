@@ -13,7 +13,7 @@ class PDFSigner {
 	private $_pdfpath;
 
 	public function __construct() {
-		$this->setSignatureManagerClass ( new Java ( 'dido.pdfmanager.PdfManager' ) );
+		$this->setSignatureManagerClass ( new Java ( 'dido.signatureinspector.SignatureInspector' ) );
 	}
 
 	public function setSignatureManagerClass($smg) {
