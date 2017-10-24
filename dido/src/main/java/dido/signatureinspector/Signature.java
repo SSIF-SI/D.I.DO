@@ -1,4 +1,4 @@
-package dido.pdfmanager;
+package dido.signatureinspector;
 
 public class Signature {
 	private String name;

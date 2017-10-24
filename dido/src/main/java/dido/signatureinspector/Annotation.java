@@ -1,4 +1,4 @@
-package dido.pdfmanager;
+package dido.signatureinspector;
 
 public class Annotation {
 	private String content=null;

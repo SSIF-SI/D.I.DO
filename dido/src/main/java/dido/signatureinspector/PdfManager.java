@@ -1,4 +1,4 @@
-package dido.pdfmanager;
+package dido.signatureinspector;
 
 
 import java.io.FileInputStream;
@@ -45,7 +45,7 @@ import com.itextpdf.text.pdf.security.PrivateKeySignature;
 import com.itextpdf.text.pdf.security.SignaturePermissions;
 import com.itextpdf.text.pdf.security.SignaturePermissions.FieldLock;
 
-import dido.pdfmanager.interfaces.InterfaceSignatureManager;
+import dido.signatureinspector.interfaces.InterfaceSignatureManager;
 
 public class PdfManager implements InterfaceSignatureManager {
 	final static Logger logger = Logger.getLogger(PdfManager.class.getName());
@@ -170,7 +170,7 @@ public class PdfManager implements InterfaceSignatureManager {
 		signatures.add(tmpSignature);
 	}
 
-	public boolean loadPDF(String path){
+	public boolean load(String path){
 		// Set up a simple configuration that logs on the console.
 		signatures=new ArrayList<Signature>();
 		annotations=new ArrayList<Annotation>();

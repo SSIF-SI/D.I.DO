@@ -1,4 +1,4 @@
-package dido.pdfmanager;
+package dido.signatureinspector;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -34,14 +34,14 @@ import org.bouncycastle.util.Store;
 import com.google.gson.Gson;
 import com.itextpdf.text.DocumentException;
 
-import dido.pdfmanager.interfaces.InterfaceSignatureManager;
+import dido.signatureinspector.interfaces.InterfaceSignatureManager;
 
 public class P7mManager implements InterfaceSignatureManager {
 	private List<Signature> signatures = null;
-	final static Logger logger = Logger.getLogger(PdfManager.class.getName());
+	final static Logger logger = Logger.getLogger(P7mManager.class.getName());
 	private Signature tmpSignature = null;
 
-	public boolean loadPDF(String path) {
+	public boolean load(String path) {
 		try{
 			 File f = new File(path);
 	         byte[] buffer = new byte[(int)f.length()];
@@ -69,6 +69,7 @@ public class P7mManager implements InterfaceSignatureManager {
 	        	 String signerName = IETFUtils.valueToString(cn.getFirst().getValue());
 	        	 logger.info("Signer Name: " + signerName);
 	        	 tmpSignature.setName(signerName);
+	        	 tmpSignature.setSigner(signerName);
 	        	 SubjectPublicKeyInfo subjectPKInfo = cert.getSubjectPublicKeyInfo();
 	        	 RSAPublicKey pub = (RSAPublicKey) toPublicKey(subjectPKInfo);
 	        	 logger.info("Public Key: " + pub.getModulus().toString(16));
