@@ -29,7 +29,7 @@ class Application_Detail{
 	public function createDetail($md, $mdLinks){
 		flog("mdLinks: %o",$mdLinks);
 		extract($md);
-	
+		
 		$id_md = $md[Masterdocument::ID_MD];
 		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
 		
@@ -50,10 +50,12 @@ class Application_Detail{
 			($this->_userManager->isGestore(true) && $XMLParser->isOwner($this->_userManager->getUser()->getGruppi()));
 
 		$almostOne = false;
+		
+		
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
-			
 			if(isset($doc[XMLParser::MD])){
+				
 				// il documento in realtà è un Master Document esterno
 				$docName = (string)$doc[XMLParser::MD];
 				
@@ -67,6 +69,7 @@ class Application_Detail{
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
+					
 					if(!$this->_parseMdLink($listOnDb, $mdLinks[Application_DocumentBrowser::LABEL_MD_LINKS],(int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $ICanManageIt, $mdClosed))
 						break;
 					$almostOne = true;
@@ -81,17 +84,17 @@ class Application_Detail{
 					$this->_flowResults->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 					);
-				
+					
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
-					//Utils::Printr($listOnDb);
 					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 						break;
 					$almostOne = true;
 				}
+				
 			}
-			
+		
 		}
 		
 		if(!$almostOne)
@@ -162,6 +165,7 @@ class Application_Detail{
 	
 	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
+		
 		foreach($listOnDb as $id_doc => $docData){
 				
 			$docName = $documents[$id_doc][Document::NOME];
@@ -179,7 +183,8 @@ class Application_Detail{
 				Common::getFilenameFromDocument($documents[$id_doc]);
 				
 			$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc]);
-				
+
+			
 			$editInfoBTN =
 			($ICanManageIt && !$documentClosed) ?
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
@@ -187,7 +192,7 @@ class Application_Detail{
 		
 			if(!$documentClosed)	
 				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $MDSigners);
-				
+			
 			$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
 			$panelButtons = [];
 				
@@ -301,6 +306,8 @@ class Application_Detail{
 			'errors' => false,
 			'html'		=> []	
 		];
+		
+		flog("docPath: %s",$docPath);
 		
 		$this->_SignatureChecker->load($docPath);
 		

@@ -17,7 +17,10 @@ class SignatureChecker{
 	public function load($filename){
 		$tmpFile = $this->_ftpDataSource->getTempFile ( $filename );
 		
-		$this->_SignatureInspector->load ( $tmpFile );
+		$path_parts = pathinfo($filename);
+		$ext = strtoupper($path_parts['extension']);
+		
+		$this->_SignatureInspector->load ( $tmpFile, $ext );
 		$this->_signaturesOnDocument = $this->_SignatureInspector->getSignatures ();
 		unlink ( $tmpFile );
 		
