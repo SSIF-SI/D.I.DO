@@ -40,6 +40,8 @@ class Application_Detail{
 			$md[Masterdocument::TYPE]
 		);
 		
+		$innerValues = $XMLParser->getMasterDocumentInnerValues();
+		
 		$this->_redirectUrl = TurnBack::getLastHttpReferer()."#".dirname($md[Masterdocument::XML])."/#".Common::fieldFromLabel($md[Masterdocument::NOME]);
 		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data);
 		$this->_flowResults = new FlowTimeline();
@@ -108,7 +110,7 @@ class Application_Detail{
 		
 		
 		if(count($listOnDb)){
-			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $docInputs);
+			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs);
 		} else {
 			if($this->_userManager->isGestore()){
 				$this->_flowResults->addTimelineElement(
@@ -163,7 +165,7 @@ class Application_Detail{
 		return true;
 	}
 	
-	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
+	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
 		
 		foreach($listOnDb as $id_doc => $docData){
@@ -182,7 +184,7 @@ class Application_Detail{
 				DIRECTORY_SEPARATOR .
 				Common::getFilenameFromDocument($documents[$id_doc]);
 				
-			$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc]);
+			$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues);
 
 			
 			$editInfoBTN =
@@ -237,11 +239,9 @@ class Application_Detail{
 		return true;
 	}
 	
-	public function createDocumentInfoPanel($inputs, $docData, $readonly = true, $mdInfo = false){
-		
-		$docInfo = FormHelper::createInputs($inputs, $docData, $readonly);
-		if(!$mdInfo) $docInfo .= FormHelper::createInputs($this->_defaultDocumentInputs, $docData, $readonly);
-		
+	public function createDocumentInfoPanel($inputs, $docData, $innerValues = null, $readonly = true, $mdInfo = false){
+		$docInfo = FormHelper::createInputs($inputs, $docData, $innerValues, $readonly);
+		if(!$mdInfo) $docInfo .= FormHelper::createInputs($this->_defaultDocumentInputs, $docData, $innerValues, $readonly);
 		return $docInfo;
 	}
 	
@@ -367,7 +367,7 @@ class Application_Detail{
 				true
 		);
 		
-		$infoPanel = FormHelper::createInputs($XMLParser->getMasterDocumentInputs(), $md_data, true);
+		$infoPanel = FormHelper::createInputs($XMLParser->getMasterDocumentInputs(), $md_data, $XMLParser->getMasterDocumentInnerValues(), true);
 		if(!$readOnly)
 			$infoPanel .= "<div class=\"text-center\"><a href=\"?action=".Application_ActionManager::ACTION_EDIT_MD_INFO."&".Masterdocument::ID_MD."=".$id_md."\" class=\"btn btn-primary ".Application_ActionManager::ACTION_EDIT_MD_INFO."\">Modifica informazioni</a></div>";
 		

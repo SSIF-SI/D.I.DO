@@ -18,8 +18,8 @@
 		<input values="areeProgettuali" shortView="true">area progettuale</input>
 		<input mandatory="0">ambito</input>
 		<input>controparti</input>
-		<input values="ruoliAttivitaPec">ruolo</input>
-		<input values="esitiAttivitaPec" shortView="true">esito</input>
+		<input innerValues="ruoliAttivitaPec" >ruolo</input>
+		<input innerValues="esitiAttivitaPec" shortView="true">esito</input>
 	</inputs>
 	<list>
 		<document name="atto" minOccur="1">
@@ -33,4 +33,17 @@
 			</inputs>
 		</document>
 	</list>
+	<innerValues>
+		<values name="ruoliAttivitaPec">
+			<value value="coordinatore">Coordinatore</value>
+			<value value="partner">Partner</value>
+			<value value="contraente">Contraente</value>
+			<value value="subcontraente">Subcontraente</value>
+		</values>
+		<values name="esitiAttivitaPec">
+			<value value="ammessa">Ammessa</value>
+			<value value="non ammessa">Non ammessa</value>
+			<value value="sospesa">Sospesa</value>
+		</values>
+	</innerValues>
 </masterDocument>

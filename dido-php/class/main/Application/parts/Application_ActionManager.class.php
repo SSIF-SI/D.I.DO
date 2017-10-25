@@ -99,6 +99,8 @@ class Application_ActionManager {
 			$docInputs = $docToSearch->inputs->input;
 		}
 		
+		$innerValues = $XMLParser->getMasterDocumentInnerValues();
+		
 		if(count($_POST)){
 			$ARP = new AjaxResultParser();
 			$ARP->encode(
@@ -109,7 +111,7 @@ class Application_ActionManager {
 					->getErrors(true));
 		}
 		
-		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], false);
+		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues, false);
 		echo("<form>$docInfo</form>");
 		Utils::includeScript(SCRIPTS_PATH, "datepicker.js");
 		die();
@@ -146,6 +148,8 @@ class Application_ActionManager {
 				$docToSearch = $XMLParser->getXmlSource();
 				$docInputs = $docToSearch->inputs->input;
 			}
+			
+			$innerValues = $XMLParser->getMasterDocumentInnerValues();
 			
 			if(count($_POST)){
 				//Sto salvando qualcosa
@@ -184,7 +188,7 @@ class Application_ActionManager {
 				$ARP->encode($eh->getErrors(true));
 			}
 			
-			$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], false);
+			$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues, false);
 		}
 		include(VIEWS_PATH."docUpload.php");
 	}
@@ -263,8 +267,7 @@ class Application_ActionManager {
 			$types = $XMLParser->getDocTypes();
 			
 		}
-		
-		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($XMLParser->getMasterDocumentInputs(), $md_data, false, true);
+		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($XMLParser->getMasterDocumentInputs(), $md_data, $XMLParser->getMasterDocumentInnerValues(), false, true);
 		if(!empty($types)){
 			$types = array_combine($types, array_map(function($el){return ucfirst($el);}, $types));
 			$docInfo = HTMLHelper::select(XMLParser::TYPE, "Tipo", $types, null, null, false, true).$docInfo;

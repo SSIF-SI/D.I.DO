@@ -75,22 +75,5 @@ class ListHelper {
 				"parziale" => "Parziale" 
 		);
 	}
-
-	static function ruoliAttivitaPec() {
-		return array (
-				"coordinatore" => "Coordinatore",
-				"partner" => "Partner",
-				"contraente" => "Contraente",
-				"subcontraente" => "Subcontraente" 
-		);
-	}
-
-	static function esitiAttivitaPec() {
-		return array (
-				"ammessa" => "Ammessa",
-				"non ammessa" => "Non ammessa",
-				"sospesa" => "Sospesa" 
-		);
-	}
 }
 ?>

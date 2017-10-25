@@ -47,6 +47,14 @@ class XMLParser implements IXMLParser {
 	
 	const SIGN_ROLE = "signRole";
 	
+	// Inner Values
+	
+	const INNER_VALUES= "innerValues";
+	
+	const IV_NAME = "name";
+	
+	const IV_VALUE = "value";
+	
 	// Common Params
 	const MANDATORY = "mandatory";
 
@@ -95,6 +103,19 @@ class XMLParser implements IXMLParser {
 
 	public function getMasterDocumentInputs() {
 		return $this->_xml->inputs->input;
+	}
+
+	public function getMasterDocumentInnerValues($values = null) {
+		if(is_null($values))
+			return isset($this->_xml->innerValues->values) ? $this->_xml->innerValues->values : null;
+		
+		foreach ( $this->_xml->innerValues->values as $innerValues ) {
+			
+			if ($innerValues [self::IV_NAME] == $values) {
+				return $innerValues->value;
+			}
+		}
+		return false;
 	}
 
 	public function getDocumentSignatures($docname){

@@ -1,49 +1,81 @@
 <?php
+
 class FormHelper {
+
 	private static $warnmessages = array ();
+
 	private static $warnBox = "";
-	public static function createInputs($inputs, $data, $readonly = false) {
-		if(!$inputs) return;
+
+	public static function createInputs($inputs, $data, $innerValues = null, $readonly = false) {
+		
+		if($innerValues){
+			$iValues = array();
+			foreach($innerValues as $i_Values){
+				$key = (string)$i_Values[XMLParser::IV_NAME];
+				foreach($i_Values->value as $i_Value){
+					$k =(string) $i_Value[XMLParser::IV_VALUE];
+					$v =(string) $i_Value;
+					$iValues[$key][$k] = $v;
+				}
+			}
+			$innerValues = $iValues;
+			
+		}
+		
+		if (! $inputs)
+			return;
 		ob_start ();
 		$col = 0;
-?>
+		?>
 <div class="row">
 <?php
 		foreach ( $inputs as $input ) :
-			$col++;
-			if($col > 3){
+			$col ++;
+			if ($col > 3) {
 				$col = 1;
-?>
+				?>
 </div>
 <div class="row">
 <?php
 			}
-			$editable = !$readonly || ($readonly && isset ( $input [XMLParser::EDITABLE] ) && $input [XMLParser::EDITABLE]);
+			$editable = ! $readonly || ($readonly && isset ( $input [XMLParser::EDITABLE] ) && $input [XMLParser::EDITABLE]);
 			$type = is_null ( $input [XMLParser::TYPE] ) ? 'text' : ( string ) $input [XMLParser::TYPE];
 			
 			$required = is_null ( $input [XMLParser::MANDATORY] ) ? true : ( bool ) ( string ) $input [XMLParser::MANDATORY];
 			// $required = is_null($input['mandatory']) ? true : false;
 			
-			$key = Common::labelFromField((string)$input, false);
+			$key = Common::labelFromField ( ( string ) $input, false );
 			
-			$field = Common::fieldFromLabel($key);
-			$label = Common::labelFromField($key);
+			$field = Common::fieldFromLabel ( $key );
+			$label = Common::labelFromField ( $key );
 			
 			$value = $data [$key];
 			
-			if(isset($input[XMLParser::VALUES])){
+			if (isset ( $input [XMLParser::VALUES] )) {
 				$rValue = $value;
-				$callback = ( string ) $input[XMLParser::VALUES];
-				$values = ListHelper::$callback();
-				if(isset($input[XMLParser::SIGN_ROLE])){
-					$values_alt = ListHelper::persone();
+				$callback = ( string ) $input [XMLParser::VALUES];
+				$values = ListHelper::$callback ();
+				if (isset ( $input [XMLParser::SIGN_ROLE] )) {
+					$values_alt = ListHelper::persone ();
 				}
 				
-				$old = !isset($values[$value]);
+				$old = ! isset ( $values [$value] );
 				
-				$value = isset($values[$value]) ? $values[$value] : $values_alt[$value];
+				$value = isset ( $values [$value] ) ? $values [$value] : $values_alt [$value];
+			}
+			
+			if(isset($input[XMLParser::INNER_VALUES]) && !is_null($innerValues)){
+				$rValue = $value;
+				$innerValuesToSearch = (string)$input[XMLParser::INNER_VALUES];
+				if(isset($innerValues[$innerValuesToSearch])){
+					$values = $innerValues[$innerValuesToSearch];
+					$old = !isset($values[$value]);
+					$value = isset($values[$value]) ? $values[$value] : null;
+				}
 				
 			}
+			
+			
 			if ($type == "data")
 				$value = Utils::convertDateFormat ( $value, DB_DATE_FORMAT, "d/m/Y" );
 			
@@ -51,31 +83,34 @@ class FormHelper {
 <div class="col-lg-4">
         <?php ;if($readonly || !$editable):?>
 		        <strong><?=ucfirst($key)?> <?php HTMLHelper::checkRequired($required);?></strong><br />
-	<em><?=empty($value) ? "&nbsp;" : $value?></em>
+		<em><?=empty($value) ? "&nbsp;" : $value?></em>
 		
              
-			 <?php else :
-				if (!isset ( $input [XMLParser::VALUES] ))
+			 
+			 <?php
+else :
+				if (! isset ( $input [XMLParser::VALUES] ) && ! isset ( $input [XMLParser::INNER_VALUES] ))
 					$input_html = HTMLHelper::input ( $type, $field, $label, $value, null, $required );
 				else {
-					if($old == false || is_null($data[$key]))
-						$input_html = HTMLHelper::select ($field, $label, $values, $rValue, null, false, $required );
-					else 
-						$input_html = HTMLHelper::fakeInput ( $field, $label, $value, $rValue, $required);
+					if ($old == false || is_null ( $data [$key] ))
+						$input_html = HTMLHelper::select ( $field, $label, $values, $rValue, null, false, $required );
+					else
+						$input_html = HTMLHelper::fakeInput ( $field, $label, $value, $rValue, $required );
 				}
 				echo $input_html;
 			endif;
 			?>
 				<hr />
+	</div>
+<?php
+		endforeach
+		;
+		?>
 </div>
 <?php
-		endforeach;
-?>
-</div>
-<?php 
 		return ob_get_clean ();
 	}
-		
+
 	public static function check($REQUEST, $inputs) {
 		self::$warnmessages = array ();
 		self::$warnBox = "";
@@ -108,16 +143,16 @@ class FormHelper {
 			self::$warnBox = HTMLHelper::saveErrorBox ( $errors );
 		}
 	}
-	
+
 	public static function isValid() {
 		$errors = Utils::filterList ( self::$warnmessages, 'error', true );
 		return count ( $errors ) == 0;
 	}
-	
+
 	public static function getWarnMessages($item = null) {
 		return is_null ( $item ) ? self::$warnmessages : (isset ( self::$warnmessages [$item] ) ? self::$warnmessages [$item] : null);
 	}
-	
+
 	public static function getWarnBox() {
 		return self::$warnBox;
 	}
