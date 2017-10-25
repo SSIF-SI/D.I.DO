@@ -54,26 +54,12 @@ class ListHelper {
 		return $list;
 	}
 
-	static function tipiElaborazione() {
-		return array (
-				"cassa" => "Cassa",
-				"competenza" => "Competenza" 
-		);
-	}
 
 	static function areeProgettuali() {
 		$areeObj= new aree_progettuali();
 		$aree = $areeObj->getAll(aree_progettuali::DESCRIZIONE);
 		$aree = Utils::getListfromField($aree,array(aree_progettuali::DESCRIZIONE,aree_progettuali::CODICE), aree_progettuali::CODICE);
 		return $aree;
-	}
-
-	static function esitiRichiesteDiDelega() {
-		return array (
-				"accolta" => "Accolta",
-				"negata" => "Negata",
-				"parziale" => "Parziale" 
-		);
 	}
 }
 ?>

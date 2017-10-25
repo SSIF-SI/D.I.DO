@@ -4,7 +4,7 @@
 	<inputs>
 		<input values="progetti" shortView="true">acronimo progetto</input>
 		<input shortView="true">periodo</input>
-		<input values="tipiElaborazione" shortView="true">tipo elaborazione</input>
+		<input innerValues="tipiElaborazione" shortView="true">tipo elaborazione</input>
 		<input values="gruppi" shortView="true">gruppo</input>
 	</inputs>
 	<list>
@@ -20,4 +20,10 @@
 		</document>
 		<document name="risposta PMS" minOccur="1" />
 	</list>
+	<innerValues>
+		<values name="tipiElaborazione">
+			<value value="cassa">Cassa</value>
+			<value value="competenza">Competenza</value>
+		</values>
+	</innerValues>
 </masterDocument>

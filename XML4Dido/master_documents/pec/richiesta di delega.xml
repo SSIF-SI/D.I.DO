@@ -7,7 +7,7 @@
 		<input values="areeProgettuali" shortView="true">area progettuale</input>
 		<input shortView="true">tipo atto</input>
 		<input>bando</input>
-		<input values="esitiRichiesteDiDelega" shortView="true">esito</input>
+		<input innerValues="esitiRichiesteDiDelega" shortView="true">esito</input>
 		<input type="textarea">note</input>
 	</inputs>
 	<list>
@@ -23,4 +23,11 @@
 			</inputs>
 		</document>
 	</list>
+	<innerValues>
+		<values name="esitiRichiesteDiDelega">
+			<value value="accolta">Accolta</value>
+			<value value="negata">Negata</value>
+			<value value="parziale">Parziale</value>
+		</values>
+	</innerValues>
 </masterDocument>
