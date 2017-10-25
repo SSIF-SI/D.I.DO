@@ -109,18 +109,13 @@
 
 			<div class="navbar-default sidebar" role="navigation" style="visibility: hidden">
 				<div class="sidebar-nav navbar-collapse">
+					<div style="margin:0.4em">
+						<a href="<?=BUSINESS_HTTP_PATH?>search.php" class="btn btn-primary btn-lg, btn-block">
+							<i class="fa fa-search"></i> Ricerca
+						</a>
+					</div>
 					<ul class="nav" id="side-menu">
-						<li class="sidebar-search">
-							<div class="input-group custom-search-form">
-								<input type="text" class="form-control" placeholder="Search...">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button">
-										<i class="fa fa-search"></i>
-									</button>
-								</span>
-							</div> <!-- /input-group -->
-						</li>
-                       	<?=$Application->getApplicationPart(Application::NAVIGATOR)->renderLeftMenu()?>
+						<?=$Application->getApplicationPart(Application::NAVIGATOR)->renderLeftMenu()?>
                     </ul>
                     
 				</div>
