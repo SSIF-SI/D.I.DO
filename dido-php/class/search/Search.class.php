@@ -5,30 +5,8 @@ class Search{
 	private $_view;
 	
 	public function __construct(){
-		if(Utils::checkAjax ()){
-			if(isset($_GET['addFilter'])){
-				include (BUSINESS_PATH."addFilter".$_GET['addFilter'].".php");
-				die();
-			}
-		}
-		
-		if(isset($_GET['reset'])){
-			Session::getInstance()->delete("Search_URI");
-			Session::getInstance()->delete("Search_filters");
-			header("Location:".$_SERVER['PHP_SELF']);
-			die();
-		}
-		
 		$this->_requestUri = array_pop(explode("/",$_SERVER['REQUEST_URI']));
-		
-		if(Session::getInstance()->exists("Search_URI") && $this->_requestUri != Session::getInstance()->get("Search_URI")){
-			header("Location:".BUSINESS_HTTP_PATH . Session::getInstance()->get("Search_URI"));
-			die();
-		}
-		
 		$this->_view = $this->parseUri();
-		
-		
 	}
 	
 	public function parseUri(){
