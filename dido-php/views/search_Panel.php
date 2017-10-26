@@ -17,9 +17,14 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-lg-3">
-		<a href="" class="btn btn-lg btn-primary" style="margin-bottom:0.3em">
+	<div class="col-lg-6">
+		<button type="submit" class="btn btn-lg btn-primary btn-block" style="margin-bottom:0.3em">
 			<i class="fa fa-search"> </i> Cerca
+        </button>
+	</div>
+	<div class="col-lg-6">
+		<a href="<?=$Search->getRequestUri()."&reset"?>" class="btn btn-lg btn-danger btn-block" style="margin-bottom:0.3em">
+			<i class="fa fa-times"> </i> Reset
         </a>
 	</div>
 </div>
