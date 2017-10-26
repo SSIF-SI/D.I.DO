@@ -75,11 +75,26 @@ var MyModal = {
 				} 
 			}
 		},
+		confirmModal: function(context, contentSet){
+			var href=$(context).prop("href");
+			MyModal.addButtons(
+					[
+					 {id:"ok", type: "button", label: "Ok", cssClass: "btn-primary", spanClass: "fa-check", callback: function(){
+					 	alert("OK");
+					 }
+					 }
+					 ]
+			);
+			if(contentSet == undefined || !contentSet) 
+				MyModal.load($(context));
+			else 
+				MyModal.modal();
+		},
 		editModal: function(context, contentSet){
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[
-					 {id:"salva", type: "submit", label: "Salva", cssClass: "btn-primary", spanClass: "fa-save", callback: function(){;
+					 {id:"salva", type: "submit", label: "Salva", cssClass: "btn-primary", spanClass: "fa-save", callback: function(){
 					 MyModal.submit({
 						  element:$(context),
 						  href:href,
@@ -98,7 +113,7 @@ var MyModal = {
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[
-					 {id:"Elimina", type: "submit", label: "Elimina", cssClass: "btn-danger", spanClass: "fa-trash-o", callback: function(){;
+					 {id:"Elimina", type: "submit", label: "Elimina", cssClass: "btn-danger", spanClass: "fa-trash-o", callback: function(){
 					 MyModal.submit({
 						 element: $(context),
 						 href: href});

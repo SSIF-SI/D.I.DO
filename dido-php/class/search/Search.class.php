@@ -5,22 +5,48 @@ class Search{
 	private $_view;
 	
 	public function __construct(){
+		if(Utils::checkAjax ()){
+			if(isset($_GET['addFilter'])){
+				include (BUSINESS_PATH."addFilter".$_GET['addFilter'].".php");
+				die();
+			}
+		}
+		
+		if(isset($_GET['reset'])){
+			Session::getInstance()->delete("Search_URI");
+			Session::getInstance()->delete("Search_filters");
+			header("Location:".$_SERVER['PHP_SELF']);
+			die();
+		}
+		
 		$this->_requestUri = array_pop(explode("/",$_SERVER['REQUEST_URI']));
+		
+		if(Session::getInstance()->exists("Search_URI") && $this->_requestUri != Session::getInstance()->get("Search_URI")){
+			header("Location:".BUSINESS_HTTP_PATH . Session::getInstance()->get("Search_URI"));
+			die();
+		}
+		
 		$this->_view = $this->parseUri();
+		
+		
 	}
 	
 	public function parseUri(){
+		
 		if(isset($_GET['source'])){
 			array_push($this->_tree, $this->_translate($_GET['source']));
 		} else return "search_setSource.php";
 		
 		if(isset($_GET['closed']) || isset($_GET['all'])){
+			
 			array_push($this->_tree, 
 				isset($_GET['closed']) ? $this->_translate($_GET['closed']) : $this->_translate('all')
 			);
-		} else return "search_setClosed.php";
+			if(!Session::getInstance()->exists("Search_URI")) Session::getInstance()->set("Search_URI", $this->_requestUri);
+			return "search_Panel.php";
+		} 
 		
-		return null;
+		return "search_setClosed.php";
 	}
 	
 	public function getTree(){
@@ -46,13 +72,13 @@ class Search{
 			case 'all':
 				return "Tutti";
 				break;
-			case '1':
+			case ProcedureManager::CLOSED:
 				return "Chiusi";
 				break;
-			case '0':
+			case ProcedureManager::OPEN:
 				return "Aperti";
 				break;
-			case '-1':
+			case ProcedureManager::INCOMPLETE:
 				return "Incompleti";
 				break;
 				
