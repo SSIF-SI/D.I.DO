@@ -5,3 +5,14 @@
 .timeline > li > .timeline-panel.mdLink::after{
 	border-color: transparent #ffa;
 }
+
+ul#filterList{
+	list-style-type:none;
+	margin:0; 
+	padding:0;
+	margin-bottom:1em;
+}
+ul#filterList li{
+	display:inline-block;
+	margin:0.3em !important;
+}

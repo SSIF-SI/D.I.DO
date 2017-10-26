@@ -16,7 +16,7 @@
 			Chiusi
         </a>
 	</div>
-	<?php if($_GET['source'] == "master_documents"):?>
+	<?php if($_GET['source'] == "Masterdocument"):?>
 	<div class="col-lg-6">
 		<a href="<?=$Search->getRequestUri()?>&closed=<?=ProcedureManager::INCOMPLETE?>" class="btn btn-lg btn-block btn-danger" style="margin-bottom:0.3em">
 			Incompleti

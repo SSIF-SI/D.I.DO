@@ -75,13 +75,12 @@ var MyModal = {
 				} 
 			}
 		},
-		confirmModal: function(context, contentSet){
+		confirmModal: function(context, contentSet, callback){
+			if(MyModal.busy) return;
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[
-					 {id:"ok", type: "button", label: "Ok", cssClass: "btn-primary", spanClass: "fa-check", callback: function(){
-					 	alert("OK");
-					 }
+					 {id:"ok", type: "button", label: "Ok", cssClass: "btn-primary", spanClass: "fa-check", callback: callback
 					 }
 					 ]
 			);
@@ -91,6 +90,7 @@ var MyModal = {
 				MyModal.modal();
 		},
 		editModal: function(context, contentSet){
+			if(MyModal.busy) return;
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[
@@ -110,6 +110,7 @@ var MyModal = {
 				MyModal.modal();
 		},
 		deleteModal: function(context){
+			if(MyModal.busy) return;
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[
@@ -125,6 +126,7 @@ var MyModal = {
 			MyModal.modal();
 		},
 		signModal: function(context){
+			if(MyModal.busy) return;
 			var href=$(context).prop("href");
 			MyModal.addButtons(
 					[

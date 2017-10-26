@@ -1,7 +1,22 @@
 <form method="POST">
 <div class="row">
 	<div class="col-lg-12 filter-box">
-		<?php // TODO Mettere i filtri?>	
+		<ul id="filterList">
+		</ul>
+		<?php 
+			if(Session::getInstance()->exists("Search_filters")){
+				$P = Session::getInstance()->get("Search_filters");
+				
+				
+				foreach(Session::getInstance()->get("Search_filters") as $key=>$values):
+					foreach($values as $ik=>$value):
+		?>
+		<input id="filter-<?=$ik?>" type="hidden" name="<?=$key."[$ik]"?>" value="<?=$value?>" />
+		<?php 			
+					endforeach;
+				endforeach;
+			}
+		?>	
 	</div>
 </div>
 <div class="row">
@@ -28,4 +43,5 @@
         </a>
 	</div>
 </div>
+<input type="hidden" name="postIt" value="" />
 </form>
