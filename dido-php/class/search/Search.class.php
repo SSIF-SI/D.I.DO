@@ -5,7 +5,9 @@ class Search{
 	private $_view;
 	
 	public function __construct(){
-		$this->_requestUri = array_pop(explode("/",$_SERVER['REQUEST_URI']));
+		$uriParts = explode("/",$_SERVER['REQUEST_URI']);
+		$requestUri = array_pop($uriParts);
+		$this->_requestUri = $requestUri;
 		$this->_view = $this->parseUri();
 	}
 	
