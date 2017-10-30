@@ -7,6 +7,8 @@ class MasterdocumentData extends AnyDocumentData {
 	const ID_MD = Masterdocument::ID_MD;
 
 	protected $TABLE = "master_documents_data";
+	
+	protected $VIEW = "search_master_documents_data_view";
 
 	protected $id_document_label = self::ID_MD;
 

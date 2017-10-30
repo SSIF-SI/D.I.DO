@@ -7,6 +7,8 @@ class DocumentData extends AnyDocumentData {
 	const ID_DOC = Document::ID_DOC;
 
 	protected $TABLE = "documents_data";
+	
+	protected  $VIEW ="search_documents_data_view";
 
 	protected $id_document_label = self::ID_DOC;
 

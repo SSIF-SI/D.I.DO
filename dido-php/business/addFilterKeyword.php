@@ -6,18 +6,17 @@ $className = $_GET[Search::SOURCE];
 $dataclassName=$className."Data";
 
 $A = new Application();
-$D = new $className($A->getDBConnector());
-$D_data=new $dataclassName($A->getDBConnector());
+$D=new $dataclassName($A->getDBConnector());
 
-if(isset($_GET[SharedDocumentCostants::CLOSED])){
-	$listIdDoc=$D->getBy(Document::CLOSED, $_GET[SharedDocumentCostants::CLOSED], Document::ID_DOC);
-	$listIdDoc=	Utils::getListfromField($listIdDoc,Document::ID_DOC,Document::ID_DOC);
+if(isset($_GET[SharedDocumentConstants::CLOSED])){
+	$listIdDoc=$D->getBy(SharedDocumentConstants::CLOSED, $_GET[SharedDocumentCostants::CLOSED], $className::ID);
+	$listIdDoc=	Utils::getListfromField($listIdDoc,$className::ID);
 	$ids=implode(",", $listIdDoc);
-	$listdoc_data=$D_data->getBy(Document::ID_DOC,$ids,Document::ID_DOC);
+	$listdoc_data=$D_data->getBy($className::ID,$ids,$className::ID);
 }
 else {
 	$listIdDoc=$D->getAll();
-	$listIdDoc=	Utils::getListfromField($listIdDoc,Document::ID_DOC,Document::ID_DOC);
+	$listIdDoc=	Utils::getListfromField($listIdDoc,$className::ID);
 	$ids=implode(",", $listIdDoc);
 }
 
