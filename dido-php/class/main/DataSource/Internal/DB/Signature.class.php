@@ -67,7 +67,7 @@ class Signature extends AnyDocument {
 			$id_vs = join ( ", ", array_map ( "Utils::apici", $id_vs ) );
 			$signers = array_merge ( $signers, Utils::getListfromField ( $this->getBy ( self::ID_PERSONA, $id_vs ), null, self::SIGLA ) );
 		}
-		flog("Signers: %o",$signers);
+// 		flog("Signers: %o",$signers);
 		return $signers;
 		//return $signers;
 	}

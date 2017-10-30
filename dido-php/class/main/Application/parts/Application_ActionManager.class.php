@@ -33,7 +33,7 @@ class Application_ActionManager {
 		if (!isset($_GET[Document::ID_DOC]))
 			return new ErrorHandler("Parametri mancanti");
 		$result = $this->_getMd($_GET);
-		flog($result);
+// 		flog($result);
 		extract ($result);
 		
 		$doc = new Document($this->_dbConnector);
@@ -302,7 +302,7 @@ class Application_ActionManager {
 			die();
 		} else {
 			$mdLinks = Utils::getListfromField($MasterdocumentsLinks->getBy(MasterdocumentsLinks::ID_FATHER, $_GET[Masterdocument::ID_MD]), MasterdocumentsLinks::ID_CHILD, MasterdocumentsLinks::ID_LINK);
-			flog("mdLinks Action: %o",$mdLinks);
+// 			flog("mdLinks Action: %o",$mdLinks);
 			$list = $this->_Application_DocumentBrowser->getLinkableMd($_GET[XMLParser::MD_NAME]);
 			
 			$options = array();
@@ -330,10 +330,10 @@ class Application_ActionManager {
 					$options[$id_md] = join($optLabel,", ");
 				}
 			}
-			flog("options: %o",$options);
+// 			flog("options: %o",$options);
 			
 			$selectedLink = isset($mdLinks[$_GET[MasterdocumentsLinks::ID_LINK]]) ? $mdLinks[$_GET[MasterdocumentsLinks::ID_LINK]] : null;
-			flog("Selected: %d",$selectedLink);
+// 			flog("Selected: %d",$selectedLink);
 			die("<form>".HTMLHelper::select("mdLink", $_GET[XMLParser::MD_NAME], $options, $selectedLink)."</form>");
 		}
 	}

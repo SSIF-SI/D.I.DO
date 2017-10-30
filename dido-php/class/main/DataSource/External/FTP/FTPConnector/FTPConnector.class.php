@@ -264,7 +264,7 @@ class FTPConnector implements IFTPConnector {
 
 	public function delete($filePath) {
 		$this->_connect ();
-		flog("Deleting %s", $this->_baseDir . $filePath);
+// 		flog("Deleting %s", $this->_baseDir . $filePath);
 		return @ftp_delete ( $this->_conn_id, $this->_baseDir . $filePath );
 	
 	}

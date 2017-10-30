@@ -85,7 +85,7 @@ class Application_DocumentBrowser{
 		$mds = Utils::getListfromField($this->_Masterdocument->getBy(Masterdocument::NOME, Utils::apici($md_name)),null,Masterdocument::ID_MD);
 		//$id_mds = Utils::getListfromField(Utils::filterList($id_mds, Masterdocument::CLOSED, ProcedureManager::CLOSED), Masterdocument::ID_MD);
 		if(empty($mds)) return null;
-		flog("md: %o",$mds);
+// 		flog("md: %o",$mds);
 		return $this
 			->_emptyResult()
 			->_fillResultArray(self::LABEL_MD, $mds)

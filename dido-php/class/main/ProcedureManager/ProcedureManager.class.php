@@ -123,15 +123,15 @@ class ProcedureManager implements IProcedureManager {
 
 	public function deleteDocument($doc, $ftpFolder) {
 		finfo(__METHOD__);
-		flog($doc);
-		flog($ftpFolder);
+// 		flog($doc);
+// 		flog($ftpFolder);
 		$this->_dbConnector->begin ();
 		if (! $this->_DPManager->delete ( $doc )) {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
 		$filePath = $ftpFolder . Common::getFilenameFromDocument ( $doc );
-		flog("filePath: %s",$filePath);
+// 		flog("filePath: %s",$filePath);
 		if (! $this->_FTPDataSource->deleteFile ( $filePath )) {
 			$this->_dbConnector->rollback ();
 			return false;

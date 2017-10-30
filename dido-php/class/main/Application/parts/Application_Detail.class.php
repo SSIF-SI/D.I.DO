@@ -27,7 +27,7 @@ class Application_Detail{
 	}
 	
 	public function createDetail($md, $mdLinks){
-		flog("mdLinks: %o",$mdLinks);
+// 		flog("mdLinks: %o",$mdLinks);
 		extract($md);
 		
 		$id_md = $md[Masterdocument::ID_MD];
@@ -75,7 +75,7 @@ class Application_Detail{
 					if(!$this->_parseMdLink($listOnDb, $mdLinks[Application_DocumentBrowser::LABEL_MD_LINKS],(int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $ICanManageIt, $mdClosed))
 						break;
 					$almostOne = true;
-					flog("almostOne");
+// 					flog("almostOne");
 				}
 			} else {
 				$XMLParser->checkIfMustBeLoaded ( $doc );
@@ -121,9 +121,9 @@ class Application_Detail{
 	}
 	
 	private function _parseMdLink($listOnDb, $mdLinks, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt, $mdClosed){
-		flog("listOnDB: %o",$listOnDb);
-		flog("mdLinks: %o",$mdLinks);
-		flog("data: %o",$documents_data);
+// 		flog("listOnDB: %o",$listOnDb);
+// 		flog("mdLinks: %o",$mdLinks);
+// 		flog("data: %o",$documents_data);
 		$XMLParser = new XMLParser();
 		foreach($listOnDb as $id_md => $docData){
 			$link = Utils::filterList($mdLinks, MasterdocumentsLinks::ID_CHILD, $id_md);
@@ -307,7 +307,7 @@ class Application_Detail{
 			'html'		=> []	
 		];
 		
-		flog("docPath: %s",$docPath);
+// 		flog("docPath: %s",$docPath);
 		
 		$this->_SignatureChecker->load($docPath);
 		
