@@ -2,27 +2,27 @@
 require_once("../config.php");
 if(!Utils::checkAjax()) die();
 
-$className = $_GET['source'];
+$className = $_GET[Search::SOURCE];
 $dataclassName=$className."Data";
 
 $A = new Application();
 $D = new $className($A->getDBConnector());
 $D_data=new $dataclassName($A->getDBConnector());
 
-if(isset($_GET['closed'])){
-	$listIdDoc=$D->getBy("closed", $_GET['closed'], 'id_doc');
-	$listIdDoc=	Utils::getListfromField($listIdDoc,"id_doc","id_doc");
+if(isset($_GET[SharedDocumentCostants::CLOSED])){
+	$listIdDoc=$D->getBy(Document::CLOSED, $_GET[SharedDocumentCostants::CLOSED], Document::ID_DOC);
+	$listIdDoc=	Utils::getListfromField($listIdDoc,Document::ID_DOC,Document::ID_DOC);
 	$ids=implode(",", $listIdDoc);
-	$listdoc_data=$D_data->getBy("id_doc",$ids,'id_doc');
+	$listdoc_data=$D_data->getBy(Document::ID_DOC,$ids,Document::ID_DOC);
 }
 else {
 	$listIdDoc=$D->getAll();
-	$listIdDoc=	Utils::getListfromField($listIdDoc,"id_doc","id_doc");
+	$listIdDoc=	Utils::getListfromField($listIdDoc,Document::ID_DOC,Document::ID_DOC);
 	$ids=implode(",", $listIdDoc);
 }
 
-$keys = $D_data->getRealDistinct("key","id_doc IN (".$ids." )");
-$keys=Utils::getListfromField($keys,"key");
+$keys = $D_data->getRealDistinct(AnyDocument::KEY,Document::ID_DOC . " IN (".$ids." )");
+$keys=Utils::getListfromField($keys,AnyDocument::KEY);
 ?>
 
 <form>

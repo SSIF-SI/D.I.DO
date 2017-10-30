@@ -6,9 +6,9 @@ class Document extends Crud {
 
 	const ID_MD = Masterdocument::ID_MD;
 
-	const NOME = "nome";
+	const NOME = SharedDocumentConstants::NOME;
 
-	const CLOSED = "closed";
+	const CLOSED = SharedDocumentConstants::CLOSED;
 
 	const EXTENSION = "extension";
 

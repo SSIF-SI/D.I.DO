@@ -1,18 +1,18 @@
 <?php
 
-class Masterdocument extends Crud {
+class Masterdocument extends Crud{
 
 	const ID_MD = "id_md";
 
-	const NOME = "nome";
-
 	const TYPE = "type";
+
+	const NOME = SharedDocumentConstants::NOME;
+
+	const CLOSED = SharedDocumentConstants::CLOSED;
 
 	const XML = "xml";
 
 	const FTP_FOLDER = "ftp_folder";
-
-	const CLOSED = "closed";
 
 	protected $TABLE = "master_documents";
 

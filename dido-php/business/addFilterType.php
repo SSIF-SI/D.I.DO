@@ -2,7 +2,7 @@
 require_once("../config.php");
 if(!Utils::checkAjax()) die();
 
-$className = $_GET['source'];
+$className = $_GET[Search::SOURCE];
 
 $class = new ReflectionClass($className);
 $static = $class->getConstants();
@@ -24,7 +24,7 @@ $types = $D->getRealDistinct($field);
 		<label>Tipi di Procedimento</label>
 <?php 
 	foreach($types as $k=>$type):
-		$label = ucwords($type['nome'].(isset($type['type']) ? " - ".$type['type'] : null)); 
+		$label = ucwords($type[SharedDocumentCostants::NOME].(isset($type[Masterdocument::TYPE]) ? " - ".$type[Masterdocument::TYPE] : null)); 
 ?>
 			<div id="ft-<?=$k?>" class="checkbox">
             	<label for="type-<?=$k?>">

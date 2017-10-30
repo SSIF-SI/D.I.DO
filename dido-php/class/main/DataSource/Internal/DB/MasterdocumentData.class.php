@@ -6,10 +6,6 @@ class MasterdocumentData extends AnyDocument {
 
 	const ID_MD = Masterdocument::ID_MD;
 
-	const KEY = "key";
-
-	const VALUE = "value";
-
 	protected $TABLE = "master_documents_data";
 
 	protected $id_document_label = self::ID_MD;

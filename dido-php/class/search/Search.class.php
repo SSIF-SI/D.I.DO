@@ -4,6 +4,10 @@ class Search{
 	private $_requestUri; 
 	private $_view;
 	
+	const SOURCE 		= "source";
+	const SEARCH_URI 	= "Search_URI";
+	const ALL 			= "all";
+	
 	public function __construct(){
 		$uriParts = explode("/",$_SERVER['REQUEST_URI']);
 		$requestUri = array_pop($uriParts);
@@ -13,16 +17,16 @@ class Search{
 	
 	public function parseUri(){
 		
-		if(isset($_GET['source'])){
-			array_push($this->_tree, $this->_translate($_GET['source']));
+		if(isset($_GET[self::SOURCE])){
+			array_push($this->_tree, $this->_translate($_GET[self::SOURCE]));
 		} else return "search_setSource.php";
 		
-		if(isset($_GET['closed']) || isset($_GET['all'])){
+		if(isset($_GET[SharedDocumentConstants::CLOSED]) || isset($_GET[self::ALL])){
 			
 			array_push($this->_tree, 
-				isset($_GET['closed']) ? $this->_translate($_GET['closed']) : $this->_translate('all')
+				isset($_GET[SharedDocumentConstants::CLOSED]) ? $this->_translate($_GET[SharedDocumentConstants::CLOSED]) : $this->_translate(self::ALL)
 			);
-			if(!Session::getInstance()->exists("Search_URI")) Session::getInstance()->set("Search_URI", $this->_requestUri);
+			if(!Session::getInstance()->exists(self::SEARCH_URI)) Session::getInstance()->set(self::SEARCH_URI, $this->_requestUri);
 			return "search_Panel.php";
 		} 
 		
@@ -43,13 +47,13 @@ class Search{
 	
 	private function _translate($value){
 		switch($value){
-			case 'master_documents':
+			case 'Masterdocument':
 				return "Procedimenti";
 				break;
-			case 'documents':
+			case 'Document':
 				return "Documenti interni ai Procedimenti";
 				break;
-			case 'all':
+			case self::ALL:
 				return "Tutti";
 				break;
 			case ProcedureManager::CLOSED:

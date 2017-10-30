@@ -6,10 +6,6 @@ class DocumentData extends AnyDocument {
 
 	const ID_DOC = Document::ID_DOC;
 
-	const KEY = "key";
-
-	const VALUE = "value";
-
 	protected $TABLE = "documents_data";
 
 	protected $id_document_label = self::ID_DOC;
