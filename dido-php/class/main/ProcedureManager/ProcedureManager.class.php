@@ -122,7 +122,7 @@ class ProcedureManager implements IProcedureManager {
 	}
 
 	public function deleteDocument($doc, $ftpFolder) {
-		finfo(__METHOD__);
+		//finfo(__METHOD__);
 // 		flog($doc);
 // 		flog($ftpFolder);
 		$this->_dbConnector->begin ();

@@ -23,7 +23,7 @@
 			</signatures>
 			<inputs>
 				<input>numero mandato</input>
-				<input type="date">data mandato</input>
+				<input type="data">data mandato</input>
 			</inputs>
 		</document>
 	</list>

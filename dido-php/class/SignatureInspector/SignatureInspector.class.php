@@ -23,12 +23,12 @@ class SignatureInspector{
 			$ext = strtoupper($path_parts['extension']);
 		}
 		$method = "load$ext";
-		finfo("%s(%s) Called", $method,$file_path);
+		//finfo("%s(%s) Called", $method,$file_path);
 		$this->_signatureManagerClass->$method ( $file_path );
 		$this->_signatures = json_decode ( ( string ) $this->_signatureManagerClass->getSignatures () );
-		finfo("getSignatures Called");
+		//finfo("getSignatures Called");
 		$this->_annotations = json_decode ( ( string ) $this->_signatureManagerClass->getAnnotations () );
-		finfo("getAnnotations Called");
+		//finfo("getAnnotations Called");
 		
 		if(strtolower($ext) == 'pdf'){
 			$content = json_decode ( $this->_signatureManagerClass->getXmlMetadata () );
