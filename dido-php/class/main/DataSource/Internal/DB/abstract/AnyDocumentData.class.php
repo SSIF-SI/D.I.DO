@@ -1,6 +1,6 @@
 <?php
 
-abstract class AnyDocument extends Crud {
+abstract class AnyDocumentData extends Crud {
 	const KEY = "key";
 
 	const VALUE = "value";

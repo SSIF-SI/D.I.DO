@@ -1,6 +1,6 @@
 <?php
 
-class MasterdocumentData extends AnyDocument {
+class MasterdocumentData extends AnyDocumentData {
 
 	const ID_MASTERDATA = "id_masterdata";
 
