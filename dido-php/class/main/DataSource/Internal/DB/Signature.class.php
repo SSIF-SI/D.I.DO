@@ -1,6 +1,6 @@
 <?php
 
-class Signature extends AnyDocument {
+class Signature extends AnyDocumentData {
 
 	const ID_ITEM = "id_item";
 

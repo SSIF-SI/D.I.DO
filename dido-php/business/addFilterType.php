@@ -16,7 +16,6 @@ if(isset($static['TYPE']))
 	$field .= ",".$className::TYPE;
 
 $types = $D->getRealDistinct($field);
-
 ?>
 
 <form>
@@ -24,7 +23,7 @@ $types = $D->getRealDistinct($field);
 		<label>Tipi di Procedimento</label>
 <?php 
 	foreach($types as $k=>$type):
-		$label = ucwords($type[SharedDocumentCostants::NOME].(isset($type[Masterdocument::TYPE]) ? " - ".$type[Masterdocument::TYPE] : null)); 
+		$label = ucwords($type[SharedDocumentConstants::NOME].(isset($type[Masterdocument::TYPE]) ? " - ".$type[Masterdocument::TYPE] : null)); 
 ?>
 			<div id="ft-<?=$k?>" class="checkbox">
             	<label for="type-<?=$k?>">

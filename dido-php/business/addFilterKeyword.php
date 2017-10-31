@@ -7,21 +7,35 @@ $dataclassName=$className."Data";
 
 $A = new Application();
 $D=new $dataclassName($A->getDBConnector());
+$XDS = new XMLDataSource();
+$XMLParser = new XMLParser();
+
+$D->useView(true);
 
 if(isset($_GET[SharedDocumentConstants::CLOSED])){
-	$listIdDoc=$D->getBy(SharedDocumentConstants::CLOSED, $_GET[SharedDocumentCostants::CLOSED], $className::ID);
-	$listIdDoc=	Utils::getListfromField($listIdDoc,$className::ID);
-	$ids=implode(",", $listIdDoc);
-	$listdoc_data=$D_data->getBy($className::ID,$ids,$className::ID);
+	$list=$D->getBy(SharedDocumentConstants::CLOSED, $_GET[SharedDocumentConstants::CLOSED],"id_md");
+	$listIdMdNome=	Utils::getListfromField($list,"id_md",$className::NOME);
+	$listkeyValue= Utils::getListfromField($list,$dataclassName::KEY,$dataclassName::VALUE);
+	$listXMLSource=$D->getRealDistinct("xml",SharedDocumentConstants::CLOSED."=".$_GET[SharedDocumentConstants::CLOSED],"xml");
+	$listXMLSource=Utils::getListfromField($listXMLSource,"xml");
+	$XDS->filter(new XMLFilterFilename($listXMLSource));
+	
+	$listkeys=$D->getRealDistinct(AnyDocumentData::KEY,'true',AnyDocumentData::KEY);
 }
 else {
-	$listIdDoc=$D->getAll();
-	$listIdDoc=	Utils::getListfromField($listIdDoc,$className::ID);
-	$ids=implode(",", $listIdDoc);
+	$list=$D->getAll("id_md");
+	$listIdMd=	Utils::getListfromField($list,"id_md");	
+	$listkeyValue= Utils::getListfromField($list,$dataclassName::VALUE,$dataclassName::KEY);
+	$listXMLSource= $D->getRealDistinct("xml");
+	$listXMLSource=Utils::getListfromField($listXMLSource,"xml");
+	Utils::printr($listXMLSource);
+	
+	$XDS->filter(new XMLFilterFilename($listXMLSource));
+	
+	$listkeys=$D->getRealDistinct(AnyDocumentData::KEY,'true',AnyDocumentData::KEY);
+	$listkeys=Utils::getListfromField($listkeys,AnyDocumentData::KEY,AnyDocumentData::KEY);
 }
 
-$keys = $D_data->getRealDistinct(AnyDocument::KEY,Document::ID_DOC . " IN (".$ids." )");
-$keys=Utils::getListfromField($keys,AnyDocument::KEY);
 ?>
 
 <form>
@@ -29,8 +43,9 @@ $keys=Utils::getListfromField($keys,AnyDocument::KEY);
 		<label>Parole Chiave</label>
 		<div class="select">
 		<select id="select" name="kw-option" >
+		<option id="kw-all"  value="all">Cerca in tutte le parole chiave</option>
 <?php 
-	foreach($keys as $k=>$val):
+	foreach($listkeys as $k=>$val):
 	$option=ucwords($val);
 ?>
 	<option id="kw-<?=$k?>"  value="<?=$val?>"><?=$option?></option>
