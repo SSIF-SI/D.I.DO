@@ -36,6 +36,9 @@
 					Flusso documentale 
 				</div>
 				<div class="panel-body">
+					<?php if ($Application_Detail->canMdBeClosed()):?>
+					<p class="text-center"><a class="btn btn-danger closeMd" href="?id_md=<?=$_GET[Masterdocument::ID_MD]?>"><i class="fa fa-close"> </i> CHIUDI PROCEDIMENTO</a><br/></p>
+					<?php endif;?>
 					<?=$Application_Detail->getFlowResults()->render();?>
 				</div>
 			</div>

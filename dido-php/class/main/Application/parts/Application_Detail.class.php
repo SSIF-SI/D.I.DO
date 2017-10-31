@@ -11,6 +11,7 @@ class Application_Detail{
 	private $_redirectUrl;
 	private $_info;
 	private $_flowResults;
+	private $_canMdBeClosed = false;
 	
 	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IFTPDataSource $ftpDataSource){
 		$this->_userManager = $userManager;
@@ -55,6 +56,9 @@ class Application_Detail{
 		
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
+			$mandatory = 0;
+			$foundMandatory = 0;
+			
 			if(isset($doc[XMLParser::MD])){
 				
 				// il documento in realtà è un Master Document esterno
@@ -79,8 +83,13 @@ class Application_Detail{
 			} else {
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
-				
+
+				// è obbligatorio
+				if((int)$doc[XMLParser::MIN_OCCUR])
+					$mandatory++;
+					
 				$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
+				
 				if(count($listOnDb) == 0){
 					$this->_flowResults->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
@@ -92,6 +101,9 @@ class Application_Detail{
 					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 						break;
 					$almostOne = true;
+					if((int)$doc[XMLParser::MIN_OCCUR])
+						$foundMandatory++;
+					
 				}
 				
 			}
@@ -100,6 +112,11 @@ class Application_Detail{
 		
 		if(!$almostOne)
 			return;
+		
+		if($mandatory == $foundMandatory){
+			$this->_canMdBeClosed = true && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED;
+		}
+		
 		// Ora si aggiunge eventuali allegati se c'è almeno il primo documento caricato
 		$XMLParser->load(XML_STD_PATH."allegato.xml");
 		$docToSearch = $XMLParser->getXmlSource();
@@ -117,6 +134,10 @@ class Application_Detail{
 				);
 			}
 		} 
+	}
+	
+	public function canMdBeClosed(){
+		return $this->_canMdBeClosed;
 	}
 	
 	private function _parseMdLink($listOnDb, $mdLinks, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt, $mdClosed){
