@@ -172,7 +172,7 @@ class Application_Detail{
 			$docName = $documents[$id_doc][Document::NOME];
 			
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
-				
+			$mdClosed = $md[Masterdocument::CLOSED] == ProcedureManager::CLOSED;
 			$IMustSignIt =
 				$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
 				!$documents[$id_doc][Application_DocumentBrowser::IS_SIGNED_BY_ME];
@@ -187,7 +187,7 @@ class Application_Detail{
 
 			
 			$editInfoBTN =
-			($ICanManageIt && !$documentClosed) ?
+			($ICanManageIt && !$mdClosed /*&& !$documentClosed*/) ?
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
