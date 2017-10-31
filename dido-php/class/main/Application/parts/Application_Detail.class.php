@@ -53,7 +53,6 @@ class Application_Detail{
 
 		$almostOne = false;
 		
-		
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			if(isset($doc[XMLParser::MD])){
@@ -90,7 +89,7 @@ class Application_Detail{
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 						break;
 					$almostOne = true;
 				}

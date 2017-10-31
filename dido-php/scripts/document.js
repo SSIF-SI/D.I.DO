@@ -8,7 +8,6 @@ $(document).ready(function(){
 	
 	$('a.add-doc, a.edit-doc, a.upload-doc').click(function (e) {
 		e.preventDefault();
-		if()
 		MyModal.setTitle("Nuovo documento");
 		MyModal.editModal(this);
 	});
