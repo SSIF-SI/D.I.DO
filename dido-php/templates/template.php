@@ -14,6 +14,15 @@
 <!-- Bootstrap Core CSS -->
 <link href="<?=SB_ADMIN_2?>vendor/bootstrap/css/bootstrap.css"
 	rel="stylesheet">
+
+<!-- Build Core CSS -->
+<link href="<?=SB_ADMIN_2?>vendor/bootstrap/css/build.css"
+	rel="stylesheet">
+
+<!-- Build Core CSS -->
+<link href="<?=SB_ADMIN_2?>vendor/bootstrap-select/css/bootstrap-select.min.css"
+	rel="stylesheet">
+
 <link
 	href="<?=SB_ADMIN_2?>vendor/bootstrap-datepicker/css/bootstrap-datepicker3.min.css"
 	rel="stylesheet">
@@ -142,6 +151,8 @@
 	<script
 		src="<?=SB_ADMIN_2?>vendor/bootstrap-datepicker/locales/bootstrap-datepicker.it.min.js"
 		charset="UTF-8"></script>
+	<script
+		src="<?=SB_ADMIN_2?>vendor/bootstrap-select/js/bootstrap-select.min.js"></script>
 
 	<!-- Metis Menu Plugin JavaScript -->
 	<script src="<?=SB_ADMIN_2?>vendor/metisMenu/metisMenu.min.js"></script>

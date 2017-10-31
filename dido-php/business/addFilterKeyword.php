@@ -14,27 +14,34 @@ $D->useView(true);
 
 if(isset($_GET[SharedDocumentConstants::CLOSED])){
 	$list=$D->getBy(SharedDocumentConstants::CLOSED, $_GET[SharedDocumentConstants::CLOSED],"id_md");
-	$listIdMdNome=	Utils::getListfromField($list,"id_md",$className::NOME);
-	$listkeyValue= Utils::getListfromField($list,$dataclassName::KEY,$dataclassName::VALUE);
+	$listIdMdNome=$D->getRealDistinct($className::NOME,SharedDocumentConstants::CLOSED."=".$_GET[SharedDocumentConstants::CLOSED],$className::NOME);
 	$listXMLSource=$D->getRealDistinct("xml",SharedDocumentConstants::CLOSED."=".$_GET[SharedDocumentConstants::CLOSED],"xml");
-	$listXMLSource=Utils::getListfromField($listXMLSource,"xml");
-	$XDS->filter(new XMLFilterFilename($listXMLSource));
-	
-	$listkeys=$D->getRealDistinct(AnyDocumentData::KEY,'true',AnyDocumentData::KEY);
-}
-else {
+	}
+	else {
 	$list=$D->getAll("id_md");
-	$listIdMd=	Utils::getListfromField($list,"id_md");	
-	$listkeyValue= Utils::getListfromField($list,$dataclassName::VALUE,$dataclassName::KEY);
 	$listXMLSource= $D->getRealDistinct("xml");
-	$listXMLSource=Utils::getListfromField($listXMLSource,"xml");
-	Utils::printr($listXMLSource);
+	$listIdMdNome= $D->getRealDistinct($className::NOME);
 	
-	$XDS->filter(new XMLFilterFilename($listXMLSource));
-	
-	$listkeys=$D->getRealDistinct(AnyDocumentData::KEY,'true',AnyDocumentData::KEY);
-	$listkeys=Utils::getListfromField($listkeys,AnyDocumentData::KEY,AnyDocumentData::KEY);
+	}
+$listIdMdNome=	Utils::getListfromField($listIdMdNome,$className::NOME);
+$listkeyValue= Utils::getListfromField($list,$dataclassName::VALUE,$dataclassName::KEY);
+$listXMLSource=Utils::getListfromField($listXMLSource,"xml");
+$listkeys=$D->getRealDistinct(AnyDocumentData::KEY,'true',AnyDocumentData::KEY);
+$listkeys=Utils::getListfromField($listkeys,AnyDocumentData::KEY,AnyDocumentData::KEY);
+$XDS->filter(new XMLFilterFilename($listXMLSource));
+
+$mdinputs=array();
+$docinputs=array();
+foreach($listXMLSource as $fName){
+	$xml = $XDS->getSingleXmlByFilename($fName);
+	$XMLParser->setXMLSource($xml["xml"]);
+	$mdinputs = array_merge($mdinputs, $XMLParser->getMasterDocumentInputs());
+	foreach($listIdMdNome as $id_md=>$nome){
+		$docinputs=array_merge($docinputs,$XMLParser->getDocumentInputs($nome));
+	}
 }
+Utils::printr($mdinputs);
+Utils::printr($docinputs);
 
 ?>
 
@@ -42,7 +49,7 @@ else {
 	<div class="form-group">
 		<label>Parole Chiave</label>
 		<div class="select">
-		<select id="select" name="kw-option" >
+		<select id="select" name="kw-option" class="selectpicker">
 		<option id="kw-all"  value="all">Cerca in tutte le parole chiave</option>
 <?php 
 	foreach($listkeys as $k=>$val):
@@ -73,4 +80,8 @@ else {
 			$("#filter-"+$(this).attr("id")).remove();
 		
 	});
+</script>
+<script type="text/javascript">
+    $('.selectpicker').selectpicker({
+      });
 </script>

@@ -19,27 +19,28 @@ $types = $D->getRealDistinct($field);
 ?>
 
 <form>
-	<div class="form-group">
-		<label>Tipi di Procedimento</label>
+
+	<fieldset>
+		<legend>Tipi di Procedimento</legend>
 <?php 
 	foreach($types as $k=>$type):
 		$label = ucwords($type[SharedDocumentConstants::NOME].(isset($type[Masterdocument::TYPE]) ? " - ".$type[Masterdocument::TYPE] : null)); 
 ?>
-			<div id="ft-<?=$k?>" class="checkbox">
-            	<label for="type-<?=$k?>">
-                	<input id="type-<?=$k?>" type="checkbox"  value="<?=$label?>"><?=$label?>
-				</label>
+			<div id="ft-<?=$k?>" class="checkbox checkbox-success checkbox-circle">
+            	<input id="type-<?=$k?>" class="styled" type="checkbox" value="<?=$label?>">
+            	<label for="type-<?=$k?>"><?=$label?></label>
 			</div>
 <?php endforeach;?>
-	</div>
 	<div id="filterResult" class="btn-success">
 	</div>
+	</fieldset>
 </form>
 <script>
 	$(".filter-box input").each(function(el){
 		var idToRemove =  $(this).attr("id").replace(/filter-type-/,"ft-");
 		$("#"+idToRemove).remove();
 	});
+
 	$(".checkbox input").click(function(e){
 		var action = $(this).prop("checked");
 		if(action)
@@ -48,4 +49,10 @@ $types = $D->getRealDistinct($field);
 			$("#filter-"+$(this).attr("id")).remove();
 		
 	});
+</script>
+<script type="text/javascript">
+    function changeState(el) {
+        if (el.readOnly) el.checked=el.readOnly=false;
+        else if (!el.checked) el.readOnly=el.indeterminate=true;
+    }
 </script>
