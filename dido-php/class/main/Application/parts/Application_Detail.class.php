@@ -17,7 +17,7 @@ class Application_Detail{
 		$this->_ProcedureManager = new ProcedureManager($dbConnector, $ftpDataSource);
 		
 		$XMLParser = new XMLParser();
-		$XMLParser->load(FILES_PATH."defaultDocumentsInputs.xml");
+		$XMLParser->load(FILES_PATH.SharedDocumentConstants::DEFAULT_INPUT_SOURCE);
 
 		$this->_defaultDocumentInputs = $XMLParser->getXmlSource()->input;
 		$this->_Signature = new Signature($dbConnector);
