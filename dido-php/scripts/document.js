@@ -6,6 +6,29 @@ $(document).ready(function(){
 		MyModal.editModal(this);
 	});
 	
+	$('a.closeMd,a.closeIncompleteMd').click(function (e) {
+		e.preventDefault();
+		var more = "";
+		
+		if($(this).hasClass("closeIncompleteMd")){
+			more = " con stato INCOMPLETO";
+		}
+		if(confirm("Sei sicuro di voler chiudere definitivamente il procedimento"+more+"?")){
+			var href = $(this).attr("href");
+			$.ajax({
+				url: href, 
+				type: "GET", 
+				dataType: "json",
+				success: function( result ) {
+					location.reload();
+				},
+				error: function(){
+					alert("Errore imprevisto");
+				}
+			});
+		}
+	});
+	
 	$('a.add-doc, a.edit-doc, a.upload-doc').click(function (e) {
 		e.preventDefault();
 		MyModal.setTitle("Nuovo documento");

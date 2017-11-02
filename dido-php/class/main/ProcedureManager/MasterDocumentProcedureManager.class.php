@@ -69,10 +69,14 @@ class MasterDocumentProcedureManager extends AProcedureManager {
 		if (empty ( $main ))
 			return false;
 		
-		$main [Masterdocument::CLOSED] = $status;
 		$Masterdocument = new Masterdocument ( $this->getDbConnector () );
-		$result = $Masterdocument->save ( $main );
 		
+		$stub = $Masterdocument->getStub();
+		$main [Masterdocument::CLOSED] = $status;
+		
+		$md = Utils::stubFill($stub, $main);
+		
+		$result = $Masterdocument->save ( $md );
 		return $result->getErrors () === false ? false : true;
 	}
 	

@@ -2,6 +2,7 @@
 	<div class="col-lg-12">
 		<h1><?=ucfirst($md[Masterdocument::NOME])?></h1>
 		<h3><?=ucfirst($md[Masterdocument::TYPE])?></h3>
+		<h4>Stato: <?=$Application_Detail->renderStatus($md[Masterdocument::CLOSED]);?></h4>
 	</div>
 </div>
 <a href="<?=$Application_Detail->getRedirectUrl()?>">Torna all'elenco</a>
@@ -36,9 +37,15 @@
 					Flusso documentale 
 				</div>
 				<div class="panel-body">
-					<?php if ($Application_Detail->canMdBeClosed()):?>
-					<p class="text-center"><a class="btn btn-danger closeMd" href="?id_md=<?=$_GET[Masterdocument::ID_MD]?>"><i class="fa fa-close"> </i> CHIUDI PROCEDIMENTO</a><br/></p>
+					<p class="text-center" >
+					<?php if(!$md[Masterdocument::CLOSED]):?>
+						<?php if ($Application_Detail->canMdBeClosed()):?>
+						<a class="btn btn-danger closeMd" href="?action=<?=Application_ActionManager::ACTION_CLOSE_MD?>&id_md=<?=$_GET[Masterdocument::ID_MD]?>"><i class="fa fa-lock"> </i> CHIUDI PROCEDIMENTO</a>
+						<?php else:?>
+						<a class="btn btn-danger closeIncompleteMd" href="?action=<?=Application_ActionManager::ACTION_CLOSE_MD?>&id_md=<?=$_GET[Masterdocument::ID_MD]."&".Masterdocument::CLOSED."=".ProcedureManager::INCOMPLETE?>"><i class="fa fa-warning"> </i> CHIUDI PROCEDIMENTO INCOMPLETO</a>
+						<?php endif;?>
 					<?php endif;?>
+					</p>
 					<?=$Application_Detail->getFlowResults()->render();?>
 				</div>
 			</div>

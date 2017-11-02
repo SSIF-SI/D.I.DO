@@ -55,8 +55,8 @@ class ProcedureManager implements IProcedureManager {
 		return $this->_DPManager->update( $data );
 	}
 
-	public function closeIncompleteMasterdocument($md) {
-		return $this->_MDPManager->close($md, self::INCOMPLETE );
+	public function closeMasterdocument($md, $status) {
+		return $this->_MDPManager->close($md, $status );
 	}
 	
 	public function closeDocument($doc) {

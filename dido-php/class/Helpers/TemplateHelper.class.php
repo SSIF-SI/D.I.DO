@@ -16,12 +16,14 @@ class TemplateHelper {
 			<div class="panel-heading">
 				<div class="row">
 					<div class="col-xs-3">
-						<i class="fa <?=$icon_class?> fa-5x"></i>
+						<i class="fa <?=$icon_class?> fa-4x"></i>
 					</div>
 					<div class="col-xs-9 text-right">
 						<div class="huge"><?=$nTot?></div>
-						<div><?=$label?></div>
 					</div>
+				</div>
+				<div class="row">
+					<div class="text-right" style="padding-right:0.6em"><?=$label?></div>
 				</div>
 			</div>
 			<a href="<?=$href?>">
