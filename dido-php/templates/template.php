@@ -143,6 +143,9 @@
 
 	<!-- jQuery -->
 	<script src="<?=SB_ADMIN_2?>vendor/jquery/jquery.min.js"></script>
+	
+	<!-- jQuery-ui -->
+	<script src="<?=SB_ADMIN_2?>vendor/jquery-ui-1.12.1/jquery-ui.js"></script>
 
 	<!-- Bootstrap Core JavaScript -->
 	<script src="<?=SB_ADMIN_2?>vendor/bootstrap/js/bootstrap.min.js"></script>

@@ -16,3 +16,26 @@ ul#filterList li{
 	display:inline-block;
 	margin:0.3em !important;
 }
+
+form#search-form{
+	position: relative;
+}
+
+form#search-form ul{
+	position: absolute;
+	top:0;
+	left:0;
+	width: 100%;
+	max-height: 200px;
+	overflow:auto;
+	border:1px solid #DDDDDD;
+	border-radius: 6px;
+	z-index:1;
+}
+span.ui-helper-hidden-accessible{
+	display: none !important;
+}
+.ui-state-focus{
+	color:#ffffff;
+	background-color: #428bca;
+}
