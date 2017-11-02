@@ -81,76 +81,68 @@ if($className=="Masterdocument"){
 // Utils::printr($listkeyValue);
 
 ?>
-<div class="col-lg-6">
-<form>
-		<label>Parole Chiave</label>
-		<div class="select">
-			<select id="select" name="kw-option" class="selectpicker">
-				<option id="kw-all" value="all">-- Tutte --</option>
+<script>
+  $(function() {
+
+    var valoriChiavi = [
+    	               	"Prova1",
+    	               	"Prova2",
+    	               	"Prova3",
+    	               	"Prova1",
+    	               	"Prova2",
+    	               	"Prova3",
+    	               	"Prova1",
+    	               	"Prova2",
+    	               	"Prova3",
+    	               	"Prova1",
+    	               	"Prova2",
+    	               	"Prova3",
+    	               	"Prova1",
+    	               	"Prova2",
+    	               	"Prova3",
+    	               	"Ciao",
+    	               	"Hello"
+    	               	];
+       	
+    	$("#spotlight").autocomplete({
+    		source: valoriChiavi
+    	});
+    	
+    
+  });
+  </script>
+<form id="search-form">
+<div class="row">
+	<div class="col-lg-6">
+		<div class="form-group">
+			<label for="keyword">Parola chiave:</label>
+			<div class="select">
+				<select id="keyword" name="kw-option" class="selectpicker" data-container="body" data-width="100%">
+					<option id="kw-all" value="all">-- Tutte --</option>
 		
 <?php 
 	foreach($listkeys as $k=>$val):
 	$option=ucwords($val);
 ?>
-	<option id="kw-<?=$k?>" value="<?=$val?>"><?=$option?></option>
+					<option id="kw-<?=$k?>" value="<?=$val?>"><?=$option?></option>
 
 <?php endforeach;?>
-			</select>
+				</select>
+			</div>
 		</div>
-
-</form>
-</div>
-<div class="col-lg-6">
-<form id="search-form">
-	<div class="form-group">
-		<label for="spotlight">Cerca</label>
-		<input type="email" class="form-control ui-autocomplete-input" id="spotlight" placeholder="Cerca" autocomplete="off"/>
 	</div>
-</form>
+	<div class="col-lg-6">
+		<div class="form-group">
+			<label for="spotlight">Cerca:</label>
+			<input type="text" class="form-control" id="spotlight" placeholder="Cerca" autocomplete="off"/>
+		</div>
+	</div>
 </div>
-<div id="filterResult" class="btn-warning"></div>
+</form>
 
 <script>
-	$(".filter-box input").each(function(el){
-		var idToRemove =  $(this).attr("id").replace(/filter-kw-/,"kw-");
-		$("#"+idToRemove).remove();
-	});
-	$(".select input").click(function(e){
-		var action = $(this).prop("kw-option");
-		if(action)
-			$('<input id="filter-'+$(this).attr("id")+'" type="hidden" name="nome['+$(this).attr("id")+']" value="'+$(this).val()+'" />').appendTo($("#filterResult"));
-		else 
-			$("#filter-"+$(this).attr("id")).remove();
-		
-	});
+	$("#keyword").selectpicker();
 </script>
 
-<script type="text/javascript">
-    $('.selectpicker').selectpicker({
-      });
-</script>
 
-<script type="text/javascript">
-$(function(){
-	var valoriChiavi = [
-	               	"Prova1",
-	               	"Prova2",
-	               	"Prova3",
-	               	"Ciao",
-	               	"Hello"
-	               	];
-   	
-	$("#spotlight").autocomplete({
-		source: valoriChiavi,
-		appendTo: $("#search-form")
-	});
-	
-	$("#spotlight").data("ui-autocomplete")._renderMenu = function(ul, items){
-		var that=this;
-		ul.attr("class","nav nav-pill nav-stacked");
-		$.each(items, function(index,item){that._renderItemData(ul,item);
-		});
-	};
-});
-</script>
 

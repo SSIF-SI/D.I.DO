@@ -20,7 +20,8 @@
 	rel="stylesheet">
 
 <!-- Build Core CSS -->
-<link href="<?=SB_ADMIN_2?>vendor/bootstrap-select/css/bootstrap-select.min.css"
+<link
+	href="<?=SB_ADMIN_2?>vendor/bootstrap-select/css/bootstrap-select.min.css"
 	rel="stylesheet">
 
 <link
@@ -48,10 +49,11 @@
 <link
 	href="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/css/fileinput.min.css"
 	rel="stylesheet" type="text/css">
-	
-<link
-	href="<?=HTTP_ROOT?>css/dido.css"
-	rel="stylesheet" type="text/css">
+
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<link href="<?=HTTP_ROOT?>css/dido.css" rel="stylesheet" type="text/css">
 
 <style>
 .panel-heading .accordion-toggle {
@@ -71,11 +73,11 @@
 	content: "\e117"; /* adjust as needed, taken from bootstrap.css */
 }
 
-@media only screen and (min-width: 780px){
-.modal-dialog{
-	width:80% !important
+@media only screen and (min-width: 780px) {
+	.modal-dialog {
+		width: 80% !important
+	}
 }
-
 </style>
 
 </head>
@@ -116,17 +118,19 @@
 			</ul>
 			<!-- /.navbar-top-links -->
 
-			<div class="navbar-default sidebar" role="navigation" style="visibility: hidden">
+			<div class="navbar-default sidebar" role="navigation"
+				style="visibility: hidden">
 				<div class="sidebar-nav navbar-collapse">
-					<div style="margin:0.4em">
-						<a href="<?=BUSINESS_HTTP_PATH?>search.php" class="btn btn-primary btn-lg, btn-block">
-							<i class="fa fa-search"></i> Ricerca
+					<div style="margin: 0.4em">
+						<a href="<?=BUSINESS_HTTP_PATH?>search.php"
+							class="btn btn-primary btn-lg, btn-block"> <i
+							class="fa fa-search"></i> Ricerca
 						</a>
 					</div>
 					<ul class="nav" id="side-menu">
 						<?=$Application->getApplicationPart(Application::NAVIGATOR)->renderLeftMenu()?>
                     </ul>
-                    
+
 				</div>
 				<!-- /.sidebar-collapse -->
 			</div>
@@ -143,7 +147,7 @@
 
 	<!-- jQuery -->
 	<script src="<?=SB_ADMIN_2?>vendor/jquery/jquery.min.js"></script>
-	
+
 	<!-- jQuery-ui -->
 	<script src="<?=SB_ADMIN_2?>vendor/jquery-ui-1.12.1/jquery-ui.js"></script>
 
@@ -185,8 +189,8 @@
 	
 	<!-- Custom Scripts -->
 	<?php
-	if(file_exists(SCRIPTS_RPATH.str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])))){
-		Utils::includeScript(SCRIPTS_PATH, str_replace(".php", ".js", basename($_SERVER['PHP_SELF'])));
+	if (file_exists ( SCRIPTS_RPATH . str_replace ( ".php", ".js", basename ( $_SERVER ['PHP_SELF'] ) ) )) {
+		Utils::includeScript ( SCRIPTS_PATH, str_replace ( ".php", ".js", basename ( $_SERVER ['PHP_SELF'] ) ) );
 	}
 	
 	if (isset ( $pageScripts )) {
@@ -205,7 +209,7 @@
 			});
 		});
 		
-	</script>	
+	</script>
 </body>
 
 </html>
