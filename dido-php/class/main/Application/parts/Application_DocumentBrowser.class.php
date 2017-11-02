@@ -118,17 +118,36 @@ class Application_DocumentBrowser{
 			->getResult();
 	}
 	
+	public function getAllMyClosedDocuments(){
+		return $this
+			->_allMyClosedDocuments()
+			// Quindi restituisco l'array
+			->getResult();
+	}
+	
 	public function getResult(){
 		
 		return $this->_resultArray;
 	}
 	
-	private function _allMyPendingDocuments(){
+private function _allMyPendingDocuments(){
 		return $this
 			// Svuoto l'array
 			->_emptyResult()
 			// Ci metto tutti i MD aperti
 			->_fillResultArray(self::LABEL_MD, $this->_openDocuments())
+			// Creo a cascata l'albero dei risultati
+			->_createResultTree()
+			// Completo applicando i filtri in base ai "permessi utente"
+			->_complete();
+	}
+	
+	private function _allMyClosedDocuments(){
+		return $this
+			// Svuoto l'array
+			->_emptyResult()
+			// Ci metto tutti i MD aperti
+			->_fillResultArray(self::LABEL_MD, $this->_closedDocuments())
 			// Creo a cascata l'albero dei risultati
 			->_createResultTree()
 			// Completo applicando i filtri in base ai "permessi utente"
@@ -331,6 +350,18 @@ class Application_DocumentBrowser{
 		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
 	}
 	
+	private function _closedDocuments(){
+		$list = $this->_Masterdocument->searchBy([
+			[
+				CRUD::SEARCHBY_FIELD => Masterdocument::CLOSED,
+				CRUD::SEARCHBY_VALUE => ProcedureManager::OPEN,
+				CRUD::SEARCHBY_OPERATOR => "!="
+			]
+		]);
+			
+		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
+	}
+	
 	private function _fillResultArray($key, $values){
 		$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
 		return $this;
@@ -422,6 +453,24 @@ class Application_DocumentBrowser{
 		
 		
 		
+	}
+	
+	public static function purge($id_mds, $list){
+		if(count($id_mds)) foreach($id_mds as $id_md){
+			if(isset($list[self::LABEL_DOCUMENTS][$id_md])){
+				$ddataKeys = array_keys($list[self::LABEL_DOCUMENTS][$id_md]);
+				foreach($ddataKeys as $id_ddata){
+					unset ($list[self::LABEL_DOCUMENTS_DATA][$id_ddata]);
+				}
+			}
+		
+			unset(
+					$list[self::LABEL_MD][$id_md],
+					$list[self::LABEL_MD_DATA][$id_md],
+					$list[self::LABEL_DOCUMENTS][$id_md]
+			);
+		}
+		return $list;
 	}
 }
 ?>

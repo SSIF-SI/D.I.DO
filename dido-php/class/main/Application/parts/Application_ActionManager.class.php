@@ -17,6 +17,7 @@ class Application_ActionManager {
 	const ACTION_EDIT_INFO = "editInfo";
 	const ACTION_EDIT_MD_LINK = "editMdLink";
 	const ACTION_CLOSE_DOC = "closedocument";
+	const ACTION_CLOSE_MD = "closemd";
 	const ACTION_EDIT_MD_INFO = "editMdInfo";
 	
 	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource, IXMLDataSource $XMLDataSource){
@@ -54,6 +55,17 @@ class Application_ActionManager {
 		$ARP=new AjaxResultParser();
 		$ARP->encode($this->_ProcedureManager->closeDocument($doc));
 		
+	}
+	
+	public function closemd(){
+		if (!isset($_GET[Masterdocument::ID_MD]))
+			return new ErrorHandler("Parametri mancanti");	
+		$result = $this->_getMd($_GET);
+		extract ($result);
+		
+		$status = isset($_GET[Masterdocument::CLOSED]) ? $_GET[Masterdocument::CLOSED] : ProcedureManager::CLOSED;
+		$ARP=new AjaxResultParser();
+		$ARP->encode($this->_ProcedureManager->closeMasterdocument($md, $status));
 	}
 	
 	public function download(){

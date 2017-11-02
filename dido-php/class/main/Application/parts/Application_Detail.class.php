@@ -11,6 +11,7 @@ class Application_Detail{
 	private $_redirectUrl;
 	private $_info;
 	private $_flowResults;
+	private $_canMdBeClosed = false;
 	
 	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IFTPDataSource $ftpDataSource){
 		$this->_userManager = $userManager;
@@ -33,7 +34,7 @@ class Application_Detail{
 		$id_md = $md[Masterdocument::ID_MD];
 		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
 		
-		$mdClosed = $md[Masterdocument::CLOSED];
+		$mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
 		
 		$XMLParser = new XMLParser(
 			$md[Masterdocument::XML],
@@ -43,7 +44,7 @@ class Application_Detail{
 		$innerValues = $XMLParser->getMasterDocumentInnerValues();
 		
 		$this->_redirectUrl = TurnBack::getLastHttpReferer()."#".dirname($md[Masterdocument::XML])."/#".Common::fieldFromLabel($md[Masterdocument::NOME]);
-		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data);
+		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data, $mdClosed);
 		$this->_flowResults = new FlowTimeline();
 		
 		
@@ -53,9 +54,11 @@ class Application_Detail{
 
 		$almostOne = false;
 		
-		
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
+			$mandatory = 0;
+			$foundMandatory = 0;
+			
 			if(isset($doc[XMLParser::MD])){
 				
 				// il documento in realtà è un Master Document esterno
@@ -63,6 +66,7 @@ class Application_Detail{
 				
 				$listOnDb = Utils::filterList($mdLinks[Application_DocumentBrowser::LABEL_MD], Masterdocument::NOME, $docName);
 				if(count($listOnDb) == 0){
+					if($mdClosed) break;
 					$this->_flowResults->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
 					);
@@ -80,9 +84,15 @@ class Application_Detail{
 			} else {
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
-				
+
+				// è obbligatorio
+				if((int)$doc[XMLParser::MIN_OCCUR])
+					$mandatory++;
+					
 				$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
+				
 				if(count($listOnDb) == 0){
+					if($mdClosed) break;
 					$this->_flowResults->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 					);
@@ -90,9 +100,12 @@ class Application_Detail{
 					if($doc[XMLParser::MIN_OCCUR])
 						break;				
 				} else {
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 						break;
 					$almostOne = true;
+					if((int)$doc[XMLParser::MIN_OCCUR])
+						$foundMandatory++;
+					
 				}
 				
 			}
@@ -101,6 +114,14 @@ class Application_Detail{
 		
 		if(!$almostOne)
 			return;
+		
+		if($mandatory == $foundMandatory){
+			$this->_canMdBeClosed = true && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED;
+		}
+		
+		if($md[Masterdocument::CLOSED] == ProcedureManager::INCOMPLETE) 
+			return;
+		
 		// Ora si aggiunge eventuali allegati se c'è almeno il primo documento caricato
 		$XMLParser->load(XML_STD_PATH."allegato.xml");
 		$docToSearch = $XMLParser->getXmlSource();
@@ -118,6 +139,26 @@ class Application_Detail{
 				);
 			}
 		} 
+	}
+	
+	public function canMdBeClosed(){
+		return $this->_canMdBeClosed;
+	}
+	
+	public function renderStatus($status){
+		$model = '<span class="btn btn-%s"><i class="fa fa-%s"> </i> %s</span>';
+		switch($status){
+			case ProcedureManager::CLOSED:
+				$model = sprintf($model, "danger", "lock", "CHIUSO");
+				break;
+			case ProcedureManager::INCOMPLETE:
+				$model = sprintf($model, "warning", "warning", "INCOMPLETO");
+				break;
+			default:
+				$model = sprintf($model, "success", "unlock", "APERTO");
+				break;
+		}
+		return $model;
 	}
 	
 	private function _parseMdLink($listOnDb, $mdLinks, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt, $mdClosed){
@@ -168,12 +209,13 @@ class Application_Detail{
 	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
 		
+		$mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
+			
 		foreach($listOnDb as $id_doc => $docData){
 				
 			$docName = $documents[$id_doc][Document::NOME];
 			
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
-				
 			$IMustSignIt =
 				$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
 				!$documents[$id_doc][Application_DocumentBrowser::IS_SIGNED_BY_ME];
@@ -188,7 +230,7 @@ class Application_Detail{
 
 			
 			$editInfoBTN =
-			($ICanManageIt && !$documentClosed) ?
+			($ICanManageIt && !$mdClosed /*&& !$documentClosed*/) ?
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
@@ -356,7 +398,7 @@ class Application_Detail{
 		return $this->_flowResults;
 	}
 	
-	private function _createAdditionalInfo($XMLParser, $id_md, $md_data){
+	private function _createAdditionalInfo($XMLParser, $id_md, $md_data, $mdClosed){
 		$readOnly =
 		!is_null($XMLParser->getSource()) ?
 		true : (
@@ -368,7 +410,7 @@ class Application_Detail{
 		);
 		
 		$infoPanel = FormHelper::createInputs($XMLParser->getMasterDocumentInputs(), $md_data, $XMLParser->getMasterDocumentInnerValues(), true);
-		if(!$readOnly)
+		if(!$readOnly && !$mdClosed)
 			$infoPanel .= "<div class=\"text-center\"><a href=\"?action=".Application_ActionManager::ACTION_EDIT_MD_INFO."&".Masterdocument::ID_MD."=".$id_md."\" class=\"btn btn-primary ".Application_ActionManager::ACTION_EDIT_MD_INFO."\">Modifica informazioni</a></div>";
 		
 		$this->_info = $infoPanel;
