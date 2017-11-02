@@ -117,7 +117,7 @@ if($className=="Masterdocument"){
 		<div class="form-group">
 			<label for="keyword">Parola chiave:</label>
 			<div class="select">
-				<select id="keyword" name="kw-option" class="selectpicker" data-container="body" data-width="100%">
+				<select id="keyword" name="kw-option" class="selectpicker" data-live-search="true" data-size="7" data-container="body" data-width="100%">
 					<option id="kw-all" value="all">-- Tutte --</option>
 		
 <?php 
