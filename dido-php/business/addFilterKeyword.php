@@ -88,16 +88,17 @@ foreach ( $listXMLSource as $fName ) {
 
 
   $(function() {
-
+		/*
 	  var selected=[];
 	  $('#keyword').change(function () {
 	  	  selected  = $("#keyword").val();
 	  	 $("#spotlight").autocomplete({
 	    		source: "search.php?keyword="+ selected});
 	  });
-	  
+	  */
+
 	  $("#spotlight").autocomplete({
-    		source: "search.php?keyword="+ selected,
+    		source: location.href+"&keyword="+ $("#keyword").find("option:selected").val(),
     		open: function(event) {
     	        $('.ui-autocomplete').css('height', 'auto');
     	        var $input = $(event.target),
@@ -110,9 +111,16 @@ foreach ( $listXMLSource as $fName ) {
     	            $('.ui-autocomplete').css('height', (windowHeight - inputHeight - inputTop - 20) + 'px');
     	        }
     	    }
-    	});
+	    });
     	
-    
+	  $('.selectpicker').on('change', function(){
+		    var selected = $(this).find("option:selected").val();
+		  	 $("#spotlight")
+		  	 	.autocomplete({source: location.href+"&keyword="+ $("#keyword").find("option:selected").val()})
+		  	 	.autocomplete('search');
+	  });
+	  
+	  
   });
   </script>
 <form id="search-form">
