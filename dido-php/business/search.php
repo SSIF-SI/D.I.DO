@@ -15,6 +15,10 @@ if(isset($_GET['reset'])){
 	die();
 }
 
+if(isset($_GET['keyword']) && isset($_GET['term'])){
+	die(json_encode(array("prova","prova2","c","avbc")));
+}
+
 
 define (PAGE_TITLE, "Ricerca");
 
