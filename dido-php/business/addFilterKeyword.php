@@ -10,7 +10,6 @@ $A = new Application ();
 $D = new $dataclassName ( $A->getDBConnector () );
 $XDS = new XMLDataSource ();
 $XMLParser = new XMLParser ();
-
 $D->useView ( true );
 
 if (isset ( $_GET [SharedDocumentConstants::CLOSED] )) {
@@ -41,12 +40,12 @@ foreach ( $listXMLSource as $fName ) {
 		foreach ( $inputs as $input ) {
 			if (isset ( $input [XMLParser::TYPE] )) {
 				$inputstype = array_merge ( $inputstype, array (
-						"$input" => " " . $input [XMLParser::TYPE] 
+						"$input" => "" . $input [XMLParser::TYPE] 
 				) );
 			}
 			if (isset ( $input [XMLParser::VALUES] )) {
 				$inputsvalues = array_merge ( $inputsvalues, array (
-						"$input" => " " . $input [XMLParser::VALUES] 
+						"$input" => "" . $input [XMLParser::VALUES] 
 				) );
 			}
 		}
@@ -66,17 +65,18 @@ foreach ( $listXMLSource as $fName ) {
 		foreach ( $docinputs as $input ) {
 			if (isset ( $input [XMLParser::TYPE] )) {
 				$inputstype = array_merge ( $inputstype, array (
-						"$input" => " " . $input [XMLParser::TYPE] 
+						"$input" =>"". $input [XMLParser::TYPE] 
 				) );
 			}
 			if (isset ( $input [XMLParser::VALUES] )) {
 				$inputsvalues = array_merge ( $inputsvalues, array (
-						"$input" => " " . $input [XMLParser::VALUES] 
+						"$input" =>"". $input [XMLParser::VALUES] 
 				) );
 			}
 		}
 	}
 }
+
 // Utils::printr("Tipi:");
 // Utils::printr($inputstype);
 // Utils::printr("Valori:");
@@ -114,9 +114,11 @@ foreach ( $listXMLSource as $fName ) {
 	    });
     	
 	  $('.selectpicker').on('change', function(){
-		    var selected = $(this).find("option:selected").val();
-		  	 $("#spotlight")
-		  	 	.autocomplete({source: location.href+"&keyword="+ $("#keyword").find("option:selected").val()})
+		    var selected=$(this).find("option:selected").val();
+		   	var transform=typeof $(this).find("option:selected").attr('transform')!='undefined'?"&transform="+$(this).find("option:selected").attr('transform'):"";
+		   	var type=typeof $(this).find("option:selected").attr('type')!='undefined'?"&type="+$(this).find("option:selected").attr('type'):"";
+		    $("#spotlight")
+		  	 	.autocomplete({source: location.href+type+transform+"&keyword="+selected})
 		  	 	.autocomplete('search');
 	  });
 	  
@@ -136,8 +138,10 @@ foreach ( $listXMLSource as $fName ) {
 <?php
 foreach ( $listkeys as $k => $val ) :
 	$option = ucwords ( $val );
+	$transform=isset($inputsvalues[$val])?"transform='".$inputsvalues[$val]."'": "";
+	$type=isset($inputstype[$val])?"type='".$inputstype[$val]."'": "";
 	?>
-					<option id="kw-<?=$k?>" value="<?=$val?>"><?=$option?></option>
+					<option id="kw-<?=$k?>" <?=$type?> <?=$transform?> value="<?=$val?>"><?=$option?></option>
 
 <?php endforeach;?>
 				</select>

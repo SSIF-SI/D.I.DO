@@ -15,8 +15,53 @@ if(isset($_GET['reset'])){
 	die();
 }
 
-if(isset($_GET['keyword']) && isset($_GET['term'])){
-	die(json_encode(array("prova","prova2","c","avbc")));
+if(isset($_GET['keyword'])){
+	$className = $_GET [Search::SOURCE];
+	$dataclassName = $className . "Data";
+	
+	$A = new Application ();
+	$D = new $dataclassName ( $A->getDBConnector () );
+	$D->useView ( true );
+	if(isset($_GET['term'])){
+		$term=$_GET['term'];
+		if(isset ($_GET ["transform"])){
+			$transformlist=ListHelper::$_GET ["transform"]();
+			$transformlist=array_filter($transformlist, function($el) use ($term) {
+				return ( stripos($el, $term) !== false );
+			});
+			$key=array_map(function($el){ return "'".$el."'";}, array_keys($transformlist));
+			$where=$dataclassName::VALUE." IN ( ".implode(", ", $key ). " ) ";				
+		}else{
+			$where=$dataclassName::VALUE." ilike '%".$_GET['term']."%'";
+		}
+	}
+	
+	if($_GET['keyword']!="all"){
+		if(!empty($where))
+			$where=$where." AND ".$dataclassName::KEY." ilike '".$_GET['keyword']."'";
+		else
+			$where=$dataclassName::KEY." ilike '".$_GET['keyword']."'";
+	}
+	
+	if( $_GET [SharedDocumentConstants::CLOSED]){
+		if(!empty($where)){
+			$where=$where." AND ".SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED];
+		}else{
+			$where=SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED];
+			}
+		}	
+	
+	$listkeyValues= $D->getRealDistinct ( $dataclassName::VALUE, $where, $dataclassName::VALUE );
+	$listkeyValues = Utils::getListfromField ( $listkeyValues, $dataclassName::VALUE);
+	if(isset ($_GET ["transform"])){
+	 $tmp=array();
+	 foreach($listkeyValues as $k=>$val){
+	 	if(isset($transformlist[$val]))
+	 		array_push($tmp,$transformlist[$val]);
+	}
+	$listkeyValues=$tmp;
+	}
+	die(json_encode($listkeyValues));
 }
 
 
