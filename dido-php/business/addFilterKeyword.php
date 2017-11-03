@@ -105,7 +105,19 @@ if($className=="Masterdocument"){
     	               	];
        	
     	$("#spotlight").autocomplete({
-    		source: valoriChiavi
+    		source: valoriChiavi,
+    		open: function(event) {
+    	        $('.ui-autocomplete').css('height', 'auto');
+    	        var $input = $(event.target),
+    	            inputTop = $input.offset().top,
+    	            inputHeight = $input.height(),
+    	            autocompleteHeight = $('.ui-autocomplete').height(),
+    	            windowHeight = $(window).height();
+    	        
+    	        if ((inputHeight + inputTop+ autocompleteHeight) > windowHeight) {
+    	            $('.ui-autocomplete').css('height', (windowHeight - inputHeight - inputTop - 20) + 'px');
+    	        }
+    	    }
     	});
     	
     
@@ -117,7 +129,7 @@ if($className=="Masterdocument"){
 		<div class="form-group">
 			<label for="keyword">Parola chiave:</label>
 			<div class="select">
-				<select id="keyword" name="kw-option" class="selectpicker" data-live-search="true" data-size="7" data-container="body" data-width="100%">
+				<select id="keyword" name="kw-option" class="selectpicker" data-live-search="true" data-container="body" data-width="100%">
 					<option id="kw-all" value="all">-- Tutte --</option>
 		
 <?php 
