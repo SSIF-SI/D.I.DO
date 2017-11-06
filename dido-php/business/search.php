@@ -22,6 +22,8 @@ if(isset($_GET['keyword'])){
 	$A = new Application ();
 	$D = new $dataclassName ( $A->getDBConnector () );
 	$D->useView ( true );
+	$where=$dataclassName::KEY." ilike '".$_GET['keyword']."'";
+	
 	if(isset($_GET['term'])){
 		$term=$_GET['term'];
 		if(isset ($_GET ["transform"])){
@@ -30,34 +32,22 @@ if(isset($_GET['keyword'])){
 				return ( stripos($el, $term) !== false );
 			});
 			$key=array_map(function($el){ return "'".$el."'";}, array_keys($transformlist));
-			$where=$dataclassName::VALUE." IN ( ".implode(", ", $key ). " ) ";				
+			$where=$where." AND ". $dataclassName::VALUE." IN ( ".implode(", ", $key ). " ) ";				
 		}else{
-			$where=$dataclassName::VALUE." ilike '%".$_GET['term']."%'";
+			$where=$where." AND ". $dataclassName::VALUE." ilike '%".$_GET['term']."%'";
 		}
 	}
-	
-	if($_GET['keyword']!="all"){
-		if(!empty($where))
-			$where=$where." AND ".$dataclassName::KEY." ilike '".$_GET['keyword']."'";
-		else
-			$where=$dataclassName::KEY." ilike '".$_GET['keyword']."'";
-	}
-	
 	if( $_GET [SharedDocumentConstants::CLOSED]){
-		if(!empty($where)){
 			$where=$where." AND ".SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED];
-		}else{
-			$where=SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED];
-			}
 		}	
 	
 	$listkeyValues= $D->getRealDistinct ( $dataclassName::VALUE, $where, $dataclassName::VALUE );
-	$listkeyValues = Utils::getListfromField ( $listkeyValues, $dataclassName::VALUE);
+	$listkeyValues = Utils::getListfromField ( $listkeyValues, $dataclassName::VALUE,$dataclassName::VALUE);
 	if(isset ($_GET ["transform"])){
 	 $tmp=array();
 	 foreach($listkeyValues as $k=>$val){
 	 	if(isset($transformlist[$val]))
-	 		array_push($tmp,$transformlist[$val]);
+	 		array_push($tmp,array("value"=>$transformlist[$val], "key"=>$val));
 	}
 	$listkeyValues=$tmp;
 	}

@@ -84,18 +84,27 @@ foreach ( $listXMLSource as $fName ) {
 // Utils::printr($listkeyValue);
 
 ?>
+
+<script>
+// 	$(".filter-box input").each(function(el){
+// 		var idToRemove =  $(this).attr("id").replace(/filter-type-/,"ft-");
+// 		$("#"+idToRemove).remove();
+// 	});
+
+	function beforeFillFilterBox(){
+		var keyword = $("#keyword").find("option:selected").val();
+		var autocomplete=$("#spotlight").val();
+		var originalValue=$("#hiddenkey").val()!=""? $("#hiddenkey").val():autocomplete;
+		var optid=$("#keyword").find("option:selected").attr("id");
+		$('<input id="filter-'+optid+'" label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+keyword+']" value="'+originalValue+'"/>').appendTo($("#filterResult"));
+				
+	};
+</script>
+
 <script>
 
 
   $(function() {
-		/*
-	  var selected=[];
-	  $('#keyword').change(function () {
-	  	  selected  = $("#keyword").val();
-	  	 $("#spotlight").autocomplete({
-	    		source: "search.php?keyword="+ selected});
-	  });
-	  */
 
 	  $("#spotlight").autocomplete({
     		source: location.href+"&keyword="+ $("#keyword").find("option:selected").val(),
@@ -110,7 +119,14 @@ foreach ( $listXMLSource as $fName ) {
     	        if ((inputHeight + inputTop+ autocompleteHeight) > windowHeight) {
     	            $('.ui-autocomplete').css('height', (windowHeight - inputHeight - inputTop - 20) + 'px');
     	        }
-    	    }
+    	    },
+	  		select: function (event, ui) {
+	  			 var key = ui.item.key;
+	  		     var value = ui.item.value;
+	  		     $("#hiddenkey").val(key);
+	  		   //store in session
+	  		     document.valueSelectedForAutocomplete = value;
+		    }
 	    });
     	
 	  $('.selectpicker').on('change', function(){
@@ -133,7 +149,6 @@ foreach ( $listXMLSource as $fName ) {
 				<div class="select">
 					<select id="keyword" name="kw-option" class="selectpicker"
 						data-live-search="true" data-container="body" data-width="100%">
-						<option id="kw-all" value="all">-- Tutte --</option>
 		
 <?php
 foreach ( $listkeys as $k => $val ) :
@@ -141,7 +156,7 @@ foreach ( $listkeys as $k => $val ) :
 	$transform=isset($inputsvalues[$val])?"transform='".$inputsvalues[$val]."'": "";
 	$type=isset($inputstype[$val])?"type='".$inputstype[$val]."'": "";
 	?>
-					<option id="kw-<?=$k?>" <?=$type?> <?=$transform?> value="<?=$val?>"><?=$option?></option>
+					<option id="<?=$k?>" <?=$type?> <?=$transform?> value="<?=$val?>"><?=$option?></option>
 
 <?php endforeach;?>
 				</select>
@@ -152,11 +167,15 @@ foreach ( $listkeys as $k => $val ) :
 			<div class="form-group">
 				<label for="spotlight">Cerca:</label> <input type="text"
 					class="form-control" id="spotlight" placeholder="Cerca"
-					autocomplete="off" />
+					autocomplete="off" /><input type="hidden"
+					 id="hiddenkey"/>
 			</div>
 		</div>
-	</div>
+	
 </form>
+<div id="filterResult" class="btn-warning">
+</div>
+
 
 <script>
 	$("#keyword").selectpicker();
