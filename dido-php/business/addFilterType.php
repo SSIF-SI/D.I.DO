@@ -44,7 +44,7 @@ $types = $D->getRealDistinct($field);
 	$(".checkbox input").click(function(e){
 		var action = $(this).prop("checked");
 		if(action)
-			$('<input id="filter-'+$(this).attr("id")+'" type="hidden" name="nome['+$(this).attr("id")+']" value="'+$(this).val()+'" />').appendTo($("#filterResult"));
+			$('<input id="filter-'+$(this).attr("id")+'" type="hidden" name="nome['+$(this).attr("id")+']" value="'+$(this).val()+'" class="success"/>').appendTo($("#filterResult"));
 		else 
 			$("#filter-"+$(this).attr("id")).remove();
 		

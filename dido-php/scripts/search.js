@@ -8,7 +8,7 @@ $(document).ready(function(){
 				delete beforeFillFilterBox;
 				beforeFillFilterBox = undefined;
 			}
-			$(".filter-box").append($("#filterResult").html());
+			$("#boxFilters").append($("#filterResult").html());
 			fillFilterBox("#filterResult input");
 			MyModal.close();
 		});
@@ -17,10 +17,10 @@ $(document).ready(function(){
 	fillFilterBox();
 	
 	function fillFilterBox(html){
-		var el = html == undefined ? ".filter-box input" : html;
+		var el = html == undefined ? "#boxFilters input" : html;
 		$(el).each(function(){
-//			var buttonClass = $(this).attr("name").indexOf("nome") != -1 ? "btn-success" : "btn-warning";
-			var buttonClass =$("#filterResult").attr("class");
+			var buttonClass = "btn-"+$(this).attr('class') != undefined ? "btn-"+$(this).attr('class') : $("#filterResult").attr("class");
+			var buttonClass = "btn-"+$(this).attr('class');
 			var label=typeof $(this).attr("label")!='undefined'?$(this).attr("label"):$(this).val();
 			var li = $("<li class='btn "+buttonClass+"'>"+label+"&nbsp;</li>");
 			var i = $("<i class='fa fa-times' data-rel='"+$(this).attr("id")+"'> </i>").click(function(e){

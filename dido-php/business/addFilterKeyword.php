@@ -96,7 +96,7 @@ foreach ( $listXMLSource as $fName ) {
 		var autocomplete=$("#spotlight").val();
 		var originalValue=$("#hiddenkey").val()!=""? $("#hiddenkey").val():autocomplete;
 		var optid=$("#keyword").find("option:selected").attr("id");
-		$('<input id="filter-'+optid+'" label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+keyword+']" value="'+originalValue+'"/>').appendTo($("#filterResult"));
+		$('<input id="filter-'+optid+'" label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+keyword+']" value="'+originalValue+'" class="warning"/>').appendTo($("#filterResult"));
 				
 	};
 </script>

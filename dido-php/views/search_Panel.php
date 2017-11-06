@@ -1,6 +1,6 @@
 <form method="POST">
 <div class="row">
-	<div class="col-lg-12 filter-box">
+	<div class="col-lg-12" id="boxFilters">
 		<ul id="filterList">
 		</ul>
 		<?php 
@@ -11,7 +11,7 @@
 				foreach(Session::getInstance()->get("Search_filters") as $key=>$values):
 					foreach($values as $ik=>$value):
 		?>
-		<input id="filter-<?=$ik?>" type="hidden" name="<?=$key."[$ik]"?>" value="<?=$value?>" />
+		<input id="filter-<?=$ik?>" type="hidden" name="<?=$key."[$ik]"?>" value="<?=$value?>" class="<? echo $key == "nome" ? "success" : "warning";?>"/>
 		<?php 			
 					endforeach;
 				endforeach;
