@@ -19,7 +19,7 @@ $(document).ready(function(){
 	function fillFilterBox(html){
 		var el = html == undefined ? "#boxFilters input" : html;
 		$(el).each(function(){
-			var buttonClass = "btn-"+$(this).attr('class') != undefined ? "btn-"+$(this).attr('class') : $("#filterResult").attr("class");
+//			var buttonClass = "btn-"+$(this).attr('class') != undefined ? "btn-"+$(this).attr('class') : $("#filterResult").attr("class");
 			var buttonClass = "btn-"+$(this).attr('class');
 			var label=typeof $(this).attr("label")!='undefined'?$(this).attr("label"):$(this).val();
 			var li = $("<li class='btn "+buttonClass+"'>"+label+"&nbsp;</li>");

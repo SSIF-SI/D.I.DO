@@ -65,12 +65,12 @@ foreach ( $listXMLSource as $fName ) {
 		foreach ( $docinputs as $input ) {
 			if (isset ( $input [XMLParser::TYPE] )) {
 				$inputstype = array_merge ( $inputstype, array (
-						"$input" =>"". $input [XMLParser::TYPE] 
+						"$input" => "" . $input [XMLParser::TYPE] 
 				) );
 			}
 			if (isset ( $input [XMLParser::VALUES] )) {
 				$inputsvalues = array_merge ( $inputsvalues, array (
-						"$input" =>"". $input [XMLParser::VALUES] 
+						"$input" => "" . $input [XMLParser::VALUES] 
 				) );
 			}
 		}
@@ -96,7 +96,10 @@ foreach ( $listXMLSource as $fName ) {
 		var autocomplete=$("#spotlight").val();
 		var originalValue=$("#hiddenkey").val()!=""? $("#hiddenkey").val():autocomplete;
 		var optid=$("#keyword").find("option:selected").attr("id");
-		$('<input id="filter-'+optid+'" label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+keyword+']" value="'+originalValue+'" class="warning"/>').appendTo($("#filterResult"));
+		$('<input id="filter-'+optid+'" data-label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+keyword+']" value="'+originalValue+'" class="warning"/>').appendTo($("#filterResult"));
+		if(typeof $("#keyword").find("option:selected").attr('transform')!= 'undefined'){
+			$('<input id="transform-'+optid+'" type="hidden" name="transform['+keyword+']" value="'+originalValue+'"/>').appendTo($("#filterResult"));
+		}
 				
 	};
 </script>
@@ -131,8 +134,8 @@ foreach ( $listXMLSource as $fName ) {
     	
 	  $('.selectpicker').on('change', function(){
 		    var selected=$(this).find("option:selected").val();
-		   	var transform=typeof $(this).find("option:selected").attr('transform')!='undefined'?"&transform="+$(this).find("option:selected").attr('transform'):"";
-		   	var type=typeof $(this).find("option:selected").attr('type')!='undefined'?"&type="+$(this).find("option:selected").attr('type'):"";
+		   	var transform=typeof $(this).find("option:selected").attr('transform')!= 'undefined' ?"&transform="+$(this).find("option:selected").attr('transform'):"";
+		   	var type=typeof $(this).find("option:selected").attr('type')!= 'undefined ' ?"&type="+$(this).find("option:selected").attr('type'):"";
 		    $("#spotlight")
 		  	 	.autocomplete({source: location.href+type+transform+"&keyword="+selected})
 		  	 	.autocomplete('search');
@@ -153,8 +156,8 @@ foreach ( $listXMLSource as $fName ) {
 <?php
 foreach ( $listkeys as $k => $val ) :
 	$option = ucwords ( $val );
-	$transform=isset($inputsvalues[$val])?"transform='".$inputsvalues[$val]."'": "";
-	$type=isset($inputstype[$val])?"type='".$inputstype[$val]."'": "";
+	$transform = isset ( $inputsvalues [$val] ) ? "transform='" . $inputsvalues [$val] . "'" : "";
+	$type = isset ( $inputstype [$val] ) ? "type='" . $inputstype [$val] . "'" : "";
 	?>
 					<option id="<?=$k?>" <?=$type?> <?=$transform?> value="<?=$val?>"><?=$option?></option>
 
@@ -167,14 +170,13 @@ foreach ( $listkeys as $k => $val ) :
 			<div class="form-group">
 				<label for="spotlight">Cerca:</label> <input type="text"
 					class="form-control" id="spotlight" placeholder="Cerca"
-					autocomplete="off" /><input type="hidden"
-					 id="hiddenkey"/>
+					autocomplete="off" /><input type="hidden" id="hiddenkey" />
 			</div>
 		</div>
-	
+	</div>
+
 </form>
-<div id="filterResult" class="btn-warning">
-</div>
+<div id="filterResult" class="btn-warning"></div>
 
 
 <script>
