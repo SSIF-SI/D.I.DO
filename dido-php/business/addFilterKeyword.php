@@ -91,15 +91,17 @@ foreach ( $listXMLSource as $fName ) {
 // 		$("#"+idToRemove).remove();
 // 	});
 
+
 	function beforeFillFilterBox(){
 		var keyword = $("#keyword").find("option:selected").val();
 		var autocomplete=$("#spotlight").val();
 		var originalValue=$("#hiddenkey").val()!=""? $("#hiddenkey").val():autocomplete;
-		var optid=$("#keyword").find("option:selected").attr("id");
-		$('<input id="filter-'+optid+'" data-label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+keyword+']" value="'+originalValue+'" class="warning"/>').appendTo($("#filterResult"));
-		if(typeof $("#keyword").find("option:selected").attr('transform')!= 'undefined'){
-			$('<input id="transform-'+optid+'" type="hidden" name="transform['+keyword+']" value="'+originalValue+'"/>').appendTo($("#filterResult"));
-		}
+		var nameid=(keyword+"+"+originalValue).split(' ').join('_');
+// 		var optid=$("#keyword").find("option:selected").attr("id")+(autocomplete.split(' ').join('-'));
+		$('<input id="filter-'+nameid+'" data-label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+nameid+']" value="'+autocomplete+'" class="warning"/>').appendTo($("#filterResult"));
+// 		if(typeof $("#keyword").find("option:selected").attr('transform')!= 'undefined'){
+// 			$('<input id="transform-'+nameid+'" type="hidden" name="transform['+nameid+']" value="'+originalValue+'" class="transform" />').appendTo($("#filterResult"));
+// 		}
 				
 	};
 </script>
@@ -126,7 +128,7 @@ foreach ( $listXMLSource as $fName ) {
 	  		select: function (event, ui) {
 	  			 var key = ui.item.key;
 	  		     var value = ui.item.value;
-	  		     $("#hiddenkey").val(key);
+	  		     $("#hiddenkey").val(key);	  		     
 	  		   //store in session
 	  		     document.valueSelectedForAutocomplete = value;
 		    }

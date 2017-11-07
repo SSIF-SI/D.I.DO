@@ -5,6 +5,19 @@ $(document).ready(function(){
 		MyModal.confirmModal(this, false, function(){
 			if (typeof beforeFillFilterBox == 'function') { 
 				beforeFillFilterBox();
+				var $id=$("#filterResult input").attr("id");
+				var $exist=false;
+				$("#boxFilters input").each(function() {
+					if($(this).attr("id")==$id){
+						alert("Filtro Esistente!");
+						$exist=true;
+					}
+				});
+				if($exist){
+					$("#filterResult input").remove();
+					$exist=false;
+					return;
+				}
 				delete beforeFillFilterBox;
 				beforeFillFilterBox = undefined;
 			}
@@ -13,24 +26,30 @@ $(document).ready(function(){
 			MyModal.close();
 		});
 	});
-	
+
 	fillFilterBox();
-	
+
 	function fillFilterBox(html){
 		var el = html == undefined ? "#boxFilters input" : html;
 		$(el).each(function(){
-//			var buttonClass = "btn-"+$(this).attr('class') != undefined ? "btn-"+$(this).attr('class') : $("#filterResult").attr("class");
-			var buttonClass = "btn-"+$(this).attr('class');
-			var label=typeof $(this).attr("label")!='undefined'?$(this).attr("label"):$(this).val();
-			var li = $("<li class='btn "+buttonClass+"'>"+label+"&nbsp;</li>");
-			var i = $("<i class='fa fa-times' data-rel='"+$(this).attr("id")+"'> </i>").click(function(e){
-				e.preventDefault();
-				var idToRemove = $(this).attr("data-rel");
-				$("#"+idToRemove).remove();
-				$(li).remove();
-			});
-			i.appendTo(li);
-			li.appendTo("#filterList");
+//			if($(this).attr('class')!='transform'){
+				var buttonClass = "btn-"+$(this).attr('class');
+				var label=$(this).attr('data-label');
+				var li = $("<li id=btn-"+$(this).attr("id")+" class='btn "+buttonClass+"'>"+label+"&nbsp;</li>");
+				var i = $("<i class='fa fa-times' data-rel='"+$(this).attr("id")+"'> </i>").click(function(e){
+					e.preventDefault();
+					var idToRemove = document.getElementById( $(this).attr("data-rel") );
+					idToRemove.parentNode.removeChild( idToRemove );
+//					var idTransformRemove = document.getElementById( $(this).attr("data-rel").replace(/filter-/,"transform-") );
+//					if(idTransformRemove!=null)
+//						idTransformRemove.parentNode.removeChild( idTransformRemove );
+					$(li).remove();
+				});
+				i.appendTo(li);
+				li.appendTo("#filterList");
+//			}
+
 		});
+
 	}
 });
