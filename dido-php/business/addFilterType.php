@@ -36,7 +36,7 @@ $types = $D->getRealDistinct($field);
 	</fieldset>
 </form>
 <script>
-	$(".filter-box input").each(function(el){
+	$("#boxFilters input").each(function(el){
 		var idToRemove =  $(this).attr("id").replace(/filter-type-/,"ft-");
 		$("#"+idToRemove).remove();
 	});

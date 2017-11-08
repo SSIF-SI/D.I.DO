@@ -67,6 +67,13 @@ if(count($_POST)){
 		unset($_POST['postIt']);
 		Session::getInstance()->set("Search_filters", $_POST);
 	}
+	$source = $_GET['source'];
+	$closed = isset($_GET['closed']) ? $_GET['closed'] : null;
+	$types = isset($_POST['nome']) ? array_map("strtolower",$_POST['nome']) : null;
+	$keywords = isset($_POST['keyword']) ? $_POST['keyword'] : null;
+	$Application
+		->getApplicationPart(Application::DOCUMENTBROWSER)
+		->searchDocuments($source, $closed, $types,$keywords);
 }
 
 if(Session::getInstance()->exists("Search_URI") && $Search->getRequestUri() != Session::getInstance()->get("Search_URI")){

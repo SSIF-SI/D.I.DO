@@ -93,17 +93,6 @@ class Application_DocumentBrowser{
 			->getResult();
 	}
 	
-	private function _just($value){
-		$list = $this->_Masterdocument->searchBy([
-				[
-						CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
-						CRUD::SEARCHBY_VALUE => $value
-				]
-		]);
-			
-		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
-	}
-	
 	public function getAllMyPendingDocuments(){
 		return $this
 			->_allMyPendingDocuments()
@@ -123,6 +112,57 @@ class Application_DocumentBrowser{
 			->_allMyClosedDocuments()
 			// Quindi restituisco l'array
 			->getResult();
+	}
+	
+	public function searchDocuments($source, $closed = null, $types = array(), $keywords = array()){
+		$source = "_$source";
+		$sourceData = $source."Data";
+
+		$mainFilters = [];
+		
+		if(!is_null($closed)){
+			array_push($mainFilters, 
+				[
+					CRUD::SEARCHBY_FIELD => SharedDocumentConstants::CLOSED,
+					CRUD::SEARCHBY_VALUE => $closed
+				]
+			);
+		}
+		
+		if(count($types)){
+			foreach ($types as $type){
+				$type = explode(" - ", $type);
+				array_push($mainFilters,
+					[
+						CRUD::SEARCHBY_FIELD => SharedDocumentConstants::NOME,
+						CRUD::SEARCHBY_VALUE => $type[0]
+					]
+				);
+				if(isset($type[1])){
+					array_push($mainFilters,
+							[
+									CRUD::SEARCHBY_FIELD => Masterdocument::TYPE,
+									CRUD::SEARCHBY_VALUE => $type[1]
+							]
+					);
+				}
+			}
+		}
+		
+		$mainlist = $this->$source->searchBy($mainFilters);
+		
+		Utils::printr($mainlist);
+	}
+	
+	private function _just($value){
+		$list = $this->_Masterdocument->searchBy([
+				[
+						CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
+						CRUD::SEARCHBY_VALUE => $value
+				]
+		]);
+			
+		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
 	}
 	
 	public function getResult(){
@@ -361,6 +401,7 @@ private function _allMyPendingDocuments(){
 			
 		return Utils::getListfromField($list,null,Masterdocument::ID_MD);
 	}
+	
 	
 	private function _fillResultArray($key, $values){
 		$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
