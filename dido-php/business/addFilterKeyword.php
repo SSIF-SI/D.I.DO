@@ -136,8 +136,8 @@ foreach ( $listXMLSource as $fName ) {
     	
 	  $('.selectpicker').on('change', function(){
 		    var selected=$(this).find("option:selected").val();
-		   	var transform=typeof $(this).find("option:selected").attr('transform')!= 'undefined' ?"&transform="+$(this).find("option:selected").attr('transform'):"";
-		   	var type=typeof $(this).find("option:selected").attr('type')!= 'undefined ' ?"&type="+$(this).find("option:selected").attr('type'):"";
+		   	var transform=typeof $(this).find("option:selected").attr('transform')!= "undefined" ?"&transform="+$(this).find("option:selected").attr('transform'):"";
+		   	var type=typeof $(this).find("option:selected").attr('type')!= "undefined" ?"&type="+$(this).find("option:selected").attr('type'):"";
 		    $("#spotlight")
 		  	 	.autocomplete({source: location.href+type+transform+"&keyword="+selected})
 		  	 	.autocomplete('search');

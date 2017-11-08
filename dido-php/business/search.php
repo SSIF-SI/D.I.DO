@@ -60,7 +60,6 @@ define (PAGE_TITLE, "Ricerca");
 $Search = new Search();
 
 if(count($_POST)){
-	Utils::printr($_POST);
 	if(count($_POST) == 1 && isset($_POST['postIt'])){
 		Session::getInstance()->delete("Search_filters");
 	} else {
@@ -71,9 +70,9 @@ if(count($_POST)){
 	$closed = isset($_GET['closed']) ? $_GET['closed'] : null;
 	$types = isset($_POST['nome']) ? array_map("strtolower",$_POST['nome']) : null;
 	$keywords = isset($_POST['keyword']) ? $_POST['keyword'] : null;
-	$Application
+	Utils::printr($Application
 		->getApplicationPart(Application::DOCUMENTBROWSER)
-		->searchDocuments($source, $closed, $types,$keywords);
+		->searchDocuments($source, $closed, $types,$keywords));
 }
 
 if(Session::getInstance()->exists("Search_URI") && $Search->getRequestUri() != Session::getInstance()->get("Search_URI")){

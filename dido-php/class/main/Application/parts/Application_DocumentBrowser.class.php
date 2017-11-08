@@ -119,8 +119,7 @@ class Application_DocumentBrowser{
 		$sourceData = $source."Data";
 
 		$mainFilters = [];
-		$dataFilters=[];
-		
+		$dataFilters= [];
 		if(!is_null($closed)){
 			array_push($mainFilters, 
 				[
@@ -151,6 +150,7 @@ class Application_DocumentBrowser{
 		}
 		if(count($keywords)){
 			$keyvalues=[];
+			
 			foreach ($keywords as $key=>$value){
 				$x=strstr($key,"+",true);
 				$x=str_replace('_', ' ',$x);
@@ -180,21 +180,26 @@ class Application_DocumentBrowser{
 				);
 			}				
 			$this->$sourceData->useView(true);
-			$datalist= $this->$sourceData->searchBy($dataFilters,"AND","id_md");
+			$datalist= $this->$sourceData->searchBy($dataFilters," AND ","id_md");
 			$this->$sourceData->useView(false);
 			$dataIdMD=Utils::getListfromField($datalist,null,Masterdocument::ID_MD);
+				
 		}
 		if(empty($mainFilters) && !empty($dataFilters))
 			$list=$dataIdMD;
 		else {
-			$mainlist = $this->$source->searchBy($mainFilters, "AND","id_md");
+			$mainlist = $this->$source->searchBy($mainFilters, " AND ","id_md");
 			$mainIdMd=Utils::getListfromField($mainlist,null,Masterdocument::ID_MD);
-		}
-		if(!empty($mainFilters)&&!empty($dataFilters))
-			$list=array_intersect_key($mainIdMd, $dataIdMD);
-		else
 			$list=$mainIdMd;
-		Utils::printr($list);
+		}
+		if(!empty($mainFilters) && !empty($dataFilters))
+			$list=array_intersect_key($mainIdMd, $dataIdMD);
+		
+		return 	$this->_emptyResult()
+			->_fillResultArray(self::LABEL_MD, $list)
+			->_createResultTree()
+			->_complete()
+			->getResult();
 		
 	}
 	
@@ -448,7 +453,8 @@ private function _allMyPendingDocuments(){
 	
 	
 	private function _fillResultArray($key, $values){
-		$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
+		if(!empty($values))
+			$this->_resultArray[$key] = $this->_resultArray[$key] + $values;
 		return $this;
 	}
 

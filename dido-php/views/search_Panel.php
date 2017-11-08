@@ -6,17 +6,13 @@
 		<?php 
 			if(Session::getInstance()->exists("Search_filters")){
 				$P = Session::getInstance()->get("Search_filters");
-// 				if(isset($P["transform"]))
-// 					$transform=$P["transform"];
+				$type=[];
+				$keyword=[];
 				if(isset($P["nome"]))
 					$type=$P["nome"];
 				if(isset($P["keyword"]))
 					$keyword=$P["keyword"];
-// 				foreach($transform as $key=>$value):
-// 				?>
-		<!-- 	<input id="transform-<?=$key?>" type="hidden" name="transform<?="[$key]"?>" value="<?=$value?>" class="transform" /> -->
-			<?php	
-// 				endforeach;
+
 				foreach($keyword as $key=>$value):
 					$label=strstr($key,"+",true);
 					$label=str_replace('_', ' ',$label);
@@ -26,7 +22,6 @@
 		<input id="filter-<?=$key?>" data-label="<?=$label?>" type="hidden" name="keyword<?="[$key]"?>" value="<?=$value?>" class="warning" />
 		<?php 
 				endforeach;
-				
 				foreach($type as $ik=>$value):
 		?>
 		<input id="filter-<?=$ik?>" data-label="<?=$value?>" type="hidden" name="nome<?="[$ik]"?>" value="<?=$value?>" class="success" />
