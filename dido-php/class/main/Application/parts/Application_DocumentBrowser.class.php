@@ -119,6 +119,7 @@ class Application_DocumentBrowser{
 		$sourceData = $source."Data";
 
 		$mainFilters = [];
+		$dataFilters=[];
 		
 		if(!is_null($closed)){
 			array_push($mainFilters, 
@@ -148,10 +149,53 @@ class Application_DocumentBrowser{
 				}
 			}
 		}
+		if(count($keywords)){
+			$keyvalues=[];
+			foreach ($keywords as $key=>$value){
+				$x=strstr($key,"+",true);
+				$x=str_replace('_', ' ',$x);
+				$v=strstr($key,"+");
+				$v=str_replace('+', '',$v);
+				if(!isset ($keyvalues[$x]))
+ 					$keyvalues[$x]=[];	
+				array_push($keyvalues[$x],$v);
+			}
+			foreach ($keyvalues as $key=>$value){
+				array_push($dataFilters,
+					[
+						Crud::SEARCHBY_OPEN_BRACKET=>true,
+						CRUD::SEARCHBY_FIELD => AnyDocumentData::KEY,
+						CRUD::SEARCHBY_VALUE => $key,
+						CRUD::SEARCHBY_LOGIC_OPERATOR=>"AND"
+					]
+				);
+				array_push($dataFilters,
+					[
+						CRUD::SEARCHBY_CLOSE_BRACKET=>true,
+						CRUD::SEARCHBY_FIELD => AnyDocumentData::VALUE,
+						CRUD::SEARCHBY_VALUE => $value,
+						CRUD::SEARCHBY_OPERATOR=>"in",
+						CRUD::SEARCHBY_LOGIC_OPERATOR=>"AND"
+					]
+				);
+			}				
+			$this->$sourceData->useView(true);
+			$datalist= $this->$sourceData->searchBy($dataFilters,"AND","id_md");
+			$this->$sourceData->useView(false);
+			$dataIdMD=Utils::getListfromField($datalist,null,Masterdocument::ID_MD);
+		}
+		if(empty($mainFilters) && !empty($dataFilters))
+			$list=$dataIdMD;
+		else {
+			$mainlist = $this->$source->searchBy($mainFilters, "AND","id_md");
+			$mainIdMd=Utils::getListfromField($mainlist,null,Masterdocument::ID_MD);
+		}
+		if(!empty($mainFilters)&&!empty($dataFilters))
+			$list=array_intersect_key($mainIdMd, $dataIdMD);
+		else
+			$list=$mainIdMd;
+		Utils::printr($list);
 		
-		$mainlist = $this->$source->searchBy($mainFilters);
-		
-		Utils::printr($mainlist);
 	}
 	
 	private function _just($value){
