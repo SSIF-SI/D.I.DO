@@ -11,7 +11,13 @@ if(Utils::checkAjax ()){
 if(isset($_GET['reset'])){
 	Session::getInstance()->delete("Search_URI");
 	Session::getInstance()->delete("Search_filters");
+	Session::getInstance()->delete("Search_postIt");
 	header("Location:".$_SERVER['PHP_SELF']);
+	die();
+}
+
+if(isset($_GET[Masterdocument::ID_MD])){
+	include(BUSINESS_PATH."document.php");
 	die();
 }
 
@@ -55,34 +61,46 @@ if(isset($_GET['keyword'])){
 }
 
 
+
 define (PAGE_TITLE, "Ricerca");
 
 $Search = new Search();
 
-if(count($_POST)){
-	if(count($_POST) == 1 && isset($_POST['postIt'])){
-		Session::getInstance()->delete("Search_filters");
-	} else {
-		unset($_POST['postIt']);
-		Session::getInstance()->set("Search_filters", $_POST);
+if(count($_POST) || Session::getInstance()->exists("Search_postIt")){
+	if(count($_POST)){
+		if(isset($_POST['postIt'])){
+			
+			Session::getInstance()->set("Search_postIt",true);
+			
+			if(count($_POST) == 1 && isset($_POST['postIt'])){
+				Session::getInstance()->delete("Search_filters");
+			} else {
+				unset($_POST['postIt']);
+				Session::getInstance()->set("Search_filters", $_POST);
+			}
+		}
 	}
+	
+	$filters = Session::getInstance()->exists("Search_filters") ? Session::getInstance()->get("Search_filters") : null;
+		
 	$source = $_GET['source'];
 	$closed = isset($_GET['closed']) ? $_GET['closed'] : null;
-	$types = isset($_POST['nome']) ? array_map("strtolower",$_POST['nome']) : null;
-	$keywords = isset($_POST['keyword']) ? $_POST['keyword'] : null;
-	Utils::printr($Application
+	
+	$types = isset($filters['nome']) ? array_map("strtolower",$filters['nome']) : null;
+	$keywords = isset($filters['keyword']) ? $filters['keyword'] : null;
+	
+	$list = $Application
 		->getApplicationPart(Application::DOCUMENTBROWSER)
-		->searchDocuments($source, $closed, $types,$keywords));
+		->searchDocuments($source, $closed, $types,$keywords);
+	
+	$list[Application_DocumentBrowser::LABEL_MD] = Common::categorize($list[Application_DocumentBrowser::LABEL_MD]);
+	
+	$XMLDataSource = $Application->getXMLDataSource();
 }
 
-if(Session::getInstance()->exists("Search_URI") && $Search->getRequestUri() != Session::getInstance()->get("Search_URI")){
-	header("Location:".BUSINESS_HTTP_PATH . Session::getInstance()->get("Search_URI"));
-	die();
-}
 
-$pageScripts = array (
-		"MyModal.js"
-);
+
+$pageScripts = array ("MyModal.js","locationHash.js");
 
 include_once (TEMPLATES_PATH . "template.php");
 

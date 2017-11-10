@@ -15,7 +15,7 @@ $field = $className::NOME;
 if(isset($static['TYPE']))
 	$field .= ",".$className::TYPE;
 
-$types = $D->getRealDistinct($field);
+$types = $D->useView(false)->getRealDistinct($field);
 ?>
 
 <form>

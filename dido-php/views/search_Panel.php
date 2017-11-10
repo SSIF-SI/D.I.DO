@@ -58,3 +58,5 @@
 </div>
 <input type="hidden" name="postIt" value="" />
 </form>
+
+<?php if(isset($list)) include(VIEWS_PATH."documentTabs.php");?>

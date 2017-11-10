@@ -122,7 +122,7 @@
 				style="visibility: hidden">
 				<div class="sidebar-nav navbar-collapse">
 					<div style="margin: 0.4em">
-						<a href="<?=BUSINESS_HTTP_PATH?>search.php"
+						<a href="<?=BUSINESS_HTTP_PATH . (Session::getInstance()->exists(Search::SEARCH_URI) ? Session::getInstance()->get(Search::SEARCH_URI) : "search.php")?>"
 							class="btn btn-primary btn-lg, btn-block"> <i
 							class="fa fa-search"></i> Ricerca
 						</a>

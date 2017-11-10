@@ -131,13 +131,14 @@ class Application_DocumentBrowser{
 		
 		if(count($types)){
 			foreach ($types as $type){
-				$type = explode(" - ", $type);
+				//$type = explode(" - ", $type);
 				array_push($mainFilters,
 					[
 						CRUD::SEARCHBY_FIELD => SharedDocumentConstants::NOME,
-						CRUD::SEARCHBY_VALUE => $type[0]
+						CRUD::SEARCHBY_VALUE => $type
 					]
 				);
+				/*
 				if(isset($type[1])){
 					array_push($mainFilters,
 							[
@@ -146,6 +147,7 @@ class Application_DocumentBrowser{
 							]
 					);
 				}
+				*/
 			}
 		}
 		if(count($keywords)){
@@ -178,13 +180,65 @@ class Application_DocumentBrowser{
 						CRUD::SEARCHBY_LOGIC_OPERATOR=>"AND"
 					]
 				);
-			}				
+			}	
+			/*			
 			$this->$sourceData->useView(true);
 			$datalist= $this->$sourceData->searchBy($dataFilters," AND ","id_md");
 			$this->$sourceData->useView(false);
 			$dataIdMD=Utils::getListfromField($datalist,null,Masterdocument::ID_MD);
-				
+			*/
 		}
+		
+		$list = array();
+		$mainList = array();
+		$dataList = array();
+		
+		
+		// Riempimento array
+		if(empty($mainFilters) && empty($dataFilters)){
+			$mainList = $this->$source->getAll(null, Masterdocument::ID_MD);
+		}
+		
+		if(!empty($mainFilters)){
+			$this->$source->useView(true);
+			$mainList = $this->$source->searchBy($mainFilters, " OR ",Masterdocument::ID_MD);
+			$mainList = Utils::getListfromField($mainList,null,Masterdocument::ID_MD);
+			$this->$source->useView(false);
+		}
+		
+		if(!empty($dataFilters)){
+			$this->$sourceData->useView(true);
+			$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);
+			$dataList = Utils::getListfromField($dataList,null,Masterdocument::ID_MD);
+			$this->$sourceData->useView(false);
+		}
+		
+		// calcolo finale della lista
+		switch(true){
+			case empty($mainFilters) && empty($dataFilters):
+			case empty($dataFilters): 	 
+				$list = array_keys($mainList);
+				break;
+			case empty($mainFilters):
+				$list = array_keys($dataList);
+				break;
+			default:
+				$list = array_intersect(array_keys($dataList), array_keys($mainList));
+				break;
+		}
+		
+		$list = $this->_Masterdocument
+			->searchBy([
+			[
+					CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
+					CRUD::SEARCHBY_VALUE => $list,
+					CRUD::SEARCHBY_OPERATOR => "in"
+			]
+		]);
+		
+		$list = Utils::getListfromField($list,null,Masterdocument::ID_MD);
+		
+		/*
 		if(empty($mainFilters) && !empty($dataFilters))
 			$list=$dataIdMD;
 		else {
@@ -194,8 +248,9 @@ class Application_DocumentBrowser{
 		}
 		if(!empty($mainFilters) && !empty($dataFilters))
 			$list=array_intersect_key($mainIdMd, $dataIdMD);
-		
-		return 	$this->_emptyResult()
+		*/
+			
+		return $this->_emptyResult()
 			->_fillResultArray(self::LABEL_MD, $list)
 			->_createResultTree()
 			->_complete()
@@ -477,7 +532,7 @@ private function _allMyPendingDocuments(){
 			$documents = Utils::getListfromField ( 
 				$this->_Document->getBy ( Document::ID_MD, join ( ",", $md_ids ) ), null, Document::ID_DOC 
 			);
-			
+					
 			if (! empty ( $documents )) {
 				foreach ( $documents as $k => $document ) {
 					$documents [$k] [self::MUST_BE_SIGNED_BY_ME] = 0;

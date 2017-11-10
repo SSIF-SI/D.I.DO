@@ -1,8 +1,3 @@
-<div class="row">
-	<div class="col-lg-12">
-		<h1 class="page-header">PAGE_TITLE</h1>
-	</div>
-</div>
 <?php 
 if(!count($list[Application_DocumentBrowser::LABEL_MD])){
 ?>
@@ -21,7 +16,7 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 ?>
 	<!-- Nav tabs -->
 		<li class="">
-			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=ucFirst($sezione)."&nbsp;&nbsp;&nbsp;<span class=\"badge\">$badgeValue</span>"?></a>
+			<a href="<?="#".$sezione_field?>" data-toggle="tab" aria-expanded="false"><?=ucfirst($sezione)."&nbsp;&nbsp;&nbsp;<span class=\"badge\">$badgeValue</span>"?></a>
 		</li>
 <?php 
 endforeach; 
@@ -67,7 +62,6 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 						<table class="table table-condensed table-striped">
 							<thead>
 							<tr>
-								<th>Nome documento</th>
 <?php 
 			foreach($inputs as $input):
 				if(isset($input[XMLParser::SHORTWIEW])):
@@ -86,35 +80,30 @@ foreach($list[Application_DocumentBrowser::LABEL_MD] as $sezione => $nomeDocumen
 <?php 
 			foreach($items as $k=>$item):
 				$formId = $tipoDocumento_field.$k;
-				foreach($list[Application_DocumentBrowser::LABEL_DOCUMENTS][$k] as $id_doc=>$docData):
 ?>
 							<tr>
+<?php 
+				$obj = $list[Application_DocumentBrowser::LABEL_MD_DATA][$k];
+				foreach($inputs as $input):
+					if(isset($input[XMLParser::SHORTWIEW])):
+						$key = Common::labelFromField((string)$input, false);
+						$value= Common::renderValue($obj[$key],$input);
+?>
 								<td>
-									<strong><?=ucfirst($docData[Document::NOME])?></strong>
+									<?=$value?>
 								</td>
 <?php 
-					$obj = $list[Application_DocumentBrowser::LABEL_MD_DATA][$k];
-					foreach($inputs as $input):
-						if(isset($input[XMLParser::SHORTWIEW])):
-							$key = Common::labelFromField((string)$input, false);
-							$value = Common::renderValue($obj[$key],$input);
+					endif;
+				endforeach;			
 ?>
-									<td>
-										<?=$value?>
-									</td>
-<?php 
-						endif;
-					endforeach;			
-?>
-									<td>
-										<a class="btn btn-primary detail"
-								href="?<?=Masterdocument::ID_MD?>=<?=$k?>&<?=Document::ID_DOC?>=<?=$docData[Document::ID_DOC]?>"><span class="fa fa-search fa-1x fa-fw"></span>
-									Dettaglio</a>
-										
-									</td>
-								</tr>
+								<td class="text-right">
+									<a class="btn btn-primary detail"
+							href="?<?=Masterdocument::ID_MD?>=<?=$k?>"><span class="fa fa-search fa-1x fa-fw"></span>
+								Dettaglio</a>
+									
+								</td>
+							</tr>
 <?php		
-				endforeach;
 			endforeach;
 ?>					
 						</table>
@@ -132,4 +121,3 @@ endforeach;
 ?>
 	</div>
 </div>
-
