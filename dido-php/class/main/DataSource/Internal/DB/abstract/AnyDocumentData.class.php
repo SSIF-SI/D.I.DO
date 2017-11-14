@@ -32,7 +32,7 @@ abstract class AnyDocumentData extends Crud {
 			}
 		}
 		$where = join ( " $link ", $where );
-		$sql = sprintf ( $this->SQL_SEARCH, isset ( $this->VIEW ) ? $this->VIEW : $this->TABLE, $where );
+		$sql = sprintf ( $this->SQL_SEARCH, $this->_canIUseView() ? $this->VIEW : $this->TABLE, $where );
 		$this->_connInstance->query ( $sql );
 		return $this->_connInstance->allResults ();
 	}
@@ -51,13 +51,15 @@ abstract class AnyDocumentData extends Crud {
 		
 		$where = join ( " {$link} ", $where );
 		
-		$sql = sprintf ( $this->SQL_SEARCH, isset ( $this->VIEW ) ? $this->VIEW : $this->TABLE, $where );
+		$sql = sprintf ( $this->SQL_SEARCH, $this->_canIUseView() ? $this->VIEW : $this->TABLE, $where );
 		$this->_connInstance->query ( $sql );
 		return $this->_connInstance->allResults ();
 	}
 
 	public function saveInfo($data, $id_parent/*,$docInputs*/){
+		$this->useView(false);
 		$existents_input = Utils::getListfromField ( $this->searchByKeys ( array_keys ( $data ), $id_parent ), null, self::KEY );
+		$this->useView(true);
 		
 		$this->_connInstance->begin ();
 		
@@ -75,6 +77,7 @@ abstract class AnyDocumentData extends Crud {
 					$existents_input [$key] [$this->id_document_label] = $id_parent;
 					
 					$object = Utils::stubFill ( $this->_stub, $existents_input [$key] );
+					
 					$result = $this->save ( $object, null );
 				}
 			}

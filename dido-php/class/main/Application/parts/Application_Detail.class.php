@@ -97,8 +97,13 @@ class Application_Detail{
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 					);
 					
-					if($doc[XMLParser::MIN_OCCUR])
+					
+					if($doc[XMLParser::MIN_OCCUR]){
+						if(isset($doc[XMLParser::CLOSING_POINT])){
+							$this->_canMdBeClosed = true;
+						}
 						break;				
+					}
 				} else {
 					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
 						break;
@@ -112,12 +117,28 @@ class Application_Detail{
 		
 		}
 		
+		if($mandatory == $foundMandatory || $this->_canMdBeClosed){
+			
+			
+			// Controllo che non ci siano input con valori obbligatori PRIMA della chiusura
+			$mandatoryInputsBeforeClosing = true;
+			
+			$mdInputs = $XMLParser->getMasterDocumentInputs();
+			foreach($mdInputs as $mdInput){
+				if(isset($mdInput[XMLParser::MANDATORY_BEFORE_CLOSING]) && $mdInput[XMLParser::MANDATORY_BEFORE_CLOSING]){
+					if(!isset($md_data[(string)$mdInput])){
+						var_dump($md_data[$id_md][(string)$mdInput]);
+						$mandatoryInputsBeforeClosing = false;
+						break;
+					}
+				}
+			}
+			
+			$this->_canMdBeClosed = true && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED && $mandatoryInputsBeforeClosing;
+		}
+		
 		if(!$almostOne)
 			return;
-		
-		if($mandatory == $foundMandatory){
-			$this->_canMdBeClosed = true && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED;
-		}
 		
 		if($md[Masterdocument::CLOSED] == ProcedureManager::INCOMPLETE) 
 			return;
@@ -234,8 +255,9 @@ class Application_Detail{
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
-			if(!$documentClosed)	
+			if(!$documentClosed){	
 				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $MDSigners);
+			}
 			
 			$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
 			$panelButtons = [];
@@ -258,7 +280,7 @@ class Application_Detail{
 				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 			
 			// Il documento se non ci sono errori e non è già chiuso lo posso chiudere
-			if(!($signatures && $docSignatures['errors']) && !$documentClosed)
+			if(!$documentClosed && !$docSignatures['errors'])
 				array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
 			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
@@ -341,13 +363,14 @@ class Application_Detail{
 	}
 
 	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $MDSigners){
-		if(!$docSignatures) 
-			return null;
 		
 		$signResult = [
 			'errors' => false,
 			'html'		=> []	
 		];
+		
+		if(!$docSignatures)
+			return $signResult;
 		
 // 		flog("docPath: %s",$docPath);
 		
@@ -376,6 +399,7 @@ class Application_Detail{
 				$signResult['html'][] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs_Delegato} - delegato da {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
 				break;
 			}
+			$signResult['errors'] = true;
 			$signResult['html'][] = "<div class=\"alert alert-warning\"><span class=\"fa fa-warning\"></span> Manca la firma di {$whoIs} ({$who[SignersRoles::DESCRIZIONE]})</div>";
 		}
 		$signResult['html'] = join(PHP_EOL,$signResult['html']);

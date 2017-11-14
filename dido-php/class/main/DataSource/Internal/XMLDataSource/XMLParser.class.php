@@ -27,6 +27,8 @@ class XMLParser implements IXMLParser {
 	
 	const MAX_OCCUR = "maxOccur";
 	
+	const CLOSING_POINT = "closingPoint";
+	
 	// Signature params 
 	const ROLE = "role";
 
@@ -46,6 +48,8 @@ class XMLParser implements IXMLParser {
 	const EDITABLE = "editable";
 	
 	const SIGN_ROLE = "signRole";
+	
+	const MANDATORY_BEFORE_CLOSING = "mandatoryBeforeClosing";
 	
 	// Inner Values
 	

@@ -19,10 +19,10 @@
 		<input mandatory="0">ambito</input>
 		<input>controparti</input>
 		<input innerValues="ruoliAttivitaPec" >ruolo</input>
-		<input innerValues="esitiAttivitaPec" shortView="true">esito</input>
+		<input innerValues="esitiAttivitaPec" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
 	</inputs>
 	<list>
-		<document name="atto" minOccur="1">
+		<document name="atto" minOccur="1" closingPoint="1">
 			<signatures>
 				<signature mandatory="0" role="DIR" />
 			</signatures>
