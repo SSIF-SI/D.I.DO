@@ -8,7 +8,6 @@
 	</types>
 	<inputs>
 		<input values="persone" shortView="true">nominativo associato</input>
-		<input values="tipo_associatura" shortView="true">tipo associatura</input>
 		<input values="gruppi" shortView="true">laboratorio</input>
 		<input type="data" shortView="true">data inizio</input>
 		<input type="data" shortView="true">data fine</input>
@@ -42,5 +41,7 @@
 			<value value="accettata">Accettata</value>
 			<value value="rifiutata">Rifiutata</value>
 		</values>
+
 	</innerValues>
+	
 </masterDocument>

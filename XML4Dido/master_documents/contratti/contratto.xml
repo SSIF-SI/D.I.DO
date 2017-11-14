@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<masterDocument name="seminario" owner="SA">
+<masterDocument name="contratto" owner="SA">
 	<types>
 		<type>co.co.co.</type>
 		<type>prestazione occasionale</type>
