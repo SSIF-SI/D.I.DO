@@ -174,7 +174,93 @@ class SignatureHelper {
 <?php
 		return ob_get_clean ();
 	}
+	static function createModalSpecialSigner($id=null){
+		$signersObj = new SpecialSignatures( DBConnector::getInstance () );
+		$typeObj = new SpecialSignatureTypes( DBConnector::getInstance () );
+		
+		$signer = is_null ( $idP ) ? $signersObj->getStub () : $signersObj->get ( array (
+		SpecialSignatures::ID_PERSONA => $id
+	) );
+	$types=$typeObj->getAll();
+    $listPersone = ListHelper::persone ();
+	$signers = array_keys ( $signersObj->getAll ( null, SpecialSignatures::ID_PERSONA ) );
 
+ob_start ();
+?>
+
+<?php	if(is_null($id) && count($listPersone) == 0): ?>
+<div class="alert alert-danger">Non è possibile aggiungere ulteriori
+	firmatari</div>
+<?php 	else: ?>
+<form id="firmatario" name="firmatario" method="POST">
+<?php
+			if (is_null ( $id )) {
+				echo HTMLHelper::select ( SpecialSignatures::ID_PERSONA, "Persona", $listPersone, isset ( $signer [SpecialSignatures::ID_PERSONA] ) ? $signer [SpecialSignatures::ID_PERSONA] : null, null,false, true );
+			} else {
+				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $idP ) . "</p>";
+				echo HTMLHelper::input ( 'hidden', SpecialSignatures::ID_PERSONA, null, $idP );
+			}
+			echo HTMLHelper::select ( SpecialSignatureTypes::TYPE, "Tipo", $types, isset ( $signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE] ) ? $types [$signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE]] : null, null,false, true );
+				
+			echo HTMLHelper::input ( 'textarea', Signers::PKEY, "Chiave Pubblica", isset ( $signer [Signers::PKEY] ) ? $signer [Signers::PKEY] : null, true, true );
+			?>
+			            <div class="signatures list-group"></div>
+	<div class="errorbox"></div>
+	<label for="pdfConFirma">Pdf con firma digitale:</label><br /> <input
+		class="file" type="file" id="pdfConFirma" name="pdfConFirma"
+		data-allowed-file-extensions='["pdf", "p7m"]' />
+</form>
+<script
+	src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/fileinput.min.js"></script>
+<script src="<?=LIB_PATH?>kartik-v-bootstrap-fileinput/js/locales/it.js"></script>
+<script>
+    					$('#pkey').on("keyup",function(){
+    						$(".signatures a").removeClass("active");
+            			});
+
+    					pdfConFirma();	
+		    	    	
+            			$("#pdfConFirma").on('filebatchuploadsuccess', function(event, data) {
+			    	    	$(".signatures").html("");
+			    	    	
+			    	    	pdfConFirma();	
+			    	    	$('<div class="panel panel-success">'+
+			    	    			'<div class="panel-heading"> FIRME TROVATE: </div>'+
+			    	    			'<div class="panel-body"></div>'+
+			    	    			'<div class="panel-footer"> clicca su una delle firme trovate per aggiornare il campo "Chiave Pubblica" </div>'+
+			    	    			'</div>').appendTo(".signatures");
+	    	    			
+							for (i = 0; i < data.response.signatures.length; i++) {
+			    	    		$('<a href="#" data-pkey="'+data.response.signatures[i].publicKey+'" class="list-group-item list-group-item-action"><span class="fa fa-check-circle"></span>&nbsp;'+data.response.signatures[i].signer+'</a>').appendTo('.signatures .panel-body');
+			    	    	}
+							$(".signatures a").click(function(e){
+								$(".signatures a").removeClass("active");
+								$(this).addClass("active");
+								$("#pkey").val($(this).attr("data-pkey"));
+							}); 			    	   
+			    		});
+
+            			function pdfConFirma(){
+	    					$("#pdfConFirma").fileinput('destroy')
+		    	    		.fileinput({
+				    	        language: "it",
+				    	        uploadUrl: '../importPdf.php',
+				    	        uploadAsync: false,
+				    	        showPreview: false,
+				    	        uploadExtraData: {getOnlySignatures:true},
+				    	        elErrorContainer: '.errorbox'
+				    	    })
+			    	    	.fileinput('enable');
+            			}
+		    	    </script>
+
+
+
+<?php
+		endif;
+		return ob_get_clean ();
+	
+	}
 	static function getSigners() {
 		$signersObj = new Signers ( DBConnector::getInstance () );
 		$signers = $signersObj->getAll ( null, Signers::ID_PERSONA );
