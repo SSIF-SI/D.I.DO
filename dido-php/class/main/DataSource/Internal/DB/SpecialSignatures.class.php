@@ -2,7 +2,7 @@
 
 class SpecialSignatures extends Crud {
 
-	const ID_SPECIAL_SIGNATURE		= "id_special_signature";
+	const ID_SPECIAL_SIGNATURE		= "id_special_signatures";
 	
 	const ID_SPECIAL_SIGNATURE_TYPE = "id_special_signature_type";
 	

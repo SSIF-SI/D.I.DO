@@ -12,8 +12,7 @@ if (Utils::checkAjax ()) {
 		die ( json_encode ( $userRolesObj->delete ( $_GET ) ) );
 	}
 	
-	if (count ( $_POST ) != 0) {
-		
+	if (count ( $_POST ) != 0) {		
 		die ( json_encode ( $userRolesObj->save ( $_POST ) ) );
 	} else {
 		$list = isset ( $_GET ['list'] ) ? $_GET ['list'] : null;
@@ -34,9 +33,9 @@ if (Utils::checkAjax ()) {
 			case 'ApplySign' :
 				die ( SignatureHelper::createModalApplySign () );
 				break;
-			case 'SpecialSigners' :
-					die ( SignatureHelper::createModalSpecialSigner ( $id ) );
-					break;
+			case 'SpecialSignatures' :
+				die ( SignatureHelper::createModalSpecialSigner ( $id ) );
+				break;
 		}
 	}
 }

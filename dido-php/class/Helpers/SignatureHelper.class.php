@@ -178,12 +178,13 @@ class SignatureHelper {
 		$signersObj = new SpecialSignatures( DBConnector::getInstance () );
 		$typeObj = new SpecialSignatureTypes( DBConnector::getInstance () );
 		
-		$signer = is_null ( $idP ) ? $signersObj->getStub () : $signersObj->get ( array (
-		SpecialSignatures::ID_PERSONA => $id
+		$signer = is_null ( $id ) ? $signersObj->getStub () : $signersObj->get ( array (
+		SpecialSignatures::ID_SPECIAL_SIGNATURE => $id
 	) );
+	
 	$types=$typeObj->getAll();
+	$types=Utils::getListfromField($types,SpecialSignatureTypes::TYPE,SpecialSignatureTypes::ID_SIGNATURE_TYPE);
     $listPersone = ListHelper::persone ();
-	$signers = array_keys ( $signersObj->getAll ( null, SpecialSignatures::ID_PERSONA ) );
 
 ob_start ();
 ?>
@@ -195,14 +196,15 @@ ob_start ();
 <form id="firmatario" name="firmatario" method="POST">
 <?php
 			if (is_null ( $id )) {
-				echo HTMLHelper::select ( SpecialSignatures::ID_PERSONA, "Persona", $listPersone, isset ( $signer [SpecialSignatures::ID_PERSONA] ) ? $signer [SpecialSignatures::ID_PERSONA] : null, null,false, true );
-			} else {
-				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $idP ) . "</p>";
-				echo HTMLHelper::input ( 'hidden', SpecialSignatures::ID_PERSONA, null, $idP );
-			}
-			echo HTMLHelper::select ( SpecialSignatureTypes::TYPE, "Tipo", $types, isset ( $signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE] ) ? $types [$signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE]] : null, null,false, true );
+				echo HTMLHelper::select ( SpecialSignatures::ID_PERSONA, "Persona", $listPersone, isset ( $signer [SpecialSignatures::ID_PERSONA] ) ? $signer [SpecialSignatures::ID_PERSONA] : null, null,false, true );				
 				
-			echo HTMLHelper::input ( 'textarea', Signers::PKEY, "Chiave Pubblica", isset ( $signer [Signers::PKEY] ) ? $signer [Signers::PKEY] : null, true, true );
+			} else {
+				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $signer[$id][SpecialSignatures::ID_PERSONA] ) . "</p>";
+				echo HTMLHelper::input ( 'hidden', SpecialSignatures::ID_PERSONA, null, $signer[$id][SpecialSignatures::ID_PERSONA] );
+				echo HTMLHelper::input ( 'hidden', SpecialSignatures::ID_SPECIAL_SIGNATURE, null, $id );
+				}
+			echo HTMLHelper::select ( SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE, "Tipo", $types, isset ( $signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE] ) ? $types [$signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE]] : null, null,false, true );
+			echo HTMLHelper::input ( 'textarea', Signers::PKEY, "Chiave Pubblica", isset ( $signer [SpecialSignatures::PKEY] ) ? $signer [SpecialSignatures::PKEY] : null, true, true );
 			?>
 			            <div class="signatures list-group"></div>
 	<div class="errorbox"></div>
@@ -303,11 +305,25 @@ ob_start ();
 				Signature::PKEY_DELEGATO,
 				Signature::SIGLA  
 		) );
-		
+
+		$specialSignatureObj= new SpecialSignatures(DBConnector::getInstance ());
+		$specialsigners=$specialSignatureObj->getAll(null,SpecialSignatures::ID_SPECIAL_SIGNATURE);
+		$metadata = self::createMetadata ( $specialsigners, "SpecialSignatures", SpecialSignatures::ID_SPECIAL_SIGNATURE, array (
+				SpecialSignatures::ID_PERSONA => 'PersonaleHelper::getNominativo',
+				SpecialSignatures::PKEY		=> 'Utils::shorten'
+		));
+		$specialsigners=HTMLHelper::editTable($specialsigners, $metadata ['buttons'], $metadata ['substitutes'], array (
+		'type' => 'Tipo'
+		), array (
+		SpecialSignatures::ID_SPECIAL_SIGNATURE
+		) );
+
+
 		return array (
 				'all' => $signers,
 				'fixed' => $fixed_signers,
-				'variable' => $variable_signers 
+				'variable' => $variable_signers,
+				'special' =>$specialsigners
 		);
 	}
 

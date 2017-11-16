@@ -16,6 +16,8 @@
 						aria-expanded="false">Firmatari fissi</a></li>
 					<li class=""><a href="#firmatari-variabili" data-toggle="tab"
 						aria-expanded="true">Firmatari variabili</a></li>
+					<li class=""><a href="#firmatari-speciali" data-toggle="tab"
+						aria-expanded="true">Firmatari speciali</a></li>
 					<li class=""><a href="#applica-firma" data-toggle="tab"
 						aria-expanded="true">Applica Firma</a></li>
 				</ul>
@@ -49,6 +51,16 @@
 								variabile</a>
 						</div>
 					                	<?=$signers['variable']?>
+	                                </div>
+	                <div class="tab-pane" id="firmatari-speciali">
+						<h4>Firmatari Speciali</h4>
+						<div>
+							<a class="btn btn-primary mymodal edit"
+								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=SpecialSignatures"?>"><span
+								class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario speciale
+								</a>
+						</div>
+					                	<?=$signers['special']?>
 	                                </div>
 					<div class="tab-pane" id="applica-firma">
 						<h4>Applica firma</h4>
