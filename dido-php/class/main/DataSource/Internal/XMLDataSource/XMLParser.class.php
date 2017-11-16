@@ -34,6 +34,8 @@ class XMLParser implements IXMLParser {
 
 	const ALT = "alt";
 	
+	const SIGNATURE_TYPE = "type";
+	
 	// Input Params
 	const TYPE = "type";
 	
@@ -129,6 +131,13 @@ class XMLParser implements IXMLParser {
 		return $document->signatures->signature;
 	}
 	
+	public function getDocumentSpecialSignatures($docname){
+		$document = $this->getDocByName($docname);
+		if(!$document) return false;
+		
+		return $document->specialSignatures->signature;
+	}
+	
 	public function getDocumentInputs($docname) {
 		if(!count($this->getDocList ()))
 			return false;
@@ -198,6 +207,36 @@ class XMLParser implements IXMLParser {
 		return (empty($signatures) ? false : $signatures);
 	}
 
+	
+	public function isSpecialSigner(array $types) {
+		$signatures = [];
+	
+		foreach ( $this->getDocList () as $document ) {
+			$this->checkIfMustBeLoaded ( $document );
+			$docName = (string)$document[self::DOC_NAME];
+				
+			$docSignatures = $this->getDocumentSpecialSignatures($docName);
+				
+			if (!$docSignatures)
+				continue;
+	
+			foreach ( $docSignatures as $signature ) {
+				if( in_array ( $signature [self::SIGNATURE_TYPE], $types )){
+						
+					if(!isset($signatures[(string)$signature [self::SIGNATURE_TYPE]]))
+						$signatures[(string)$signature [self::SIGNATURE_TYPE]] = [];
+						
+					array_push($signatures[(string)$signature [self::SIGNATURE_TYPE]], $docName);
+				}
+			}
+				
+		}
+	
+	
+		return (empty($signatures) ? false : $signatures);
+	}
+	
+	
 	public function isVisible(array $services) {
 		if ($this->isOwner ( $services ))
 			return true;

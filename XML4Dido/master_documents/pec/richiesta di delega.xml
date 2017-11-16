@@ -7,7 +7,7 @@
 		<input values="areeProgettuali" shortView="true">area progettuale</input>
 		<input shortView="true">tipo atto</input>
 		<input>bando</input>
-		<input innerValues="esitiRichiesteDiDelega" shortView="true">esito</input>
+		<input innerValues="esitiRichiesteDiDelega" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
 		<input type="textarea">note</input>
 	</inputs>
 	<list>

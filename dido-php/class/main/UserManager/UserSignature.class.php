@@ -4,6 +4,8 @@ class UserSignature {
 
 	private $_signature;
 
+	private $_specialSignatures;
+
 	private $_signatureRoles;
 
 	public function __construct(IDBConnector $dbConnector, $user_id) {
@@ -17,10 +19,17 @@ class UserSignature {
 		
 		$this->_signature = reset ( $mySignature );
 		$this->_signatureRoles = Utils::getListfromField ( $signer, null, SignersRoles::SIGLA );
+		
+		$specialSignatures = new SpecialSignatures($dbConnector);
+		$this->_specialSignatures = Utils::getListfromField($specialSignatures->getBy(SpecialSignatures::ID_PERSONA, $user_id),SpecialSignatures::PKEY,SpecialSignatureTypes::TYPE);
 	}
 
 	public function getSignature() {
 		return $this->_signature;
+	}
+
+	public function getSpecialSignatures() {
+		return $this->_specialSignatures;
 	}
 
 	public function getSignatureRoles() {

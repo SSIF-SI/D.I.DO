@@ -30,9 +30,9 @@
 		</document>
 		
 		<document name="accettazione associato" minOccur="1" maxOccur="1" >
-			<signatures>
-				<signature role="DIR-C" />
-			</signatures>
+			<specialSignatures>
+				<specialSignature type="copia conforme" />
+			</specialSignatures>
 		</document>
 
 	</list>

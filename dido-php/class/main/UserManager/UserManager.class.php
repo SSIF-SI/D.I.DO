@@ -43,7 +43,7 @@ class UserManager implements IUserManager{
 	}
 
 	public function isSigner() {
-		return ! is_null ( $this->_signature->getSignature () );
+		return ! is_null ( $this->_signature->getSignature () ) || ! is_null($this->_signature->getSpecialSignatures());
 	}
 
 	public function hasSignRole($signRole) {
