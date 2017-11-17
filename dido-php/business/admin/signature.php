@@ -35,6 +35,9 @@ if (Utils::checkAjax ()) {
 			case 'ApplySign' :
 				die ( SignatureHelper::createModalApplySign () );
 				break;
+			case 'SpecialSignatures' :
+				die ( SignatureHelper::createModalSpecialSigner ( $id ) );
+				break;
 		}
 	}
 }

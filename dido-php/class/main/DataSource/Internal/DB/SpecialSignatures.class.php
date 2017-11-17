@@ -10,6 +10,8 @@ class SpecialSignatures extends Crud {
 	
 	const ID_PERSONA 				= "id_persona";
 	
+
+	
 	protected $TABLE = "special_signatures";
 	protected $VIEW = "special_signatures_view";
 	

@@ -195,15 +195,17 @@ ob_start ();
 <?php 	else: ?>
 <form id="firmatario" name="firmatario" method="POST">
 <?php
+	
 			if (is_null ( $id )) {
 				echo HTMLHelper::select ( SpecialSignatures::ID_PERSONA, "Persona", $listPersone, isset ( $signer [SpecialSignatures::ID_PERSONA] ) ? $signer [SpecialSignatures::ID_PERSONA] : null, null,false, true );				
 				
 			} else {
-				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $signer[$id][SpecialSignatures::ID_PERSONA] ) . "</p>";
+				
+				echo "<label for=\"persona\">Persona:</label><p id=\"persona\">" . PersonaleHelper::getNominativo ( $signer[SpecialSignatures::ID_PERSONA] ) . "</p>";
 				echo HTMLHelper::input ( 'hidden', SpecialSignatures::ID_PERSONA, null, $signer[$id][SpecialSignatures::ID_PERSONA] );
 				echo HTMLHelper::input ( 'hidden', SpecialSignatures::ID_SPECIAL_SIGNATURE, null, $id );
 				}
-			echo HTMLHelper::select ( SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE, "Tipo", $types, isset ( $signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE] ) ? $types [$signer [SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE]] : null, null,false, true );
+			echo HTMLHelper::select ( SpecialSignatures::ID_SPECIAL_SIGNATURE_TYPE, "Tipo", $types, isset ( $signer [SpecialSignatureTypes::TYPE] ) ? array_keys($types,$signer [SpecialSignatureTypes::TYPE])[0] : null, null,false, true );
 			echo HTMLHelper::input ( 'textarea', Signers::PKEY, "Chiave Pubblica", isset ( $signer [SpecialSignatures::PKEY] ) ? $signer [SpecialSignatures::PKEY] : null, true, true );
 			?>
 			            <div class="signatures list-group"></div>
@@ -313,7 +315,7 @@ ob_start ();
 				SpecialSignatures::PKEY		=> 'Utils::shorten'
 		));
 		$specialsigners=HTMLHelper::editTable($specialsigners, $metadata ['buttons'], $metadata ['substitutes'], array (
-		'type' => 'Tipo'
+		SpecialSignatureTypes::TYPE => 'Tipo'
 		), array (
 		SpecialSignatures::ID_SPECIAL_SIGNATURE
 		) );
