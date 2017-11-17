@@ -28,9 +28,8 @@ class SignatureChecker{
 	}
 	
 	public function checkSignature($signature) {
-		
 		if (count ( $this->_signaturesOnDocument )) {
-			foreach ( $signaturesOnDocument as $sod ) {
+			foreach ( $this->_signaturesOnDocument as $sod ) {
 			// Utils::printr($sod);
 				if ($sod->publicKey == $signature)
 				return true;

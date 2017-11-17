@@ -42,6 +42,8 @@ class Application_DocumentBrowser{
 	 */
 	private $_SignatureChecker;
 	
+	private $_allSpecialSignatures;
+	
 	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IXMLDataSource $XMLDataSource, IFTPDataSource $ftpDataSource){
 		$this->_dbConnector = $dbConnector;
 		$this->_userManager = $userManager;
@@ -54,6 +56,8 @@ class Application_DocumentBrowser{
 		$this->_MasterdocumentsLinks = new MasterdocumentsLinks( $this->_dbConnector );
 		
 		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
+		$this->_allSpecialSignatures = $this->_userManager->getUserSign()->getAllSpecialSignatures();
+		
 	}
 	
 	public function get($id_md){
@@ -104,6 +108,7 @@ class Application_DocumentBrowser{
 		return $this->
 			_allMyPendingDocuments()
 			->_docFilter(self::MUST_BE_SIGNED_BY_ME, 1)
+			->_docFilter(self::IS_SIGNED_BY_ME, $value)
 			->getResult();
 	}
 	
@@ -358,9 +363,55 @@ private function _allMyPendingDocuments(){
 						$listOfDocTypes = array_unique(array_values($listOfDocTypes));
 						$iddocToInspect = $this->_filterDocByDocType($listOfDocTypes,$id_md);
 						foreach($iddocToInspect as $id_doc){
+							
+							$filename =
+							$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
+							Common::getFolderNameFromMasterdocument(
+									$this->_resultArray[self::LABEL_MD][$id_md]
+							) .
+							DIRECTORY_SEPARATOR .
+							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
+							
+							$this->_SignatureChecker->load($filename);
+							
+							if ($this->_SignatureChecker->checkSignature($mySpecialSignatures[$type])){
+								$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+								$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
+								continue;
+							}
+							
+							if(isset($this->_allSpecialSignatures[$type])){
+									
+								$listOfSpecialSigners = $this->_allSpecialSignatures[$type];
+									
+								$signerFound = false;
+								foreach($listOfSpecialSigners as $specialSigner){
+									
+									$result = $this->_SignatureChecker->checkSignature($specialSigner[SpecialSignatures::PKEY]);
+									
+									if($result){
+										$signerFound = true;
+										break;
+									}
+										
+								}
+							
+								if(!$signerFound){
+																		
+									$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+									$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+									
+									if(!in_array($id_doc, $docsToBeSigned))
+										array_push($docsToBeSigned, $id_doc);
+								}
+								
+							}
+							/*	
 							$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
 							$this->_checkIfSigned($docsToBeSigned, $id_md, $id_doc, $mySpecialSignatures[$type]);
+							*/
 						}
 					}
 					
@@ -392,11 +443,17 @@ private function _allMyPendingDocuments(){
 							$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 							// Se lo devo firmare controllo che sia effettivamente firmato
 							// per ora alla vecchia maniera
+							$filename =
+							$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
+							Common::getFolderNameFromMasterdocument(
+									$this->_resultArray[self::LABEL_MD][$id_md]
+							) .
+							DIRECTORY_SEPARATOR .
+							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
+							
+							$this->_SignatureChecker->load($filename);
+							
 							$this->_checkIfSigned($docsToBeSigned, $id_md, $id_doc, $mySignature);
-							Utils::printr("isSigner");
-							Utils::printr("Doc signed outside");
-							Utils::printr($docsToBeSigned);
-								 
 						} 
 					}
 				}
@@ -411,18 +468,8 @@ private function _allMyPendingDocuments(){
 	}
 	
 	private function _checkIfSigned(&$docsToBeSigned, $id_md, $id_doc, $signature){
-		// Se lo devo firmare controllo che sia effettivamente firmato
-		// per ora alla vecchia maniera
 		
-		$filename =
-		$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
-		Common::getFolderNameFromMasterdocument(
-				$this->_resultArray[self::LABEL_MD][$id_md]
-		) .
-		DIRECTORY_SEPARATOR .
-		$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
-		
-		if($this->_SignatureChecker->load($filename)->checkSignature($signature)){
+		if($this->_SignatureChecker->checkSignature($signature)){
 			$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
 		} else {
 			if(!in_array($id_doc, $docsToBeSigned))

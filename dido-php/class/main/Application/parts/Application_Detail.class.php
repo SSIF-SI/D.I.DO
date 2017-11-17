@@ -419,7 +419,7 @@ class Application_Detail{
 					foreach($listOfSpecialSigners as $specialSigner){
 						$result = $this->_SignatureChecker->checkSignature($specialSigner[SpecialSignatures::PKEY]);
 						if($result){
-							$ssigner = Personale::getInstance()->getNominativo($specialSigner[SpecialSignatures::ID_PERSONA]);
+							$sSigner = Personale::getInstance()->getNominativo($specialSigner[SpecialSignatures::ID_PERSONA]);
 							$signResult['html'][] =	"<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> Firma per $type effettuata da $sSigner</div>";
 							$signerFound = true;
 							break;
