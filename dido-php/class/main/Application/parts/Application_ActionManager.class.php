@@ -177,8 +177,9 @@ class Application_ActionManager {
 				
 				$doc = new Document($this->_dbConnector);
 				
+				// Il documento viene chiuso in automatico se non ci sono firme digitali previste
 				$closed = 
-					$XMLParser->getDocumentSignatures($docName) ?
+					$XMLParser->getDocumentSignatures($docName) || $XMLParser->getDocumentSpecialSignatures($docName) ?
 					ProcedureManager::OPEN :
 					ProcedureManager::CLOSED;
 					
