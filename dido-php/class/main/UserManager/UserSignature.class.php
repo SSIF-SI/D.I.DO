@@ -5,6 +5,8 @@ class UserSignature {
 	private $_signature;
 
 	private $_specialSignatures;
+	
+	private $_allSpecialSignatures;
 
 	private $_signatureRoles;
 
@@ -21,7 +23,9 @@ class UserSignature {
 		$this->_signatureRoles = Utils::getListfromField ( $signer, null, SignersRoles::SIGLA );
 		
 		$specialSignatures = new SpecialSignatures($dbConnector);
+		$this->_allSpecialSignatures = Utils::groupListBy($specialSignatures->getAll(),SpecialSignatureTypes::TYPE);
 		$this->_specialSignatures = Utils::getListfromField($specialSignatures->getBy(SpecialSignatures::ID_PERSONA, $user_id),SpecialSignatures::PKEY,SpecialSignatureTypes::TYPE);
+		
 	}
 
 	public function getSignature() {
@@ -30,6 +34,10 @@ class UserSignature {
 
 	public function getSpecialSignatures() {
 		return $this->_specialSignatures;
+	}
+
+	public function getAllSpecialSignatures() {
+		return $this->_allSpecialSignatures;
 	}
 
 	public function getSignatureRoles() {

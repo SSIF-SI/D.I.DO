@@ -5,6 +5,8 @@ class Application_Detail{
 	
 	private $_defaultDocumentInputs;
 	private $_Signature;
+	private $_allSpecialSignatures;
+	private $_mySpecialSignatures;
 	private $_sigRoles;
 	private $_SignatureChecker;
 	
@@ -25,6 +27,8 @@ class Application_Detail{
 		$sigRoles = new SignersRoles($dbConnector);
 		$this->_sigRoles = Utils::getListfromField($sigRoles->getAll(),SignersRoles::DESCRIZIONE, SignersRoles::SIGLA);
 		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
+		$this->_mySpecialSignatures = $this->_userManager->getUserSign()->getSpecialSignatures();
+		$this->_allSpecialSignatures = $this->_userManager->getUserSign()->getAllSpecialSignatures();
 	}
 	
 	public function createDetail($md, $mdLinks){
@@ -105,7 +109,7 @@ class Application_Detail{
 						break;				
 					}
 				} else {
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $XMLParser->getDocumentSpecialSignatures($docName), $MDSigners))
 						break;
 					$almostOne = true;
 					if((int)$doc[XMLParser::MIN_OCCUR])
@@ -227,7 +231,7 @@ class Application_Detail{
 		return true;
 	}
 	
-	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $signatures = false, $MDSigners = null){
+	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $signatures = false, $specialSignatures = null, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
 		
 		$mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
@@ -256,7 +260,7 @@ class Application_Detail{
 			null;
 		
 			if(!$documentClosed){	
-				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $MDSigners);
+				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $specialSignatures, $MDSigners);
 			}
 			
 			$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
@@ -362,21 +366,22 @@ class Application_Detail{
 		return new ErrorHandler($result ? false : "Impossibile aggiornare i dati");
 	}
 
-	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $MDSigners){
+	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $specialSignatures, $MDSigners){
 		
 		$signResult = [
 			'errors' => false,
 			'html'		=> []	
 		];
 		
-		if(!$docSignatures)
+		if(!$docSignatures && !$specialSignatures)
 			return $signResult;
 		
+	
 // 		flog("docPath: %s",$docPath);
 		
 		$this->_SignatureChecker->load($docPath);
 		
-		foreach($docSignatures as $signature){
+		if($docSignatures) foreach($docSignatures as $signature){
 			$role = (string)$signature[XMLParser::ROLE];
 			/*if($role == "REQ") continue;*/
 			if(!isset($MDSigners[$role])){
@@ -402,7 +407,41 @@ class Application_Detail{
 			$signResult['errors'] = true;
 			$signResult['html'][] = "<div class=\"alert alert-warning\"><span class=\"fa fa-warning\"></span> Manca la firma di {$whoIs} ({$who[SignersRoles::DESCRIZIONE]})</div>";
 		}
+		
+		if($specialSignatures){
+			foreach($specialSignatures as $specialSignature){
+				$type = (string) $specialSignature[XMLParser::SIGNATURE_TYPE];
+				
+				if(isset($this->_allSpecialSignatures[$type])){
+					$listOfSpecialSigners = $this->_allSpecialSignatures[$type];
+					
+					$signerFound = false;
+					foreach($listOfSpecialSigners as $specialSigner){
+						$result = $this->_SignatureChecker->checkSignature($specialSigner[SpecialSignatures::PKEY]);
+						if($result){
+							$ssigner = Personale::getInstance()->getNominativo($specialSigner[SpecialSignatures::ID_PERSONA]);
+							$signResult['html'][] =	"<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> Firma per $type effettuata da $sSigner</div>";
+							$signerFound = true;
+							break;
+						}
+						
+					}
+					
+					if(!$signerFound){
+						$signResult['errors'] = true;
+						$signResult['html'][] =	"<div class=\"alert alert-danger\"><span class=\"fa fa-danger\"></span> Manca la firma per $type </div>";
+					}
+				} else {
+					$signResult['errors'] = true;
+					$signResult['html'][] =	"<div class=\"alert alert-danger\"><span class=\"fa fa-danger\"></span> Manca la firma per $type </div>";
+				}						
+			}
+			
+		}
+		
+		
 		$signResult['html'] = join(PHP_EOL,$signResult['html']);
+		
 		return $signResult;
 	}
 	
