@@ -46,6 +46,7 @@ $signers = SignatureHelper::getSigners ();
 
 $pageScripts = array (
 		"MyModal.js",
-		"signatureModal.js" 
+		"signatureModal.js",
+		"locationHash.js"
 );
 include_once (TEMPLATES_PATH . "template.php");
