@@ -49,4 +49,7 @@ $pageScripts = array (
 		"signatureModal.js",
 		"locationHash.js"
 );
+
+$view = ADMIN_VIEWS_PATH.basename($_SERVER['PHP_SELF']);
+
 include_once (TEMPLATES_PATH . "template.php");

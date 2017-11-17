@@ -16,6 +16,8 @@
 						aria-expanded="false">Firmatari fissi</a></li>
 					<li class=""><a href="#firmatari-variabili" data-toggle="tab"
 						aria-expanded="true">Firmatari variabili</a></li>
+					<li class=""><a href="#firmatari-speciali" data-toggle="tab"
+						aria-expanded="true">Firmatari speciali</a></li>
 					<li class=""><a href="#applica-firma" data-toggle="tab"
 						aria-expanded="true">Applica Firma</a></li>
 				</ul>
@@ -50,11 +52,21 @@
 						</div>
 					                	<?=$signers['variable']?>
 	                                </div>
+	                <div class="tab-pane" id="firmatari-speciali">
+						<h4>Firmatari Speciali</h4>
+						<div>
+							<a class="btn btn-primary mymodal edit"
+								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=SpecialSignatures"?>"><span
+								class="fa fa-plus fa-1x fa-fw"></span> Aggiungi firmatario speciale
+								</a>
+						</div>
+					                	<?=$signers['special']?>
+	                                </div>
 					<div class="tab-pane" id="applica-firma">
 						<h4>Applica firma</h4>
 						<div>
 							<a class="btn btn-primary mymodal sign"
-								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span
+								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span
 								class="fa fa-plus fa-1x fa-fw"></span> Applica firma</a>
 						</div>
 					</div>
@@ -65,11 +77,5 @@
 	</div>
 </div>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
-	aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content"></div>
-	</div>
-</div>
 
 
