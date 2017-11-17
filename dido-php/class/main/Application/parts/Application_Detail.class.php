@@ -131,7 +131,7 @@ class Application_Detail{
 			foreach($mdInputs as $mdInput){
 				if(isset($mdInput[XMLParser::MANDATORY_BEFORE_CLOSING]) && $mdInput[XMLParser::MANDATORY_BEFORE_CLOSING]){
 					if(!isset($md_data[(string)$mdInput])){
-						var_dump($md_data[$id_md][(string)$mdInput]);
+						//var_dump($md_data[$id_md][(string)$mdInput]);
 						$mandatoryInputsBeforeClosing = false;
 						break;
 					}
