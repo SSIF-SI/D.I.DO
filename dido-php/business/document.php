@@ -42,7 +42,6 @@ if(isset($_GET[Masterdocument::ID_MD])){
 	$list[Application_DocumentBrowser::LABEL_MD] = Common::categorize($list[Application_DocumentBrowser::LABEL_MD]);
 	
 	$XMLDataSource = $Application->getXMLDataSource();
-
 }
 
 $pageScripts = array("MyModal.js","locationHash.js");

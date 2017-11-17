@@ -336,6 +336,10 @@ private function _allMyPendingDocuments(){
 	private function _signatureCheck(){
 		if($this->_userManager->isSigner()){
 			
+			//Utils::printr("BeforeSignatureCheck");
+			//Utils::printr($this->_resultArray);
+				
+			
 			$signRoles = $this->_userManager->getUserSign()->getSignatureRoles();
 			$mySignature = $this->_userManager->getUserSign()->getSignature();
 			$mySpecialSignatures = $this->_userManager->getUserSign()->getSpecialSignatures();
@@ -345,9 +349,9 @@ private function _allMyPendingDocuments(){
 				$docsToBeSigned = [];
 				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
 				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
-				// Se non ho il ruolo id uno dei firmatari del documento skippo
 				
 				$isSpecialSigner = $XMLParser->isSpecialSigner(array_keys($mySpecialSignatures));
+				
 				
 				if($isSpecialSigner){
 					foreach($isSpecialSigner as $type=>$listOfDocTypes){
@@ -357,9 +361,12 @@ private function _allMyPendingDocuments(){
 							$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 							$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
 							$this->_checkIfSigned($docsToBeSigned, $id_md, $id_doc, $mySpecialSignatures[$type]);
-						}			
+						}
 					}
+					
 				}
+				
+				$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = count($docsToBeSigned);
 				
 				$isSigner = $XMLParser->isSigner(array_keys($signRoles));
 				
@@ -386,18 +393,27 @@ private function _allMyPendingDocuments(){
 							// Se lo devo firmare controllo che sia effettivamente firmato
 							// per ora alla vecchia maniera
 							$this->_checkIfSigned($docsToBeSigned, $id_md, $id_doc, $mySignature);
+							Utils::printr("isSigner");
+							Utils::printr("Doc signed outside");
+							Utils::printr($docsToBeSigned);
+								 
 						} 
 					}
 				}
 				$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = count($docsToBeSigned);
 			}
 		}
+		
+		//Utils::printr("AfterSignatureCheck");
+			
+			
 		return $this;
 	}
 	
-	private function checkIfSigned(&$docsToBeSigned, $id_md, $id_doc, $signature){
+	private function _checkIfSigned(&$docsToBeSigned, $id_md, $id_doc, $signature){
 		// Se lo devo firmare controllo che sia effettivamente firmato
 		// per ora alla vecchia maniera
+		
 		$filename =
 		$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
 		Common::getFolderNameFromMasterdocument(
@@ -412,6 +428,8 @@ private function _allMyPendingDocuments(){
 			if(!in_array($id_doc, $docsToBeSigned))
 				array_push($docsToBeSigned, $id_doc);
 		}
+		
+		
 	}
 	
 	private function _propertyCheck(){

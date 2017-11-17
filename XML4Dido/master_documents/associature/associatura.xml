@@ -14,7 +14,11 @@
 		<input innerValues="esitiAssociature" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
 	</inputs>
 	<list>
-		<document name="domanda associatura" minOccur="1" maxOccur="1"/>
+		<document name="domanda associatura" minOccur="1" maxOccur="1">
+			<specialSignatures>
+				<specialSignature type="copia conforme" />
+			</specialSignatures>
+		</document>
 		<document name="scheda" minOccur="1" maxOccur="1"/>
 		<document name="curriculum" minOccur="1" maxOccur="1"/>
 		<document name="programma ricerca" minOccur="1" maxOccur="1"/>

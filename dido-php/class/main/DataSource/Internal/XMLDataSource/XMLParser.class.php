@@ -135,7 +135,7 @@ class XMLParser implements IXMLParser {
 		$document = $this->getDocByName($docname);
 		if(!$document) return false;
 		
-		return $document->specialSignatures->signature;
+		return $document->specialSignatures->specialSignature;
 	}
 	
 	public function getDocumentInputs($docname) {
@@ -212,9 +212,10 @@ class XMLParser implements IXMLParser {
 		$signatures = [];
 	
 		foreach ( $this->getDocList () as $document ) {
+			
 			$this->checkIfMustBeLoaded ( $document );
 			$docName = (string)$document[self::DOC_NAME];
-				
+
 			$docSignatures = $this->getDocumentSpecialSignatures($docName);
 				
 			if (!$docSignatures)
@@ -223,6 +224,7 @@ class XMLParser implements IXMLParser {
 			foreach ( $docSignatures as $signature ) {
 				if( in_array ( $signature [self::SIGNATURE_TYPE], $types )){
 						
+					
 					if(!isset($signatures[(string)$signature [self::SIGNATURE_TYPE]]))
 						$signatures[(string)$signature [self::SIGNATURE_TYPE]] = [];
 						
@@ -233,6 +235,7 @@ class XMLParser implements IXMLParser {
 		}
 	
 	
+		
 		return (empty($signatures) ? false : $signatures);
 	}
 	
