@@ -66,7 +66,7 @@
 						<h4>Applica firma</h4>
 						<div>
 							<a class="btn btn-primary mymodal sign"
-								href="<?=BUSINESS_HTTP_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span
+								href="<?=ADMIN_BUSINESS_PATH.basename($_SERVER['PHP_SELF'])."?list=ApplySign"?>"><span
 								class="fa fa-plus fa-1x fa-fw"></span> Applica firma</a>
 						</div>
 					</div>
