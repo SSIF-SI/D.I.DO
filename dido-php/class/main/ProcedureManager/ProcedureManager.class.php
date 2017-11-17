@@ -103,9 +103,10 @@ class ProcedureManager implements IProcedureManager {
 		return $new_doc;
 	}
 
-	public function updateDocument($document, $data, $filePath = null, $repositoryPath = null) {
+	public function updateDocument($document, $data = null, $filePath = null, $repositoryPath = null) {
 		$this->_dbConnector->begin ();
-		if (! $this->updateDocumentData( $data )) {
+		
+		if (!is_null($data) && !$this->updateDocumentData( $data )) {
 			$this->_dbConnector->rollback ();
 			return false;
 		}
@@ -118,7 +119,7 @@ class ProcedureManager implements IProcedureManager {
 		}
 		
 		$this->_dbConnector->commit ();
-		return $new_doc;
+		return true;
 	}
 
 	public function deleteDocument($doc, $ftpFolder) {
@@ -150,10 +151,8 @@ class ProcedureManager implements IProcedureManager {
 
 	private function uploadFile($doc, $filePath, $repositoryPath) {
 		$filename = $repositoryPath . Common::getFilenameFromDocument ( $doc );
-		if (! $this->_FTPDataSource->upload ( $filePath, $filename )) {		
-			return false;
-		}
-		return true;
+		$result = $this->_FTPDataSource->upload ( $filePath, $filename );
+		return $result;
 	}
 }
 ?>

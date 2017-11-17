@@ -131,15 +131,14 @@ class Application_ActionManager {
 	
 	public function upload(){
 		$md = $this->_getMd($_GET);
-		
 		if($md instanceof ErrorHandler)
 			return $md;
 		
 		$ARP = new AjaxResultParser();
 		$eh = new ErrorHandler(false);
-			
+
 		extract($md);
-			
+		
 		if (!isset($_GET[Document::ID_DOC])){
 			// Nuovo documento, ho bisogno anche del pannello di informazioni
 			if(!isset($_GET[XMLParser::DOC_NAME])){
@@ -162,47 +161,50 @@ class Application_ActionManager {
 			}
 			
 			$innerValues = $XMLParser->getMasterDocumentInnerValues();
-			
-			if(count($_POST)){
-				//Sto salvando qualcosa
-				$extension = Common::getFileExtension($_POST['upFileName']);
-				$filePath = FILES_PATH . $_POST['upFilePath'];
-				
-				$repositoryPath = 
-					$md [Masterdocument::FTP_FOLDER] 
-					. Common::getFolderNameFromMasterdocument($md) 
-					. DIRECTORY_SEPARATOR;
-				
-				unset($_POST['upFileName'], $_POST['upFilePath']);
-				
-				$doc = new Document($this->_dbConnector);
-				
-				// Il documento viene chiuso in automatico se non ci sono firme digitali previste
-				$closed = 
-					$XMLParser->getDocumentSignatures($docName) || $XMLParser->getDocumentSpecialSignatures($docName) ?
-					ProcedureManager::OPEN :
-					ProcedureManager::CLOSED;
-					
-				$doc = Utils::stubFill($doc->getStub(), [
-					Document::ID_MD => $md[Masterdocument::ID_MD],
-					Document::NOME	=> $docName,
-					Document::EXTENSION => $extension,
-					Document::CLOSED => $closed
-				]);
-				
-				$data = Common::createPostMetadata($_POST);
-				
-				$result = $this->_ProcedureManager->createDocument($doc, $data, $filePath, $repositoryPath);
-				
-				if(!$result){
-					$eh->setErrors("Impossibile creare il documento");
-				}
-				
-				$ARP->encode($eh->getErrors(true));
-			}
-			
 			$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues, false);
 		}
+		
+		if(count($_POST)){
+			//Sto salvando qualcosa
+			$extension = Common::getFileExtension($_POST['upFileName']);
+			$filePath = FILES_PATH . $_POST['upFilePath'];
+		
+			$repositoryPath =
+			$md [Masterdocument::FTP_FOLDER]
+			. Common::getFolderNameFromMasterdocument($md)
+			. DIRECTORY_SEPARATOR;
+		
+			unset($_POST['upFileName'], $_POST['upFilePath']);
+		
+			$doc = new Document($this->_dbConnector);
+			if (!isset($_GET[Document::ID_DOC])){
+				// Il documento viene chiuso in automatico se non ci sono firme digitali previste
+				$closed =
+				$XMLParser->getDocumentSignatures($docName) || $XMLParser->getDocumentSpecialSignatures($docName) ?
+				ProcedureManager::OPEN :
+				ProcedureManager::CLOSED;
+					
+				$doc = Utils::stubFill($doc->getStub(), [
+						Document::ID_MD => $md[Masterdocument::ID_MD],
+						Document::NOME	=> $docName,
+						Document::EXTENSION => $extension,
+						Document::CLOSED => $closed
+				]);
+			
+				$data = Common::createPostMetadata($_POST);
+			
+				$result = $this->_ProcedureManager->createDocument($doc, $data, $filePath, $repositoryPath);
+			} else {
+				$doc = Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
+				$result = $this->_ProcedureManager->updateDocument($doc, null, $filePath, $repositoryPath);
+			}
+			if(!$result){
+				$eh->setErrors("Impossibile creare il documento");
+			}
+		
+			$ARP->encode($eh->getErrors(true));
+		}
+		
 		include(VIEWS_PATH."docUpload.php");
 	}
 	
