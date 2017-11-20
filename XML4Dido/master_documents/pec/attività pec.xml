@@ -22,11 +22,24 @@
 		<input innerValues="esitiAttivitaPec" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
 	</inputs>
 	<list>
+		<types>
+			<type for="atto">con firma del direttore</type>
+			<type for="atto">con firma per copia conforme</type>
+			<type for="atto">senza firme</type>
+		</types>
 		<document name="atto" minOccur="1" closingPoint="1">
+			<inputs>
+				<imput>descrizione</imput>
+			</inputs>
+
 			<signatures>
-				<signature mandatory="0" role="DIR" />
+				<signature mandatory="1" role="DIR" onlyIfType="con firma del direttore"/>					
 			</signatures>
+			<specialSignatures>
+				<specialSignature mandatory="1" type="copia conforme" onlyIfType="con firma per copia conforme"/>
+			</specialSignatures>				
 		</document>
+		
 		<document name="allegato" minOccur="0">
 			<inputs>
 				<input>titolo</input>
