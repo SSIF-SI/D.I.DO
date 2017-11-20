@@ -189,20 +189,21 @@ class XMLParser implements IXMLParser {
 					if(!isset($signatures[(string)$signature [self::ROLE]]))
 						$signatures[(string)$signature [self::ROLE]] = [];
 					
-					array_push($signatures[(string)$signature [self::ROLE]], $docName);
+					if(!in_array($docName, $signatures[(string)$signature [self::ROLE]]))
+						array_push($signatures[(string)$signature [self::ROLE]], $docName);
 				}
 				if( in_array ( $signature [self::ALT], $sigRoles )){
 					
 					if(!isset($signatures[(string)$signature [self::ALT]]))
 						$signatures[(string)$signature [self::ALT]] = [];
 					
-					array_push($signatures[(string)$signature [self::ALT]], $docName);
+					if(!in_array($docName, $signatures[(string)$signature [self::ALT]]))
+						array_push($signatures[(string)$signature [self::ALT]], $docName);
 					
 				}
 			}
 			
 		}
-		
 		
 		return (empty($signatures) ? false : $signatures);
 	}
