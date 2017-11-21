@@ -4,7 +4,7 @@ class Masterdocument extends Crud{
 
 	const ID_MD = "id_md";
 
-	const TYPE = "type";
+	const TYPE = SharedDocumentConstants::TYPE;
 
 	const NOME = SharedDocumentConstants::NOME;
 

@@ -1,6 +1,8 @@
 <?php
 class SharedDocumentConstants{
 	const NOME = "nome";
+	
+	const TYPE = "type";
 
 	const CLOSED = "closed";
 

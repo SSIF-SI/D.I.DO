@@ -8,6 +8,8 @@ class Document extends Crud {
 
 	const NOME = SharedDocumentConstants::NOME;
 
+	const TYPE = SharedDocumentConstants::TYPE;
+
 	const CLOSED = SharedDocumentConstants::CLOSED;
 
 	const EXTENSION = "extension";
