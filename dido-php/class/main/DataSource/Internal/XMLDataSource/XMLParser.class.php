@@ -155,9 +155,14 @@ class XMLParser implements IXMLParser {
 		return $this->_xml->list->document;
 	}
 
-	public function getDocTypes() {
+	public function getMdDocTypes() {
 		return ( array ) $this->_xml->types->type;
 	}
+	
+	public function getDocTypes() {
+		return ( array ) $this->_xml->list->types->type;
+	}
+	
 
 	public function getSource() {
 		return $this->_xml [self::FROM];

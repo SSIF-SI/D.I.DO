@@ -279,7 +279,7 @@ class Application_ActionManager {
 
 			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML]);
 			
-			$types = $XMLParser->getDocTypes();
+			$types = $XMLParser->getMdDocTypes();
 			
 		}
 		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($XMLParser->getMasterDocumentInputs(), $md_data, $XMLParser->getMasterDocumentInnerValues(), false, true);

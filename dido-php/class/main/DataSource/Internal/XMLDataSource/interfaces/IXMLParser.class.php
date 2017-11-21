@@ -14,8 +14,10 @@ interface IXMLParser {
 	
 	public function getDocList();
 
+	public function getMdDocTypes();
+	
 	public function getDocTypes();
-
+	
 	public function getSource();
 
 	public function getOwner();
