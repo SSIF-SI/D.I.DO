@@ -167,7 +167,8 @@ class Application_ActionManager {
 			if($docTypes){
 				$options = array();
 				foreach($docTypes as $type){
-					$options[(string)$type] = (string) $type;
+					if((string)$type[XMLParser::TYPE_FOR]==$docName)
+						$options[(string)$type] = (string) $type;
 				}
 				$docInfo = HTMLHelper::select(Document::TYPE, "Tipo di $docName", $options). $docInfo;
 			}

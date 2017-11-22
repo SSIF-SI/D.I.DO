@@ -373,7 +373,6 @@ private function _allMyPendingDocuments(){
 						
 					$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 					$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
-				
 					
 					if(count($signatures->signature)){
 						foreach($signatures->signature as $signature){

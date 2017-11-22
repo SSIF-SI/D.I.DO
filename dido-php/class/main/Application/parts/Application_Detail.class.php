@@ -246,7 +246,6 @@ class Application_Detail{
 				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
 				
 			}
-								
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
 			$IMustSignIt =
 				$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
@@ -322,7 +321,7 @@ class Application_Detail{
 	
 	public function createMdTableInfo($id_md, $inputs, $docData){
 		ob_start();
-?>		
+?>
 <table class="table table-condensed table-striped">
 	<thead>
 		<tr>
@@ -337,8 +336,7 @@ class Application_Detail{
 <?php 
 		endforeach;
 ?>
-			<th>
-			</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tr>
@@ -355,14 +353,12 @@ class Application_Detail{
 			endif;
 		endforeach;			
 ?>
-			<td class="text-right">
-				<a target="_blank" class="btn btn-primary detail"
-		href="?<?=Masterdocument::ID_MD?>=<?=$id_md?>"><span class="fa fa-search fa-1x fa-fw"></span>
-			Dettaglio</a>
-				
-			</td>
-		</tr>
-	</table>
+			<td class="text-right"><a target="_blank"
+			class="btn btn-primary detail"
+			href="?<?=Masterdocument::ID_MD?>=<?=$id_md?>"><span
+				class="fa fa-search fa-1x fa-fw"></span> Dettaglio</a></td>
+	</tr>
+</table>
 <?php 
 		return ob_get_clean();
 	}
@@ -379,47 +375,50 @@ class Application_Detail{
 			'errors' => false,
 			'html'		=> []	
 		];
-		
-		
+
 		if(!$docSignatures && !$specialSignatures)
 			return $signResult;
 		
-	
 // 		flog("docPath: %s",$docPath);
 		
 		$this->_SignatureChecker->load($docPath);
 		
-		if($docSignatures) foreach($docSignatures as $signature){
-			$role = (string)$signature[XMLParser::ROLE];
-			/*if($role == "REQ") continue;*/
-			if(!isset($MDSigners[$role])){
-				$signResult['errors'] = true;
-				$signResult['html'][] = "<div class=\"alert alert-danger\"><span class=\"fa fa-times\"></span> Manca la firma del {$this->_sigRoles [$role]} nel sistema DIDO!!!</div>";
-				continue;
+		if($docSignatures) {
+			foreach ( $docSignatures as $signature ) {
+				if(!$signature)
+				break;	
+				$role = ( string ) $signature [XMLParser::ROLE];
+				/* if($role == "REQ") continue; */
+				if (! isset ( $MDSigners [$role] )) {
+					$signResult ['errors'] = true;
+					$signResult ['html'] [] = "<div class=\"alert alert-danger\"><span class=\"fa fa-times\"></span> Manca la firma del {$this->_sigRoles [$role]} nel sistema DIDO!!!</div>";
+					continue;
+				}
+				
+				$who = $MDSigners [$role];
+				
+				$whoIs = Personale::getInstance ()->getNominativo ( $who [Signers::ID_PERSONA] );
+				
+				if ($this->_SignatureChecker->checkSignature ( $who [Signature::PKEY] )) {
+					$signResult ['html'] [] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
+					break;
+				}
+				
+				if ($this->_SignatureChecker->checkSignature ( $who [Signature::PKEY_DELEGATO] )) {
+					$whoIs_Delegato = Personale::getInstance ()->getNominativo ( $who [Signature::ID_DELEGATO] );
+					$signResult ['html'] [] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs_Delegato} - delegato da {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
+					break;
+				}
+				$signResult ['errors'] = true;
+				$signResult ['html'] [] = "<div class=\"alert alert-warning\"><span class=\"fa fa-warning\"></span> Manca la firma di {$whoIs} ({$who[SignersRoles::DESCRIZIONE]})</div>";
 			}
-			
-			$who = $MDSigners[$role];
-			
-			$whoIs = Personale::getInstance()->getNominativo($who[Signers::ID_PERSONA]);
-		
-			if($this->_SignatureChecker->checkSignature($who[Signature::PKEY])){
-				$signResult['html'][] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
-				break;
-			}
-			
-			if($this->_SignatureChecker->checkSignature($who[Signature::PKEY_DELEGATO])){
-				$whoIs_Delegato = Personale::getInstance()->getNominativo($who[Signature::ID_DELEGATO]);
-				$signResult['html'][] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs_Delegato} - delegato da {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
-				break;
-			}
-			$signResult['errors'] = true;
-			$signResult['html'][] = "<div class=\"alert alert-warning\"><span class=\"fa fa-warning\"></span> Manca la firma di {$whoIs} ({$who[SignersRoles::DESCRIZIONE]})</div>";
 		}
 		
-		if($specialSignatures){
+		if ($specialSignatures){	
 			foreach($specialSignatures as $specialSignature){
-				$type = (string) $specialSignature[XMLParser::SIGNATURE_TYPE];
-				
+				if(!$specialSignature)
+					break;
+				$type = (string) $specialSignature[XMLParser::SIGNATURE_TYPE];				
 				if(isset($this->_allSpecialSignatures[$type])){
 					$listOfSpecialSigners = $this->_allSpecialSignatures[$type];
 					

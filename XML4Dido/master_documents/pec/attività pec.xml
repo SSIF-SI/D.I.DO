@@ -23,10 +23,32 @@
 	</inputs>
 	<list>
 		<types>
+    		<type for="gatto">con firma</type>
 			<type for="atto">con firma del direttore</type>
 			<type for="atto">con firma per copia conforme</type>
 			<type for="atto">senza firme</type>
+			<type for="patto">con firma  conforme</type>
+			<type for="patto">con firma del direttore</type>
+						
+			
 		</types>
+		
+		<document name="gatto" minOccur="1" closingPoint="1">
+			<inputs>
+				<input>descrizione</input>
+			</inputs>		
+		</document>
+		
+		<document name="patto" minOccur="1" closingPoint="1">
+			<inputs>
+				<input>descrizione</input>
+			</inputs>
+			<signatures>
+				<signature mandatory="1" role="DIR" onlyIfType="con firma del direttore"/>					
+			</signatures>
+						
+		</document>
+		
 		<document name="atto" minOccur="1" closingPoint="1">
 			<inputs>
 				<input>descrizione</input>

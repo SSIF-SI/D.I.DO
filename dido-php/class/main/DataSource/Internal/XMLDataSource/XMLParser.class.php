@@ -61,6 +61,9 @@ class XMLParser implements IXMLParser {
 	
 	const IV_VALUE = "value";
 	
+	const TYPE_FOR = "for";
+	
+	
 	// Common Params
 	const MANDATORY = "mandatory";
 
