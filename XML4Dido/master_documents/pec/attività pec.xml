@@ -29,7 +29,7 @@
 		</types>
 		<document name="atto" minOccur="1" closingPoint="1">
 			<inputs>
-				<imput>descrizione</imput>
+				<input>descrizione</input>
 			</inputs>
 
 			<signatures>
@@ -38,12 +38,6 @@
 			<specialSignatures>
 				<specialSignature mandatory="1" type="copia conforme" onlyIfType="con firma per copia conforme"/>
 			</specialSignatures>				
-		</document>
-		
-		<document name="allegato" minOccur="0">
-			<inputs>
-				<input>titolo</input>
-			</inputs>
 		</document>
 	</list>
 	<innerValues>

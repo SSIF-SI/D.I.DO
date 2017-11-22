@@ -215,7 +215,7 @@ class Application_Detail{
 			if(!$lowerLimit || count($listOnDb) > $lowerLimit)
 				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
 			
-			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody, "mdLink");
+			$panel = new FlowTimelinePanel($docName, null, $panelButtons, $panelBody, "mdLink");
 			
 			$badge =
 				new FlowTimelineBadgeSuccess();
@@ -247,9 +247,6 @@ class Application_Detail{
 				
 			}
 								
-			if(!is_null($docType))
-				$docName .= " - ".ucfirst($docType);
-			
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
 			$IMustSignIt =
 				$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
@@ -297,7 +294,7 @@ class Application_Detail{
 			if(!$documentClosed && !$docSignatures['errors'])
 				array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
-			$panel = new FlowTimelinePanel(ucfirst($docName), $panelButtons, $panelBody);
+			$panel = new FlowTimelinePanel($docName, $docType, $panelButtons, $panelBody);
 				
 			$badge =
 				($signatures && $docSignatures['errors']) || !$documentClosed ?
@@ -382,6 +379,7 @@ class Application_Detail{
 			'errors' => false,
 			'html'		=> []	
 		];
+		
 		
 		if(!$docSignatures && !$specialSignatures)
 			return $signResult;

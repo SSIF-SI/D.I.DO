@@ -57,7 +57,7 @@ class TimelineElementMissing extends ATimelineElement{
 		
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			new FlowTimelineBadgeMissingDocuments(), 
-			new FlowTimelinePanel($title, $buttons, new FlowTimelinePanelBody(), $isLink ? "mdLink" : "")
+			new FlowTimelinePanel($title, null, $buttons, new FlowTimelinePanelBody(), $isLink ? "mdLink" : "")
 		);
 	}
 }
@@ -93,6 +93,7 @@ class FlowTimelineElement{
 
 class FlowTimelinePanel{
 	private $_title;
+	private $_subtitle;
 	private $_buttons;
 	private $_class;
 	private $_panel = 
@@ -102,6 +103,7 @@ class FlowTimelinePanel{
 			<div class='row'>					
 				<div class="col-lg-4">
 					<h4 class="timeline-title">%s</h4>
+					<h5>%s</h5>
 				</div>
 				<div class="col-lg-8 text-right">
 					%s
@@ -114,9 +116,10 @@ class FlowTimelinePanel{
 		</div>
 	</div>
 TLP;
-	public function __construct($title, $buttons, FlowTimelinePanelBody $body, $class = null){
+	public function __construct($title, $subtitle = null, $buttons, FlowTimelinePanelBody $body, $class = null){
 		$this->_buttons = $buttons;
-		$this->_title = $title;
+		$this->_title = ucfirst($title);
+		$this->_subtitle = is_null($subtitle) ? null : ucfirst($subtitle);
 		$this->_body = $body;
 		$this->_class = $class;
 	}
@@ -128,7 +131,7 @@ TLP;
 				$buttonsHTML .= $button->get();
 		}
 		
-		printf($this->_panel, $this->_class, $this->_title, $buttonsHTML, $this->_body->render());
+		printf($this->_panel, $this->_class, $this->_title, $this->_subtitle, $buttonsHTML, $this->_body->render());
 	}
 	
 }
@@ -165,12 +168,12 @@ SIGINFO;
 	private $_infoTable = null;
 	private $_signatures = null;
 		
-	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null){
-		$col = is_null($signatures) ? 12 : 6;
+	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = []){
+		$col = empty($signatures) ? 12 : 6;
 		
 		if(!is_null($infoTable))
 			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfoBTN);
-		if(!is_null($signatures))
+		if(!empty($signatures))
 			$this->_signatures = sprintf(self::SIGNATURES_INFO, $signatures);
 		
 	}
