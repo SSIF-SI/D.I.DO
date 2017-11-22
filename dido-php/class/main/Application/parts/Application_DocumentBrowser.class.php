@@ -351,15 +351,120 @@ private function _allMyPendingDocuments(){
 			
 			$XMLParser = new XMLParser();
 			
-			
 			foreach($this->_resultArray[self::LABEL_MD] as $id_md => $md){
 				$docsToBeSigned = [];
 				$xml = $this->_XMLDataSource->getSingleXmlByFilename($md[Masterdocument::XML]);
 				$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML], $md[Masterdocument::TYPE]);
 				
-				$isSpecialSigner = $XMLParser->isSpecialSigner(array_keys($mySpecialSignatures));
-				$isSigner = $XMLParser->isSigner(array_keys($signRoles));
+				foreach($this->_resultArray[self::LABEL_DOCUMENTS][$id_md] as $id_doc => $document){
 					
+					$docName = $document[Document::NOME];
+					$docType = $document[Document::TYPE];
+					
+					$filename =
+					$this->_resultArray[self::LABEL_MD][$id_md][Masterdocument::FTP_FOLDER] .
+					Common::getFolderNameFromMasterdocument(
+							$this->_resultArray[self::LABEL_MD][$id_md]
+					) .
+					DIRECTORY_SEPARATOR .
+					$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::FTP_NAME];
+					
+					$alreadyLoaded = false;
+						
+					$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
+					$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
+				
+					if(count($signatures->signature)){
+						foreach($signatures->signature as $signature){
+							
+							$role = (string) $signature[XMLParser::ROLE];
+							
+							if(isset($signRoles[$role])){
+								if($signRoles[$role][Signature::FIXED_ROLE]){
+									// E' un ruolo fisso, lo devo firmare sempre
+									
+									$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+								} else {
+									// è variabile, devo vedere nel md data se io sono uno dei firmatari
+									$signatureInput = $signRoles[$role][Signature::DESCRIZIONE];
+									if($this->_resultArray[self::LABEL_MD_DATA][$id_md][$signatureInput] == $this->_userManager->getFieldToWriteOnDb()){
+										$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+									}
+								}
+								
+								if(	$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME]){
+									
+									$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+									// Se lo devo firmare controllo che sia effettivamente firmato
+									// per ora alla vecchia maniera
+									$alreadyLoaded = true;
+									$this->_SignatureChecker->load($filename);
+									
+									if($this->_SignatureChecker->checkSignature($mySignature)){
+										$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
+									} else {
+										if(!in_array($id_doc, $docsToBeSigned))
+											array_push($docsToBeSigned, $id_doc);
+									}
+									
+								}
+							}
+						}
+					}
+					
+					if( $this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] &&
+					   !$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME])
+						continue;
+					   
+					if(count($specialSignatures->specialsignature)){
+					   	foreach($specialSignatures->specialSignature as $specialSignature){
+					   		$type = (string) $specialSignature[XMLParser::TYPE];
+					   		
+					   		if(!$alreadyLoaded)
+					   			$this->_SignatureChecker->load($filename);
+					   		
+					   		// Se è già firmato da me lo marco e vado avanti.
+					   		if ($this->_SignatureChecker->checkSignature($mySpecialSignatures[$type])){
+					   			$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+					   			$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+					   			$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
+					   			continue;
+					   		}
+					   		
+					   		// Se sono arrivato qui controllo se è stato firmato da altri.
+					   		if(isset($this->_allSpecialSignatures[$type])){
+					   				
+					   			$listOfSpecialSigners = $this->_allSpecialSignatures[$type];
+					   				
+					   			$signerFound = false;
+					   			foreach($listOfSpecialSigners as $specialSigner){
+					   		
+					   				$result = $this->_SignatureChecker->checkSignature($specialSigner[SpecialSignatures::PKEY]);
+					   		
+					   				if($result){
+					   					$signerFound = true;
+					   					break;
+					   				}
+					   		
+					   			}
+					   				
+					   			if(!$signerFound){
+					   		
+					   				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+					   				$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
+					   		
+					   				if(!in_array($id_doc, $docsToBeSigned))
+					   					array_push($docsToBeSigned, $id_doc);
+					   			}
+					   		
+					   		}
+					   	}
+					}
+					
+				}
+				
+				/*
+				
 				if($isSigner){
 				
 					foreach($isSigner as $role=>$listOfDocTypes){
@@ -457,7 +562,8 @@ private function _allMyPendingDocuments(){
 					}
 						
 				}
-				
+				*/
+									
 				// Riepilogo del numero di documenti da firmare all'interno del mio Master Document;
 				$this->_resultArray[self::LABEL_MD][$id_md][self::DOC_TO_SIGN_INSIDE] = count($docsToBeSigned);
 				
@@ -465,23 +571,9 @@ private function _allMyPendingDocuments(){
 			}
 		}
 		
-		//Utils::printr("AfterSignatureCheck");
-			
-			
 		return $this;
 	}
 	
-	private function _checkIfSigned(&$docsToBeSigned, $id_md, $id_doc, $signature){
-		
-		if($this->_SignatureChecker->checkSignature($signature)){
-			$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
-		} else {
-			if(!in_array($id_doc, $docsToBeSigned))
-				array_push($docsToBeSigned, $id_doc);
-		}
-		
-		
-	}
 	
 	private function _propertyCheck(){
 		$XMLParser = new XMLParser();

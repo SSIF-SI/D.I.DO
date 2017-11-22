@@ -84,7 +84,7 @@ class XMLParser implements IXMLParser {
 		
 		if (! is_null ( $md_type )) { // Se il master document è di un certo tipo
 		                              // filtro i documenti associati
-			$this->_filter ( $md_type );
+			$this->_filter ( $this->_xml->list->document, $md_type );
 		}
 	}
 
@@ -92,21 +92,23 @@ class XMLParser implements IXMLParser {
 		return $this->_xml;
 	}
 
-	private function _filter($mdType) {
-		for($i = 0, $k = 0; $k < count ( $this->_xml->list->document ); $k ++) {
+	private function _filter(&$source, $type) {
+		for($i = 0, $k = 0; $k < count ( $source ); $k ++) {
+
 			
-			$onlyIfType = $this->_xml->list->document [$k] [self::ONLYIFTYPE];
+			$onlyIfType = $source [$k] [self::ONLYIFTYPE];
 			
 			if (! is_null ( $onlyIfType )) {
 				$onlyIfType = ( string ) $onlyIfType;
-				if ($onlyIfType != $mdType) {
+				if ($onlyIfType != $type) {
 					$key = $k - $i ++;
-					unset ( $this->_xml->list->document [$key] );
+					unset ( $source [$key] );
 				}
 			}
 		}
 	}
-
+	
+	
 	public function getMasterDocumentInputs() {
 		return $this->_xml->inputs->input;
 	}
@@ -124,18 +126,26 @@ class XMLParser implements IXMLParser {
 		return false;
 	}
 
-	public function getDocumentSignatures($docname){
+	public function getDocumentSignatures($docname, $docType = null){
 		$document = $this->getDocByName($docname);
+		
 		if(!$document) return false;
 		
-		return $document->signatures->signature;
+		if(!is_null($docType))
+			$this->_filter ( $document->signatures, (string) $docType );
+		
+		
+		return $document->signatures;
 	}
 	
-	public function getDocumentSpecialSignatures($docname){
+	public function getDocumentSpecialSignatures($docname, $docType = null){
 		$document = $this->getDocByName($docname);
 		if(!$document) return false;
 		
-		return $document->specialSignatures->specialSignature;
+		if(!is_null($docType))
+			$this->_filter ( $document->specialSignatures, (string) $docType );
+		
+		return $document->specialSignatures;
 	}
 	
 	public function getDocumentInputs($docname) {
@@ -156,14 +166,13 @@ class XMLParser implements IXMLParser {
 	}
 
 	public function getMdDocTypes() {
-		return ( array ) $this->_xml->types->type;
+		return $this->_xml->types->type;
 	}
 	
 	public function getDocTypes() {
-		return ( array ) $this->_xml->list->types->type;
+		return $this->_xml->list->types->type;
 	}
 	
-
 	public function getSource() {
 		return $this->_xml [self::FROM];
 	}
@@ -221,7 +230,7 @@ class XMLParser implements IXMLParser {
 			
 			$this->checkIfMustBeLoaded ( $document );
 			$docName = (string)$document[self::DOC_NAME];
-
+				
 			$docSignatures = $this->getDocumentSpecialSignatures($docName);
 				
 			if (!$docSignatures)
@@ -284,8 +293,11 @@ class XMLParser implements IXMLParser {
 			return null;
 		foreach ( $this->getDocList() as $document ) {
 			$this->checkIfMustBeLoaded ( $document );
-			if (( string ) $document [self::DOC_NAME] == $docname)
-				return $document;
+			if (( string ) $document [self::DOC_NAME] == $docname){
+				$clone = clone $document;
+				return $clone;
+			}
+				
 		}
 		return null;
 	}

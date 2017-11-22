@@ -88,7 +88,7 @@ class Application_Detail{
 			} else {
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
-
+				
 				// è obbligatorio
 				if((int)$doc[XMLParser::MIN_OCCUR])
 					$mandatory++;
@@ -109,7 +109,7 @@ class Application_Detail{
 						break;				
 					}
 				} else {
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser->getDocumentSignatures($docName), $XMLParser->getDocumentSpecialSignatures($docName), $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
 						break;
 					$almostOne = true;
 					if((int)$doc[XMLParser::MIN_OCCUR])
@@ -231,14 +231,23 @@ class Application_Detail{
 		return true;
 	}
 	
-	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $signatures = false, $specialSignatures = null, $MDSigners = null){
+	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $XMLParser= null, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
 		
 		$mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
 			
 		foreach($listOnDb as $id_doc => $docData){
-				
+			
 			$docName = $documents[$id_doc][Document::NOME];
+			$docType = $documents[$id_doc][Document::TYPE];
+
+			if(!is_null($XMLParser)){
+				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
+				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
+			}
+								
+			if(!is_null($docType))
+				$docName .= " - ".ucfirst($docType);
 			
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
 			$IMustSignIt =
@@ -260,7 +269,7 @@ class Application_Detail{
 			null;
 		
 			if(!$documentClosed){	
-				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures, $specialSignatures, $MDSigners);
+				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures->signature, $specialSignatures->specialSignature, $MDSigners);
 			}
 			
 			$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);

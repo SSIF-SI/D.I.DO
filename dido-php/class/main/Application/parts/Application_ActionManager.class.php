@@ -147,7 +147,8 @@ class Application_ActionManager {
 			}
 
 			$docName = $_GET[XMLParser::DOC_NAME];
-			
+			$docType = $_GET[XMLParser::TYPE];
+				
 			// TODO: Ricodificare questa bruttura!!!
 			$XMLParser = new XMLParser();
 			
@@ -180,7 +181,7 @@ class Application_ActionManager {
 			if (!isset($_GET[Document::ID_DOC])){
 				// Il documento viene chiuso in automatico se non ci sono firme digitali previste
 				$closed =
-				$XMLParser->getDocumentSignatures($docName) || $XMLParser->getDocumentSpecialSignatures($docName) ?
+				$XMLParser->getDocumentSignatures($docName, $docType) || $XMLParser->getDocumentSpecialSignatures($docName, $docType) ?
 				ProcedureManager::OPEN :
 				ProcedureManager::CLOSED;
 					
@@ -279,7 +280,7 @@ class Application_ActionManager {
 
 			$XMLParser->setXMLSource($xml[XMLDataSource::LABEL_XML]);
 			
-			$types = $XMLParser->getMdDocTypes();
+			$types = (array) $XMLParser->getMdDocTypes();
 			
 		}
 		$docInfo = $this->_Application_Detail->createDocumentInfoPanel($XMLParser->getMasterDocumentInputs(), $md_data, $XMLParser->getMasterDocumentInnerValues(), false, true);
