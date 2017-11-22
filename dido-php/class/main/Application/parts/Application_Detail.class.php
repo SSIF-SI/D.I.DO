@@ -283,7 +283,7 @@ class Application_Detail{
 			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 
 			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
-			if(!$upperLimit || count($listOnDb) < $upperLimit)
+			if($documentClosed && (!$upperLimit || count($listOnDb) < $upperLimit))
 				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
 			
 			// Se non c'è il minoccur o comunque minOccur = 0

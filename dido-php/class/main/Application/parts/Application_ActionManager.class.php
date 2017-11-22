@@ -147,7 +147,6 @@ class Application_ActionManager {
 			}
 
 			$docName = $_GET[XMLParser::DOC_NAME];
-			$docType = $_GET[XMLParser::TYPE];
 				
 			// TODO: Ricodificare questa bruttura!!!
 			$XMLParser = new XMLParser();
@@ -155,6 +154,7 @@ class Application_ActionManager {
 			if($docName != "allegato"){
 				$XMLParser->setXMLSource($md[Masterdocument::XML], $md[Masterdocument::TYPE]);
 				$docInputs = $XMLParser->getDocumentInputs($docName);
+				$docTypes = $XMLParser->getDocTypes();
 			} else {
 				$XMLParser->load(XML_STD_PATH."allegato.xml");
 				$docToSearch = $XMLParser->getXmlSource();
@@ -162,7 +162,15 @@ class Application_ActionManager {
 			}
 			
 			$innerValues = $XMLParser->getMasterDocumentInnerValues();
+			
 			$docInfo = $this->_Application_Detail->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues, false);
+			if($docTypes){
+				$options = array();
+				foreach($docTypes as $type){
+					$options[(string)$type] = (string) $type;
+				}
+				$docInfo = HTMLHelper::select(Document::TYPE, "Tipo di $docName", $options). $docInfo;
+			}
 		}
 		
 		if(count($_POST)){
@@ -177,6 +185,8 @@ class Application_ActionManager {
 		
 			unset($_POST['upFileName'], $_POST['upFilePath']);
 		
+			$docType = $_POST[XMLParser::TYPE];
+				
 			$doc = new Document($this->_dbConnector);
 			if (!isset($_GET[Document::ID_DOC])){
 				// Il documento viene chiuso in automatico se non ci sono firme digitali previste
@@ -188,10 +198,13 @@ class Application_ActionManager {
 				$doc = Utils::stubFill($doc->getStub(), [
 						Document::ID_MD => $md[Masterdocument::ID_MD],
 						Document::NOME	=> $docName,
+						Document::TYPE	=> $_POST[Document::TYPE],
 						Document::EXTENSION => $extension,
 						Document::CLOSED => $closed
 				]);
 			
+				unset($_POST[Document::TYPE]);
+				
 				$data = Common::createPostMetadata($_POST);
 			
 				$result = $this->_ProcedureManager->createDocument($doc, $data, $filePath, $repositoryPath);
