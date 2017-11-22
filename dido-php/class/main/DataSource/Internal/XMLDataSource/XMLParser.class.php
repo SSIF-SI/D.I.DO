@@ -132,7 +132,7 @@ class XMLParser implements IXMLParser {
 		if(!$document) return false;
 		
 		if(!is_null($docType))
-			$this->_filter ( $document->signatures, (string) $docType );
+			$this->_filter ( $document->signatures->signature, (string) $docType );
 		
 		
 		return $document->signatures;
@@ -143,7 +143,7 @@ class XMLParser implements IXMLParser {
 		if(!$document) return false;
 		
 		if(!is_null($docType))
-			$this->_filter ( $document->specialSignatures, (string) $docType );
+			$this->_filter ( $document->specialSignatures->specialSignature, (string) $docType );
 		
 		return $document->specialSignatures;
 	}

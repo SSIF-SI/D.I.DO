@@ -244,6 +244,7 @@ class Application_Detail{
 			if(!is_null($XMLParser)){
 				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
+				
 			}
 								
 			if(!is_null($docType))
