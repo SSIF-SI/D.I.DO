@@ -106,25 +106,31 @@ class ProcedureManager implements IProcedureManager {
 	public function updateDocument($document, $data = null, $filePath = null, $repositoryPath = null, $oldExtension=null) {
 		$this->_dbConnector->begin ();
 		
-		if (!is_null($data) && !$this->updateDocumentData( $data )) {
+		if (! is_null ( $data ) && ! $this->updateDocumentData ( $data )) {
 			$this->_dbConnector->rollback ();
 			return false;
-		
 		}
-		if(!is_null($oldExtension)){
-			$oldPath = $repositoryPath . Common::getFilenameFromDocument ( $document,$oldExtension );
-			$newPath = $repositoryPath . Common::getFilenameFromDocument ( $document );
-			if (! $this->_FTPDataSource->rename($oldPath, $newPath)) {
-				$this->_dbConnector->rollback ();
-				return false;
-			}
-		}
-		
 		if (! is_null ( $filePath ) && ! is_null ( $repositoryPath )) {
+			
+			if (! is_null ( $oldExtension )) {
+				if (! $this->_DPManager->update(null,$document)) {
+					$this->_dbConnector->rollback ();
+					return false;
+				}
+				$oldPath = $repositoryPath . Common::getFilenameFromDocument ( $document, $oldExtension );
+				if (! $this->_FTPDataSource->deleteFile ( $oldPath )) {
+					$this->_dbConnector->rollback ();
+					return false;
+				}
+				
+			}
+			
 			if (! $this->uploadFile ( $document, $filePath, $repositoryPath )) {
 				$this->_dbConnector->rollback ();
 				return false;
 			}
+			
+			
 		}
 		
 		$this->_dbConnector->commit ();

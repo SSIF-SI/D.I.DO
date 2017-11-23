@@ -14,7 +14,6 @@ interface IFTPDataSource {
 	
 	public function upload($source, $destination);
 	
-	public function rename($oldPath,$newPath);
 	
 }
 

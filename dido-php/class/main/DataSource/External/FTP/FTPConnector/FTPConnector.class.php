@@ -269,11 +269,6 @@ class FTPConnector implements IFTPConnector {
 		return @ftp_delete ( $this->_conn_id, $this->_baseDir . $filePath );
 	
 	}
-	public function rename($oldPath,$newPath) {
-		$this->_connect ();
-		return @ftp_rename($this->_conn_id, $this->_baseDir . $oldPath, $this->_baseDir . $newPath);
-	
-	}
 }
 
 class FTPConnectorException extends Exception {
