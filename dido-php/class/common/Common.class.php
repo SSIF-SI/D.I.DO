@@ -40,8 +40,9 @@ class Common{
 		return self::fieldFromLabel ( $md[Masterdocument::NOME] . " " . $md[Masterdocument::ID_MD]);
 	}
 	
-	public static function getFilenameFromDocument($document) {
-		return self::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $document [Document::EXTENSION] );
+	public static function getFilenameFromDocument($document,$forceExtension=null) {
+		$extension=!is_null($forceExtension)?$forceExtension:$document [Document::EXTENSION];
+		return self::fieldFromLabel ( $document [Document::NOME] . " " . $document [Document::ID_DOC] . "." . $extension );
 	}
 	
 	

@@ -214,7 +214,9 @@ class Application_ActionManager {
 				$result = $this->_ProcedureManager->createDocument($doc, $data, $filePath, $repositoryPath);
 			} else {
 				$doc = Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
-				$result = $this->_ProcedureManager->updateDocument($doc, null, $filePath, $repositoryPath);
+				$oldExtension=$doc[Document::EXTENSION]==$extension?null:$doc[Document::EXTENSION];
+				$doc[Document::EXTENSION]=$extension;
+				$result = $this->_ProcedureManager->updateDocument($doc, null, $filePath, $repositoryPath,$oldExtension);
 			}
 			if(!$result){
 				$eh->setErrors("Impossibile creare il documento");

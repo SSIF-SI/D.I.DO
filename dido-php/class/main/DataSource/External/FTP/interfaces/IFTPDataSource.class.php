@@ -13,6 +13,9 @@ interface IFTPDataSource {
 	public function getTempFile($file, $tmpPath = FILES_PATH);
 	
 	public function upload($source, $destination);
+	
+	public function rename($oldPath,$newPath);
+	
 }
 
 ?>

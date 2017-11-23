@@ -39,6 +39,10 @@ class FTPDataSource implements IFTPDataSource{
 		$this->_ftpConnector->download($filename);
 	}
 	
+	public function rename($oldPath,$newPath){
+		$this->_ftpConnector->rename($oldPath, $newPath);
+	}
+	
 }
 
 ?>
