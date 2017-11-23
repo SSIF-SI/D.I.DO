@@ -374,7 +374,7 @@ private function _allMyPendingDocuments(){
 					$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 					$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
 					
-					if(count($signatures->signature)){
+					if(!SignatureChecker::emptySignatures($signatures->signature)){
 						foreach($signatures->signature as $signature){
 							
 							$role = (string) $signature[XMLParser::ROLE];
@@ -416,7 +416,7 @@ private function _allMyPendingDocuments(){
 					   !$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME])
 						continue;
 					   
-					if(count($specialSignatures->specialsignature)){
+					if(!SignatureChecker::emptySignatures($specialSignatures->specialSignature)){
 					   	foreach($specialSignatures->specialSignature as $specialSignature){
 					   		$type = (string) $specialSignature[XMLParser::TYPE];
 					   		
