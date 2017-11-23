@@ -37,5 +37,10 @@ class SignatureChecker{
 		} else
 			return false;
 	}
+	
+	public static function emptySignatures($signatures){
+		$signatures = (array) $signatures;
+		return empty($signatures);
+	}
 }
 ?>

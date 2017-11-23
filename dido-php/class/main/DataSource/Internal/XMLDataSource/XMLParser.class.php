@@ -187,7 +187,7 @@ class XMLParser implements IXMLParser {
 	public function isOwner(array $services) {
 		return in_array ( $this->getOwner (), $services );
 	}
-
+/*
 	public function isSigner(array $sigRoles) {
 		$signatures = [];
 		
@@ -257,7 +257,7 @@ class XMLParser implements IXMLParser {
 		return (empty($signatures) ? false : $signatures);
 	}
 	
-	
+*/	
 	public function isVisible(array $services) {
 		if ($this->isOwner ( $services ))
 			return true;

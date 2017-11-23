@@ -276,7 +276,7 @@ class Application_Detail{
 			// - il documento non è chiuso e
 			// - posso gestirlo o devo firmarlo
 			if( !$documentClosed && ( $ICanManageIt || $IMustSignIt ) )
-				array_push($panelButtons, new FlowTimelineButtonUpload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+				array_push($panelButtons, new FlowTimelineButtonUpload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}&".XMLParser::DOC_NAME."=$docName"));
 				
 			// Di default lo posso scaricare sempre
 			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
@@ -376,17 +376,19 @@ class Application_Detail{
 			'html'		=> []	
 		];
 
-		if(!$docSignatures && !$specialSignatures)
+		if(SignatureChecker::emptySignatures($docSignatures) && SignatureChecker::emptySignatures($specialSignatures))
 			return $signResult;
 		
 // 		flog("docPath: %s",$docPath);
 		
 		$this->_SignatureChecker->load($docPath);
 		
-		if($docSignatures) {
+		if(!SignatureChecker::emptySignatures($docSignatures)) {
 			foreach ( $docSignatures as $signature ) {
+				/*
 				if(!$signature)
 				break;	
+				*/
 				$role = ( string ) $signature [XMLParser::ROLE];
 				/* if($role == "REQ") continue; */
 				if (! isset ( $MDSigners [$role] )) {
@@ -414,10 +416,12 @@ class Application_Detail{
 			}
 		}
 		
-		if ($specialSignatures){	
+		if (!SignatureChecker::emptySignatures($specialSignatures)){	
 			foreach($specialSignatures as $specialSignature){
+				/*
 				if(!$specialSignature)
 					break;
+				*/
 				$type = (string) $specialSignature[XMLParser::SIGNATURE_TYPE];				
 				if(isset($this->_allSpecialSignatures[$type])){
 					$listOfSpecialSigners = $this->_allSpecialSignatures[$type];

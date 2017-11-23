@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inputs>
+	<input key="descrizione" type="textarea" shortView="true">descrizione</input>
 	<input mandatory="0">numero protocollo</input>
 	<input mandatory="0" type="data">data protocollo</input>
 </inputs>

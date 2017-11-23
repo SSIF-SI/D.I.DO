@@ -190,12 +190,15 @@ class Application_ActionManager {
 				
 			$doc = new Document($this->_dbConnector);
 			if (!isset($_GET[Document::ID_DOC])){
+				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
+				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
+				
 				// Il documento viene chiuso in automatico se non ci sono firme digitali previste
 				$closed =
-				$XMLParser->getDocumentSignatures($docName, $docType) || $XMLParser->getDocumentSpecialSignatures($docName, $docType) ?
-				ProcedureManager::OPEN :
-				ProcedureManager::CLOSED;
-					
+					SignatureChecker::emptySignatures($signatures->signature) && SignatureChecker::emptySignatures($specialSignatures->specialSignature) ?
+					ProcedureManager::CLOSED :
+					ProcedureManager::OPEN;
+						
 				$doc = Utils::stubFill($doc->getStub(), [
 						Document::ID_MD => $md[Masterdocument::ID_MD],
 						Document::NOME	=> $docName,

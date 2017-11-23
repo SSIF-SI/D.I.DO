@@ -31,7 +31,9 @@ $(document).ready(function(){
 	
 	$('a.add-doc, a.edit-doc, a.upload-doc').click(function (e) {
 		e.preventDefault();
-		MyModal.setTitle("Nuovo documento");
+		var href = $(this).attr("href");
+		var params = paesrQueryString(href);
+		MyModal.setTitle((params['id_doc'] != undefined ? "Aggiorna" : "Nuovo")+ " documento - "+jsUcfirst(params['name']));
 		MyModal.editModal(this);
 	});
 	$('a.close-doc').click(function (e) {
@@ -71,4 +73,21 @@ $(document).ready(function(){
 		}
 	});
 
+	function paesrQueryString(querystring) {
+	  // remove any preceding url and split
+	  querystring = querystring.substring(querystring.indexOf('?')+1).split('&');
+	  var params = {}, pair, d = decodeURIComponent;
+	  // march and parse
+	  for (var i = querystring.length - 1; i >= 0; i--) {
+	    pair = querystring[i].split('=');
+	    params[d(pair[0])] = d(pair[1] || '');
+	  }
+
+	  return params;
+	};
+	
+	function jsUcfirst(string) 
+	{
+	    return string.charAt(0).toUpperCase() + string.slice(1);
+	}
 });
