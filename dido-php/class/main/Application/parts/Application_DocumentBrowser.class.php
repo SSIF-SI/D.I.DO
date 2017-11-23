@@ -374,6 +374,7 @@ private function _allMyPendingDocuments(){
 					$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 					$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
 					
+					
 					if(!SignatureChecker::emptySignatures($signatures->signature)){
 						foreach($signatures->signature as $signature){
 							
@@ -417,7 +418,7 @@ private function _allMyPendingDocuments(){
 						continue;
 					   
 					if(!SignatureChecker::emptySignatures($specialSignatures->specialSignature)){
-					   	foreach($specialSignatures->specialSignature as $specialSignature){
+						foreach($specialSignatures->specialSignature as $specialSignature){
 					   		$type = (string) $specialSignature[XMLParser::TYPE];
 					   		
 					   		if(!$alreadyLoaded)
@@ -425,10 +426,11 @@ private function _allMyPendingDocuments(){
 					   		
 					   		// Se è già firmato da me lo marco e vado avanti.
 					   		if ($this->_SignatureChecker->checkSignature($mySpecialSignatures[$type])){
+					   			
 					   			$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 					   			$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
 					   			$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME] = 1;
-					   			continue;
+					   			break;
 					   		}
 					   		
 					   		// Se sono arrivato qui controllo se è stato firmato da altri.
@@ -443,6 +445,7 @@ private function _allMyPendingDocuments(){
 					   		
 					   				if($result){
 					   					$signerFound = true;
+					   					//Utils::printr("Domanda firmata da altri");
 					   					break;
 					   				}
 					   		
@@ -450,6 +453,7 @@ private function _allMyPendingDocuments(){
 					   				
 					   			if(!$signerFound){
 					   		
+					   				//Utils::printr("Domanda firmabile da me");
 					   				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 					   				$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
 					   		

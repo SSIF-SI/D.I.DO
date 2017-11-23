@@ -417,7 +417,6 @@ class Application_Detail{
 		}
 		
 		if (!SignatureChecker::emptySignatures($specialSignatures)){	
-			//Utils::printr("Ci sono firme speciali");
 			foreach($specialSignatures as $specialSignature){
 				/*
 				if(!$specialSignature)
@@ -425,18 +424,14 @@ class Application_Detail{
 				*/
 				$type = (string) $specialSignature[XMLParser::SIGNATURE_TYPE];
 
-				//Utils::printr($type);
-				
-				//Utils::printr($this->_allSpecialSignatures);
-				
 				if(isset($this->_allSpecialSignatures[$type])){
 					$listOfSpecialSigners = $this->_allSpecialSignatures[$type];
 					
 					$signerFound = false;
 					foreach($listOfSpecialSigners as $specialSigner){
-						//Utils::printr("Controllo la firma di {$specialSigner[SpecialSignatures::ID_PERSONA]} => {$specialSigner[SpecialSignatures::PKEY]}");
+						$result = $this->_SignatureChecker->checkSignature($specialSigner[SpecialSignatures::PKEY]);
+						
 						if($result){
-							//Utils::printr("TROVATA!");
 							$sSigner = Personale::getInstance()->getNominativo($specialSigner[SpecialSignatures::ID_PERSONA]);
 							$signResult['html'][] =	"<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> Firma per $type effettuata da $sSigner</div>";
 							$signerFound = true;
@@ -446,7 +441,6 @@ class Application_Detail{
 					}
 					
 					if(!$signerFound){
-						//Utils::printr("NON TROVATA!");
 							
 						$signResult['errors'] = true;
 						$signResult['html'][] =	"<div class=\"alert alert-danger\"><span class=\"fa fa-danger\"></span> Manca la firma per $type </div>";

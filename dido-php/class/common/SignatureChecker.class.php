@@ -15,7 +15,7 @@ class SignatureChecker{
 	 */
 	
 	public function load($filename){
-		//Utils::printr("Loading $filename");
+		
 		$tmpFile = $this->_ftpDataSource->getTempFile ( $filename );
 		
 		$path_parts = pathinfo($filename);
@@ -25,7 +25,6 @@ class SignatureChecker{
 		$this->_signaturesOnDocument = $this->_SignatureInspector->getSignatures ();
 		unlink ( $tmpFile );
 		
-		//Utils::printr($this->_signaturesOnDocument);
 		return $this;
 	}
 	
