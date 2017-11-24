@@ -14,6 +14,8 @@ class Application_Detail{
 	private $_info;
 	private $_flowResults;
 	private $_canMdBeClosed = false;
+	private $_ICanManageIt = false;
+	private $_mdClosed = false;
 	
 	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IFTPDataSource $ftpDataSource){
 		$this->_userManager = $userManager;
@@ -38,7 +40,7 @@ class Application_Detail{
 		$id_md = $md[Masterdocument::ID_MD];
 		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
 		
-		$mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
+		$this->_mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
 		
 		$XMLParser = new XMLParser(
 			$md[Masterdocument::XML],
@@ -48,11 +50,11 @@ class Application_Detail{
 		$innerValues = $XMLParser->getMasterDocumentInnerValues();
 		
 		$this->_redirectUrl = TurnBack::getLastHttpReferer()."#".dirname($md[Masterdocument::XML])."/#".Common::fieldFromLabel($md[Masterdocument::NOME]);
-		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data, $mdClosed);
+		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data, $this->_mdClosed);
 		$this->_flowResults = new FlowTimeline();
 		
 		
-		$ICanManageIt =
+		$this->_ICanManageIt =
 			$this->_userManager->isAdmin() ||
 			($this->_userManager->isGestore(true) && $XMLParser->isOwner($this->_userManager->getUser()->getGruppi()));
 
@@ -70,9 +72,9 @@ class Application_Detail{
 				
 				$listOnDb = Utils::filterList($mdLinks[Application_DocumentBrowser::LABEL_MD], Masterdocument::NOME, $docName);
 				if(count($listOnDb) == 0){
-					if($mdClosed) break;
+					if($this->_mdClosed) break;
 					$this->_flowResults->addTimelineElement(
-						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
+						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $this->_ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
 					);
 				
 					# Se ne serve almeno uno si blocca il rendering
@@ -80,7 +82,7 @@ class Application_Detail{
 						break;				
 				} else {
 					
-					if(!$this->_parseMdLink($listOnDb, $mdLinks[Application_DocumentBrowser::LABEL_MD_LINKS],(int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $ICanManageIt, $mdClosed))
+					if(!$this->_parseMdLink($listOnDb, $mdLinks[Application_DocumentBrowser::LABEL_MD_LINKS],(int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $mdLinks[Application_DocumentBrowser::LABEL_MD_DATA], $this->_mdClosed))
 						break;
 					$almostOne = true;
 // 					flog("almostOne");
@@ -103,9 +105,9 @@ class Application_Detail{
 				$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
 				
 				if(count($listOnDb) == 0){
-					if($mdClosed) break;
+					if($this->_mdClosed) break;
 					$this->_flowResults->addTimelineElement(
-						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $this->_ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 					);
 					
 					
@@ -116,7 +118,7 @@ class Application_Detail{
 						break;				
 					}
 				} else {
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $this->_ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
 						break;
 					$almostOne = true;
 					if((int)$doc[XMLParser::MIN_OCCUR])
@@ -145,7 +147,7 @@ class Application_Detail{
 				}
 			}
 			
-			$this->_canMdBeClosed = true && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED && $mandatoryInputsBeforeClosing;
+			$this->_canMdBeClosed = $this->_ICanManageIt && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED && $mandatoryInputsBeforeClosing ;
 		}
 		
 		if(!$almostOne)
@@ -163,11 +165,11 @@ class Application_Detail{
 		
 		
 		if(count($listOnDb)){
-			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs);
+			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $docInputs);
 		} else {
 			if($this->_userManager->isGestore()){
 				$this->_flowResults->addTimelineElement(
-						new TimelineElementMissing(ucfirst($docName), false, $ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
+						new TimelineElementMissing(ucfirst($docName), false, $this->_ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 				);
 			}
 		} 
@@ -177,6 +179,9 @@ class Application_Detail{
 		return $this->_canMdBeClosed;
 	}
 	
+	public function canIManageIt(){
+		return $this->_ICanManageIt;
+	}
 	public function renderStatus($status){
 		$model = '<span class="btn btn-%s"><i class="fa fa-%s"> </i> %s</span>';
 		switch($status){
@@ -193,7 +198,7 @@ class Application_Detail{
 		return $model;
 	}
 	
-	private function _parseMdLink($listOnDb, $mdLinks, $lowerLimit, $upperLimit, $documents_data, $ICanManageIt, $mdClosed){
+	private function _parseMdLink($listOnDb, $mdLinks, $lowerLimit, $upperLimit, $documents_data){
 // 		flog("listOnDB: %o",$listOnDb);
 // 		flog("mdLinks: %o",$mdLinks);
 // 		flog("data: %o",$documents_data);
@@ -211,16 +216,18 @@ class Application_Detail{
 			$panelBody = new FlowTimelinePanelBody($docInfo, null, null);
 			$panelButtons = [];
 			
-			if(($ICanManageIt && !$mdClosed))
-				array_push($panelButtons, new FlowTimelineButtonEdit("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}&".MasterdocumentsLinks::ID_LINK."={$id_link}"));				
-
-			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
-			if(!$upperLimit || count($listOnDb) < $upperLimit)
-				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}"));
-			
-			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
-			if(!$lowerLimit || count($listOnDb) > $lowerLimit)
-				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
+			if($this->_ICanManageIt){
+				if((!$this->_mdClosed))
+					array_push($panelButtons, new FlowTimelineButtonEdit("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}&".MasterdocumentsLinks::ID_LINK."={$id_link}"));				
+	
+				// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
+				if(!$upperLimit || count($listOnDb) < $upperLimit)
+					array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}"));
+				
+				// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
+				if(!$lowerLimit || count($listOnDb) > $lowerLimit)
+					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
+			}
 			
 			$panel = new FlowTimelinePanel($docName, null, $panelButtons, $panelBody, "mdLink");
 			
@@ -238,10 +245,10 @@ class Application_Detail{
 		return true;
 	}
 	
-	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $ICanManageIt, $docInputs, $XMLParser= null, $MDSigners = null){
+	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $docInputs, $XMLParser= null, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
 		
-		$mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
+		$this->_mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
 			
 		foreach($listOnDb as $id_doc => $docData){
 			
@@ -268,7 +275,7 @@ class Application_Detail{
 
 			
 			$editInfoBTN =
-			($ICanManageIt && !$mdClosed /*&& !$documentClosed*/) ?
+			($this->_ICanManageIt && !$this->_mdClosed /*&& !$documentClosed*/) ?
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
@@ -282,23 +289,25 @@ class Application_Detail{
 			// Posso caricare il documento se:
 			// - il documento non è chiuso e
 			// - posso gestirlo o devo firmarlo
-			if( !$documentClosed && ( $ICanManageIt || $IMustSignIt ) )
+			if( !$documentClosed && ( $this->_ICanManageIt || $IMustSignIt ) )
 				array_push($panelButtons, new FlowTimelineButtonUpload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}&".XMLParser::DOC_NAME."=$docName"));
 				
 			// Di default lo posso scaricare sempre
 			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 
+			if($this->_ICanManageIt){
 			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
-			if($documentClosed && (!$upperLimit || count($listOnDb) < $upperLimit))
-				array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
-			
-			// Se non c'è il minoccur o comunque minOccur = 0
-			if(!$lowerLimit || ($lowerLimit >= 1 && count($listOnDb) > $lowerLimit))
-				array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
-			
-			// Il documento se non ci sono errori e non è già chiuso lo posso chiudere
-			if(!$documentClosed && !$docSignatures['errors'])
-				array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+				if($documentClosed && (!$upperLimit || count($listOnDb) < $upperLimit))
+					array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=".$docName."&".Masterdocument::ID_MD."={$id_md}"));
+				
+				// Se non c'è il minoccur o comunque minOccur = 0
+				if(!$lowerLimit || ($lowerLimit >= 1 && count($listOnDb) > $lowerLimit))
+					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+				
+				// Il documento se non ci sono errori e non è già chiuso lo posso chiudere
+				if(!$documentClosed && !$docSignatures['errors'])
+					array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+			}
 				
 			$panel = new FlowTimelinePanel($docName, $docType, $panelButtons, $panelBody);
 				
@@ -482,7 +491,7 @@ class Application_Detail{
 		return $this->_flowResults;
 	}
 	
-	private function _createAdditionalInfo($XMLParser, $id_md, $md_data, $mdClosed){
+	private function _createAdditionalInfo($XMLParser, $id_md, $md_data){
 		$readOnly =
 		!is_null($XMLParser->getSource()) ?
 		true : (
@@ -494,7 +503,7 @@ class Application_Detail{
 		);
 		
 		$infoPanel = FormHelper::createInputs($XMLParser->getMasterDocumentInputs(), $md_data, $XMLParser->getMasterDocumentInnerValues(), true);
-		if(!$readOnly && !$mdClosed)
+		if(!$readOnly && !$this->_mdClosed)
 			$infoPanel .= "<div class=\"text-center\"><a href=\"?action=".Application_ActionManager::ACTION_EDIT_MD_INFO."&".Masterdocument::ID_MD."=".$id_md."\" class=\"btn btn-primary ".Application_ActionManager::ACTION_EDIT_MD_INFO."\">Modifica informazioni</a></div>";
 		
 		$this->_info = $infoPanel;
