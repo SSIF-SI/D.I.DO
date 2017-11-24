@@ -4,4 +4,7 @@
 	<input>destinatario</input>
 	<input>titolare dei fondi</input>
 	<input>responsabile di laboratorio</input>
+	<input>responsabile scientifico</input>
+	<input>nominativo</input>
+	<input>nominativo associato</input>
 </inputs>
