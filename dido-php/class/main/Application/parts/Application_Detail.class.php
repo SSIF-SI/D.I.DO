@@ -91,6 +91,7 @@ class Application_Detail{
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
 				
+				
 				// Se il documento ha il parametro onlyIfExists lo controllo se e solo se esiste già un documento col nome del parametro
 				if(isset($doc[XMLParser::ONLYIFEXISTS])){
 					$docExists = count(Utils::filterList($documents, Document::NOME, $docName)) > 0;
@@ -118,7 +119,7 @@ class Application_Detail{
 						break;				
 					}
 				} else {
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $this->_ICanManageIt, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
 						break;
 					$almostOne = true;
 					if((int)$doc[XMLParser::MIN_OCCUR])
@@ -258,8 +259,8 @@ class Application_Detail{
 			if(!is_null($XMLParser)){
 				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
-				
 			}
+
 			$documentClosed = $documents[$id_doc][Document::CLOSED] == ProcedureManager::CLOSED;
 			$IMustSignIt =
 				$documents[$id_doc][Application_DocumentBrowser::MUST_BE_SIGNED_BY_ME] &&
