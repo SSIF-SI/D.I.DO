@@ -89,6 +89,13 @@ class Application_Detail{
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
 				
+				// Se il documento ha il parametro onlyIfExists lo controllo se e solo se esiste già un documento col nome del parametro
+				if(isset($doc[XMLParser::ONLYIFEXISTS])){
+					$docExists = count(Utils::filterList($documents, Document::NOME, $docName)) > 0;
+// 					if(!$docExists) continue;
+				}
+				
+				
 				// è obbligatorio
 				if((int)$doc[XMLParser::MIN_OCCUR])
 					$mandatory++;
