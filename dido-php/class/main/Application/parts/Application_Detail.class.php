@@ -91,11 +91,10 @@ class Application_Detail{
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
 				
-				
 				// Se il documento ha il parametro onlyIfExists lo controllo se e solo se esiste già un documento col nome del parametro
 				if(isset($doc[XMLParser::ONLYIFEXISTS])){
 					$docExists = count(Utils::filterList($documents, Document::NOME, $docName)) > 0;
-// 					if(!$docExists) continue;
+ 					if(!$docExists) continue;
 				}
 				
 				
@@ -119,21 +118,16 @@ class Application_Detail{
 						break;				
 					}
 				} else {
+					$almostOne = true;
 					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
 						break;
-					$almostOne = true;
 					if((int)$doc[XMLParser::MIN_OCCUR])
 						$foundMandatory++;
-					
 				}
-				
 			}
-		
 		}
 		
 		if($mandatory == $foundMandatory || $this->_canMdBeClosed){
-			
-			
 			// Controllo che non ci siano input con valori obbligatori PRIMA della chiusura
 			$mandatoryInputsBeforeClosing = true;
 			
