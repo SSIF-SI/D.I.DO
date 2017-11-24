@@ -417,9 +417,12 @@ private function _allMyPendingDocuments(){
 					   !$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::IS_SIGNED_BY_ME])
 						continue;
 					   
-					if(!SignatureChecker::emptySignatures($specialSignatures->specialSignature)){
+					if(!SignatureChecker::emptySignatures($specialSignatures->specialSignature) && !empty($mySpecialSignatures)){
 						foreach($specialSignatures->specialSignature as $specialSignature){
 					   		$type = (string) $specialSignature[XMLParser::TYPE];
+					   		
+					   		if(!isset($mySpecialSignatures[$type]))
+					   			continue;
 					   		
 					   		if(!$alreadyLoaded)
 					   			$this->_SignatureChecker->load($filename);
@@ -451,9 +454,9 @@ private function _allMyPendingDocuments(){
 					   		
 					   			}
 					   				
+					   			// Se sono qui allora è umn documento che posso firmare io
 					   			if(!$signerFound){
-					   		
-					   				//Utils::printr("Domanda firmabile da me");
+					   				
 					   				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 					   				$this->_resultArray[self::LABEL_DOCUMENTS][$id_md][$id_doc][self::MUST_BE_SIGNED_BY_ME] = 1;
 					   		
