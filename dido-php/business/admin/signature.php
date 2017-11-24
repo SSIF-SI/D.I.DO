@@ -2,20 +2,20 @@
 require_once ("../../config.php");
 
 if (Utils::checkAjax ()) {
+	$ARP=new AjaxResultParser();
 	$classname = $_GET ['list'];
 	if ($classname != 'ApplySign')
-		$userRolesObj = new $classname ( DBConnector::getInstance () );
+		$classObj = new $classname ( DBConnector::getInstance () );
 	
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	if ($delete) {
 		unset ( $_GET ['list'], $_GET ['delete'] );
 		
-		die ( json_encode ( $userRolesObj->delete ( $_GET ) ) );
+		$ARP->encode($classObj->delete ( $_GET ) ->getErrors(true)) ;
 	}
 	
 	if (count ( $_POST ) != 0) {
-		
-		die ( json_encode ( $userRolesObj->save ( $_POST ) ) );
+		$ARP->encode($classObj->save ( $_POST )->getErrors(true));
 	} else {
 		$list = isset ( $_GET ['list'] ) ? $_GET ['list'] : null;
 		unset ( $_GET ['list'] );

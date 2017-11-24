@@ -38,7 +38,7 @@
 				</div>
 				<div class="panel-body">
 					<p class="text-center" >
-					<?php if(!$md[Masterdocument::CLOSED]):?>
+					<?php if(!$md[Masterdocument::CLOSED] && $Application_Detail->canIManageIt()):?>
 						<?php if ($Application_Detail->canMdBeClosed()):?>
 						<a class="btn btn-danger closeMd" href="?action=<?=Application_ActionManager::ACTION_CLOSE_MD?>&id_md=<?=$_GET[Masterdocument::ID_MD]?>"><i class="fa fa-lock"> </i> CHIUDI PROCEDIMENTO</a>
 						<?php else:?>

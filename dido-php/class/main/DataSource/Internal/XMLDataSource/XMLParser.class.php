@@ -23,6 +23,8 @@ class XMLParser implements IXMLParser {
 
 	const ONLYIFTYPE = "onlyIfType";
 
+	const ONLYIFEXISTS = "onlyIfExists";
+
 	const MIN_OCCUR = "minOccur";
 	
 	const MAX_OCCUR = "maxOccur";

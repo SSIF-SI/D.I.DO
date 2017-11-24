@@ -1,28 +1,28 @@
 <?php
 require_once ("../config.php");
 
-$userRolesObj = new UsersRoles ( DBConnector::getInstance () );
+$classObj = new UsersRoles ( DBConnector::getInstance () );
 
 if (Utils::checkAjax ()) {
 	$delete = isset ( $_GET ['delete'] ) ? true : false;
 	
 	if ($delete) {
 		unset ( $_GET ['delete'] );
-		die ( json_encode ( $userRolesObj->delete ( $_GET ) ) );
+		die ( json_encode ( $classObj->delete ( $_GET ) ) );
 	}
 	
 	if (count ( $_POST ) != 0) {
-		die ( json_encode ( $userRolesObj->save ( $_POST ) ) );
+		die ( json_encode ( $classObj->save ( $_POST ) ) );
 	} else {
 		if (count ( $_GET ) > 0)
-			$user_role = $userRolesObj->get ( $_GET );
+			$user_role = $classObj->get ( $_GET );
 		else {
-			$user_role = $userRolesObj->getStub ();
+			$user_role = $classObj->getStub ();
 		}
 		
 		$listPersone = ListHelper::persone ();
 		
-		$alreadyset = array_keys ( $userRolesObj->getAll ( "id_persona", 'id_persona' ) );
+		$alreadyset = array_keys ( $classObj->getAll ( "id_persona", 'id_persona' ) );
 		
 		foreach ( $alreadyset as $id_persona ) {
 			if (array_key_exists ( $id_persona, $listPersone ) && $id_persona != $user_role ['id_persona'])
@@ -34,7 +34,7 @@ if (Utils::checkAjax ()) {
 
 define (PAGE_TITLE, "Gestione Permessi");
 
-$list = $userRolesObj->getAll ( "id_persona, ruolo,id_ruolo" );
+$list = $classObj->getAll ( "id_persona, ruolo,id_ruolo" );
 $metadata = HTMLHelper::createMetadata ( $list, basename ( $_SERVER ['PHP_SELF'] ), array (
 		"id_persona",
 		"id_ruolo" 

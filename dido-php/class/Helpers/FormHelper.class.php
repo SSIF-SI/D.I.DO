@@ -81,14 +81,13 @@ class FormHelper {
 			
 			?>
 <div class="col-lg-4">
-        <?php ;if($readonly || !$editable):?>
+        <?php if($readonly || !$editable):?>
 		        <strong><?=ucfirst($key)?> <?php HTMLHelper::checkRequired($required);?></strong><br />
-		<em><?=empty($value) ? "&nbsp;" : $value?></em>
+		<em><?=empty($value) ? "&nbsp;" : nl2br($value)?></em>
 		
              
 			 
-			 <?php
-else :
+		<?php else :
 				if (! isset ( $input [XMLParser::VALUES] ) && ! isset ( $input [XMLParser::INNER_VALUES] ))
 					$input_html = HTMLHelper::input ( $type, $field, $label, $value, null, $required );
 				else {
