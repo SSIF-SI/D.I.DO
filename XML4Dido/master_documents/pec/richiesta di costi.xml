@@ -2,7 +2,7 @@
 
 <masterDocument name="richiesta di costi" owner="SAS - PC">
 	<inputs>
-		<input values="progetti" shortView="true">acronimo progetto</input>
+		<input values="progetti" shortView="true" autocomplete="true">acronimo progetto</input>
 		<input shortView="true">periodo</input>
 		<input innerValues="tipiElaborazione" shortView="true">tipo elaborazione</input>
 		<input values="gruppi" shortView="true">gruppo</input>

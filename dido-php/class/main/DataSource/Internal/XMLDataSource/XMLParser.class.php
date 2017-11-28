@@ -47,6 +47,8 @@ class XMLParser implements IXMLParser {
 	
 	const VALUES = "values";
 	
+	const AUTOCOMPLETE = "autocomplete";
+	
 	const SHORTWIEW = "shortView";
 	
 	const EDITABLE = "editable";

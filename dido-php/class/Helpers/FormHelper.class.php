@@ -7,7 +7,6 @@ class FormHelper {
 	private static $warnBox = "";
 
 	public static function createInputs($inputs, $data, $innerValues = null, $readonly = false) {
-		
 		if($innerValues){
 			$iValues = array();
 			foreach($innerValues as $i_Values){
@@ -55,6 +54,14 @@ class FormHelper {
 				$rValue = $value;
 				$callback = ( string ) $input [XMLParser::VALUES];
 				$values = ListHelper::$callback ();
+				
+				if(isset($input [XMLParser::AUTOCOMPLETE])){
+					$DD = new DocumentData(DBConnector::getInstance());
+					$DDList = Utils::getListfromField($DD->getBy(DocumentData::KEY, Common::fieldFromLabel($label), DocumentData::VALUE),DocumentData::VALUE, DocumentData::KEY);
+					$values = $values + $DDList;
+					asort($values);
+				}
+				
 				if (isset ( $input [XMLParser::SIGN_ROLE] )) {
 					$values_alt = ListHelper::persone ();
 				}
