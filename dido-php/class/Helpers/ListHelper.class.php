@@ -50,7 +50,7 @@ class ListHelper {
 			$list = Utils::filterList ( $list, "inizio", $data, Utils::OP_LESS_THAN . Utils::OP_EQUAL );
 			$list = Utils::filterList ( $list, "inizio", $data, Utils::OP_MORE_THAN . Utils::OP_EQUAL );
 		}
-		$list = Utils::getListfromField($list, "acronimo", "id");
+		$list = Utils::getListfromField($list, "acronimo", "acronimo");
 		return $list;
 	}
 
