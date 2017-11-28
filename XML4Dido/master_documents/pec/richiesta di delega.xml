@@ -8,7 +8,7 @@
 		<input shortView="true">tipo atto</input>
 		<input>bando</input>
 		<input innerValues="esitiRichiesteDiDelega" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
-		<input type="textarea">note</input>
+		<input type="textarea" mandatory="0">note</input>
 	</inputs>
 	<list>
 		<document name="richiesta di delega" minOccur="1" maxOccur="1">
