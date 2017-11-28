@@ -36,6 +36,7 @@ class SignatureChecker{
 				if ($sod->publicKey == $signature)
 				return true;
 			}
+			return false;
 		} else
 			return false;
 	}

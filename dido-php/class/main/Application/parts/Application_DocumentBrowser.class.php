@@ -108,7 +108,7 @@ class Application_DocumentBrowser{
 		return $this->
 			_allMyPendingDocuments()
 			->_docFilter(self::MUST_BE_SIGNED_BY_ME, 1)
-			->_docFilter(self::IS_SIGNED_BY_ME, $value)
+			->_docFilter(self::IS_SIGNED_BY_ME, 0)
 			->getResult();
 	}
 	
@@ -598,8 +598,7 @@ private function _allMyPendingDocuments(){
 				continue;
 			}
 			
-			
-			// Se sono proprietario segno la proprietà e salto il resto
+			// Se sono "proprietario" in quanto destinatario segno la proprietà e salto il resto
 			foreach($inputFields as $key){
 				if(isset($md_data[$key]) && $md_data[$key] == $uid){
 					$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
@@ -607,6 +606,12 @@ private function _allMyPendingDocuments(){
 				}
 			}
 			
+			// Se non ho ruoli taglio
+			if(!$this->_userManager->getUserRole()){
+				$this->_purge($id_md);
+				continue;
+			}
+				
 			// Se sono consultatore controllo che i MD siano legati a
 			// - i msiei gruppi
 			// - i miei progetti
@@ -619,10 +624,6 @@ private function _allMyPendingDocuments(){
 					}
 				}
 			}	
-			
-			// Se non ho ruoli taglio
-			if(!$this->_userManager->getUserRole())
-				$this->_purge($id_md);
 			
 		}
 		
@@ -654,7 +655,7 @@ private function _allMyPendingDocuments(){
 						}
 						}
 						*/
-					$this->_purge($id_md);
+				$this->_purge($id_md);
 			}
 		}
 	

@@ -34,26 +34,25 @@ class DocumentProcedureManager extends AProcedureManager {
 	}
 
 	public function update($data=null,$doc=null) {
-		if (empty ( $data ) && empty ( $doc ))
+		if ((is_null ( $data ) && is_null ( $doc )) || (empty ( $data ) && empty ( $doc )))
 			return false;
 			// Step 1. salvo i dati nella tabella document_data
 		
 		$this->getDBConnector ()->begin ();
-		if (! empty ( $data )) {
+		if (! is_null ( $data ) && ! empty ( $data )) {
 			$id_doc = current ( array_keys ( $data ) );
 			if (! $this->_saveDocData ( $data [$id_doc], $id_doc )) {
 				$this->getDBConnector ()->rollback ();
 				return false;
 			}
 		}
-		if (! empty ( $doc )) {
+		if (!is_null ( $doc ) && ! empty ( $doc )) {
 			if (! $this->_updateDocument ( $doc )) {
 				$this->getDBConnector ()->rollback ();
 				return false;
 			}
 		}
 		$this->getDBConnector ()->commit ();
-		
 		return true;
 	}
 
