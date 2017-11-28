@@ -76,7 +76,7 @@ class Common{
 	}
 	
 	public static function renderValue($value, $input){
-		if(isset($input[XMLParser::VALUES])){
+		if(isset($input[XMLParser::VALUES]) && !isset($input[XMLParser::AUTOCOMPLETE])){
 			$callback = ( string ) $input[XMLParser::VALUES];
 			$values = ListHelper::$callback();
 			if(isset($input[XMLParser::SIGN_ROLE])){

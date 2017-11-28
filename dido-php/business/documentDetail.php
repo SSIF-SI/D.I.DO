@@ -1,5 +1,6 @@
 <?php 
 $id_md = $_GET[Masterdocument::ID_MD];
+
 $Application_Detail = $Application->getApplicationPart("Detail");
 $md = $Application_DocumentBrowser->get($id_md);
 

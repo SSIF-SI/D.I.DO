@@ -54,12 +54,16 @@ class FormHelper {
 				$rValue = $value;
 				$callback = ( string ) $input [XMLParser::VALUES];
 				$values = ListHelper::$callback ();
-				
 				if(isset($input [XMLParser::AUTOCOMPLETE])){
-					$DD = new DocumentData(DBConnector::getInstance());
-					$DDList = Utils::getListfromField($DD->getBy(DocumentData::KEY, Common::fieldFromLabel($label), DocumentData::VALUE),DocumentData::VALUE, DocumentData::KEY);
-					$values = $values + $DDList;
-					asort($values);
+					$MDD = new MasterdocumentData(DBConnector::getInstance());
+					//TODO: Rifattorizzare la getBy del Crud
+					$MDDList = Utils::getListfromField($MDD->getBy(MasterdocumentData::KEY, Utils::apici(strtolower($label)), MasterdocumentData::VALUE),MasterdocumentData::VALUE, MasterdocumentData::VALUE);
+					$values = $values + $MDDList;
+					uasort($values, function($a, $b){
+						$a = strtolower($a);
+						$b = strtolower($b);
+						return $a == $b ? 0 : ($a > $b ? 1 : -1);
+					});
 				}
 				
 				if (isset ( $input [XMLParser::SIGN_ROLE] )) {
@@ -68,7 +72,10 @@ class FormHelper {
 				
 				$old = ! isset ( $values [$value] );
 				
-				$value = isset ( $values [$value] ) ? $values [$value] : $values_alt [$value];
+				$value = 
+					isset($input [XMLParser::AUTOCOMPLETE]) ? 
+					$rValue : 
+					(isset ( $values [$value] ) ? $values [$value] : $values_alt [$value]);
 			}
 			
 			if(isset($input[XMLParser::INNER_VALUES]) && !is_null($innerValues)){
@@ -95,9 +102,11 @@ class FormHelper {
              
 			 
 		<?php else :
-				if (! isset ( $input [XMLParser::VALUES] ) && ! isset ( $input [XMLParser::INNER_VALUES] ))
-					$input_html = HTMLHelper::input ( $type, $field, $label, $value, null, $required );
-				else {
+				if ((! isset ( $input [XMLParser::VALUES] ) && ! isset ( $input [XMLParser::INNER_VALUES] )) || isset($input[XMLParser::AUTOCOMPLETE])){
+					$class = isset($input[XMLParser::AUTOCOMPLETE]) ? "ui-autocomplete-input" : null;
+					$acValues = isset($input[XMLParser::AUTOCOMPLETE]) ? $values : null;
+					$input_html = HTMLHelper::input ( $type, $field, $label, $value, $class, $required, false, $acValues );
+				}else {
 					if ($old == false || is_null ( $data [$key] ))
 						$input_html = HTMLHelper::select ( $field, $label, $values, $rValue, null, false, $required );
 					else

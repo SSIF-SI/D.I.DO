@@ -31,6 +31,7 @@ if(isset($_GET[Masterdocument::ID_MD])){
 } else {
 	$method = $addData[$_GET['status']]['method'];
 	$list = $Application_DocumentBrowser->$method();
+	
 	if(isset($addData[$_GET['status']]['filter'])){
 		
 		$filter = $addData[$_GET['status']]['filter'];

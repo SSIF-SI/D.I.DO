@@ -26,7 +26,7 @@ class HTMLHelper {
 		return ob_get_clean ();
 	}
 
-static function input($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false) {
+static function input($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false, $acValues = null) {
 		ob_start ();
 		if ($type == 'hidden' || $type == 'file') :
 			if ($type != 'hidden' && ! is_null ( $label )) :
@@ -39,7 +39,7 @@ static function input($type, $name, $label, $value = null, $class = null, $requi
 			endif;
 			echo self::lineInput ( $type, $name, $label, $value, $class, $required, $isImported );
 		 else :
-			$innerInput = $type == 'textarea' ? self::textareaInput ( $name, $label, $value, $required, $isImported ) : self::lineInput ( $type, $name, $label, $value, $class, $required, $isImported );
+			$innerInput = $type == 'textarea' ? self::textareaInput ( $name, $label, $value, $required, $isImported ) : self::lineInput ( $type, $name, $label, $value, $class, $required, $isImported, $acValues );
 			?>
 <div class="form-group <?=$class?>">
 <?php 	if($type != 'hidden'):?>	
@@ -164,17 +164,24 @@ static function input($type, $name, $label, $value = null, $class = null, $requi
 		return ob_get_clean ();
 	}
 
-	private static function lineInput($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false) {
+	private static function lineInput($type, $name, $label, $value = null, $class = null, $required = false, $isImported = false, $autocompleteValues = null) {
 		$more = $type == 'file' ? 'data-show-upload="false" data-allowed-file-extensions=\'["pdf", "p7m"]\'' : null;
 		$more .= $isImported ? " readonly=\"readonly\"" : null;
 		$required = $required ? "required=\"required\"" : null;
 		$class = $type == "hidden" ? null : "class=\"form-control $class\"";
 		
+		$autocompleter = "";
+		
+		if(!is_null($autocompleteValues)){
+			$autocompleteValues = array_map('Utils::apici',$autocompleteValues);
+			$autocompleter = sprintf('<script>$( "#%s" ).autocomplete({source: [%s]});</script>',$name, join(",", $autocompleteValues));
+		}
+		
 		if ($imported === true && $type == "data") {
 			$valueMod = Utils::convertDateFormat ( $value, "d/m/Y", DB_DATE_FORMAT );
 			return "<input type=\"$type\" $class value=\"$value\" linkto=\"$name\" $more $required/>\n" . "<input type=\"hidden\" name=\"$name\" id=\"$name\" value=\"$valueMod\"/>";
 		} else
-			return "<input type=\"$type\" $class name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>";
+			return "<input type=\"$type\" $class name=\"$name\" id=\"$name\" value=\"$value\" $required $more/>".$autocompleter;
 	}
 
 	private static function textareaInput($name, $label, $value = null, $required = false, $isImported = false) {
