@@ -63,8 +63,8 @@ class Application_Detail{
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			$mandatory = 0;
-			$foundMandatory = 0;
-			
+			$foundMandatory = 0;				
+				
 			if(isset($doc[XMLParser::MD])){
 				
 				// il documento in realtà è un Master Document esterno
@@ -119,7 +119,7 @@ class Application_Detail{
 					}
 				} else {
 					$almostOne = true;
-					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $XMLParser->getDocumentInputs($docName), $XMLParser, $MDSigners))
+					if(!$this->_parse($listOnDb, (int)$doc[XMLParser::MIN_OCCUR], (int)$doc[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $XMLParser->getDocumentInputs($docName),(boolean)$doc[XMLParser::PRIVATE_DOC], $XMLParser, $MDSigners))
 						break;
 					if((int)$doc[XMLParser::MIN_OCCUR])
 						$foundMandatory++;
@@ -158,9 +158,8 @@ class Application_Detail{
 		$docName = $docToSearch[XMLParser::DOC_NAME];
 		$listOnDb = Utils::filterList($documents, Document::NOME, $docName);
 		
-		
 		if(count($listOnDb)){
-			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $docInputs);
+			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $docInputs,(boolean)$docToSearch[XMLParser::PRIVATE_DOC]);
 		} else {
 			if($this->_userManager->isGestore()){
 				$this->_flowResults->addTimelineElement(
@@ -240,16 +239,15 @@ class Application_Detail{
 		return true;
 	}
 	
-	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $docInputs, $XMLParser= null, $MDSigners = null){
+	private function _parse($listOnDb, $lowerLimit, $upperLimit, $md, $documents, $documents_data, $innerValues, $docInputs, $private, $XMLParser= null, $MDSigners = null){
 		$id_md = $md[Masterdocument::ID_MD];
-		
+		$private = is_null($private)? false : $private;
 		$this->_mdClosed = $md[Masterdocument::CLOSED] != ProcedureManager::OPEN;
-			
+
 		foreach($listOnDb as $id_doc => $docData){
-			
 			$docName = $documents[$id_doc][Document::NOME];
 			$docType = $documents[$id_doc][Document::TYPE];
-
+			
 			if(!is_null($XMLParser)){
 				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
@@ -287,7 +285,8 @@ class Application_Detail{
 			if( !$documentClosed && ( $this->_ICanManageIt || $IMustSignIt ) )
 				array_push($panelButtons, new FlowTimelineButtonUpload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}&".XMLParser::DOC_NAME."=$docName"));
 				
-			// Di default lo posso scaricare sempre
+			// Se private_doc è true posso scaricare solamente se sICanManageIT altrimente posso scaricarlo. Se private è false posso scaricarlo sempre
+			if(!$private || $this->_ICanManageIt)
 			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 
 			if($this->_ICanManageIt){

@@ -5,6 +5,7 @@
 		<input shortView="true">titolo</input>
 		<input values="persone" shortView="true">responsabile scientifico</input>
 		<input values="areeProgettuali" shortView="true">area progettuale</input>
+		<input values="gruppi" shortView="true">gruppo</input>
 		<input shortView="true">tipo atto</input>
 		<input>bando</input>
 		<input innerValues="esitiRichiesteDiDelega" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>

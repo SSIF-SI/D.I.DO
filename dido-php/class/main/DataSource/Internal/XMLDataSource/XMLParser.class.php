@@ -31,6 +31,9 @@ class XMLParser implements IXMLParser {
 	
 	const CLOSING_POINT = "closingPoint";
 	
+	const PRIVATE_DOC = "private";
+	
+	
 	// Signature params 
 	const ROLE = "role";
 

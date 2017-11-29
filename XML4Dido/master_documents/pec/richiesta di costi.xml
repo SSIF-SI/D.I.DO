@@ -8,15 +8,10 @@
 		<input values="gruppi" shortView="true">gruppo</input>
 	</inputs>
 	<list>
-		<document name="richiesta di costi" minOccur="1" maxOccur="1">
+		<document name="richiesta di costi" minOccur="1" maxOccur="1" private="true">
 			<signatures>
 				<signature role="DIR" />
 			</signatures>
-		</document>
-		<document name="allegato" minOccur="0">
-			<inputs>
-				<input>titolo</input>
-			</inputs>
 		</document>
 		<document name="risposta PMS" minOccur="1" />
 	</list>
