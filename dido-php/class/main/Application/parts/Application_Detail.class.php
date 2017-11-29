@@ -287,7 +287,7 @@ class Application_Detail{
 				
 			// Se private_doc è true posso scaricare solamente se sICanManageIT altrimente posso scaricarlo. Se private è false posso scaricarlo sempre
 			if(!$private || $this->_ICanManageIt)
-			array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
+				array_push($panelButtons, new FlowTimelineButtonDownload("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DOWNLOAD."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 
 			if($this->_ICanManageIt){
 			// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
