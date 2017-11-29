@@ -298,6 +298,11 @@ class Application_Detail{
 				if(!$lowerLimit || ($lowerLimit >= 1 && count($listOnDb) > $lowerLimit))
 					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
+				//Se il master Document non è chiuso posso settare il documento come privato
+				if(!$this->_mdClosed )
+					array_push($panelButtons, new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}","fa-eye", "Visibile"));
+				
+				
 				// Il documento se non ci sono errori e non è già chiuso lo posso chiudere
 				if(!$documentClosed && !$docSignatures['errors'])
 					array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));

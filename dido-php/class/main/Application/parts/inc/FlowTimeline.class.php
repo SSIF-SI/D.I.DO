@@ -233,6 +233,13 @@ class FlowTimelineButtonCloseDocument extends AFlowTimelinePanelButton{
 	}
 }
 
+class FlowTimelineButtonTogglePrivate extends AFlowTimelinePanelButton{
+	public function __construct($href, $icon="fa-eye", $text="Visibile"){
+		$this->_button = sprintf(self::HTML, "success", "private-doc", $href, "fa-eye", "Visibile");
+	}
+}
+
+
 class FlowTimelineButtonAdd extends AFlowTimelinePanelButton{
 	public function __construct($href){
 		$this->_button = sprintf(self::HTML, "success", "add-doc",$href, "fa-plus", "Nuovo");

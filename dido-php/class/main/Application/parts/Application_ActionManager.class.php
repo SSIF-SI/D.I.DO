@@ -19,6 +19,8 @@ class Application_ActionManager {
 	const ACTION_CLOSE_DOC = "closedocument";
 	const ACTION_CLOSE_MD = "closemd";
 	const ACTION_EDIT_MD_INFO = "editMdInfo";
+	const ACTION_SETPRIVATE = "setPrivate";
+	
 	
 	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource, IXMLDataSource $XMLDataSource){
 		$this->_Application_Detail = $App_Detail;
@@ -388,6 +390,12 @@ class Application_ActionManager {
 		die();
 	}
 	
+	public function setPrivate(){
+		
+		Utils::printr($_GET);
+		
+	}
+	
 	private function _getMD($GET){
 		if(!isset($GET[Masterdocument::ID_MD]))
 			return new ErrorHandler("Parametri mancanti");
@@ -400,6 +408,8 @@ class Application_ActionManager {
 			
 		return $md;
 	}
+	
+	
 
 }
 ?>

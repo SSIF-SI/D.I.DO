@@ -15,6 +15,9 @@ class Document extends Crud {
 	const EXTENSION = "extension";
 
 	const IMPORTED_FILE_NAME = "imported_file_name";
+	
+	const PRIVATE_DOC = "private";
+	
 
 	protected $TABLE = "documents";
 
