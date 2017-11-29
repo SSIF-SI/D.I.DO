@@ -589,7 +589,7 @@ private function _allMyPendingDocuments(){
 		$uid = $this->_userManager->getFieldToWriteOnDb();
 		
 		$myServices = $this->_userManager->getUser()->getGruppi();
-		$myProjects = $this->_userManager->getUser()->getProgetti();
+		//$myProjects = $this->_userManager->getUser()->getProgetti();
 		
 		foreach($this->_resultArray[self::LABEL_MD_DATA] as $id_md => $md_data){
 			// se è già stata assegnata la proprietà ed è già mio saltro tutto 
@@ -618,7 +618,7 @@ private function _allMyPendingDocuments(){
 			// Se si, segno la proprietà e salto il resto
 			if($this->_userManager->isConsultatore()){
 				foreach($md_data as $k=>$v){
-					if(in_array($v,$myServices) || in_array($v, $myProjects)){
+					if(in_array($v,$myServices)/* || in_array($v, $myProjects)*/){
 						$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
 						continue 2;
 					}
