@@ -26,6 +26,8 @@ class Personale {
 
 	private $_persone;
 
+	private $_personale;
+
 	private $_cfId;
 
 	private $_gruppi;
