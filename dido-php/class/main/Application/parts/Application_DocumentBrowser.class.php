@@ -598,7 +598,7 @@ private function _allMyPendingDocuments(){
 				continue;
 			}
 			
-			// Se sono "proprietario" in quanto destinatario segno la proprietà e salto il resto
+			// Se sono "proprietario" in quanto destinatario, anche senza un riolo specifico, lo vedo
 			foreach($inputFields as $key){
 				if(isset($md_data[$key]) && $md_data[$key] == $uid){
 					$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
@@ -612,9 +612,14 @@ private function _allMyPendingDocuments(){
 				continue;
 			}
 				
+			// Se sono gestore lo vedo sempre
+			if($this->_userManager->isGestore(true)){
+				$this->_resultArray[self::LABEL_MD][$id_md][self::IS_MY_DOC] = 1;
+				continue;
+			}
+			
 			// Se sono consultatore controllo che i MD siano legati a
 			// - i msiei gruppi
-			// - i miei progetti
 			// Se si, segno la proprietà e salto il resto
 			if($this->_userManager->isConsultatore()){
 				foreach($md_data as $k=>$v){
@@ -625,8 +630,10 @@ private function _allMyPendingDocuments(){
 				}
 			}	
 			
+			
+				
+			
 		}
-		
 		
 		return $this;
 	}
