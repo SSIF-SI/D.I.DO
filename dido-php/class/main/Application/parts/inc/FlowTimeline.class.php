@@ -96,14 +96,18 @@ class FlowTimelinePanel{
 	private $_subtitle;
 	private $_buttons;
 	private $_class;
+	private	$_privateBTN;
 	private $_panel = 
 <<<TLP
 	<div class="timeline-panel %s">
 		<div class="timeline-heading">
 			<div class='row'>					
-				<div class="col-lg-4">
-					<h4 class="timeline-title">%s</h4>
+				<div class="col-lg-2">
+					<h4 class="timeline-title">%s</h4> 
 					<h5>%s</h5>
+				</div>
+				<div class="col-lg-2 text-left">
+					%s
 				</div>
 				<div class="col-lg-8 text-right">
 					%s
@@ -116,9 +120,10 @@ class FlowTimelinePanel{
 		</div>
 	</div>
 TLP;
-	public function __construct($title, $subtitle = null, $buttons, FlowTimelinePanelBody $body, $class = null){
+	public function __construct($title, $privateBTN=null, $subtitle = null, $buttons, FlowTimelinePanelBody $body, $class = null){
 		$this->_buttons = $buttons;
 		$this->_title = ucfirst($title);
+		$this->_privateBTN=$privateBTN;
 		$this->_subtitle = is_null($subtitle) ? null : ucfirst($subtitle);
 		$this->_body = $body;
 		$this->_class = $class;
@@ -126,12 +131,15 @@ TLP;
 	
 	public function render(){
 		$buttonsHTML = "";
+		
+		$privateBTN=is_null($this->_privateBTN)?"":$this->_privateBTN->get();
+		
 		if(count($this->_buttons)){
 			foreach ($this->_buttons as $button)
 				$buttonsHTML .= $button->get();
 		}
 		
-		printf($this->_panel, $this->_class, $this->_title, $this->_subtitle, $buttonsHTML, $this->_body->render());
+		printf($this->_panel, $this->_class, $this->_title, $this->_subtitle, $privateBTN, $buttonsHTML, $this->_body->render());
 	}
 	
 }

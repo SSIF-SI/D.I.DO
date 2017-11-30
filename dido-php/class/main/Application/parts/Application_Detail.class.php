@@ -223,7 +223,7 @@ class Application_Detail{
 					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
 			}
 			
-			$panel = new FlowTimelinePanel($docName, null, $panelButtons, $panelBody, "mdLink");
+			$panel = new FlowTimelinePanel($docName, null ,null, $panelButtons, $panelBody, "mdLink");
 			
 			$badge =
 				new FlowTimelineBadgeSuccess();
@@ -248,7 +248,8 @@ class Application_Detail{
 			$docName = $documents[$id_doc][Document::NOME];
 			$docType = $documents[$id_doc][Document::TYPE];
 			$docPrivacy= $documents[$id_doc][Document::PRIVATE_DOC];
-				
+			$privateBTN=null;
+			
 			if(!is_null($XMLParser)){
 				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
@@ -301,7 +302,7 @@ class Application_Detail{
 				
 				//Se il master Document non è chiuso posso settare il documento come privato
 				if(!$this->_mdClosed ){
-					array_push($panelButtons, new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}",$docPrivacy));
+					$privateBTN=new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}",$docPrivacy);
 				}
 				
 				
@@ -309,8 +310,9 @@ class Application_Detail{
 				if(!$documentClosed && !$docSignatures['errors'])
 					array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 			}
-				
-			$panel = new FlowTimelinePanel($docName, $docType, $panelButtons, $panelBody);
+			
+
+			$panel = new FlowTimelinePanel($docName,$privateBTN, $docType, $panelButtons, $panelBody);
 				
 			$badge =
 				($signatures && $docSignatures['errors']) || !$documentClosed ?
