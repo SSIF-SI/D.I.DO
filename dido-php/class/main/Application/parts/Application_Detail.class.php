@@ -302,7 +302,7 @@ class Application_Detail{
 				
 				//Se il master Document non è chiuso posso settare il documento come privato
 				if(!$this->_mdClosed ){
-					$privateBTN=new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}",$docPrivacy);
+					$privateBTN = new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}",$docPrivacy);
 				}
 				
 				
@@ -311,9 +311,8 @@ class Application_Detail{
 					array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 			}
 			
-
 			$panel = new FlowTimelinePanel($docName,$privateBTN, $docType, $panelButtons, $panelBody);
-				
+			
 			$badge =
 				($signatures && $docSignatures['errors']) || !$documentClosed ?
 				new FlowTimelineBadgeWarning() :

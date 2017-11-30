@@ -21,6 +21,9 @@ class Application_ActionManager {
 	const ACTION_EDIT_MD_INFO = "editMdInfo";
 	const ACTION_SETPRIVATE = "setPrivate";
 	
+	const LABEL_PRIVATE = "Privato";
+	const LABEL_VISIBLE = "Visibile";
+	
 	
 	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource, IXMLDataSource $XMLDataSource){
 		$this->_Application_Detail = $App_Detail;
@@ -402,11 +405,11 @@ class Application_ActionManager {
 		if(!$doc[Document::PRIVATE_DOC] && $result){
 			$newclass = "btn btn-danger private-doc";
 			$newspan="fa fa-eye-slash fa-1x fa-fw";
-			$spantext="Private";
+			$spantext= self::LABEL_PRIVATE;
 		}else{
 		 	$newclass= "btn btn-success private-doc";
 		 	$newspan="fa fa-eye fa-1x fa-fw";
-		 	$spantext="Visibile";
+		 	$spantext= self::LABEL_VISIBLE;
 		 }
 		$ARP=new AjaxResultParser();
 		$ARP->encode(["result" => $result, "newclass" => $newclass,"newspan"=>$newspan,"spantext"=>$spantext] );
