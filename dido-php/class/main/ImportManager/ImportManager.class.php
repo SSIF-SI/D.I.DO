@@ -129,7 +129,8 @@ class ImportManager {
 		
 		$XMLParser->checkIfMustBeLoaded($docToBeGenerated);
 		$doc = $this->_generateDocRecord ( ( string )$docToBeGenerated [XMLParser::DOC_NAME], $md [Masterdocument::ID_MD], "pdf", $import_filename_field );
-		
+		// Documento di default visibile
+		$doc[Document::PRIVATE_DOC] = ProcedureManager::VISIBLE;
 		// Se è un documento allegato deve essere chiuso di default
 		if(!is_null($docData)){
 			$doc[Document::IMPORTED_FILE_NAME] = $import_filename_field;

@@ -5,7 +5,6 @@ class DocumentProcedureManager extends AProcedureManager {
 	public function create($main, $data = null) {
 		if (empty ( $main ))
 			return false;
-			
 			// Deve essere fatto tutto in una singola transazione
 		$this->getDBConnector()->begin ();
 		// Step 1. Salvo il record nella tabella document

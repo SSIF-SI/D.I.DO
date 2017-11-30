@@ -15,6 +15,8 @@ class ProcedureManager implements IProcedureManager {
 	const CLOSED = 1;
 	
 	const INCOMPLETE = - 1;
+	
+	const VISIBLE = 0;
 
 	public function __construct(IDBConnector $dbConnector, IFTPDataSource $ftpDataSource) {
 		$this->_dbConnector = $dbConnector;

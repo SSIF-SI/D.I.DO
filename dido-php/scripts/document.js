@@ -76,14 +76,20 @@ $(document).ready(function(){
 	$('a.private-doc').click(function (e) {
 		e.preventDefault();
 		var href = $(this).attr("href");
+		var that =this; 
+		var oldClass=$(this).find("span").first().attr("class");
+		$(this).find("span").first().attr("class","fa fa-refresh fa-spin fa-1x fa-fw");
 		$.ajax({
 			url: href, 
 			type: "GET", 
 			dataType: "json",
 			success: function( result ) {
-				location.reload();
+				$(that).removeClass();
+				$(that).addClass(result["newclass"]);
+				$(that).html("<span class=\""+result["newspan"]+"\"></span> "+result["spantext"]);
 			},
 		error: function(){
+			$(that).find("span").first().attr('class',oldClass);
 			alert("Errore imprevisto");
 		}
 	});

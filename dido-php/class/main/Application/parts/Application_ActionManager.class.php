@@ -200,13 +200,13 @@ class Application_ActionManager {
 					SignatureChecker::emptySignatures($signatures->signature) && SignatureChecker::emptySignatures($specialSignatures->specialSignature) ?
 					ProcedureManager::CLOSED :
 					ProcedureManager::OPEN;
-						
 				$doc = Utils::stubFill($doc->getStub(), [
 						Document::ID_MD => $md[Masterdocument::ID_MD],
 						Document::NOME	=> $docName,
 						Document::TYPE	=> $_POST[Document::TYPE],
 						Document::EXTENSION => $extension,
-						Document::CLOSED => $closed
+						Document::CLOSED => $closed,
+						Document::PRIVATE_DOC => ProcedureManager::VISIBLE
 				]);
 			
 				unset($_POST[Document::TYPE]);
@@ -398,8 +398,18 @@ class Application_ActionManager {
 		
 		$doc = new Document($this->_dbConnector);
 		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
+		$result=$this->_ProcedureManager->setPrivate($doc);
+		if(!$doc[Document::PRIVATE_DOC] && $result){
+			$newclass = "btn btn-danger private-doc";
+			$newspan="fa fa-eye-slash fa-1x fa-fw";
+			$spantext="Private";
+		}else{
+		 	$newclass= "btn btn-success private-doc";
+		 	$newspan="fa fa-eye fa-1x fa-fw";
+		 	$spantext="Visibile";
+		 }
 		$ARP=new AjaxResultParser();
-		$ARP->encode($this->_ProcedureManager->setPrivate($doc));
+		$ARP->encode(["result" => $result, "newclass" => $newclass,"newspan"=>$newspan,"spantext"=>$spantext] );
 		
 				
 	}
