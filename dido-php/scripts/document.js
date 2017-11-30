@@ -72,6 +72,22 @@ $(document).ready(function(){
 			});
 		}
 	});
+	
+	$('a.private-doc').click(function (e) {
+		e.preventDefault();
+		var href = $(this).attr("href");
+		$.ajax({
+			url: href, 
+			type: "GET", 
+			dataType: "json",
+			success: function( result ) {
+				location.reload();
+			},
+		error: function(){
+			alert("Errore imprevisto");
+		}
+	});
+	});
 
 	function paesrQueryString(querystring) {
 	  // remove any preceding url and split

@@ -391,9 +391,17 @@ class Application_ActionManager {
 	}
 	
 	public function setPrivate(){
+		if (!isset($_GET[Document::ID_DOC]))
+			return new ErrorHandler("Parametri mancanti");
+		$result = $this->_getMd($_GET);
+		extract ($result);
 		
-		Utils::printr($_GET);
+		$doc = new Document($this->_dbConnector);
+		$doc=Utils::stubFill($doc->getStub(),$documents[$_GET[Document::ID_DOC]]);
+		$ARP=new AjaxResultParser();
+		$ARP->encode($this->_ProcedureManager->setPrivate($doc));
 		
+				
 	}
 	
 	private function _getMD($GET){

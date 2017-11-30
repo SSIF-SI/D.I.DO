@@ -79,6 +79,20 @@ class DocumentProcedureManager extends AProcedureManager {
 		}
 		return true;
 	}
+	
+	public function setPrivate($doc){
+	if (empty ( $doc ))
+			return false;
+		if($doc [Document::PRIVATE_DOC])
+			$doc [Document::PRIVATE_DOC] = 0;
+		else 
+			$doc [Document::PRIVATE_DOC] = 1;
+		$Document = new Document( $this->getDbConnector () );
+		$result = $Document->save ( $doc );
+		
+		return $result->getErrors () === false;
+		
+	}
 
 	private function _saveDocData($data, $id_doc) {
 		$DocumentData = new DocumentData ( $this->getDBconnector () );
@@ -91,5 +105,7 @@ class DocumentProcedureManager extends AProcedureManager {
 		$result = $Document->save( $doc);
 		return $result->getErrors () === false;
 	}
+	
+	
 }
 ?>

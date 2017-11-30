@@ -247,7 +247,8 @@ class Application_Detail{
 		foreach($listOnDb as $id_doc => $docData){
 			$docName = $documents[$id_doc][Document::NOME];
 			$docType = $documents[$id_doc][Document::TYPE];
-			
+			$docPrivacy= $documents[$id_doc][Document::PRIVATE_DOC];
+				
 			if(!is_null($XMLParser)){
 				$signatures = $XMLParser->getDocumentSignatures($docName, $docType);
 				$specialSignatures = $XMLParser->getDocumentSpecialSignatures($docName, $docType);
@@ -299,8 +300,9 @@ class Application_Detail{
 					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 				
 				//Se il master Document non è chiuso posso settare il documento come privato
-				if(!$this->_mdClosed )
-					array_push($panelButtons, new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}","fa-eye", "Visibile"));
+				if(!$this->_mdClosed ){
+					array_push($panelButtons, new FlowTimelineButtonTogglePrivate("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_SETPRIVATE."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}",$docPrivacy));
+				}
 				
 				
 				// Il documento se non ci sono errori e non è già chiuso lo posso chiudere

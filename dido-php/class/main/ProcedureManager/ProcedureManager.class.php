@@ -163,6 +163,10 @@ class ProcedureManager implements IProcedureManager {
 	public function checkIfDocMustBeClosed($doc){
 		
 	}
+	
+	public function setPrivate($doc) {
+		return $this->_DPManager->setPrivate($doc);
+	}
 
 	private function uploadFile($doc, $filePath, $repositoryPath) {
 		$filename = $repositoryPath . Common::getFilenameFromDocument ( $doc );
