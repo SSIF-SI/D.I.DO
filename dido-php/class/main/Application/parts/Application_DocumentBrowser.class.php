@@ -86,7 +86,7 @@ class Application_DocumentBrowser{
 	}
 	
 	public function getLinkableMd($md_name){
-		$mds = Utils::getListfromField($this->_Masterdocument->getBy(Masterdocument::NOME, Utils::apici($md_name)),null,Masterdocument::ID_MD);
+		$mds = Utils::getListfromField($this->_Masterdocument->getBy(Masterdocument::NOME, $md_name),null,Masterdocument::ID_MD);
 		//$id_mds = Utils::getListfromField(Utils::filterList($id_mds, Masterdocument::CLOSED, ProcedureManager::CLOSED), Masterdocument::ID_MD);
 		if(empty($mds)) return null;
 // 		flog("md: %o",$mds);
@@ -724,7 +724,7 @@ private function _allMyPendingDocuments(){
 		if (count ( $md_ids )) {
 			$this->_resultArray [self::LABEL_MD_DATA] = $this->_compact ( 
 				Utils::groupListBy ( 
-					$this->_MasterdocumentData->getBy ( MasterdocumentData::ID_MD, join ( ",", $md_ids ) ), MasterdocumentData::ID_MD 
+					$this->_MasterdocumentData->getBy ( MasterdocumentData::ID_MD, $md_ids), MasterdocumentData::ID_MD 
 				)
 			);
 				
@@ -743,7 +743,7 @@ private function _allMyPendingDocuments(){
 				);
 				$this->_resultArray [self::LABEL_DOCUMENTS_DATA] = $this->_compact ( 
 					Utils::groupListBy ( 
-						$this->_DocumentData->getBy ( DocumentData::ID_DOC, join ( ",", array_keys ( $documents ) ) ), DocumentData::ID_DOC 
+						$this->_DocumentData->getBy ( DocumentData::ID_DOC, array_keys ( $documents )  ), DocumentData::ID_DOC 
 					) 
 				);
 			}

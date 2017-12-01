@@ -57,7 +57,7 @@ class FormHelper {
 				if(isset($input [XMLParser::AUTOCOMPLETE])){
 					$MDD = new MasterdocumentData(DBConnector::getInstance());
 					//TODO: Rifattorizzare la getBy del Crud
-					$MDDList = Utils::getListfromField($MDD->getBy(MasterdocumentData::KEY, Utils::apici(strtolower($label)), MasterdocumentData::VALUE),MasterdocumentData::VALUE, MasterdocumentData::VALUE);
+					$MDDList = Utils::getListfromField($MDD->getBy(MasterdocumentData::KEY, strtolower($label), MasterdocumentData::VALUE),MasterdocumentData::VALUE, MasterdocumentData::VALUE);
 					$values = $values + $MDDList;
 					uasort($values, function($a, $b){
 						$a = strtolower($a);

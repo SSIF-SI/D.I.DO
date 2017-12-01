@@ -12,12 +12,12 @@ $XDS = new XMLDataSource ();
 $XMLParser = new XMLParser ();
 $D->useView ( true );
 
-if (isset ( $_GET [SharedDocumentConstants::CLOSED] )) {
-	$list = $D->getBy ( SharedDocumentConstants::CLOSED, $_GET [SharedDocumentConstants::CLOSED], "id_md" );
+if (! isset ( $_GET [Document::PRIVATE_DOC] )) {
+	$list = $D->getBy ( SharedDocumentConstants::CLOSED, $_GET [SharedDocumentConstants::CLOSED], Masterdocument::ID_MD );
 	$listIdMdNome = $D->getRealDistinct ( $className::NOME, SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED], $className::NOME );
 	$listXMLSource = $D->getRealDistinct ( "xml", SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED], "xml" );
 } else {
-	$list = $D->getAll ( "id_md" );
+	$list = $D->getAll ( Masterdocument::ID_MD );
 	$listXMLSource = $D->getRealDistinct ( "xml" );
 	$listIdMdNome = $D->getRealDistinct ( $className::NOME );
 }
