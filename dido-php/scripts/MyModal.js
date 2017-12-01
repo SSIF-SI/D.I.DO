@@ -17,7 +17,7 @@ var MyModal = {
 						'<div class="modal-footer">'+
 						'<div style="visibility:hidden" class="progress progress-striped active"><div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div></div>' +
 						'<div class="modal-result"></div>'+
-						'<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-backward fa-1x fa-fw"></span> Torna indietro</button>'+
+						'<button type="button" class="btn btn-default" data-dismiss="modal"><span class="fa fa-backward fa-1x fa-fw"></span> Chiudi</button>'+
 						'</div>'+
 						'</div>'+
 						'</div>'+

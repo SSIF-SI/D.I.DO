@@ -3,37 +3,40 @@ require_once("../config.php");
 if(!Utils::checkAjax()) die();
 
 $className = $_GET[Search::SOURCE];
+$filterClass = "FilterType".$className;
 
-$class = new ReflectionClass($className);
-$static = $class->getConstants();
-
-$A = new Application();
-$D = new $className($A->getDBConnector());
+$D = new $className($Application->getDBConnector());
 
 $field = $className::NOME;
+$typesOnDb = Utils::getListfromField($D->useView(true)->getRealDistinct($field),SharedDocumentConstants::NOME);
+//$closed = isset($_GET[SharedDocumentConstants::CLOSED]) ? $_GET[SharedDocumentConstants::CLOSED] : null; 
 
-if(isset($static['TYPE']))
-	$field .= ",".$className::TYPE;
+$ADB = $Application->getApplicationPart(Application::DOCUMENTBROWSER);
 
-$types = $D->useView(false)->getRealDistinct($field);
+$types = $filterClass::getTypes($ADB, $className, $typesOnDb);
+ 
 ?>
 
 <form>
 
-	<fieldset>
-		<legend>Tipi di Procedimento</legend>
+	
 <?php 
-	foreach($types as $k=>$type):
-		$label = ucwords($type[SharedDocumentConstants::NOME].(isset($type[Masterdocument::TYPE]) ? " - ".$type[Masterdocument::TYPE] : null)); 
+	if(count($types)) foreach($types as $cat=>$typeList):
 ?>
-			<div id="ft-<?=$k?>" class="checkbox checkbox-success checkbox-circle">
-            	<input id="type-<?=$k?>" class="styled" type="checkbox" value="<?=$label?>">
-            	<label for="type-<?=$k?>"><?=$label?></label>
-			</div>
+	<fieldset>
+		<legend><?= ucfirst($cat) ?></legend>
+	<?php foreach($typeList as $k=>$label): $label = ucfirst($label)?> 
+	
+		<div id="ft-<?=$k?>" class="checkbox checkbox-success checkbox-circle">
+	       	<input id="type-<?=$k?>" class="styled" type="checkbox" value="<?=$label?>">
+	       	<label for="type-<?=$k?>"><?=$label?></label>
+		</div>
+	<?php endforeach;?>
+	</fieldset>
 <?php endforeach;?>
 	<div id="filterResult" class="btn-success">
 	</div>
-	</fieldset>
+	
 </form>
 <script>
 	$("#boxFilters input").each(function(el){

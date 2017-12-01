@@ -103,7 +103,7 @@ class FlowTimelinePanel{
 		<div class="timeline-heading">
 			<div class='row'>					
 				<div class="col-lg-4">
-					<h4><span class="timeline-title">%s</span> | %s</h4> 
+					<h4><span class="timeline-title">%s</span> %s</h4> 
 					<h5>%s</h5>
 				</div>
 				<div class="col-lg-8 text-right">
@@ -129,7 +129,7 @@ TLP;
 	public function render(){
 		$buttonsHTML = "";
 		
-		$privateBTN = is_null($this->_privateBTN)? "" : $this->_privateBTN->get();
+		$privateBTN = is_null($this->_privateBTN)? "" : "| ". $this->_privateBTN->get();
 		
 		if(count($this->_buttons)){
 			foreach ($this->_buttons as $button)

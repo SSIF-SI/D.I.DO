@@ -135,14 +135,16 @@ class Application_DocumentBrowser{
 		}
 		
 		if(count($types)){
-			foreach ($types as $type){
-				//$type = explode(" - ", $type);
-				array_push($mainFilters,
+			array_push($mainFilters,
 					[
-						CRUD::SEARCHBY_FIELD => SharedDocumentConstants::NOME,
-						CRUD::SEARCHBY_VALUE => $type
+							CRUD::SEARCHBY_FIELD => SharedDocumentConstants::NOME,
+							CRUD::SEARCHBY_VALUE => $types,
 					]
-				);
+			);
+			
+			//foreach ($types as $type){
+				//$type = explode(" - ", $type);
+				
 				/*
 				if(isset($type[1])){
 					array_push($mainFilters,
@@ -153,8 +155,9 @@ class Application_DocumentBrowser{
 					);
 				}
 				*/
-			}
+			//}
 		}
+		
 		if(count($keywords)){
 			$keyvalues=[];
 			
@@ -206,7 +209,7 @@ class Application_DocumentBrowser{
 		
 		if(!empty($mainFilters)){
 			$this->$source->useView(true);
-			$mainList = $this->$source->searchBy($mainFilters, " OR ",Masterdocument::ID_MD);
+			$mainList = $this->$source->searchBy($mainFilters, " AND ",Masterdocument::ID_MD);
 			$mainList = Utils::getListfromField($mainList,null,Masterdocument::ID_MD);
 			$this->$source->useView(false);
 		}
@@ -729,7 +732,7 @@ private function _allMyPendingDocuments(){
 			);
 				
 			$documents = Utils::getListfromField ( 
-				$this->_Document->getBy ( Document::ID_MD, join ( ",", $md_ids ) ), null, Document::ID_DOC 
+				$this->_Document->getBy ( Document::ID_MD, $md_ids ), null, Document::ID_DOC 
 			);
 					
 			if (! empty ( $documents )) {

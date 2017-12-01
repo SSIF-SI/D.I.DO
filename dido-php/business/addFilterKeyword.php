@@ -6,13 +6,12 @@ if (! Utils::checkAjax ())
 $className = $_GET [Search::SOURCE];
 $dataclassName = $className . "Data";
 
-$A = new Application ();
-$D = new $dataclassName ( $A->getDBConnector () );
+$D = new $dataclassName ( $Application->getDBConnector () );
 $XDS = new XMLDataSource ();
 $XMLParser = new XMLParser ();
 $D->useView ( true );
 
-if (! isset ( $_GET [Document::PRIVATE_DOC] )) {
+if (isset ( $_GET [SharedDocumentConstants::CLOSED] )) {
 	$list = $D->getBy ( SharedDocumentConstants::CLOSED, $_GET [SharedDocumentConstants::CLOSED], Masterdocument::ID_MD );
 	$listIdMdNome = $D->getRealDistinct ( $className::NOME, SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED], $className::NOME );
 	$listXMLSource = $D->getRealDistinct ( "xml", SharedDocumentConstants::CLOSED . "=" . $_GET [SharedDocumentConstants::CLOSED], "xml" );
