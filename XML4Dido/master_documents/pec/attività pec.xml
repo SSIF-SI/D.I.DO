@@ -11,7 +11,7 @@
 		<type>altro</type>
 	</types>
 	<inputs>
-		<input values="progetti" mandatory="0">acronimo progetto</input>
+		<input values="progetti" autocomplete="true" mandatory="0">acronimo progetto</input>
 		<input shortView="true">titolo</input>
 		<input values="persone" shortView="true">responsabile scientifico</input>
 		<input values="gruppi" shortView="true">gruppo</input>
