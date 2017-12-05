@@ -6,7 +6,7 @@
 		<input type="data" shortView="true">data mandato</input>
 	</inputs>
 	<list>
-		<document md="ordine cassa" key="id_md" minOccur="1" />
+		<document md="ordine cassa" minOccur="1" />
 		<document name="mandato di reintegro" minOccur="1" maxOccur="1">
 			<signatures>
 				<signature role="SAMM" />
