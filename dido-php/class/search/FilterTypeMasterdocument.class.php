@@ -17,9 +17,14 @@ class FilterTypeMasterdocument implements iFilterTypeSource{
 		}
 		
 		foreach($types as $cat=>$list)
-			sort ($types[$cat]);
+			if(!empty($types[$cat]))
+				sort ($types[$cat]);
+			else 
+				unset($types[$cat]);
 		
-		ksort($types);
+		if(!empty($types))
+			ksort($types);
+		
 		return $types;
 	}		
 }

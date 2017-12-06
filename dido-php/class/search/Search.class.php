@@ -18,13 +18,13 @@ class Search{
 	public function parseUri(){
 		
 		if(isset($_GET[self::SOURCE])){
-			array_push($this->_tree, $this->_translate($_GET[self::SOURCE]));
+			array_push($this->_tree, self::translate($_GET[self::SOURCE]));
 		} else return "search_setSource.php";
 		
 		if(isset($_GET[SharedDocumentConstants::CLOSED]) || isset($_GET[self::ALL])){
 			
 			array_push($this->_tree, 
-				isset($_GET[SharedDocumentConstants::CLOSED]) ? $this->_translate($_GET[SharedDocumentConstants::CLOSED]) : $this->_translate(self::ALL)
+				isset($_GET[SharedDocumentConstants::CLOSED]) ? self::translate($_GET[SharedDocumentConstants::CLOSED]) : self::translate(self::ALL)
 			);
 			if(!Session::getInstance()->exists(self::SEARCH_URI)) Session::getInstance()->set(self::SEARCH_URI, $this->_requestUri);
 			return "search_Panel.php";
@@ -45,10 +45,13 @@ class Search{
 		return $this->_requestUri;
 	}
 	
-	private function _translate($value){
+	public static function translate($value){
 		switch($value){
 			case 'Masterdocument':
 				return "Procedimenti";
+				break;
+			case 'MasterdocumentsLinks':
+				return "Procedimenti Collegati";
 				break;
 			case 'Document':
 				return "Documenti interni ai Procedimenti";

@@ -14,7 +14,7 @@ $typesOnDb = Utils::getListfromField($D->useView(true)->getRealDistinct($field),
 $ADB = $Application->getApplicationPart(Application::DOCUMENTBROWSER);
 
 $types = $filterClass::getTypes($ADB, $className, $typesOnDb);
- 
+
 ?>
 
 <form>

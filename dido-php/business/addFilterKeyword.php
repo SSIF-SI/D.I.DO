@@ -3,7 +3,7 @@ require_once ("../config.php");
 if (! Utils::checkAjax ())
 	die ();
 
-$className = $_GET [Search::SOURCE];
+$className = str_replace("sLinks", "", $_GET [Search::SOURCE]);
 $dataclassName = $className . "Data";
 
 $D = new $dataclassName ( $Application->getDBConnector () );

@@ -54,6 +54,7 @@ class Application_DocumentBrowser{
 		$this->_Document = new Document ( $this->_dbConnector );
 		$this->_DocumentData = new DocumentData ( $this->_dbConnector );
 		$this->_MasterdocumentsLinks = new MasterdocumentsLinks( $this->_dbConnector );
+		$this->_MasterdocumentsLinksData = $this->_MasterdocumentData;
 		
 		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
 		$this->_allSpecialSignatures = $this->_userManager->getUserSign()->getAllSpecialSignatures();
@@ -119,7 +120,7 @@ class Application_DocumentBrowser{
 			->getResult();
 	}
 	
-	public function searchDocuments($source, $closed = null, $types = array(), $keywords = array()){
+	public function searchDocuments($source, $closed = null, $types = array(), $keywords = array(), $isLink = false){
 		$source = "_$source";
 		$sourceData = $source."Data";
 
@@ -164,11 +165,13 @@ class Application_DocumentBrowser{
 			foreach ($keywords as $key=>$value){
 				$x=strstr($key,"+",true);
 				$x=str_replace('_', ' ',$x);
+				/*
 				$v=strstr($key,"+");
-				$v=str_replace('+', '',$v);
+				$v=str_replace(array('+',"_"), '',$v);
+				*/
 				if(!isset ($keyvalues[$x]))
  					$keyvalues[$x]=[];	
-				array_push($keyvalues[$x],$v);
+				array_push($keyvalues[$x],$value);
 			}
 			foreach ($keyvalues as $key=>$value){
 				array_push($dataFilters,
@@ -201,16 +204,20 @@ class Application_DocumentBrowser{
 		$mainList = array();
 		$dataList = array();
 		
-		
+		$id_md = $isLink ? MasterdocumentsLinks::ID_FATHER : Masterdocument::ID_MD;
+				
 		// Riempimento array
 		if(empty($mainFilters) && empty($dataFilters)){
-			$mainList = $this->$source->getAll(null, Masterdocument::ID_MD);
+			if($isLink) $this->$source->useView(true);
+			$mainList = $this->$source->getAll(null, $id_md);
+			if($isLink) $this->$source->useView(false);
+				
 		}
 		
 		if(!empty($mainFilters)){
 			$this->$source->useView(true);
-			$mainList = $this->$source->searchBy($mainFilters, " AND ",Masterdocument::ID_MD);
-			$mainList = Utils::getListfromField($mainList,null,Masterdocument::ID_MD);
+			$mainList = $this->$source->searchBy($mainFilters, " AND ",$id_md);
+			$mainList = Utils::getListfromField($mainList,null,$id_md);
 			$this->$source->useView(false);
 		}
 		
@@ -218,7 +225,19 @@ class Application_DocumentBrowser{
 			$this->$sourceData->useView(true);
 			$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);
 			$dataList = Utils::getListfromField($dataList,null,Masterdocument::ID_MD);
+			if($isLink && count($dataList)){
+				$dataList = $this->_MasterdocumentsLinks
+				->searchBy([
+						[
+								CRUD::SEARCHBY_FIELD => MasterdocumentsLinks::ID_CHILD,
+								CRUD::SEARCHBY_VALUE => array_keys($dataList),
+								CRUD::SEARCHBY_OPERATOR => "in"
+						]
+				]);
+				$dataList = Utils::getListfromField($dataList, null, MasterdocumentsLinks::ID_FATHER);
+			}
 			$this->$sourceData->useView(false);
+			
 		}
 		
 		// calcolo finale della lista
