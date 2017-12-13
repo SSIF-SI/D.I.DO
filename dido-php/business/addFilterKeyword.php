@@ -96,12 +96,16 @@ foreach ( $listXMLSource as $fName ) {
 		var autocomplete=$("#spotlight").val();
 		var originalValue=$("#hiddenkey").val()!=""? $("#hiddenkey").val():autocomplete;
 		var nameid=(keyword+"+"+originalValue).split(' ').join('_');
+		var typekey = $("#keyword").find("option:selected").attr('type');
 // 		var optid=$("#keyword").find("option:selected").attr("id")+(autocomplete.split(' ').join('-'));
 		$('<input id="filter-'+nameid+'" data-label="'+keyword[0].toUpperCase() + keyword.slice(1)+": "+autocomplete +'"type="hidden" name="keyword['+nameid+']" value="'+autocomplete+'" class="warning"/>').appendTo($("#filterResult"));
 // 		if(typeof $("#keyword").find("option:selected").attr('transform')!= 'undefined'){
 // 			$('<input id="transform-'+nameid+'" type="hidden" name="transform['+nameid+']" value="'+originalValue+'" class="transform" />').appendTo($("#filterResult"));
+
 // 		}
-				
+		if(typeof typekey != 'undefined' && typeof $("#typekey-"+nameid) != 'undefined'){
+			$('<input id="typekey-'+keyword.replace(/\s+/, "_")+'" type="hidden" name="typekey['+keyword+']" value="'+typekey+'" class="typekey" />').appendTo($("#filterResult"));
+		}
 	};
 </script>
 

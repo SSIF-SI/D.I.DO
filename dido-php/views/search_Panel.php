@@ -13,6 +13,8 @@
 				if(isset($P["keyword"]))
 					$keyword=$P["keyword"];
 
+				Utils::printr($keyword);
+				
 				foreach($keyword as $key=>$value):
 					$label=strstr($key,"+",true);
 					$label=str_replace('_', ' ',$label);
@@ -29,7 +31,7 @@
 				endforeach;
 			
 			}
-		?>	
+		?>
 	</div>
 </div>
 <div class="row">

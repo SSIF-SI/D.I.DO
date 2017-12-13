@@ -129,8 +129,8 @@ class Application_DocumentBrowser{
 		if(!is_null($closed)){
 			array_push($mainFilters, 
 				[
-					CRUD::SEARCHBY_FIELD => SharedDocumentConstants::CLOSED,
-					CRUD::SEARCHBY_VALUE => $closed
+					Crud::SEARCHBY_FIELD => SharedDocumentConstants::CLOSED,
+					Crud::SEARCHBY_VALUE => $closed
 				]
 			);
 		}
@@ -138,8 +138,8 @@ class Application_DocumentBrowser{
 		if(count($types)){
 			array_push($mainFilters,
 					[
-							CRUD::SEARCHBY_FIELD => SharedDocumentConstants::NOME,
-							CRUD::SEARCHBY_VALUE => $types,
+							Crud::SEARCHBY_FIELD => SharedDocumentConstants::NOME,
+							Crud::SEARCHBY_VALUE => $types,
 					]
 			);
 			
@@ -150,8 +150,8 @@ class Application_DocumentBrowser{
 				if(isset($type[1])){
 					array_push($mainFilters,
 							[
-									CRUD::SEARCHBY_FIELD => Masterdocument::TYPE,
-									CRUD::SEARCHBY_VALUE => $type[1]
+									Crud::SEARCHBY_FIELD => Masterdocument::TYPE,
+									Crud::SEARCHBY_VALUE => $type[1]
 							]
 					);
 				}
@@ -177,18 +177,18 @@ class Application_DocumentBrowser{
 				array_push($dataFilters,
 					[
 						Crud::SEARCHBY_OPEN_BRACKET=>true,
-						CRUD::SEARCHBY_FIELD => AnyDocumentData::KEY,
-						CRUD::SEARCHBY_VALUE => $key,
-						CRUD::SEARCHBY_LOGIC_OPERATOR=>"AND"
+						Crud::SEARCHBY_FIELD => AnyDocumentData::KEY,
+						Crud::SEARCHBY_VALUE => $key,
+						Crud::SEARCHBY_LOGIC_OPERATOR=>"AND"
 					]
 				);
 				array_push($dataFilters,
 					[
-						CRUD::SEARCHBY_CLOSE_BRACKET=>true,
-						CRUD::SEARCHBY_FIELD => AnyDocumentData::VALUE,
-						CRUD::SEARCHBY_VALUE => $value,
-						CRUD::SEARCHBY_OPERATOR=>"in",
-						CRUD::SEARCHBY_LOGIC_OPERATOR=>"AND"
+						Crud::SEARCHBY_CLOSE_BRACKET=>true,
+						Crud::SEARCHBY_FIELD => AnyDocumentData::VALUE,
+						Crud::SEARCHBY_VALUE => $value,
+						Crud::SEARCHBY_OPERATOR=>"in",
+						Crud::SEARCHBY_LOGIC_OPERATOR=>"AND"
 					]
 				);
 			}	
@@ -229,9 +229,9 @@ class Application_DocumentBrowser{
 				$dataList = $this->_MasterdocumentsLinks
 				->searchBy([
 						[
-								CRUD::SEARCHBY_FIELD => MasterdocumentsLinks::ID_CHILD,
-								CRUD::SEARCHBY_VALUE => array_keys($dataList),
-								CRUD::SEARCHBY_OPERATOR => "in"
+								Crud::SEARCHBY_FIELD => MasterdocumentsLinks::ID_CHILD,
+								Crud::SEARCHBY_VALUE => array_keys($dataList),
+								Crud::SEARCHBY_OPERATOR => "in"
 						]
 				]);
 				$dataList = Utils::getListfromField($dataList, null, MasterdocumentsLinks::ID_FATHER);
@@ -257,9 +257,9 @@ class Application_DocumentBrowser{
 		$list = $this->_Masterdocument
 			->searchBy([
 			[
-					CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
-					CRUD::SEARCHBY_VALUE => $list,
-					CRUD::SEARCHBY_OPERATOR => "in"
+					Crud::SEARCHBY_FIELD => Masterdocument::ID_MD,
+					Crud::SEARCHBY_VALUE => $list,
+					Crud::SEARCHBY_OPERATOR => "in"
 			]
 		]);
 		
@@ -288,8 +288,8 @@ class Application_DocumentBrowser{
 	private function _just($value){
 		$list = $this->_Masterdocument->searchBy([
 				[
-						CRUD::SEARCHBY_FIELD => Masterdocument::ID_MD,
-						CRUD::SEARCHBY_VALUE => $value
+						Crud::SEARCHBY_FIELD => Masterdocument::ID_MD,
+						Crud::SEARCHBY_VALUE => $value
 				]
 		]);
 			
@@ -707,8 +707,8 @@ private function _allMyPendingDocuments(){
 	private function _openDocuments(){
 		$list = $this->_Masterdocument->searchBy([
 			[
-				CRUD::SEARCHBY_FIELD => Masterdocument::CLOSED,
-				CRUD::SEARCHBY_VALUE => ProcedureManager::OPEN
+				Crud::SEARCHBY_FIELD => Masterdocument::CLOSED,
+				Crud::SEARCHBY_VALUE => ProcedureManager::OPEN
 			]
 		]);
 			
@@ -718,9 +718,9 @@ private function _allMyPendingDocuments(){
 	private function _closedDocuments(){
 		$list = $this->_Masterdocument->searchBy([
 			[
-				CRUD::SEARCHBY_FIELD => Masterdocument::CLOSED,
-				CRUD::SEARCHBY_VALUE => ProcedureManager::OPEN,
-				CRUD::SEARCHBY_OPERATOR => "!="
+				Crud::SEARCHBY_FIELD => Masterdocument::CLOSED,
+				Crud::SEARCHBY_VALUE => ProcedureManager::OPEN,
+				Crud::SEARCHBY_OPERATOR => "!="
 			]
 		]);
 			
