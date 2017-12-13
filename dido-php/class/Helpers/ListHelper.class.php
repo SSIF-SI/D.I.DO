@@ -61,5 +61,11 @@ class ListHelper {
 		$aree = Utils::getListfromField($aree,array(aree_progettuali::DESCRIZIONE,aree_progettuali::CODICE), aree_progettuali::CODICE);
 		return $aree;
 	}
+	
+	static function controparti(){
+		$inputs = new MasterdocumentData(DBConnector::getInstance());
+		$controparti = $inputs->getDistinct("controparti","controparti");
+		return $controparti;
+	}
 }
 ?>

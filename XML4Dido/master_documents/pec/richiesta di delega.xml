@@ -6,8 +6,8 @@
 		<input values="persone" shortView="true">responsabile scientifico</input>
 		<input values="areeProgettuali" shortView="true">area progettuale</input>
 		<input values="gruppi" shortView="true">gruppo</input>
-		<input shortView="true">tipo atto</input>
-		<input>bando</input>
+		<input shortView="true" innerVAlues="tipiAtto">tipo atto</input>
+		<input mandatory="0">bando</input>
 		<input innerValues="esitiRichiesteDiDelega" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
 		<input type="textarea" mandatory="0">note</input>
 	</inputs>
@@ -29,6 +29,15 @@
 			<value value="accolta">Accolta</value>
 			<value value="negata">Negata</value>
 			<value value="parziale">Parziale</value>
+		</values>
+		<values>
+			<value>progetto</value>
+			<value>contratto</value>
+			<value>accordo</value>
+			<value>convenzione</value>
+			<value>MOU</value>
+			<value>NDA</value>
+			<value>altro</value>
 		</values>
 	</innerValues>
 </masterDocument>

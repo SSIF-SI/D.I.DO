@@ -6,9 +6,10 @@
 		<input shortView="true">periodo</input>
 		<input innerValues="tipiElaborazione" shortView="true">tipo elaborazione</input>
 		<input values="gruppi" shortView="true">gruppo</input>
+		<input type="textarea">note</input>
 	</inputs>
 	<list>
-		<document md="attività pec" maxOccur="1" />
+		<document md="attività pec" minOccur="1" maxOccur="1" />
 		<document name="richiesta di costi" minOccur="1" maxOccur="1" private="true">
 			<signatures>
 				<signature role="DIR" />

@@ -17,7 +17,7 @@
 		<input values="gruppi" shortView="true">gruppo</input>
 		<input values="areeProgettuali" shortView="true">area progettuale</input>
 		<input mandatory="0">ambito</input>
-		<input>controparti</input>
+		<input values="controparti" autocomplete="true">controparti</input>
 		<input innerValues="ruoliAttivitaPec" >ruolo</input>
 		<input innerValues="esitiAttivitaPec" shortView="true" mandatory="0" mandatoryBeforeClosing="1">esito</input>
 	</inputs>
