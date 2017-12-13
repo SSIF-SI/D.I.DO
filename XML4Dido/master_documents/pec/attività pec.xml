@@ -27,7 +27,7 @@
 			<type for="atto">con firma per copia conforme</type>
 			<type for="atto">senza firme</type>
 		</types>
-		<document md="richiesta di delega"  maxOccur="1" />
+		<document md="richiesta di delega" minOccur="1" maxOccur="1" />
 		<document name="atto" minOccur="1" closingPoint="1">
 			<signatures>
 				<signature mandatory="1" role="DIR" onlyIfType="con firma del direttore"/>					

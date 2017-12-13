@@ -218,7 +218,6 @@ class Application_Detail{
 				if(!$upperLimit || count($listOnDb) < $upperLimit)
 					array_push($panelButtons, new FlowTimelineButtonAdd("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}"));
 				
-				// Se non c'è il maxoccur o comunque il numero di documenti è inferiore al maxoccur posso caricarne di nuovi
 				if(!$lowerLimit || count($listOnDb) > $lowerLimit)
 					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
 			}
