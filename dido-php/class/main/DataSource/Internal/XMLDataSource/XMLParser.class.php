@@ -70,6 +70,8 @@ class XMLParser implements IXMLParser {
 	
 	const TYPE_FOR = "for";
 	
+	const INPUT_TYPE_TEXTAREA = "textarea";
+	
 	
 	// Common Params
 	const MANDATORY = "mandatory";

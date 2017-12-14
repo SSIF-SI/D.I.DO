@@ -32,7 +32,7 @@ $(document).ready(function(){
 	function fillFilterBox(html){
 		var el = html == undefined ? "#boxFilters input" : html;
 		$(el).each(function(){
-//			if($(this).attr('class')!='transform'){
+			if($(this).attr('class')!='typekey'){
 				var buttonClass = "btn-"+$(this).attr('class');
 				var label=$(this).attr('data-label');
 				var li = $("<li id=btn-"+$(this).attr("id")+" class='btn "+buttonClass+"'>"+label+"&nbsp;</li>");
@@ -47,7 +47,7 @@ $(document).ready(function(){
 				});
 				i.appendTo(li);
 				li.appendTo("#filterList");
-//			}
+			}
 
 		});
 

@@ -103,8 +103,8 @@ foreach ( $listXMLSource as $fName ) {
 // 			$('<input id="transform-'+nameid+'" type="hidden" name="transform['+nameid+']" value="'+originalValue+'" class="transform" />').appendTo($("#filterResult"));
 
 // 		}
-		if(typeof typekey != 'undefined' && typeof $("#typekey-"+nameid) != 'undefined'){
-			$('<input id="typekey-'+keyword.replace(/\s+/, "_")+'" type="hidden" name="typekey['+keyword+']" value="'+typekey+'" class="typekey" />').appendTo($("#filterResult"));
+		if(typeof typekey != 'undefined' &&  $("#typekey-"+keyword.replace(/\s+/, "_")).length==0 ){
+			$('<input id="typekey-'+keyword.replace(/\s+/, "_")+'" type="hidden" name="typekey['+keyword.replace(/\s+/, "_")+']" value="'+typekey+'" class="typekey" />').appendTo($("#filterResult"));
 		}
 	};
 </script>

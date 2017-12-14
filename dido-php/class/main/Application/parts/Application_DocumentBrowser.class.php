@@ -120,7 +120,7 @@ class Application_DocumentBrowser{
 			->getResult();
 	}
 	
-	public function searchDocuments($source, $closed = null, $types = array(), $keywords = array(), $isLink = false){
+	public function searchDocuments($source, $closed = null, $types = array(), $keywords = array(),$typekey = array(), $isLink = false){
 		$source = "_$source";
 		$sourceData = $source."Data";
 
@@ -158,7 +158,6 @@ class Application_DocumentBrowser{
 				*/
 			//}
 		}
-		
 		if(count($keywords)){
 			$keyvalues=[];
 			
@@ -174,24 +173,30 @@ class Application_DocumentBrowser{
 				array_push($keyvalues[$x],$value);
 			}
 			foreach ($keyvalues as $key=>$value){
+				if(count($typekey))
+					$textArea=$typekey[$key]==XMLParser::INPUT_TYPE_TEXTAREA;
 				array_push($dataFilters,
 					[
 						Crud::SEARCHBY_OPEN_BRACKET=>true,
 						Crud::SEARCHBY_FIELD => AnyDocumentData::KEY,
 						Crud::SEARCHBY_VALUE => $key,
-						Crud::SEARCHBY_LOGIC_OPERATOR=>"AND"
+						Crud::SEARCHBY_INSIDE_OPERATOR=>"AND"
 					]
 				);
-				array_push($dataFilters,
-					[
-						Crud::SEARCHBY_CLOSE_BRACKET=>true,
-						Crud::SEARCHBY_FIELD => AnyDocumentData::VALUE,
-						Crud::SEARCHBY_VALUE => $value,
-						Crud::SEARCHBY_OPERATOR=>"in",
-						Crud::SEARCHBY_LOGIC_OPERATOR=>"AND"
+				if(!$textArea){
+					array_push ( $dataFilters, [ 
+							Crud::SEARCHBY_CLOSE_BRACKET => true,
+							Crud::SEARCHBY_FIELD => AnyDocumentData::VALUE,
+							Crud::SEARCHBY_VALUE => $value,
+							Crud::SEARCHBY_OPERATOR => "in",
+							Crud::SEARCHBY_END_BRACKET => true 
 					]
-				);
-			}	
+					 );
+				}else{
+					$this->_addTextAreaFilters($dataFilters,$value);
+					
+				}	
+			}
 			/*			
 			$this->$sourceData->useView(true);
 			$datalist= $this->$sourceData->searchBy($dataFilters," AND ","id_md");
@@ -820,6 +825,32 @@ private function _allMyPendingDocuments(){
 		
 		
 		
+	}
+	
+	private function _addTextAreaFilters( &$dataFilters, $values){
+		array_push ( $dataFilters, [ 
+				Crud::SEARCHBY_OPEN_BRACKET => true 
+		] );
+		
+		foreach ( $values as $n => $term ) {
+			array_push ( $dataFilters, [ 
+					Crud::SEARCHBY_INSIDE_BRACKET => true,
+					Crud::SEARCHBY_FIELD => AnyDocumentData::VALUE,
+					Crud::SEARCHBY_VALUE => "%" . $term . "%",
+					Crud::SEARCHBY_OPERATOR => "ilike",
+					Crud::SEARCHBY_INSIDE_OPERATOR => "OR" 
+			] );
+		}
+		array_push ( $dataFilters, [ 
+				Crud::SEARCHBY_CLOSE_BRACKET => true,
+				Crud::SEARCHBY_OPERATOR => "OR" 
+		] );
+		
+		array_push ( $dataFilters, [ 
+				Crud::SEARCHBY_CLOSE_BRACKET => true,
+				Crud::SEARCHBY_END_BRACKET => true 
+		]
+		 );
 	}
 	
 	public static function purge($id_mds, $list){

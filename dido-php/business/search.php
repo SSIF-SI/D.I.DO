@@ -85,17 +85,18 @@ if(count($_POST) || Session::getInstance()->exists("Search_postIt")){
 	
 	$filters = Session::getInstance()->exists("Search_filters") ? Session::getInstance()->get("Search_filters") : null;
 	
-	Utils::printr($filters);
 	
 	$source = $_GET['source'];
 	$closed = isset($_GET['closed']) ? $_GET['closed'] : null;
 	
 	$types = isset($filters['nome']) ? array_map("strtolower",$filters['nome']) : null;
 	$keywords = isset($filters['keyword']) ? $filters['keyword'] : null;
+	$typekey = isset($filters['typekey']) ? $filters['typekey'] : null;
+	
 	
 	$list = $Application
 		->getApplicationPart(Application::DOCUMENTBROWSER)
-		->searchDocuments($source, $closed, $types, $keywords, $source == "MasterdocumentsLinks");
+		->searchDocuments($source, $closed, $types, $keywords,$typekey, $source == "MasterdocumentsLinks");
 	
 	$list[Application_DocumentBrowser::LABEL_MD] = Common::categorize($list[Application_DocumentBrowser::LABEL_MD]);
 	

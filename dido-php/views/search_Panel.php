@@ -8,13 +8,14 @@
 				$P = Session::getInstance()->get("Search_filters");
 				$type=[];
 				$keyword=[];
+				$typekey=[];
+				
 				if(isset($P["nome"]))
 					$type=$P["nome"];
 				if(isset($P["keyword"]))
 					$keyword=$P["keyword"];
-
-				Utils::printr($keyword);
-				
+				if(isset ($P["typekey"]))
+					$typekey=$P["typekey"];				
 				foreach($keyword as $key=>$value):
 					$label=strstr($key,"+",true);
 					$label=str_replace('_', ' ',$label);
@@ -24,6 +25,14 @@
 		<input id="filter-<?=$key?>" data-label="<?=$label?>" type="hidden" name="keyword<?="[$key]"?>" value="<?=$value?>" class="warning" />
 		<?php 
 				endforeach;
+				
+				foreach($typekey as $key=>$tk):
+				$id=str_replace('_', ' ',$key);
+		?>
+		<input id="typekey-<?=$id?>" type="hidden" name="typekey[<?=$id?>]" value="<?=$tk?>" class="typekey" />
+		<?php 
+				endforeach;
+				
 				foreach($type as $ik=>$value):
 		?>
 		<input id="filter-<?=$ik?>" data-label="<?=$value?>" type="hidden" name="nome<?="[$ik]"?>" value="<?=$value?>" class="success" />
