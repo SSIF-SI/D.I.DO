@@ -174,30 +174,60 @@ class Application_DocumentBrowser{
  					$keyvalues[$x]=[];	
 				array_push($keyvalues[$x],$value);
 			}
+			$keyQueries=[];
+			$qb = new QueryBuilder(DBConnector::getInstance());
+				
 			foreach ($keyvalues as $key=>$value){
-				if(count($typekey))
-					$textArea=$typekey[$key]==XMLParser::INPUT_TYPE_TEXTAREA;
-				array_push($dataFilters,
-					[
-						Crud::SEARCHBY_OPEN_BRACKET=>true,
-						Crud::SEARCHBY_FIELD => AnyDocumentData::KEY,
-						Crud::SEARCHBY_VALUE => $key,
-						Crud::SEARCHBY_INSIDE_OPERATOR=>"AND"
-					]
-				);
+				$qb->opEqual(AnyDocumentData::KEY, $key)->joinAnd();
 				if(!$textArea){
-					array_push ( $dataFilters, [ 
-							Crud::SEARCHBY_CLOSE_BRACKET => true,
-							Crud::SEARCHBY_FIELD => AnyDocumentData::VALUE,
-							Crud::SEARCHBY_VALUE => $value,
-							Crud::SEARCHBY_OPERATOR => "in",
-							Crud::SEARCHBY_END_BRACKET => true 
-					]
-					 );
+					if (is_array ( $value )) {
+						$valueSet = array_map ( "Utils::apici", $value );
+						$valueSet = sprintf ( "( %s )", join ( ", ", $valueSet ) );
+						$qb->openBracket ()->opIn ( AnyDocumentData::VALUE, $valueSet )->closeBracket ();
+						array_push ( $keyQueries, $qb->getWhere () );
+						$qb->reset ();
+					} else {
+						array_push ( $keyQueries,$qb->opEqual(AnyDocumentData::VALUE, $value)->getWhere());
+						$qb->reset ();
+						
+					}
 				}else{
-					$this->_addTextAreaFilters($dataFilters,$value);
+					if (is_array ( $value )) {
+						$qb->openBracket();
+						$valueEnd=end($value);
+						foreach($value as $index->$term){
+							$qb->opLike(AnyDocumentData::VALUE, $term);
+							if($term!= $valueEnd)
+								$qb->joinOr();
+						}
+						array_push ( $keyQueries, $qb->closeBracket()->getWhere() );
+					} else {
+						array_push ( $keyQueries,$qb->opLike(AnyDocumentData::VALUE,$value)->getWhere() );
+					}
+				}
+// 				if(count($typekey))
+// 					$textArea=$typekey[$key]==XMLParser::INPUT_TYPE_TEXTAREA;
+// 				array_push($dataFilters,
+// 					[
+// 						Crud::SEARCHBY_OPEN_BRACKET=>true,
+// 						Crud::SEARCHBY_FIELD => AnyDocumentData::KEY,
+// 						Crud::SEARCHBY_VALUE => $key,
+// 						Crud::SEARCHBY_INSIDE_OPERATOR=>"AND"
+// 					]
+// 				);
+// 				if(!$textArea){
+// 					array_push ( $dataFilters, [ 
+// 							Crud::SEARCHBY_CLOSE_BRACKET => true,
+// 							Crud::SEARCHBY_FIELD => AnyDocumentData::VALUE,
+// 							Crud::SEARCHBY_VALUE => $value,
+// 							Crud::SEARCHBY_OPERATOR => "in",
+// 							Crud::SEARCHBY_END_BRACKET => true 
+// 					]
+// 					 );
+// 				}else{
+// 					$this->_addTextAreaFilters($dataFilters,$value);
 					
-				}	
+// 				}	
 			}
 			/*			
 			$this->$sourceData->useView(true);
@@ -214,7 +244,7 @@ class Application_DocumentBrowser{
 		$id_md = $isLink ? MasterdocumentsLinks::ID_FATHER : Masterdocument::ID_MD;
 				
 		// Riempimento array
-		if(empty($mainFilters) && empty($dataFilters)){
+		if(empty($mainFilters) && empty($keyQueries)){
 			if($isLink) $this->$source->useView(true);
 			$mainList = $this->$source->getAll(null, $id_md);
 			if($isLink) $this->$source->useView(false);
@@ -228,7 +258,7 @@ class Application_DocumentBrowser{
 			$this->$source->useView(false);
 		}
 		
-		if(!empty($dataFilters)){
+		if(!empty($keyQueries)){
 			$this->$sourceData->useView(true);
 			
 			$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);

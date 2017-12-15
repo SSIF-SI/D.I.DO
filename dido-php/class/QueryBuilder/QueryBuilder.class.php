@@ -16,7 +16,7 @@ class QueryBuilder extends Crud{
 	private $_from;
 	private $_where;
 	private $_orderBy;
-
+	
 	public function __construct(iDBConnector $DBConnector){
 		parent::__construct($DBConnector);
 		return $this;
@@ -136,6 +136,13 @@ class QueryBuilder extends Crud{
 		Utils::printr($sql);
 		$this->_connInstance->query($sql);
 		return $this->_connInstance->allResults();
+	}
+	
+	public function getWhere(){
+		return $this->_where;
+	}
+	public function setWhere($where){
+		return $this->_where;
 	}
 }
 
