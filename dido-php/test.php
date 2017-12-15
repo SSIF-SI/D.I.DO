@@ -34,22 +34,28 @@ require_once("config.php");
 	
 // }
 
-$className = "Masterdocument";
-$dataclassName = $className . "Data";
 
-$A = new Application ();
-$D = new $dataclassName ( $A->getDBConnector () );
-$D->useView ( true );
-	$where=$dataclassName::VALUE." ilike '%z%'";
-	$sql="SELECT distinct %s FROM %s WHERE %s ORDER BY %s";
-	$sql = sprintf($sql, $dataclassName::VALUE." , ".$dataclassName::KEY, "search_master_documents_data_view", $where, $dataclassName::VALUE);
-	
-Utils::printr( $sql );
-$listkeyValues= $D->getRealDistinct ( $dataclassName::VALUE." , ".$dataclassName::KEY, $where, $dataclassName::VALUE );
-Utils::printr($listkeyValues);
-$listkeyValues = Utils::getListfromField ( $listkeyValues, $dataclassName::VALUE, $dataclassName::KEY );
+$qb = new QueryBuilder(DBConnector::getInstance());
+$qb
+->reset()
+->select()
+->from("search_master_documents_data_view")
+->opEqual("key", "note")
+->joinAnd()
+->openBracket()
+->opLike("value", "Mul")
+->joinOr()
+->opLike("value", "Ber")
+->closeBracket()
+->joinAnd()
+->openBracket()
+->opEqual("key", "acronimo progetto")
+->joinAnd()
+->opIn("value", "DISVA")
+->closeBracket()
+->orderBy("id_md");
 
-
+Utils::printr($qb->getList());
 
 
 ?>

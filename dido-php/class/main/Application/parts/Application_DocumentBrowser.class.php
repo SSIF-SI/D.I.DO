@@ -158,6 +158,8 @@ class Application_DocumentBrowser{
 				*/
 			//}
 		}
+		
+		
 		if(count($keywords)){
 			$keyvalues=[];
 			
@@ -228,8 +230,10 @@ class Application_DocumentBrowser{
 		
 		if(!empty($dataFilters)){
 			$this->$sourceData->useView(true);
+			
 			$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);
 			$dataList = Utils::getListfromField($dataList,null,Masterdocument::ID_MD);
+			
 			if($isLink && count($dataList)){
 				$dataList = $this->_MasterdocumentsLinks
 				->searchBy([
