@@ -144,26 +144,4 @@ class QueryBuilder extends Crud{
 //  AND (key = 'acronimo progetto' AND value in ( 'DISVA' ) )
 // order by id_md
 
-$qb = new QueryBuilder(DBConnector::getInstance());
-$qb
-	->reset()
-	->select()
-	->from("search_master_documents_data_view")
-	->opEqual("key", Utils::apici("note"))
-	->joinAnd()
-	->openBracket()
-		->opLike("value", "Mul")
-		->joinOr()
-		->opLike("value", "Ber")
-	->closeBracket()
-	->joinAnd()
-	->openBracket()
-		->opEqual("key", Utils::apici("acronimo progetto"))
-		->joinAnd()
-		->opIn("value", "DISVA")
-		->closeBracket()
-	->orderBy("id_md");
 
-Utils::printr($qb->getList());
-
-die("??");
