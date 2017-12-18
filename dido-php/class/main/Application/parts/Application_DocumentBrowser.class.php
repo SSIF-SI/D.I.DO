@@ -175,7 +175,7 @@ class Application_DocumentBrowser{
 				array_push($keyvalues[$x],$value);
 			}
 			$keyQueries=[];
-			$qb = new QueryBuilder(DBConnector::getInstance());
+			$qb = new QueryBuilder($this->_dbConnector);
 				
 			foreach ($keyvalues as $key=>$value){
 				$qb->opEqual(AnyDocumentData::KEY, $key)->joinAnd();
@@ -185,10 +185,8 @@ class Application_DocumentBrowser{
 						$valueSet = sprintf ( "( %s )", join ( ", ", $valueSet ) );
 						$qb->openBracket ()->opIn ( AnyDocumentData::VALUE, $valueSet )->closeBracket ();
 						array_push ( $keyQueries, $qb->getWhere () );
-						$qb->reset ();
 					} else {
 						array_push ( $keyQueries,$qb->opEqual(AnyDocumentData::VALUE, $value)->getWhere());
-						$qb->reset ();
 						
 					}
 				}else{
@@ -205,6 +203,7 @@ class Application_DocumentBrowser{
 						array_push ( $keyQueries,$qb->opLike(AnyDocumentData::VALUE,$value)->getWhere() );
 					}
 				}
+				$qb->reset();
 // 				if(count($typekey))
 // 					$textArea=$typekey[$key]==XMLParser::INPUT_TYPE_TEXTAREA;
 // 				array_push($dataFilters,
@@ -260,19 +259,26 @@ class Application_DocumentBrowser{
 		
 		if(!empty($keyQueries)){
 			$this->$sourceData->useView(true);
-			
-			$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);
+			$qb->select("DISTINCT ".Masterdocument::ID_MD);
+			$qb->from($this->$sourceData->getFrom());
+			$qb->orderBy(Masterdocument::ID_MD);
+			foreach ($keyQueries as $where){
+				$qb->setWhere($where);
+				array_merge($dataList,$qb->getList());
+			}
+// 			$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);
 			$dataList = Utils::getListfromField($dataList,null,Masterdocument::ID_MD);
 			
 			if($isLink && count($dataList)){
-				$dataList = $this->_MasterdocumentsLinks
-				->searchBy([
-						[
-								Crud::SEARCHBY_FIELD => MasterdocumentsLinks::ID_CHILD,
-								Crud::SEARCHBY_VALUE => array_keys($dataList),
-								Crud::SEARCHBY_OPERATOR => "in"
-						]
-				]);
+				$dataList = $qb->reset()->select("*")->from("master_documents_links_search_view")->opIn(MasterdocumentsLinks::ID_CHILD, array_keys($dataList));
+// 				$dataList = $this->_MasterdocumentsLinks
+// 				->searchBy([
+// 						[
+// 								Crud::SEARCHBY_FIELD => MasterdocumentsLinks::ID_CHILD,
+// 								Crud::SEARCHBY_VALUE => array_keys($dataList),
+// 								Crud::SEARCHBY_OPERATOR => "in"
+// 						]
+// 				]);
 				$dataList = Utils::getListfromField($dataList, null, MasterdocumentsLinks::ID_FATHER);
 			}
 			$this->$sourceData->useView(false);
@@ -281,8 +287,8 @@ class Application_DocumentBrowser{
 		
 		// calcolo finale della lista
 		switch(true){
-			case empty($mainFilters) && empty($dataFilters):
-			case empty($dataFilters): 	 
+			case empty($mainFilters) && empty($keyQueries):
+			case empty($keyQueries): 	 
 				$list = array_keys($mainList);
 				break;
 			case empty($mainFilters):
@@ -292,15 +298,18 @@ class Application_DocumentBrowser{
 				$list = array_intersect(array_keys($dataList), array_keys($mainList));
 				break;
 		}
+		$list = array_map ( "Utils::apici", $list );
+		$list = sprintf ( "( %s )", join ( ", ", $list ) );
 		
-		$list = $this->_Masterdocument
-			->searchBy([
-			[
-					Crud::SEARCHBY_FIELD => Masterdocument::ID_MD,
-					Crud::SEARCHBY_VALUE => $list,
-					Crud::SEARCHBY_OPERATOR => "in"
-			]
-		]);
+		$list = $qb->reset()->select("*")->from($this->_Masterdocument->getFrom())->opIn(Masterdocument::ID_MD, $list)->getList();
+// 			$this->_Masterdocument
+// 			->searchBy([
+// 			[
+// 					Crud::SEARCHBY_FIELD => Masterdocument::ID_MD,
+// 					Crud::SEARCHBY_VALUE => $list,
+// 					Crud::SEARCHBY_OPERATOR => "in"
+// 			]
+// 		]);
 		
 		$list = Utils::getListfromField($list,null,Masterdocument::ID_MD);
 		
