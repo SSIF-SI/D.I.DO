@@ -21,17 +21,18 @@ $types = $filterClass::getTypes($ADB, $className, $typesOnDb);
 
 	
 <?php 
+	$typeCount = 0;
 	if(count($types)) foreach($types as $cat=>$typeList):
 ?>
 	<fieldset>
 		<legend><?= ucfirst($cat) ?></legend>
 	<?php foreach($typeList as $k=>$label): $label = ucfirst($label)?> 
 	
-		<div id="ft-<?=$k?>" class="checkbox checkbox-success checkbox-circle">
-	       	<input id="type-<?=$k?>" class="styled" type="checkbox" value="<?=$label?>">
-	       	<label for="type-<?=$k?>"><?=$label?></label>
+		<div id="ft-<?=$typeCount?>" class="checkbox checkbox-success checkbox-circle">
+	       	<input id="type-<?=$typeCount?>" class="styled" type="checkbox" value="<?=$label?>">
+	       	<label for="type-<?=$typeCount?>"><?=$label?></label>
 		</div>
-	<?php endforeach;?>
+	<?php $typeCount++; endforeach;?>
 	</fieldset>
 <?php endforeach;?>
 	<div id="filterResult" class="btn-success">

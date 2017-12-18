@@ -34,13 +34,12 @@ require_once("config.php");
 	
 // }
 
-
 $qb = new QueryBuilder(DBConnector::getInstance());
 $qb
 ->reset()
 ->select()
 ->from("search_master_documents_data_view")
-->opEqual("key", "note")
+->opEqual("key", Utils::apici("note"))
 ->joinAnd()
 ->openBracket()
 ->opLike("value", "Mul")
@@ -49,13 +48,12 @@ $qb
 ->closeBracket()
 ->joinAnd()
 ->openBracket()
-->opEqual("key", "acronimo progetto")
+->opEqual("key", Utils::apici("acronimo progetto"))
 ->joinAnd()
-->opIn("value", "DISVA")
+->opIn("value", Utils::apici("DISVA"))
 ->closeBracket()
 ->orderBy("id_md");
 
 Utils::printr($qb->getList());
-
 
 ?>

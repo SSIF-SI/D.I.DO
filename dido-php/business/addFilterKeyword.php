@@ -115,7 +115,8 @@ foreach ( $listXMLSource as $fName ) {
   $(function() {
 
 	  $("#spotlight").autocomplete({
-    		source: location.href+"&keyword="+ $("#keyword").find("option:selected").val(),
+    		autoFocus: true,
+			source: location.href+"&keyword="+ $("#keyword").find("option:selected").val(),
     		open: function(event) {
     	        $('.ui-autocomplete').css('height', 'auto');
     	        var $input = $(event.target),
