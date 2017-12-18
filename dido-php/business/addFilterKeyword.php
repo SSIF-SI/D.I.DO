@@ -187,7 +187,7 @@ foreach ( $listkeys as $k => $val ) :
 
 <script>
 	$("#keyword").selectpicker();
-	$("form").on("submit",function(){return false;})
+	$("#search-form").on("submit",function(){return false;})
 </script>
 
 
