@@ -34,6 +34,7 @@ class QueryBuilder extends Crud{
 	
 	public function orderBy($orderBy, $order = self::ORDER_ASC){
 		$this->_orderBy = $orderBy . $order;
+		return $this;
 	}
 	
 	public function opEqual($key, $value){
@@ -74,6 +75,12 @@ class QueryBuilder extends Crud{
 	public function reset(){
 		$this->_where = "";
 		return $this;
+	}
+	
+	public function createInValues($values){
+			$valueSet = array_map ( "Utils::apici", $values );
+			$valueSet = sprintf ( " %s ", join ( ", ", $valueSet ) );
+		return $valueSet;
 	}
 	
 	public function getList(){
@@ -142,7 +149,8 @@ class QueryBuilder extends Crud{
 		return $this->_where;
 	}
 	public function setWhere($where){
-		return $this->_where;
+		 $this->_where=$where;
+		 return $this;
 	}
 }
 
