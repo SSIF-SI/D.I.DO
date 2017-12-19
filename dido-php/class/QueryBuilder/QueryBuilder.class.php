@@ -1,5 +1,7 @@
 <?php
 class QueryBuilder extends Crud{
+	const DISTINCT = "DISTINCT ";
+	
 	const JOIN_AND = " AND ";
 	const JOIN_OR = " OR ";
 	
@@ -26,6 +28,12 @@ class QueryBuilder extends Crud{
 		$this->_what = $what;
 		return $this;
 	}
+	
+	public function selectDistinct($what){
+		$this->_what = self::DISTINCT . $this->createInValues($what, false);
+		return $this;
+	}
+	
 	
 	public function from($from){
 		$this->_from = $from;
@@ -77,10 +85,13 @@ class QueryBuilder extends Crud{
 		return $this;
 	}
 	
-	public function createInValues($values){
-			$valueSet = array_map ( "Utils::apici", $values );
-			$valueSet = sprintf ( " %s ", join ( ", ", $valueSet ) );
-		return $valueSet;
+	public function createInValues($values, $aggiungiapici = true){
+		if(!is_array($values))
+			$values = array($values);
+		
+		if($aggiungiapici) $values = array_map ( "Utils::apici", $values );
+		$values = sprintf ( "%s", join ( ", ", $values ) );
+		return $values;
 	}
 	
 	public function getList(){

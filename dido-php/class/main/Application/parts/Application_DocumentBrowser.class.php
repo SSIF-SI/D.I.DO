@@ -202,7 +202,7 @@ class Application_DocumentBrowser{
 		
 		if(!empty($mainWhere)){
 			$this->$source->useView(true);
-			$mainList=$qb->reset()->select( " DISTINCT " . Masterdocument::ID_MD)
+			$mainList=$qb->reset()->selectDistinct([Masterdocument::ID_MD])
 			->from($this->$source->getFrom())
 			->orderBy(Masterdocument::ID_MD)
 			->setWhere($mainWhere)->getList();
@@ -215,7 +215,7 @@ class Application_DocumentBrowser{
 		
 		if(!empty($keyQueries)){
 			$this->$sourceData->useView(true);
-			$qb->select("DISTINCT ".Masterdocument::ID_MD)
+			$qb->selectDistinct([Masterdocument::ID_MD])
 			->from($this->$sourceData->getFrom())
 			->orderBy(Masterdocument::ID_MD);
 			foreach ($keyQueries as $where){
