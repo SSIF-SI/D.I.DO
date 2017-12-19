@@ -130,16 +130,17 @@ class Application_DocumentBrowser{
 		
 		if(!is_null($closed)){
 			$qb->opEqual(SharedDocumentConstants::CLOSED, $closed);
-			if(count($types))
-				$qb->joinAnd();
 		}
+		
 		if(count($types)){
+			if(!is_null($closed)) $qb->joinAnd();
 			$valueSet=$qb->createInValues($types);
 			$qb->opIn( SharedDocumentConstants::NOME, $valueSet);
 		}
 		
 		$mainWhere=$qb->getWhere();
 		$qb->reset();
+		
 		if(count($keywords)){
 			$keyvalues=[];
 			
@@ -192,20 +193,23 @@ class Application_DocumentBrowser{
 		$dataList = array();
 		
 		$id_md = $isLink ? MasterdocumentsLinks::ID_FATHER : Masterdocument::ID_MD;
-				
+
 		// Riempimento array
-		if(empty($mainWhere) && empty($keyQueries)){
+		if(empty($mainWhre) && empty($keyQueries)){
 			if($isLink) $this->$source->useView(true);
 			$mainList = $this->$source->getAll(null, $id_md);
 			if($isLink) $this->$source->useView(false);
 		}
 		
 		if(!empty($mainWhere)){
+			
 			$this->$source->useView(true);
-			$mainList=$qb->reset()->selectDistinct([Masterdocument::ID_MD])
-			->from($this->$source->getFrom())
-			->orderBy(Masterdocument::ID_MD)
-			->setWhere($mainWhere)->getList();
+			$mainList=$qb->reset()
+						->selectDistinct([$id_md])
+						->from($this->$source->getFrom())
+						->orderBy($id_md)
+						->setWhere($mainWhere)
+						->getList();
 // 			$mainList = $this->$source->searchBy($mainFilters, " AND ",$id_md);
 			$mainList = Utils::getListfromField($mainList,null,$id_md);
 			$this->$source->useView(false);
@@ -213,11 +217,13 @@ class Application_DocumentBrowser{
 		
 		$mainList = array_keys($mainList);
 		
+			
+		
 		if(!empty($keyQueries)){
 			$this->$sourceData->useView(true);
 			$qb->selectDistinct([Masterdocument::ID_MD])
-			->from($this->$sourceData->getFrom())
-			->orderBy(Masterdocument::ID_MD);
+				->from($this->$sourceData->getFrom())
+				->orderBy(Masterdocument::ID_MD);
 			foreach ($keyQueries as $where){
 				$qb->setWhere($where);			
 				array_push($dataList,Utils::getListfromField($qb->getList(),Masterdocument::ID_MD));
@@ -227,10 +233,22 @@ class Application_DocumentBrowser{
 			else if(!empty($dataList)){
 				$dataList=$dataList[0];
 			}
+
+				
 						//$dataList= $this->$sourceData->searchBy($dataFilters," AND ",Masterdocument::ID_MD);
 			if($isLink && count($dataList)){
-				$dataList = $qb->reset()->select("*")->from("master_documents_links_search_view")->opIn(MasterdocumentsLinks::ID_CHILD, array_keys($dataList));
+				
+				$this->$source->useView(true);
+					
+				$dataList = $qb->reset()
+							->select("*")
+							->from($this->$source->getFrom()/*"master_documents_links_search_view"*/)
+							->opIn(MasterdocumentsLinks::ID_CHILD, $qb->createInValues($dataList))
+							->getList();
+				
 				$dataList = Utils::getListfromField($dataList, null, MasterdocumentsLinks::ID_FATHER);
+				$dataList = array_keys($dataList);
+				$this->$source->useView(false);
 			}
 			$this->$sourceData->useView(false);
 			
