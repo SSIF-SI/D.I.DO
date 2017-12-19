@@ -137,6 +137,7 @@ class Application_DocumentBrowser{
 			$valueSet=$qb->createInValues($types);
 			$qb->opIn( SharedDocumentConstants::NOME, $valueSet);
 		}
+		
 		$mainWhere=$qb->getWhere();
 		$qb->reset();
 		if(count($keywords)){
@@ -193,11 +194,10 @@ class Application_DocumentBrowser{
 		$id_md = $isLink ? MasterdocumentsLinks::ID_FATHER : Masterdocument::ID_MD;
 				
 		// Riempimento array
-		if(empty($mainFilters) && empty($keyQueries)){
+		if(empty($mainWhere) && empty($keyQueries)){
 			if($isLink) $this->$source->useView(true);
 			$mainList = $this->$source->getAll(null, $id_md);
 			if($isLink) $this->$source->useView(false);
-				
 		}
 		
 		if(!empty($mainWhere)){
@@ -210,6 +210,8 @@ class Application_DocumentBrowser{
 			$mainList = Utils::getListfromField($mainList,null,$id_md);
 			$this->$source->useView(false);
 		}
+		
+		$mainList = array_keys($mainList);
 		
 		if(!empty($keyQueries)){
 			$this->$sourceData->useView(true);
@@ -234,23 +236,31 @@ class Application_DocumentBrowser{
 			
 		}
 		
+		//Utils::printr($mainList);
+		//Utils::printr($dataList);
+		
 		// calcolo finale della lista
 		switch(true){
 			case empty($mainFilters) && empty($keyQueries):
 			case empty($keyQueries): 	 
-				$list = array_keys($mainList);
+				$list = $mainList;
 				break;
 			case empty($mainFilters):
-				$list = array_values($dataList);
+				$list = $dataList;
 				break;
 			default:
-				$list = array_intersect(array_values($dataList), array_keys($mainList));
+				$list = array_intersect($dataList, $mainList);
 				break;
 		}
 		$list = array_map ( "Utils::apici", $list );
 		
 		$list = sprintf ( " %s ", join ( ", ", $list ) );
-		$list = $qb->reset()->select("*")->from($this->_Masterdocument->getFrom())->opIn(Masterdocument::ID_MD, $list)->getList();
+		$list = $qb->reset()
+				->select("*")
+				->from($this->_Masterdocument->getFrom())
+				->opIn(Masterdocument::ID_MD, $list)
+				->orderBy(Masterdocument::ID_MD)
+				->getList();
 
 		$list = Utils::getListfromField($list,null,Masterdocument::ID_MD);
 		
@@ -279,7 +289,7 @@ class Application_DocumentBrowser{
 		return $this->_resultArray;
 	}
 	
-private function _allMyPendingDocuments(){
+	private function _allMyPendingDocuments(){
 		return $this
 			// Svuoto l'array
 			->_emptyResult()

@@ -41,6 +41,8 @@ $types = $filterClass::getTypes($ADB, $className, $typesOnDb);
 </form>
 <script>
 	$("#boxFilters input").each(function(el){
+		if($(this).hasClass("typekey")) return;
+
 		var idToRemove =  $(this).attr("id").replace(/filter-type-/,"ft-");
 		$("#"+idToRemove).remove();
 	});

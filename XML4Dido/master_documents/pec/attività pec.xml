@@ -6,8 +6,8 @@
 		<type>contratto</type>
 		<type>accordo</type>
 		<type>convenzione</type>
-		<type>MOU</type>
-		<type>NDA</type>
+		<type>mou</type>
+		<type>nda</type>
 		<type>altro</type>
 	</types>
 	<inputs>
