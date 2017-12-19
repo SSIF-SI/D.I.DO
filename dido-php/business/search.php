@@ -85,6 +85,7 @@ if(count($_POST) || Session::getInstance()->exists("Search_postIt")){
 	
 	$filters = Session::getInstance()->exists("Search_filters") ? Session::getInstance()->get("Search_filters") : null;
 	
+	Utils::printr($filters);
 	
 	$source = $_GET['source'];
 	$closed = isset($_GET['closed']) ? $_GET['closed'] : null;

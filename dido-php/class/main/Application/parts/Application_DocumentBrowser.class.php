@@ -144,14 +144,22 @@ class Application_DocumentBrowser{
 		if(count($keywords)){
 			$keyvalues=[];
 			
-			foreach ($keywords as $key=>$value){
+			foreach ($keywords as $k=>$v){
+				list($key,$value) = explode("+",$k);
+				$key = Common::labelFromField($key, false);
+				
+				/*
 				$x=strstr($key,"+",true);
 				$x=str_replace('_', ' ',$x);
 				if(!isset ($keyvalues[$x]))
  					$keyvalues[$x]=[];	
 				array_push($keyvalues[$x],$value);
-			}
+				*/
 				
+				$keyvalues[$key] = $value;
+				
+			}
+			
 			foreach ($keyvalues as $key=>$value){
 				if(count($typekey))
 					$textArea=$typekey[$key]==XMLParser::INPUT_TYPE_TEXTAREA;
@@ -165,8 +173,7 @@ class Application_DocumentBrowser{
 						$qb->opIn ( AnyDocumentData::VALUE, $valueSet );
 						array_push ( $keyQueries, $qb->getWhere () );
 					} else {
-						array_push ( $keyQueries,$qb->opEqual(AnyDocumentData::VALUE, $value)->getWhere());
-						
+						array_push ( $keyQueries,$qb->opEqual(AnyDocumentData::VALUE, Utils::apici($value, true))->getWhere());
 					}
 				}else{
 					if (is_array ( $value )) {
