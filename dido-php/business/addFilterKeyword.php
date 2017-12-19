@@ -68,6 +68,7 @@ foreach ( $listXMLSource as $fName ) {
 				) );
 			}
 			if (isset ( $input [XMLParser::VALUES] )) {
+				// TODO: Il filtro per laboratori/gruppi non funzioina a causa del nome del gruppo specificato tra parentesi. 
 				$inputsvalues = array_merge ( $inputsvalues, array (
 						"$input" => "" . $input [XMLParser::VALUES] 
 				) );
