@@ -2,6 +2,7 @@
 class Application_Detail{
 	private $_userManager;
 	private $_ProcedureManager;
+	private $_ftpDataSource;
 	
 	private $_defaultDocumentInputs;
 	private $_Signature;
@@ -20,6 +21,7 @@ class Application_Detail{
 	public function __construct(IDBConnector $dbConnector, IUserManager $userManager, IFTPDataSource $ftpDataSource){
 		$this->_userManager = $userManager;
 		$this->_ProcedureManager = new ProcedureManager($dbConnector, $ftpDataSource);
+		$this->_ftpDataSource = $ftpDataSource;
 		
 		$XMLParser = new XMLParser();
 		$XMLParser->load(FILES_PATH.SharedDocumentConstants::DEFAULT_INPUT_SOURCE);
@@ -323,7 +325,8 @@ class Application_Detail{
 			);
 				
 			if(isset($docSignatures['firstMissingSignature'])){
-				
+				$SD = new SignatureDispatcher($this->_ftpDataSource);
+				$SD->dispatch($docSignatures['firstMissingSignature'], $docPath);
 			}
 			// Se ci sono errori oppure il documento risulta ancora aperto si salta tutto il resto.
 			if(($signatures && $docSignatures['errors']) || !$documentClosed )
@@ -488,9 +491,6 @@ class Application_Detail{
 		
 		
 		$signResult['html'] = join(PHP_EOL,$signResult['html']);
-		
-		Utils::printr($signResult);
-		
 		return $signResult;
 	}
 	

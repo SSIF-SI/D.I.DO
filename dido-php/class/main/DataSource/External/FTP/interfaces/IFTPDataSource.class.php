@@ -14,7 +14,7 @@ interface IFTPDataSource {
 	
 	public function upload($source, $destination);
 	
-	
+	public function download($filename);
 }
 
 ?>

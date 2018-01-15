@@ -29,6 +29,8 @@ define ( "ADMIN_SCRIPTS_PATH", HTTP_ROOT . "scripts/admin/" );
 define ( "ADMIN_SCRIPTS_RPATH", REAL_ROOT . "scripts/admin/" );
 define ( "LIB_PATH", HTTP_ROOT . "lib/" );
 
+define ( "SAMBA_ROOT", "/samba/");
+
 define ( "FILES_PATH", REAL_ROOT . "files/" );
 define ( "FILES_HTTP_PATH", HTTP_ROOT . "files/" );
 

@@ -34,26 +34,8 @@ require_once("config.php");
 	
 // }
 
-$qb = new QueryBuilder(DBConnector::getInstance());
-$qb
-->reset()
-->select()
-->from("search_master_documents_data_view")
-->opEqual("key", Utils::apici("note"))
-->joinAnd()
-->openBracket()
-->opLike("value", "Mul")
-->joinOr()
-->opLike("value", "Ber")
-->closeBracket()
-->joinAnd()
-->openBracket()
-->opEqual("key", Utils::apici("acronimo progetto"))
-->joinAnd()
-->opIn("value", Utils::apici("DISVA"))
-->closeBracket()
-->orderBy("id_md");
+$SD = new SignatureDispatcher(new FTPDataSource());
+Utils::printr($SD->dispatch("DIR", "pec/2017/11/attività_pec_114/atto_145.pdf"));
 
-Utils::printr($qb->getList());
-
+die("??");
 ?>
