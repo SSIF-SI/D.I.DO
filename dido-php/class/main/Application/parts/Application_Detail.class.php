@@ -322,6 +322,9 @@ class Application_Detail{
 					$id_doc
 			);
 				
+			if(isset($docSignatures['firstMissingSignature'])){
+				
+			}
 			// Se ci sono errori oppure il documento risulta ancora aperto si salta tutto il resto.
 			if(($signatures && $docSignatures['errors']) || !$documentClosed )
 				return false;
@@ -388,6 +391,8 @@ class Application_Detail{
 
 	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $specialSignatures, $MDSigners){
 		
+		Utils::printr($MDSigners);
+		
 		$signResult = [
 			'errors' => false,
 			'html'		=> []	
@@ -399,6 +404,8 @@ class Application_Detail{
 // 		flog("docPath: %s",$docPath);
 		
 		$this->_SignatureChecker->load($docPath);
+		
+		$firstSignature = null;
 		
 		if(!SignatureChecker::emptySignatures($docSignatures)) {
 			foreach ( $docSignatures as $signature ) {
@@ -428,6 +435,12 @@ class Application_Detail{
 					$signResult ['html'] [] = "<div class=\"alert alert-success\"><span class=\"fa fa-check\"></span> {$whoIs_Delegato} - delegato da {$whoIs} ({$who[SignersRoles::DESCRIZIONE]}) </div>";
 					break;
 				}
+
+				if(is_null($firstSignature)){
+					$firstSignature = $role;
+					$signResult ['firstMissingSignature'] = $role;
+				}
+					
 				$signResult ['errors'] = true;
 				$signResult ['html'] [] = "<div class=\"alert alert-warning\"><span class=\"fa fa-warning\"></span> Manca la firma di {$whoIs} ({$who[SignersRoles::DESCRIZIONE]})</div>";
 			}
@@ -458,7 +471,10 @@ class Application_Detail{
 					}
 					
 					if(!$signerFound){
-							
+						if(is_null($firstSignature)){
+							$firstSignature = $role;
+							$signResult ['firstMissingSignature'] = $role;
+						}
 						$signResult['errors'] = true;
 						$signResult['html'][] =	"<div class=\"alert alert-danger\"><span class=\"fa fa-danger\"></span> Manca la firma per $type </div>";
 					}
@@ -472,6 +488,8 @@ class Application_Detail{
 		
 		
 		$signResult['html'] = join(PHP_EOL,$signResult['html']);
+		
+		Utils::printr($signResult);
 		
 		return $signResult;
 	}
