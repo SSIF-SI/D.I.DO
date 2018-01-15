@@ -36,6 +36,7 @@ require_once("config.php");
 
 $SD = new SignatureDispatcher(new FTPDataSource());
 Utils::printr($SD->dispatch("DIR", "pec/2017/11/attività_pec_114/atto_145.pdf"));
+Utils::printr($SD->test("atto_145______|pec|2017|11|attività_pec_114|atto_145_signed.pdf"));
 
 die("??");
 ?>

@@ -20,15 +20,17 @@ class SignatureDispatcher{
 		$pathParts = explode( DIRECTORY_SEPARATOR, $pathFile);
 		
 		$basePath = SAMBA_ROOT . self::$directoryMapper[$role] . DIRECTORY_SEPARATOR .reset($pathParts). DIRECTORY_SEPARATOR;
-		
-		Utils::printr($basePath);
-		
-		var_dump(mkdir($basePath, 0775));
+				
+		mkdir($basePath, 0775);
 		
 		$fileName = $this->generateFilename($pathParts, "fromFtpToServer");
 		
 		$tmpFilename = $this->_ftpDataSource->getTempFile($pathFile, $basePath);
-		rename($tmpFilename, $fileName);
+
+		chmod($tmpFilename, 0755);
+		
+		
+		return rename($tmpFilename, $basePath.$fileName);
 	}
 	
 	private function generateFilename($pathParts, $transformCallback){
@@ -51,9 +53,24 @@ class SignatureDispatcher{
 	}
 	
 	private function fromServerToFtp($pathParts){
+		
+// 		atto_145______|pec|2017|11|attività_pec_114|atto_145_signed.pdf
+		$filename=array_shift($pathParts);
+		$filename=trim($filename,"_");
+		$docFilename = array_pop($pathParts);
+		$fileParts = pathinfo($docFilename);
+		$docFilenameExt = $fileParts['extension'];
+		array_push($pathParts,$filename.".".$docFilenameExt);
+		$newPath=join(DIRECTORY_SEPARATOR, $pathParts);
+		
+		
 		return $newPath;
 	}
-	
+	public function test($pathFile){
+		$pathParts = explode( "|", $pathFile);
+		return 	$fileName = $this->generateFilename($pathParts, "fromServerToFtp");
+		
+	}
 	public function copy($source, $destination){
 		
 	}
