@@ -19,8 +19,6 @@ $addData = [
 	]
 ];
 
-define (PAGE_TITLE, $addData[$_GET['status']]['title']);
-
 if(isset($_GET['action'])){
 	$Application->manageAction($_GET['action']);
 	die();
@@ -44,6 +42,8 @@ if(isset($_GET[Masterdocument::ID_MD])){
 	
 	$XMLDataSource = $Application->getXMLDataSource();
 }
+
+define (PAGE_TITLE, isset($_GET['status']) ? $addData[$_GET['status']]['title'] : ucfirst($md[Masterdocument::NOME]));
 
 $pageScripts = array("MyModal.js","locationHash.js");
 include_once (TEMPLATES_PATH."template.php");

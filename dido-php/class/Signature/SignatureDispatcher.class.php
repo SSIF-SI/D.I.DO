@@ -4,6 +4,7 @@ class SignatureDispatcher{
 	const SIGNED_PREFIX = "_signed";
 	const PIPE = "#";
 	const SAMBAGROUP = "sambadido";
+	const OVERWRITE_FILE_SIGNED = "overwrite_file_signed";
 	
 	private $_ftpDataSource;
 	
@@ -29,9 +30,13 @@ class SignatureDispatcher{
 		}
 		
 		$fileName = $basePath . $this->generateFilename($pathParts, "fromFtpToServer");
-		//Il file c'è già
-		if(file_exists($fileName)){
-			return true;
+		
+		if(Session::getInstance()->exists(self::OVERWRITE_FILE_SIGNED)){
+			Session::getInstance()->delete(self::OVERWRITE_FILE_SIGNED);
+		} else {
+			if(file_exists($fileName)){
+				return true;
+			}
 		}
 		
 		$tmpFilename = $this->_ftpDataSource->getTempFile($pathFile, $basePath);

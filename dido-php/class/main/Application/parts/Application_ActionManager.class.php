@@ -225,8 +225,10 @@ class Application_ActionManager {
 			}
 			if(!$result){
 				$eh->setErrors("Impossibile creare il documento");
+			} else {
+				Session::getInstance()->set(SignatureDispatcher::OVERWRITE_FILE_SIGNED, true);
 			}
-		
+			
 			$ARP->encode($eh->getErrors(true));
 		}
 		

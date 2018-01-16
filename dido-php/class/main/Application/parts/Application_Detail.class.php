@@ -327,11 +327,15 @@ class Application_Detail{
 			if(isset($docSignatures['firstMissingSignature'])){
 				$SD = new SignatureDispatcher($this->_ftpDataSource);
 				$SD->dispatch($docSignatures['firstMissingSignature'], $docPath);
-			}
+			} 
 			// Se ci sono errori oppure il documento risulta ancora aperto si salta tutto il resto.
-			if(($signatures && $docSignatures['errors']) || !$documentClosed )
+			if(($signatures && $docSignatures['errors']) || !$documentClosed ){
+				Session::getInstance()->delete(SignatureDispatcher::OVERWRITE_FILE_SIGNED);
 				return false;
+			}
 		}
+		
+		Session::getInstance()->delete(SignatureDispatcher::OVERWRITE_FILE_SIGNED);
 		
 		return true;
 	}
