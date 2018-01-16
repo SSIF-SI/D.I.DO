@@ -394,7 +394,7 @@ class Application_Detail{
 
 	private function _createDocumentSignaturesPanel($docPath, $docSignatures, $specialSignatures, $MDSigners){
 		
-		Utils::printr($MDSigners);
+		//Utils::printr($MDSigners);
 		
 		$signResult = [
 			'errors' => false,

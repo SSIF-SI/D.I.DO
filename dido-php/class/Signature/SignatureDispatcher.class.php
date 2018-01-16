@@ -2,6 +2,8 @@
 class SignatureDispatcher{
 	
 	const SIGNED_PREFIX = "_signed";
+	const PIPE = "#";
+	const SAMBAGROUP = "sambadido";
 	
 	private $_ftpDataSource;
 	
@@ -21,16 +23,23 @@ class SignatureDispatcher{
 		
 		$basePath = SAMBA_ROOT . self::$directoryMapper[$role] . DIRECTORY_SEPARATOR .reset($pathParts). DIRECTORY_SEPARATOR;
 				
-		mkdir($basePath, 0775);
+		if(@mkdir($basePath)){
+			chgrp($basePath,self::SAMBAGROUP);
+			chmod($basePath, 0775);
+		}
 		
-		$fileName = $this->generateFilename($pathParts, "fromFtpToServer");
-		
+		$fileName = $basePath . $this->generateFilename($pathParts, "fromFtpToServer");
+		//Il file c'è già
+		if(file_exists($fileName)){
+			self::printLog("File $fileName already exists");
+			return true;
+		}
 		$tmpFilename = $this->_ftpDataSource->getTempFile($pathFile, $basePath);
 
-		chmod($tmpFilename, 0755);
-		
-		
-		return rename($tmpFilename, $basePath.$fileName);
+		chmod($tmpFilename, 0775);
+		$result = rename($tmpFilename, $fileName);
+		chgrp($fileName,self::SAMBAGROUP);
+		return $result;
 	}
 	
 	private function generateFilename($pathParts, $transformCallback){
@@ -39,7 +48,7 @@ class SignatureDispatcher{
 	
 	private function fromFtpToServer($pathParts){
 		
-		$suffix = join("|", $pathParts);
+		$suffix = join(self::PIPE, $pathParts);
 		
 		$docFilename = array_pop($pathParts);
 
@@ -47,31 +56,70 @@ class SignatureDispatcher{
 		$docFilenameExt = $fileParts['extension'];
 		
 		$newFilename = str_replace(".".$docFilenameExt,"",$docFilename);
-		$newFilename .= "______|" .$suffix;
+		$newFilename .= "______".self::PIPE .$suffix;
 		
 		return $newFilename;
 	}
 	
 	private function fromServerToFtp($pathParts){
 		
-// 		atto_145______|pec|2017|11|attività_pec_114|atto_145_signed.pdf
+// 		atto_145______{self::PIPE}pec{self::PIPE}2017{self::PIPE}11{self::PIPE}attività_pec_114{self::PIPE}atto_145_signed.pdf
 		$filename=array_shift($pathParts);
-		$filename=trim($filename,"_");
+		$filename=rtrim($filename,"_");
 		$docFilename = array_pop($pathParts);
 		$fileParts = pathinfo($docFilename);
 		$docFilenameExt = $fileParts['extension'];
 		array_push($pathParts,$filename.".".$docFilenameExt);
 		$newPath=join(DIRECTORY_SEPARATOR, $pathParts);
-		
-		
 		return $newPath;
 	}
-	public function test($pathFile){
-		$pathParts = explode( "|", $pathFile);
-		return 	$fileName = $this->generateFilename($pathParts, "fromServerToFtp");
-		
+	
+	public function put($pathFile){
+		$pathParts = explode( self::PIPE, basename($pathFile));
+		$fileName = $this->generateFilename($pathParts, "fromServerToFtp");
+		// Upload To ftp
+		self::printLog($pathFile." -> ".$fileName);
+		return $this->_ftpDataSource->upload($pathFile, $fileName);
 	}
-	public function copy($source, $destination){
+	
+	public function scan(){
+		self::printLog("Scanning folder(s) for signed files..");
+		$signedDocs = [];
+		$purgeDirs = [];
+		foreach(self::$directoryMapper as $role=>$path){
+			$types = glob(SAMBA_ROOT . $path . DIRECTORY_SEPARATOR . "*");
+			if(count($types)){
+				$purgeDirs = array_merge($purgeDirs, $types);
+				foreach ($types as $type){
+					self::printLog($type."...");
+					$signed = glob($type. DIRECTORY_SEPARATOR. "*" . self::SIGNED_PREFIX. ".*");
+					self::printLog(count($signed)." file(s) found");
+					if(!empty($signed))
+						$signedDocs = array_merge($signedDocs,$signed);
+				}
+			}
+		}
+		self::printLog(count($signedDocs)." total file(s) found");
+		if(empty($signedDocs)){
+			return;
+		}
 		
+		foreach($signedDocs as $sd){
+			self::printLog($this->put($sd) ? "OK." : "Error occurred. Please Verify.");
+		}
+		
+		if(!count($purgeDirs))
+			return;
+		
+		foreach($purgeDirs as $dir){
+			if(!count(glob($dir.DIRECTORY_SEPARATOR."*"))){
+				self::printLog("Removing folder $dir...");
+				self::printLog(rmdir($dir) ? "Ok." : "Error occurred. Please Verify.");
+			}
+		}
+	}
+	
+	private static function printLog($txt){
+		print "[".date("Y-m-d H:i:s")."] - ".$txt.PHP_EOL;
 	}
 }

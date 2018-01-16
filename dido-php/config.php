@@ -3,7 +3,7 @@
 require_once ('define.php');
 
 // Firelog
-require_once (FRAMEWORK_CLASS_PATH . "Firelogger.class.php");
+//require_once (FRAMEWORK_CLASS_PATH . "Firelogger.class.php");
 
 // Java
 require_once ("java/Java.inc");
