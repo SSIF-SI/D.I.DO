@@ -31,9 +31,9 @@ class SignatureDispatcher{
 		$fileName = $basePath . $this->generateFilename($pathParts, "fromFtpToServer");
 		//Il file c'è già
 		if(file_exists($fileName)){
-			self::printLog("File $fileName already exists");
 			return true;
 		}
+		
 		$tmpFilename = $this->_ftpDataSource->getTempFile($pathFile, $basePath);
 
 		chmod($tmpFilename, 0775);
