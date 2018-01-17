@@ -147,6 +147,8 @@ class Application_Detail{
 			$this->_canMdBeClosed = $this->_ICanManageIt && $md[Masterdocument::CLOSED] != ProcedureManager::CLOSED && $mandatoryInputsBeforeClosing ;
 		}
 		
+		Session::getInstance()->delete(SignatureDispatcher::OVERWRITE_FILE_SIGNED);
+		
 		if(!$almostOne)
 			return;
 		
@@ -334,8 +336,6 @@ class Application_Detail{
 				return false;
 			}
 		}
-		
-		Session::getInstance()->delete(SignatureDispatcher::OVERWRITE_FILE_SIGNED);
 		
 		return true;
 	}

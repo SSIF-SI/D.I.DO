@@ -223,6 +223,7 @@ class Application_ActionManager {
 				$doc[Document::EXTENSION]=$extension;
 				$result = $this->_ProcedureManager->updateDocument($doc, null, $filePath, $repositoryPath,$oldExtension);
 			}
+			
 			if(!$result){
 				$eh->setErrors("Impossibile creare il documento");
 			} else {
