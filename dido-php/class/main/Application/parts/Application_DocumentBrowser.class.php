@@ -156,7 +156,7 @@ class Application_DocumentBrowser{
 				array_push($keyvalues[$x],$value);
 				*/
 				
-				$keyvalues[$key] = $value;
+				$keyvalues[$key] = $v;
 				
 			}
 			
