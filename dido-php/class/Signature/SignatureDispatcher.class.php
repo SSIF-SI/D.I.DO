@@ -110,7 +110,10 @@ class SignatureDispatcher{
 		}
 		
 		foreach($signedDocs as $sd){
-			self::printLog($this->put($sd) ? "OK." : "Error occurred. Please Verify.");
+			$action = $this->put($sd);
+			$oldFilename = str_replace(self::SIGNED_PREFIX, "", $sd);
+			@unlink($oldFilename);
+			self::printLog( $action ? "OK." : "Error occurred. Please Verify.");
 		}
 		
 		if(!count($purgeDirs))
