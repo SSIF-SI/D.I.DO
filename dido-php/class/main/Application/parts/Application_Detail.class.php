@@ -226,7 +226,7 @@ class Application_Detail{
 					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
 			}
 			
-			$panel = new FlowTimelinePanel($docName, null ,null, $panelButtons, $panelBody, "mdLink");
+			$panel = new FlowTimelinePanel("Collegamento ".$docName, null ,null, $panelButtons, $panelBody, "mdLink");
 			
 			$badge =
 				new FlowTimelineBadgeSuccess();
