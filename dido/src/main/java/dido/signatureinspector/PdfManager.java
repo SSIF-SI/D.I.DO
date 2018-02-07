@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPublicKey;
@@ -113,9 +114,10 @@ public class PdfManager implements InterfaceSignatureManager {
 		}
 
 		SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS");
+		if(pkcs7.getSignDate()!=null){
 		logger.info("Signed on: " + date_format.format(pkcs7.getSignDate().getTime()));
 		tmpSignature.setSignDate(date_format.format(pkcs7.getSignDate().getTime()));
-
+		}else
 		if (pkcs7.getTimeStampDate() != null) {
 			logger.info("TimeStamp: " + date_format.format(pkcs7.getTimeStampDate().getTime()));
 			TimeStampToken ts = pkcs7.getTimeStampToken();

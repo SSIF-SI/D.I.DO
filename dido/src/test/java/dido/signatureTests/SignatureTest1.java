@@ -19,7 +19,7 @@ public class SignatureTest1 {
 	public static final String SRC2 = "/testresources/TipoA-2comment1.pdf";
 	public static final String SRC3 = "/testresources/TipoA-ex2commenti.pdf";
 //	public static final String SRC4 = "/testresources/TipoNONA.pdf";
-	public static final String SRC1 = "/testresources/sample06.pdf";
+	public static final String SRC1 = "/testresources/Mandato n. 109385.pdf";
 	public static final String KEYSTORE = "/home/giuseppe/git/D.I.DO/dido/src/test/java/testresources/signsotreT.jks";
 	public static final String PASSWORD = "PROVACHIAVE";
 
@@ -39,9 +39,9 @@ public class SignatureTest1 {
 		sigIn.loadPDF(SRC1);
 		System.out.println("JSON PDF:"+ sigIn.getAnnotations());
 		System.out.println("JSON PDF:"+ sigIn.getSignatures());
-		sigIn.loadP7m(SRC4);
-		System.out.println("JSON P7m:"+ sigIn.getAnnotations());
-		System.out.println("JSON P7m:"+ sigIn.getSignatures());
+//		sigIn.loadP7m(SRC4);
+//		System.out.println("JSON P7m:"+ sigIn.getAnnotations());
+//		System.out.println("JSON P7m:"+ sigIn.getSignatures());
 		
 //		sigMan.load(SRC);
 //		sigMan.getAnnotations();
