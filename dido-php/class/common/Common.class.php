@@ -55,7 +55,7 @@ class Common{
 		$retArray = [ ];
 		
 		foreach ( $postArray as $key=>$post ) :
-			if(preg_match("/(\d{2})\/(\d{2})\/(\d{4})$/", $post)){
+			if(preg_match("/^(\d{2})\/(\d{2})\/(\d{4})$/", $post)){
 				$post = Utils::convertDateFormat($post, "d/m/Y", DB_DATE_FORMAT);
 			}
 				
