@@ -13,6 +13,7 @@ class FlowTimeline{
 	}
 	
 	public function render($key = null){
+		Utils::printr(array_keys($this->_timeline));
 ?>
 		<ul class="timeline">
 <?php
@@ -157,7 +158,7 @@ class FlowTimelinePanelBody{
 			</div>
 		</div>
 INFO;
-
+	
 	const SIGNATURES_INFO = 
 <<<SIGINFO
 	<div class="col-lg-6">
@@ -170,21 +171,41 @@ INFO;
 	</div>
 SIGINFO;
 
+	const ATTACHMENT_HTML =
+<<<ATTACHMENT_HTML
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">Allegati:</div>
+				<div class="panel-body">
+					%s
+				</div>
+				<br/>
+			</div>
+		</div>
+ATTACHMENT_HTML;
+	
 	private $_infoTable = null;
+	private $_attachment = null;
 	private $_signatures = null;
 		
-	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = []){
+	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null, $attachment = null){
 		$col = empty($signatures) ? 12 : 6;
 		
 		if(!is_null($infoTable))
 			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfoBTN);
 		if(!empty($signatures))
 			$this->_signatures = sprintf(self::SIGNATURES_INFO, $signatures);
+		if(!empty($attachments))
+			$this->_attachment = sprintf(self::ATTACHMENT_HTML, $attachment);
 		
 	}
 	
+	public function addAttachment($attachment){
+		$this->_attachment .= $attachment;
+	}
+	
 	public function render(){
-		return $this->_infoTable."\n".$this->_signatures;	
+		return $this->_infoTable.PHP_EOL.$this->_signatures.PHP_EOL.$this->_attachment;	
 	}
 }
 

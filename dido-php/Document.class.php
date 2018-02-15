@@ -1,0 +1,35 @@
+<?php
+
+class Document extends Crud {
+
+	const ID_DOC = "id_doc";
+
+	const ID_MD = Masterdocument::ID_MD;
+
+	const NOME = SharedDocumentConstants::NOME;
+
+	const TYPE = SharedDocumentConstants::TYPE;
+
+	const CLOSED = SharedDocumentConstants::CLOSED;
+
+	const EXTENSION = "extension";
+
+	const IMPORTED_FILE_NAME = "imported_file_name";
+	
+	const PRIVATE_DOC = "private";
+	
+	const ALLEGATO_ID_DOC = "allegato_id_doc";
+	
+	protected $TABLE = "documents";
+	
+	protected $VIEW = "documents_view";
+
+	protected $SEQ_NAME = "documents_id_doc_seq";
+
+	public function __construct($connInstance) {
+		parent::__construct ( $connInstance );
+		$this->useView(false);
+	}
+}
+
+?>

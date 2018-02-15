@@ -33,6 +33,7 @@ class XMLParser implements IXMLParser {
 	
 	const PRIVATE_DOC = "private";
 	
+	const ATTACHMENT_OF = "attachmentOf";
 	
 	// Signature params 
 	const ROLE = "role";
@@ -148,18 +149,6 @@ class XMLParser implements IXMLParser {
 		
 		
 		return $document->signatures;
-	}
-	
-	public function getAttachmentSignatures($attachment){
-		return $attachment->signatures;
-	}
-	
-	public function getAttachmentsList($docname){
-		$document = $this->getDocByName($docname);
-	
-		if(!$document) return false;
-	
-		return $document->attachments;
 	}
 	
 	public function getDocumentSpecialSignatures($docname, $docType = null){
@@ -319,19 +308,6 @@ class XMLParser implements IXMLParser {
 			$this->checkIfMustBeLoaded ( $document );
 			if (( string ) $document [self::DOC_NAME] == $docname){
 				$clone = clone $document;
-				return $clone;
-			}
-				
-		}
-		return null;
-	}
-
-	public function getAttachmentByName($docname, $attachmentName) {
-		if(!count($this->getAttachmentsList($docname)))
-			return null;
-		foreach ( $this->getAttachmentsList($docname) as $attachment ) {
-			if (( string ) $attachment [self::DOC_NAME] == $attachmentName){
-				$clone = clone $attachment;
 				return $clone;
 			}
 				

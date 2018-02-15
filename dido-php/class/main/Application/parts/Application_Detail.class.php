@@ -37,7 +37,10 @@ class Application_Detail{
 	
 	public function createDetail($md, $mdLinks){
 // 		flog("mdLinks: %o",$mdLinks);
+		Utils::printr($md);
+		
 		extract($md);
+		
 		
 		$id_md = $md[Masterdocument::ID_MD];
 		$MDSigners = $this->_Signature->getSigners($id_md, $md_data);
@@ -92,18 +95,6 @@ class Application_Detail{
 			} else {
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
-				
-				$attachments = $XMLParser->getAttachmentsList($docName);
-				
-				Utils::printr($attachments);
-				
-				foreach($attachments as $attachment){
-					foreach ($attachment->attachment as $att){
-						$att_name = $att[XMLParser::DOC_NAME];
-						$att_signatures = $XMLParser->getAttachmentSignatures($att);
-						Utils::printr($att_signatures);
-					}
-				}
 				
 				// Se il documento ha il parametro onlyIfExists lo controllo se e solo se esiste già un documento col nome del parametro
 				if(isset($doc[XMLParser::ONLYIFEXISTS])){
@@ -160,6 +151,11 @@ class Application_Detail{
 		}
 		
 		Session::getInstance()->delete(SignatureDispatcher::OVERWRITE_FILE_SIGNED);
+		
+		// Se il documento è un allegato fai qualcosa
+		if(isset($doc[$XMLParser::ATTACHMENT_OF])){
+				
+		}
 		
 		if(!$almostOne)
 			return;
@@ -332,11 +328,15 @@ class Application_Detail{
 				($signatures && $docSignatures['errors']) || !$documentClosed ?
 				new FlowTimelineBadgeWarning() :
 				new FlowTimelineBadgeSuccess($documentClosed);
-					
+
+			// Se Non attachment va bene:
+			
 			$this->_flowResults->addTimelineElement(
 					new TimelineElementFull($badge, $panel),
 					$id_doc
 			);
+			
+			// Altrimenti iniettare 
 				
 			if(isset($docSignatures['firstMissingSignature'])){
 				$SD = new SignatureDispatcher($this->_ftpDataSource);
