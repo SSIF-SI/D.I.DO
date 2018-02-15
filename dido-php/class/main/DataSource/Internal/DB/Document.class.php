@@ -18,7 +18,8 @@ class Document extends Crud {
 	
 	const PRIVATE_DOC = "private";
 	
-
+	const ALLEGATO_ID_DOC = "allegato_id_doc";
+	
 	protected $TABLE = "documents";
 	
 	protected $VIEW = "documents_view";

@@ -34,7 +34,19 @@
 			</signatures>
 			<specialSignatures>
 				<specialSignature mandatory="1" type="copia conforme" onlyIfType="con firma per copia conforme"/>
-			</specialSignatures>				
+			</specialSignatures>	
+			<attachments>
+				<attachment name="scheda" minOccur="1" maxOccur="1">
+					<signatures>
+						<signature mandatory="1" role="DIR"/>					
+					</signatures>
+				</attachment>
+				<attachment name="modulo" minOccur="1" maxOccur="1">
+					<signatures>
+						<signature mandatory="1" role="DIR"/>					
+					</signatures>
+				</attachment>
+			</attachments>			
 		</document>
 	</list>
 	<innerValues>

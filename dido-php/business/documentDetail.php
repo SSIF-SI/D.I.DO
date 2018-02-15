@@ -9,6 +9,8 @@ $mdLinks = $Application_DocumentBrowser->getLinkedMd($id_md);
 if(!$md || empty($md[Application_DocumentBrowser::LABEL_MD]))
 	Common::redirect();
 
+//Utils::printr($md);
+
 $Application_Detail->createDetail($md, $mdLinks);
 extract($md);
 

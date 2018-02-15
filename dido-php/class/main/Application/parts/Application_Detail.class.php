@@ -93,6 +93,18 @@ class Application_Detail{
 				$XMLParser->checkIfMustBeLoaded ( $doc );
 				$docName = (string)$doc[XMLParser::DOC_NAME];
 				
+				$attachments = $XMLParser->getAttachmentsList($docName);
+				
+				Utils::printr($attachments);
+				
+				foreach($attachments as $attachment){
+					foreach ($attachment->attachment as $att){
+						$att_name = $att[XMLParser::DOC_NAME];
+						$att_signatures = $XMLParser->getAttachmentSignatures($att);
+						Utils::printr($att_signatures);
+					}
+				}
+				
 				// Se il documento ha il parametro onlyIfExists lo controllo se e solo se esiste già un documento col nome del parametro
 				if(isset($doc[XMLParser::ONLYIFEXISTS])){
 					$docExists = count(Utils::filterList($documents, Document::NOME, $docName)) > 0;

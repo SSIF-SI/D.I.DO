@@ -4,6 +4,7 @@ class Application_DocumentBrowser{
 	const LABEL_MD_DATA  = "md_data";
 	const LABEL_DOCUMENTS = "documents";
 	const LABEL_DOCUMENTS_DATA = "documents_data";
+	const LABEL_DOCUMENTS_ATTACHMENTS = "documents_attachments";
 	const LABEL_MD_LINKS = "md_links";
 	
 	const MUST_BE_SIGNED_BY_ME = "mustBeSignedByMe";
@@ -766,13 +767,18 @@ class Application_DocumentBrowser{
 			$documents = Utils::getListfromField ( 
 				$this->_Document->getBy ( Document::ID_MD, $md_ids ), null, Document::ID_DOC 
 			);
-					
+
+			$documents_attachments = Utils::filterList($documents, Document::ALLEGATO_ID_DOC, null, Utils::OP_NOT.Utils::OP_EQUAL.Utils::OP_EQUAL);
+			
+			$documents_attachments = Utils::groupListBy($documents_attachments, Document::ALLEGATO_ID_DOC);
+			
 			if (! empty ( $documents )) {
 				foreach ( $documents as $k => $document ) {
 					$documents [$k] [self::MUST_BE_SIGNED_BY_ME] = 0;
 					$documents [$k] [self::IS_SIGNED_BY_ME] = 0;
 					$documents [$k] [self::FTP_NAME] = Common::getFilenameFromDocument($document);
 				}
+				
 				$this->_resultArray [self::LABEL_DOCUMENTS] = Utils::groupListBy ( 
 					$documents, Document::ID_MD 
 				);
@@ -781,6 +787,7 @@ class Application_DocumentBrowser{
 						$this->_DocumentData->getBy ( DocumentData::ID_DOC, array_keys ( $documents )  ), DocumentData::ID_DOC 
 					) 
 				);
+				$this->_resultArray [self::LABEL_DOCUMENTS_ATTACHMENTS] = $documents_attachments;
 			}
 		}
 		return $this;
@@ -800,7 +807,9 @@ class Application_DocumentBrowser{
 				self::LABEL_MD => [ ],
 				self::LABEL_MD_DATA => [ ],
 				self::LABEL_DOCUMENTS => [ ],
-				self::LABEL_DOCUMENTS_DATA => [ ]
+				self::LABEL_DOCUMENTS_DATA => [ ],
+				self::LABEL_DOCUMENTS_ATTACHMENTS => [ ],
+				
 		);
 		return $this;
 	}
