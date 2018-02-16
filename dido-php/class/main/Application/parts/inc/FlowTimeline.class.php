@@ -1,4 +1,22 @@
 <?php 
+class AttachmentTimeline{
+	private $_aTimelines = [];
+	
+	public function getTimeline($key){
+		
+		if(!isset($this->_aTimelines[$key])){
+			$this->_aTimelines[$key] = new FlowTimeline();
+		}
+		
+		return $this->_aTimelines[$key]; 
+	}
+	
+	public function getTimelines(){
+		return $this->_aTimelines;
+	}
+}
+
+
 class FlowTimeline{
 	private $_timeline = [];
 	
@@ -10,6 +28,10 @@ class FlowTimeline{
 		else 
 			$this->_timeline[$key] = $timelineElement;
 		return $this;
+	}
+	
+	public function getTimelineElement($key){
+		return isset($this->_timeline[$key]) ? $this->_timeline[$key] : false;
 	}
 	
 	public function render($key = null){
@@ -93,11 +115,13 @@ class FlowTimelineElement{
 }
 
 class FlowTimelinePanel{
+	
 	private $_title;
 	private $_subtitle;
 	private $_buttons;
 	private $_class;
 	private	$_privateBTN;
+	private $_body;
 	private $_panel = 
 <<<TLP
 	<div class="timeline-panel %s">
@@ -140,6 +164,9 @@ TLP;
 		printf($this->_panel, $this->_class, $this->_title, $privateBTN, $this->_subtitle, $buttonsHTML, $this->_body->render());
 	}
 	
+	public function getPanelBody(){
+		return $this->_body;
+	}
 }
 
 class FlowTimelinePanelBody{
@@ -174,8 +201,8 @@ SIGINFO;
 	const ATTACHMENT_HTML =
 <<<ATTACHMENT_HTML
 		<div class="col-lg-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">Allegati:</div>
+			<div class="panel panel-info">
+				<div class="panel-heading">Allegati al documento:</div>
 				<div class="panel-body">
 					%s
 				</div>
@@ -185,23 +212,23 @@ SIGINFO;
 ATTACHMENT_HTML;
 	
 	private $_infoTable = null;
-	private $_attachment = null;
+	private $_attachments = null;
 	private $_signatures = null;
 		
-	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null, $attachment = null){
-		$col = empty($signatures) ? 12 : 6;
+	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null, $attachments = null){
+		$col = empty($signatures) || empty($infoTable) ? 12 : 6;
 		
 		if(!is_null($infoTable))
 			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfoBTN);
 		if(!empty($signatures))
 			$this->_signatures = sprintf(self::SIGNATURES_INFO, $signatures);
 		if(!empty($attachments))
-			$this->_attachment = sprintf(self::ATTACHMENT_HTML, $attachment);
+			$this->_attachments = sprintf(self::ATTACHMENT_HTML, $attachments);
 		
 	}
 	
-	public function addAttachment($attachment){
-		$this->_attachment .= $attachment;
+	public function setAttachments($attachments){
+		$this->_attachment = sprintf(self::ATTACHMENT_HTML, $attachments);
 	}
 	
 	public function render(){

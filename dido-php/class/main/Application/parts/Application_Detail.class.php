@@ -13,7 +13,12 @@ class Application_Detail{
 	
 	private $_redirectUrl;
 	private $_info;
+	private $_createInfoPanel;
+	
 	private $_flowResults;
+	private $_attachmentTimeline;
+	private $_timeline;
+	
 	private $_canMdBeClosed = false;
 	private $_ICanManageIt = false;
 	private $_mdClosed = false;
@@ -33,6 +38,9 @@ class Application_Detail{
 		$this->_SignatureChecker = new SignatureChecker($ftpDataSource);
 		$this->_mySpecialSignatures = $this->_userManager->getUserSign()->getSpecialSignatures();
 		$this->_allSpecialSignatures = $this->_userManager->getUserSign()->getAllSpecialSignatures();
+		$this->_flowResults = new FlowTimeline();
+		$this->_attachmentTimeline = new AttachmentTimeline();
+		
 	}
 	
 	public function createDetail($md, $mdLinks){
@@ -56,7 +64,6 @@ class Application_Detail{
 		
 		$this->_redirectUrl = TurnBack::getLastHttpReferer()."#".dirname($md[Masterdocument::XML])."/#".Common::fieldFromLabel($md[Masterdocument::NOME]);
 		$this->_createAdditionalInfo($XMLParser, $id_md, $md_data, $this->_mdClosed);
-		$this->_flowResults = new FlowTimeline();
 		
 		
 		$this->_ICanManageIt =
@@ -68,8 +75,25 @@ class Application_Detail{
 		// L'elenco dei documenti lo prendo sempre dall'XML
 		foreach($XMLParser->getDocList() as $doc){
 			$mandatory = 0;
-			$foundMandatory = 0;				
+			$foundMandatory = 0;
+			
+			$this->_timeline =& $this->_flowResults;
+			$this->_createInfoPanel = true;
+			
+			// Se il documento è un allegato fai qualcosa
+			if(isset($doc[$XMLParser::ATTACHMENT_OF])){
+				// IL nome del documento con allegati
+				$docWithAttachment = (string) $doc[$XMLParser::ATTACHMENT_OF];
+				//devo recuperare l'id del documento (ne DOVRO' AVERE solo 1 per ogni nome
+				$docWithAttachment = Utils::filterList($documents, Document::NOME, $docWithAttachment);
+				$id_docs = array_keys($docWithAttachment);
+				$id_doc = reset($id_docs);
 				
+				$att_timeline = $this->_attachmentTimeline->getTimeline($id_doc);
+				$this->_timeline =& $att_timeline;
+				$this->_createInfoPanel = false;
+			}
+			
 			if(isset($doc[XMLParser::MD])){
 				
 				// il documento in realtà è un Master Document esterno
@@ -78,7 +102,7 @@ class Application_Detail{
 				$listOnDb = Utils::filterList($mdLinks[Application_DocumentBrowser::LABEL_MD], Masterdocument::NOME, $docName);
 				if(count($listOnDb) == 0){
 					if($this->_mdClosed) break;
-					$this->_flowResults->addTimelineElement(
+					$this->_timeline->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $this->_ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}", true)
 					);
 				
@@ -111,7 +135,7 @@ class Application_Detail{
 				
 				if(count($listOnDb) == 0){
 					if($this->_mdClosed) break;
-					$this->_flowResults->addTimelineElement(
+					$this->_timeline->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), (int)$doc[XMLParser::MIN_OCCUR], $this->_ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 					);
 					
@@ -152,9 +176,17 @@ class Application_Detail{
 		
 		Session::getInstance()->delete(SignatureDispatcher::OVERWRITE_FILE_SIGNED);
 		
-		// Se il documento è un allegato fai qualcosa
-		if(isset($doc[$XMLParser::ATTACHMENT_OF])){
-				
+		// ora devo aggiungere le eventuali timeline con attachment nei pannelli giusti del flowresult
+		$attachmentTimelines = $this->_attachmentTimeline->getTimelines();
+		if(count($attachmentTimelines)){
+			foreach($attachmentTimelines as $id_doc=>$attachmentTimeline){
+				$flow_timeline = $this->_flowResults->getTimelineElement($id_doc);
+				$flow_timeline_panel_body = $flow_timeline->getPanel()->getPanelBody();
+				ob_start();
+				$attachmentTimeline->render();
+				$attachments = ob_get_clean();
+				$flow_timeline_panel_body->setAttachments($attachments);
+			}
 		}
 		
 		if(!$almostOne)
@@ -163,6 +195,9 @@ class Application_Detail{
 		if($md[Masterdocument::CLOSED] == ProcedureManager::INCOMPLETE) 
 			return;
 		
+		$this->_timeline =& $this->_flowResults;
+		$this->_createInfoPanel = true;
+			
 		// Ora si aggiunge eventuali allegati se c'è almeno il primo documento caricato
 		$XMLParser->load(XML_STD_PATH."allegato.xml");
 		$docToSearch = $XMLParser->getXmlSource();
@@ -174,7 +209,7 @@ class Application_Detail{
 			$this->_parse($listOnDb, (int)$docToSearch[XMLParser::MIN_OCCUR], (int)$docToSearch[XMLParser::MAX_OCCUR], $md, $documents, $documents_data, $innerValues, $docInputs,(boolean)$docToSearch[XMLParser::PRIVATE_DOC]);
 		} else {
 			if($this->_userManager->isGestore()){
-				$this->_flowResults->addTimelineElement(
+				$this->_timeline->addTimelineElement(
 						new TimelineElementMissing(ucfirst($docName), false, $this->_ICanManageIt, "?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_UPLOAD."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_md}")
 				);
 			}
@@ -239,7 +274,7 @@ class Application_Detail{
 			$badge =
 				new FlowTimelineBadgeSuccess();
 				
-			$this->_flowResults->addTimelineElement(
+			$this->_timeline->addTimelineElement(
 					new TimelineElementFull($badge, $panel),
 					$id_md,
 					true
@@ -277,7 +312,9 @@ class Application_Detail{
 				DIRECTORY_SEPARATOR .
 				Common::getFilenameFromDocument($documents[$id_doc]);
 				
-			$docInfo = $this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues);
+			$docInfo = $this->_createInfoPanel ?
+				$this->createDocumentInfoPanel($docInputs, $documents_data[$id_doc], $innerValues):
+				null;
 
 			
 			$editInfoBTN =
@@ -331,7 +368,7 @@ class Application_Detail{
 
 			// Se Non attachment va bene:
 			
-			$this->_flowResults->addTimelineElement(
+			$this->_timeline->addTimelineElement(
 					new TimelineElementFull($badge, $panel),
 					$id_doc
 			);
