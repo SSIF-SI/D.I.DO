@@ -35,7 +35,7 @@ class FlowTimeline{
 	}
 	
 	public function render($key = null){
-		Utils::printr(array_keys($this->_timeline));
+		
 ?>
 		<ul class="timeline">
 <?php
