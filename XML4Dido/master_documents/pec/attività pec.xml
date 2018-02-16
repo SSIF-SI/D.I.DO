@@ -36,11 +36,6 @@
 				<specialSignature mandatory="1" type="copia conforme" onlyIfType="con firma per copia conforme"/>
 			</specialSignatures>	
 		</document>
-		<document name="scheda" minOccur="1" maxOccur="1" attachmentOf="atto">
-			<signatures>
-				<signature mandatory="1" role="DIR" onlyIfType="con firma del direttore"/>					
-			</signatures>
-		</document>			
 	</list>
 	<innerValues>
 		<values name="ruoliAttivitaPec">
