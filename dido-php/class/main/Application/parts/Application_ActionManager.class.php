@@ -23,8 +23,8 @@ class Application_ActionManager {
 	
 	const LABEL_PRIVATE = "Privato";
 	const LABEL_VISIBLE = "Visibile";
-	
-	
+	const LABEL_TOGGLE_DETAIL = "Mostra/Nascondi dettagli";
+		
 	public function __construct(Application_DocumentBrowser $App_DB, Application_Detail $App_Detail, IDBConnector $dbConnector, IFTPDataSource $ftpDataSource, IXMLDataSource $XMLDataSource){
 		$this->_Application_Detail = $App_Detail;
 		$this->_Application_DocumentBrowser = $App_DB;

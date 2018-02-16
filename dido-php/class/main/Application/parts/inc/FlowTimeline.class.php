@@ -80,7 +80,7 @@ class TimelineElementMissing extends ATimelineElement{
 		
 		$this->_FlowTimelineElement = new FlowTimelineElement(
 			new FlowTimelineBadgeMissingDocuments(), 
-			new FlowTimelinePanel($title, null, null, $buttons, new FlowTimelinePanelBody(), $isLink ? "mdLink" : "")
+			new FlowTimelinePanel($title, null, null, $buttons, new FlowTimelinePanelBody(), $isLink ? "mdLink" : "", 0)
 		);
 	}
 }
@@ -137,18 +137,21 @@ class FlowTimelinePanel{
 			</div>
 		</div>
 		<br/>
-		<div class="timeline-body">
-			%s
+		<div class="collapse" id="collapse-%s">
+			<div class="timeline-body">
+				%s
+			</div>
 		</div>
 	</div>
 TLP;
-	public function __construct($title, $privateBTN = null, $subtitle = null, $buttons, FlowTimelinePanelBody $body, $class = null){
+	public function __construct($title, $privateBTN = null, $subtitle = null, $buttons, FlowTimelinePanelBody $body, $class = null, $id){
 		$this->_buttons = $buttons;
 		$this->_title = ucfirst($title);
 		$this->_privateBTN = $privateBTN;
 		$this->_subtitle = is_null($subtitle) ? null : ucfirst($subtitle);
 		$this->_body = $body;
 		$this->_class = $class;
+		$this->_id = $id;
 	}
 	
 	public function render(){
@@ -161,7 +164,7 @@ TLP;
 				$buttonsHTML .= $button->get();
 		}
 		
-		printf($this->_panel, $this->_class, $this->_title, $privateBTN, $this->_subtitle, $buttonsHTML, $this->_body->render());
+		printf($this->_panel, $this->_class, $this->_title, $privateBTN, $this->_subtitle, $buttonsHTML, $this->_class.$this->_id, $this->_body->render());
 	}
 	
 	public function getPanelBody(){
@@ -289,6 +292,18 @@ class FlowTimelineButtonCloseDocument extends AFlowTimelinePanelButton{
 class FlowTimelineButtonTogglePrivate extends AFlowTimelinePanelButton{
 	public function __construct($href,$set=false){
 		$this->_button = sprintf(self::HTML, $set?"danger":"success", "private-doc", $href, $set?"fa-eye-slash":"fa-eye", $set?Application_ActionManager::LABEL_PRIVATE:Application_ActionManager::LABEL_VISIBLE);
+	}
+}
+
+class FlowTimelineButtonToggleDetail extends AFlowTimelinePanelButton{
+	const HTML =
+	<<<HTML
+	<button class="btn btn-%s collapsed" type="button" data-toggle="collapse" data-target="#%s" aria-expanded="false" aria-controls="%s"><span class="fa %s fa-1x fa-fw"></span> %s</button>
+
+HTML;
+	
+	public function __construct($href){
+		$this->_button = sprintf(self::HTML, "primary", $href, $href, "fa-search", Application_ActionManager::LABEL_TOGGLE_DETAIL);
 	}
 }
 

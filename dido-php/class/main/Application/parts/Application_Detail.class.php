@@ -45,7 +45,7 @@ class Application_Detail{
 	
 	public function createDetail($md, $mdLinks){
 // 		flog("mdLinks: %o",$mdLinks);
-		Utils::printr($md);
+		//Utils::printr($md);
 		
 		extract($md);
 		
@@ -257,6 +257,8 @@ class Application_Detail{
 			$panelBody = new FlowTimelinePanelBody($docInfo, null, null);
 			$panelButtons = [];
 			
+			array_push($panelButtons, new FlowTimelineButtonToggleDetail("collapse-mdLink{$id_link}"));
+				
 			if($this->_ICanManageIt){
 				if((!$this->_mdClosed))
 					array_push($panelButtons, new FlowTimelineButtonEdit("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_MD_LINK."&".XMLParser::DOC_NAME."=$docName&".Masterdocument::ID_MD."={$id_father}&".MasterdocumentsLinks::ID_LINK."={$id_link}"));				
@@ -269,7 +271,7 @@ class Application_Detail{
 					array_push($panelButtons, new FlowTimelineButtonDelete("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_DELETE_MD_LINK."&".MasterdocumentsLinks::ID_LINK."={$id_link}"));
 			}
 			
-			$panel = new FlowTimelinePanel("Collegamento ".$docName, null ,null, $panelButtons, $panelBody, "mdLink");
+			$panel = new FlowTimelinePanel("Collegamento ".$docName, null ,null, $panelButtons, $panelBody, "mdLink",$id_link);
 			
 			$badge =
 				new FlowTimelineBadgeSuccess();
@@ -322,12 +324,15 @@ class Application_Detail{
 			new FlowTimelineButtonEditInfo("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_EDIT_INFO."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}") :
 			null;
 		
-			if(!$documentClosed){	
-				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures->signature, $specialSignatures->specialSignature, $MDSigners);
-			}
-			
 			$panelBody = new FlowTimelinePanelBody($docInfo, !is_null($editInfoBTN) ? $editInfoBTN->get() : null, $docSignatures['html']);
 			$panelButtons = [];
+
+			if(!$documentClosed){
+				$docSignatures = $this->_createDocumentSignaturesPanel($docPath, $signatures->signature, $specialSignatures->specialSignature, $MDSigners);
+			} else {
+				array_push($panelButtons, new FlowTimelineButtonToggleDetail("collapse-{$id_doc}"));
+			}
+			
 				
 			// Posso caricare il documento se:
 			// - il documento non è chiuso e
@@ -359,7 +364,8 @@ class Application_Detail{
 					array_push($panelButtons, new FlowTimelineButtonCloseDocument("?".Application_ActionManager::ACTION_LABEL."=".Application_ActionManager::ACTION_CLOSE_DOC."&".Masterdocument::ID_MD."={$id_md}&".Document::ID_DOC."={$id_doc}"));
 			}
 			
-			$panel = new FlowTimelinePanel($docName,$privateBTN, $docType, $panelButtons, $panelBody);
+			
+			$panel = new FlowTimelinePanel($docName,$privateBTN, $docType, $panelButtons, $panelBody,null,$id_doc);
 			
 			$badge =
 				($signatures && $docSignatures['errors']) || !$documentClosed ?
