@@ -188,7 +188,7 @@ INFO;
 	
 	const SIGNATURES_INFO = 
 <<<SIGINFO
-	<div class="col-lg-6">
+	<div class="col-lg-%s">
 		<div class="panel panel-info">
 			<div class="panel-heading">Firme Digitali:</div>
 			<div class="panel-body">
@@ -215,20 +215,20 @@ ATTACHMENT_HTML;
 	private $_attachments = null;
 	private $_signatures = null;
 		
-	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null, $attachments = null){
+	public function __construct($infoTable = null, $editInfoBTN = null, $signatures = null, $attachmentTimeline = null){
 		$col = empty($signatures) || empty($infoTable) ? 12 : 6;
 		
 		if(!is_null($infoTable))
 			$this->_infoTable = sprintf(self::INFO_HTML, $col, $infoTable, $editInfoBTN);
 		if(!empty($signatures))
-			$this->_signatures = sprintf(self::SIGNATURES_INFO, $signatures);
+			$this->_signatures = sprintf(self::SIGNATURES_INFO, $col, $signatures);
 		if(!empty($attachments))
-			$this->_attachments = sprintf(self::ATTACHMENT_HTML, $attachments);
+			$this->_attachments = sprintf(self::ATTACHMENT_HTML, $attachmentTimeline);
 		
 	}
 	
-	public function setAttachments($attachments){
-		$this->_attachment = sprintf(self::ATTACHMENT_HTML, $attachments);
+	public function setAttachments($attachmentTimeline){
+		$this->_attachment = sprintf(self::ATTACHMENT_HTML, $attachmentTimeline);
 	}
 	
 	public function render(){
