@@ -104,16 +104,21 @@
 			<!-- /.navbar-header -->
 
 			<ul class="nav navbar-top-links navbar-right">
+				<li>
+					<a href="<?=HTTP_ROOT."?privacy"?>">Privacy e cookie</a>
+				</li>
 				<li class="dropdown">
-				
-				<li class="dropdown"><a class="dropdown-toggle"
-					data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i><?=$Application->getUsername()?>&nbsp;<i
-						class="fa fa-caret-down"></i>
-				</a>
+					<a class="dropdown-toggle"
+						data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i><?=$Application->getUsername()?>&nbsp;<i
+							class="fa fa-caret-down"></i>
+					</a>
 					<ul class="dropdown-menu dropdown-user">
 						<li><a href="<?=HTTP_ROOT."?logout"?>"><i
-								class="fa fa-sign-out fa-fw"></i> Esci</a></li>
-					</ul> <!-- /.dropdown-user --></li>
+								class="fa fa-sign-out fa-fw"></i> Esci
+							</a>
+						</li>
+					</ul> <!-- /.dropdown-user -->
+				</li>
 				<!-- /.dropdown -->
 			</ul>
 			<!-- /.navbar-top-links -->

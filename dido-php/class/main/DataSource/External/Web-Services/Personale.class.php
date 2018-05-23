@@ -37,12 +37,13 @@ class Personale {
 	private $_email;
 
 	private function __construct() {
-		ini_set ( "soap.wsdl_cache_enabled", "0" );
-		$wsdl_url = "http://pimpa.isti.cnr.it/PERSONALE/web-services/dido/dido.wsdl";
-		$client = new SoapClient ( $wsdl_url );
 		
 		if(!Session::getInstance()->exists(self::SESSIONKEY_PERSONALE)){
 			
+			ini_set ( "soap.wsdl_cache_enabled", "0" );
+			$wsdl_url = "http://pimpa.isti.cnr.it/PERSONALE/web-services/dido/dido.wsdl";
+			$client = new SoapClient ( $wsdl_url );
+		
 			$persone = json_decode ( json_encode ( $client->persone () ), true );
 			$personale = json_decode ( json_encode ( $client->personale () ), true );
 			$gruppi = json_decode ( json_encode ( $client->gruppi () ), true );

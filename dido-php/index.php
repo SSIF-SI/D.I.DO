@@ -78,6 +78,9 @@ if($Application->getUserManager()->isSigner()){
 	];
 }
 
+if(isset($_GET['privacy']))
+	$view="privacy.php";
+
 include_once (TEMPLATES_PATH."template.php");
 
 ?>
